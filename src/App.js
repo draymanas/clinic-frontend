@@ -146,7 +146,7 @@ function BookingPage({ doctors, fetchData, currentUser, openLogin }) {
     const [selectedSlot, setSelectedSlot] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [showTicket, setShowTicket] = useState(false);
-    const [patientData, setPatientData] = useState({ name: '', patient_mobile: '' });
+    const [patientData, setPatientData] = useState({ name: '', mobile: '' });
 
     // --- دالة تحويل اليوم إلى تاريخ رقمي (YYYY-MM-DD) ---
     const getNextDateForDay = (dayName) => {
@@ -191,7 +191,7 @@ function BookingPage({ doctors, fetchData, currentUser, openLogin }) {
                 doctor_id: selectedDoc.id,
                 doctor_name: selectedDoc.name,
                 patient_name: patientData.name,
-                patient_mobile: patientData.patient_mobile,
+                mobile: patientData.mobile,
                 appointment_date: actualDate, // التاريخ الرقمي للسيرفر
                 price: selectedDoc.fee,
                 status: 'pending'
@@ -443,7 +443,7 @@ return (
                             {selectedDoc.availability.split(' - ').map(slot => <option key={slot} value={slot}>{getNextDateForDay(slot.split(' ')[0])} | {slot}</option>)}
                         </select>
                         <input placeholder="اسم المريض" onChange={e => setPatientData({...patientData, name: e.target.value})} style={{...inputStyle, marginTop:'10px'}} />
-                        <input placeholder="رقم الموبايل" onChange={e => setPatientData({...patientData, patient_mobile: e.target.value})} style={{...inputStyle, marginTop:'10px'}} />
+                        <input placeholder="رقم الموبايل" onChange={e => setPatientData({...patientData, mobile: e.target.value})} style={{...inputStyle, marginTop:'10px'}} />
                         <button onClick={handleConfirm} style={{ width: '100%', padding: '12px', background: '#3498db', color: '#fff', marginTop: '15px', border:'none', borderRadius:'8px' }}>تأكيد</button>
                         <button onClick={() => setShowModal(false)} style={{ width: '100%', marginTop: '10px', color: 'red', border:'none', background:'none' }}>إلغاء</button>
                     </div>
@@ -549,7 +549,7 @@ function AdminPage({ doctors, appointments, fetchData }) {
                     {appointments.map(app => (
                         <tr key={app.id} style={{borderBottom:'1px solid #eee'}}>
                             <td style={{padding:'10px'}}>{app.patient_name}</td>
-                            <td>{app.patient_mobile}</td>
+                            <td>{app.mobile}</td>
                             <td>{app.doctor_name}</td>
                             <td style={{ color: 'green', fontWeight: 'bold' }}>
     {app.booking_date || app.appointment_date 
@@ -738,7 +738,7 @@ useEffect(() => {
         <input 
             placeholder="الموبايل" 
             style={inputStyle} 
-            onChange={(e) => setCurrentUser({...currentUser, patient_mobile: e.target.value})} 
+            onChange={(e) => setCurrentUser({...currentUser, mobile: e.target.value})} 
         />
         <button 
             onClick={() => { 

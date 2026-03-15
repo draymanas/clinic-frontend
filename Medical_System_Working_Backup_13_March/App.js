@@ -191,7 +191,7 @@ function BookingPage({ doctors, fetchData, currentUser, openLogin }) {
                 doctor_id: selectedDoc.id,
                 doctor_name: selectedDoc.name,
                 patient_name: patientData.name,
-                patient_mobile: patientData.mobile,
+                mobile: patientData.mobile,
                 appointment_date: actualDate, // التاريخ الرقمي للسيرفر
                 price: selectedDoc.fee,
                 status: 'pending'
@@ -491,7 +491,7 @@ function AdminPage({ doctors, appointments, fetchData }) {
                     {appointments.map(app => (
                         <tr key={app.id} style={{borderBottom:'1px solid #eee'}}>
                             <td style={{padding:'10px'}}>{app.patient_name}</td>
-                            <td>{app.patient_mobile}</td>
+                            <td>{app.mobile}</td>
                             <td>{app.doctor_name}</td>
                             <td style={{color:'green'}}>{app.appointment_date}</td>
                         </tr>

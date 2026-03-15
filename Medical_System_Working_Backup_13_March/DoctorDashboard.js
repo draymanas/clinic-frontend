@@ -76,7 +76,7 @@ const updateStatus = async (appId, newStatus) => {
             return (
               <tr key={app.id} style={{ borderBottom: '1px solid #eee' }}>
                 <td style={paddingStyle}>{app.patient_name}</td>
-                <td style={paddingStyle}>{app.patient_mobile}</td>
+                <td style={paddingStyle}>{app.mobile}</td>
 <td style={paddingStyle}>
     {/* غيرنا app.appointment_date إلى app.booking_date */}
     {app.booking_date ? new Date(app.booking_date).toLocaleDateString('ar-EG') : 'غير محدد'}
