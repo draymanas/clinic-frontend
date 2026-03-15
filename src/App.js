@@ -738,7 +738,7 @@ useEffect(() => {
         <input 
             placeholder="الموبايل" 
             style={inputStyle} 
-            onChange={(e) => setCurrentUser({...currentUser, mobile: e.target.value})} 
+            onChange={(e) => setCurrentUser({...currentUser, patient_mobile: e.target.value})} 
         />
         <button 
             onClick={() => { 
