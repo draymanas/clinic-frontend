@@ -190,7 +190,7 @@ function BookingPage({ doctors, fetchData, currentUser, openLogin }) {
             const bookingData = {
                 doctor_id: selectedDoc.id,
                 doctor_name: selectedDoc.name,
-               patient_name: `${patientData.name} (Mob: ${patientData.mobile || 'NoNum'})`,
+                patient_name: patientData.name,
                 mobile: patientData.mobile,
                 appointment_date: actualDate, // التاريخ الرقمي للسيرفر
                 price: selectedDoc.fee,
