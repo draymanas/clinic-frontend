@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+const specialties = ["عظام", "باطنة", "أطفال", "جلدية", "نساء وتوليد", "جراحة عامة", "علاج طبيعي", "أسنان", "رمد", "مخ وأعصاب"];
 // 1. القوائم الموحدة للعناوين والمواعيد
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
@@ -215,13 +215,16 @@ const handleUpdateProfile = async (e) => {
 {/* خانة التخصص الجديد */}
 <div style={sectionBox}>
   <label>🎓 التخصص:</label>
-  <input 
-    type="text" 
+  <select 
     value={doctorData.specialty} 
     onChange={(e) => setDoctorData({...doctorData, specialty: e.target.value})} 
-    style={inputStyle} 
-    placeholder="مثلاً: استشاري طب الأطفال"
-  />
+    style={inputStyle}
+  >
+    <option value="">اختر التخصص</option>
+    {specialties.map((spec) => (
+      <option key={spec} value={spec}>{spec}</option>
+    ))}
+  </select>
 </div>
   {/* --- الخانات الجديدة اللي طلبتها يا دكتور --- */}
   <div style={{ display: 'flex', gap: '10px' }}>
