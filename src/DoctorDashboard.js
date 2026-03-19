@@ -66,7 +66,15 @@ const DoctorDashboard = ({ doctorId }) => {
       const resDoc = await fetch(`https://clinic-api-ig3d.onrender.com/doctors`); 
       const allDoctors = await resDoc.json();
       const currentDoc = allDoctors.find(d => d.id === parseInt(doctorId));
-
+const handleTimeChange = (day, field, value) => {
+    setAvailability(prev => ({
+        ...prev,
+        [day]: { 
+            ...(prev[day] || { startH: '', startM: '00', startP: 'مساءً', endH: '', endM: '00', endP: 'مساءً' }), 
+            [field]: value 
+        }
+    }));
+};
       if (currentDoc) {
         const addrParts = currentDoc.address ? currentDoc.address.split(' - ') : ['', '', ''];
         setDoctorData({
@@ -107,63 +115,57 @@ const DoctorDashboard = ({ doctorId }) => {
       } catch (error) { console.error("Update Status Error:", error); }
     }
   };
-
-  const updateDay = (day, field, value) => {
+// السطر 118: تغيير الاسم من updateDay لـ handleTimeChange
+  const handleTimeChange = (day, field, value) => {
     setAvailability(prev => ({
       ...prev,
-      [day]: { ...prev[day], [field]: value }
+      [day]: { ...(prev[day] || {}), [field]: value }
     }));
   };
 const handleUpdateProfile = async (e) => {
-  e.preventDefault();
-  const formData = new FormData();
+    e.preventDefault();
+    const formData = new FormData();
 
-  // 1. البيانات الأساسية (ضفنا التخصص هنا)
-  formData.append('name', doctorData.name);
-  formData.append('specialty', doctorData.specialty); // خانة التخصص
-  formData.append('title', doctorData.title);
-  formData.append('fee', doctorData.fee);
-  
-  // 2. الموبايلات (حسب كود التسجيل: mobile و personal_mobile)
-  formData.append('mobile', doctorData.booking_phone); 
-  formData.append('personal_mobile', doctorData.personal_phone);
-
-  // 3. العنوان (السر هنا: city للمحافظة و area للمدينة و address للتفاصيل)
-  formData.append('city', doctorData.governorate); 
-  formData.append('area', doctorData.city);
-  formData.append('address', doctorData.detailedAddress);
-
-  // 4. المواعيد والصورة
-// تجميع المواعيد في سطر واحد (نفس تنسيق التسجيل)
-const availabilityString = weekDays.map(day => {
-    const d = availability[day];
-    if (d?.startH && d?.endH) {
+    // تجميع المواعيد في سطر واحد (عشان نصلح الشاشة الحمراء)
+    const availabilityString = weekDays.map(day => {
+      const d = availability[day];
+      if (d?.startH && d?.endH) {
         return `${day} (${d.startH}:${d.startM || '00'} ${d.startP || 'مساءً'} إلى ${d.endH}:${d.endM || '00'} ${d.endP || 'مساءً'})`;
+      }
+      return null;
+    }).filter(Boolean).join(' - ');
+
+    // تعبئة البيانات
+    formData.append('name', doctorData.name);
+    formData.append('specialty', doctorData.specialty);
+    formData.append('title', doctorData.title);
+    formData.append('fee', doctorData.fee);
+    formData.append('mobile', doctorData.booking_phone);
+    formData.append('personal_mobile', doctorData.personal_phone);
+    formData.append('city', doctorData.governorate);
+    formData.append('area', doctorData.city);
+    formData.append('address', doctorData.detailedAddress);
+    formData.append('availability', availabilityString);
+
+    if (selectedFile) formData.append('image', selectedFile);
+
+    try {
+      const response = await fetch(`https://clinic-api-ig3d.onrender.com/api/update-doctor/${doctorId}`, {
+        method: 'PUT',
+        body: formData,
+      });
+
+      if (response.ok) {
+        alert("✅ تم تحديث البيانات بنجاح والحجز اشتغل!");
+        setIsEditingProfile(false);
+        fetchDoctorData();
+      } else {
+        alert("❌ فشل التحديث، تأكد من اتصال السيرفر");
+      }
+    } catch (error) {
+      alert("⚠️ خطأ في الاتصال بالسيرفر");
     }
-    return null;
-}).filter(Boolean).join(' - ');
-
-// إرسال النص الصافي للسيرفر
-formData.append('availability', availabilityString);
-  if (selectedFile) formData.append('image', selectedFile);
-
-  try {
-    const response = await fetch(`https://clinic-api-ig3d.onrender.com/api/update-doctor/${doctorId}`, {
-      method: 'PUT',
-      body: formData,
-    });
-
-    if (response.ok) {
-      alert("✅ تم تحديث كل البيانات بما فيها التخصص والعنوان!");
-      setIsEditingProfile(false);
-      fetchDoctorData(); 
-    } else {
-      alert("❌ فشل التحديث، تأكد من البيانات");
-    }
-  } catch (error) {
-    alert("⚠️ خطأ في الاتصال بالسيرفر");
-  }
-};
+  };
 
   if (loading) return <div style={{textAlign:'center', padding:'50px'}}>جاري التحميل...</div>;
 
