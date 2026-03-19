@@ -109,50 +109,39 @@ const DoctorDashboard = ({ doctorId }) => {
       [day]: { ...prev[day], [field]: value }
     }));
   };
-
 const handleUpdateProfile = async (e) => {
   e.preventDefault();
   const formData = new FormData();
 
-  // 1. البيانات الأساسية بالمسميات اللي السيرفر بيحبها
+  // 1. البيانات الأساسية (ضفنا التخصص هنا)
   formData.append('name', doctorData.name);
-  formData.append('specialty', doctorData.specialty);
+  formData.append('specialty', doctorData.specialty); // خانة التخصص
   formData.append('title', doctorData.title);
   formData.append('fee', doctorData.fee);
   
-  // 2. الموبايلات (تعديل المسميات لتطابق السيرفر)
+  // 2. الموبايلات (حسب كود التسجيل: mobile و personal_mobile)
   formData.append('mobile', doctorData.booking_phone); 
   formData.append('personal_mobile', doctorData.personal_phone);
 
-  // 3. الموقع (السيرفر بيعتبر city هي المحافظة و area هي المدينة)
+  // 3. العنوان (السر هنا: city للمحافظة و area للمدينة و address للتفاصيل)
   formData.append('city', doctorData.governorate); 
   formData.append('area', doctorData.city);
   formData.append('address', doctorData.detailedAddress);
 
-  // 4. تحويل المواعيد لنص (نفس طريقة التسجيل)
-  const availabilityString = daysOfWeek.map(day => {
-    const d = availability[day];
-    if (d && d.active && d.start && d.end) {
-      return `${day} (من ${d.start} إلى ${d.end})`;
-    }
-    return null;
-  }).filter(Boolean).join(' - ');
-  
-  formData.append('availability', availabilityString);
-
-  // 5. الصورة
+  // 4. المواعيد والصورة
+  formData.append('availability', JSON.stringify(availability));
   if (selectedFile) formData.append('image', selectedFile);
 
   try {
     const response = await fetch(`https://clinic-api-ig3d.onrender.com/api/update-doctor/${doctorId}`, {
-      method: 'PUT', // أو POST حسب ما السيرفر مبرمج للتحديث، غالباً PUT صح
+      method: 'PUT',
       body: formData,
     });
 
     if (response.ok) {
-      alert("✅ تم تحديث بيانات العيادة بنجاح!");
+      alert("✅ تم تحديث كل البيانات بما فيها التخصص والعنوان!");
       setIsEditingProfile(false);
-      fetchDoctorData();
+      fetchDoctorData(); 
     } else {
       alert("❌ فشل التحديث، تأكد من البيانات");
     }
