@@ -36,9 +36,15 @@ const DoctorDashboard = ({ doctorId }) => {
   
   // الحالة الخاصة ببيانات الدكتور
   const [doctorData, setDoctorData] = useState({
-    name: '', specialty: '', fee: '', title: '', 
-    governorate: '', city: '', detailedAddress: ''
-  });
+  name: '', 
+  specialty: '', 
+  fee: '',           // سعر الكشف
+  booking_phone: '',   // رقم الحجز
+  personal_phone: '',  // الرقم الشخصي
+  governorate: '', 
+  city: '', 
+  detailedAddress: ''
+});
 
   const [availability, setAvailability] = useState({});
   const [selectedFile, setSelectedFile] = useState(null);
@@ -105,32 +111,35 @@ const DoctorDashboard = ({ doctorId }) => {
   };
 
   // دالة حفظ التعديلات النهائية
-  const handleUpdateProfile = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append('name', doctorData.name);
-    formData.append('specialty', doctorData.specialty);
-    formData.append('fee', doctorData.fee);
-    formData.append('title', doctorData.title);
-    
-    const fullAddress = `${doctorData.governorate} - ${doctorData.city} - ${doctorData.detailedAddress}`;
-    formData.append('address', fullAddress);
-    formData.append('availability', JSON.stringify(availability));
-    
-    if (selectedFile) formData.append('image', selectedFile);
+ const handleUpdateProfile = async (e) => {
+  e.preventDefault();
+  const formData = new FormData();
+  formData.append('name', doctorData.name);
+  formData.append('fee', doctorData.fee);
+  formData.append('booking_phone', doctorData.booking_phone); // تأكد من المسمى في قاعدة البيانات
+  formData.append('personal_phone', doctorData.personal_phone);
+  
+  // دمج العنوان في حقل واحد كما فعلنا في التسجيل
+  const fullAddress = `${doctorData.governorate} - ${doctorData.city} - ${doctorData.detailedAddress}`;
+  formData.append('address', fullAddress); 
+  
+  formData.append('availability', JSON.stringify(availability));
+  if (selectedFile) formData.append('image', selectedFile);
 
-    try {
-      const response = await fetch(`https://clinic-api-ig3d.onrender.com/api/update-doctor/${doctorId}`, {
-        method: 'PUT',
-        body: formData,
-      });
-      if (response.ok) {
-        alert("✅ تم تحديث بياناتك بنجاح!");
-        setIsEditingProfile(false);
-        fetchDoctorData();
-      }
-    } catch (error) { alert("حدث خطأ في التحديث"); }
-  };
+  try {
+    const response = await fetch(`https://clinic-api-ig3d.onrender.com/api/update-doctor/${doctorId}`, {
+      method: 'PUT',
+      body: formData,
+    });
+    if (response.ok) {
+      alert("✅ تم تحديث كل البيانات بنجاح!");
+      setIsEditingProfile(false);
+      fetchDoctorData(); // دي مهمة جداً عشان البيانات تتحدث في الصفحة قدامك
+    }
+  } catch (error) {
+    alert("حدث خطأ في الاتصال بالسيرفر");
+  }
+};
 
   if (loading) return <div style={{textAlign:'center', padding:'50px'}}>جاري التحميل...</div>;
 
@@ -187,49 +196,43 @@ const DoctorDashboard = ({ doctorId }) => {
         </div>
       ) : (
         /* --- القسم الثاني: فورم التعديل الموحدة (مثل صفحة التسجيل) --- */
-        <form onSubmit={handleUpdateProfile} style={formStyle}>
-          <h3 style={{textAlign:'center', color:'#2d6a4f'}}>تحديث بيانات العيادة</h3>
-          
-          <div style={sectionBox}>
-            <label>👤 الاسم الظاهر:</label>
-            <input type="text" value={doctorData.name} onChange={(e)=>setDoctorData({...doctorData, name: e.target.value})} style={inputStyle} />
-          </div>
+<form onSubmit={handleUpdateProfile} style={formStyle}>
+  <h3 style={{textAlign:'center', color:'#2d6a4f'}}>تحديث بيانات العيادة</h3>
+  
+  <div style={sectionBox}>
+    <label>👤 الاسم الظاهر:</label>
+    <input type="text" value={doctorData.name} onChange={(e)=>setDoctorData({...doctorData, name: e.target.value})} style={inputStyle} />
+  </div>
 
-          <div style={sectionBox}>
-            <label>📍 العنوان بالتفصيل:</label>
-            <select value={doctorData.governorate} onChange={(e)=>setDoctorData({...doctorData, governorate: e.target.value, city: ''})} style={inputStyle}>
-              <option value="">اختر المحافظة</option>
-              {Object.keys(egyptLocations).map(gov => <option key={gov} value={gov}>{gov}</option>)}
-            </select>
-            <select value={doctorData.city} onChange={(e)=>setDoctorData({...doctorData, city: e.target.value})} style={inputStyle} disabled={!doctorData.governorate}>
-              <option value="">اختر المدينة</option>
-             {/* أضفنا علامة الاستفهان ? بعد اسم المحافظة لضمان عدم حدوث Error لو القائمة فاضية */}
-{doctorData.governorate && egyptLocations[doctorData.governorate]?.map(c => (
-  <option key={c} value={c}>{c}</option>
-))}</select>
-            <input type="text" placeholder="العنوان التفصيلي" value={doctorData.detailedAddress} onChange={(e)=>setDoctorData({...doctorData, detailedAddress: e.target.value})} style={inputStyle} />
-          </div>
+  {/* --- الخانات الجديدة اللي طلبتها يا دكتور --- */}
+  <div style={{ display: 'flex', gap: '10px' }}>
+    <div style={{ flex: 1, ...sectionBox }}>
+      <label>💰 سعر الكشف:</label>
+      <input type="number" value={doctorData.fee} onChange={(e)=>setDoctorData({...doctorData, fee: e.target.value})} style={inputStyle} />
+    </div>
+    <div style={{ flex: 1, ...sectionBox }}>
+      <label>📞 رقم الحجز (للعيادة):</label>
+      <input type="text" value={doctorData.booking_phone} onChange={(e)=>setDoctorData({...doctorData, booking_phone: e.target.value})} style={inputStyle} />
+    </div>
+  </div>
 
-          <div style={sectionBox}>
-            <label>📅 مواعيد العمل (اختر الأيام المفعلة):</label>
-            {daysOfWeek.map(day => (
-              <div key={day} style={dayRow}>
-                <input type="checkbox" checked={availability[day]?.active} onChange={(e)=>updateDay(day, 'active', e.target.checked)} />
-                <span style={{width:'65px'}}>{day}</span>
-                <span>من</span>
-                <select value={availability[day]?.from} onChange={(e)=>updateDay(day, 'from', e.target.value)} style={smallSelect}>{[...Array(12)].map((_,i)=><option key={i+1}>{i+1}</option>)}</select>
-                <select value={availability[day]?.fromP} onChange={(e)=>updateDay(day, 'fromP', e.target.value)} style={smallSelect}><option>صباحاً</option><option>مساءً</option></select>
-                <span>إلى</span>
-                <select value={availability[day]?.to} onChange={(e)=>updateDay(day, 'to', e.target.value)} style={smallSelect}>{[...Array(12)].map((_,i)=><option key={i+1}>{i+1}</option>)}</select>
-                <select value={availability[day]?.toP} onChange={(e)=>updateDay(day, 'toP', e.target.value)} style={smallSelect}><option>صباحاً</option><option>مساءً</option></select>
-              </div>
-            ))}
-          </div>
+  <div style={sectionBox}>
+    <label>📱 الرقم الشخصي للدكتور:</label>
+    <input type="text" value={doctorData.personal_phone} onChange={(e)=>setDoctorData({...doctorData, personal_phone: e.target.value})} style={inputStyle} />
+  </div>
 
-          <div style={sectionBox}>
-            <label>🖼️ تغيير الصورة الشخصية:</label>
-            <input type="file" onChange={(e)=>setSelectedFile(e.target.files[0])} style={inputStyle} />
-          </div>
+  <div style={sectionBox}>
+    <label>📍 العنوان بالتفصيل:</label>
+    <select value={doctorData.governorate} onChange={(e)=>setDoctorData({...doctorData, governorate: e.target.value, city: ''})} style={inputStyle}>
+      <option value="">اختر المحافظة</option>
+      {Object.keys(egyptLocations).map(gov => <option key={gov} value={gov}>{gov}</option>)}
+    </select>
+    <select value={doctorData.city} onChange={(e)=>setDoctorData({...doctorData, city: e.target.value})} style={inputStyle} disabled={!doctorData.governorate}>
+      <option value="">اختر المدينة</option>
+      {doctorData.governorate && egyptLocations[doctorData.governorate]?.map(c => <option key={c} value={c}>{c}</option>)}
+    </select>
+    <input type="text" placeholder="العنوان التفصيلي" value={doctorData.detailedAddress} onChange={(e)=>setDoctorData({...doctorData, detailedAddress: e.target.value})} style={inputStyle} />
+  </div>
 
           <button type="submit" style={saveBtn}>💾 حفظ التغييرات النهائية</button>
         </form>
