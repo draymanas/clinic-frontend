@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 const specialties = ["عظام", "باطنة", "أطفال", "جلدية", "نساء وتوليد", "جراحة عامة", "علاج طبيعي", "أسنان", "رمد", "مخ وأعصاب"];
 // 1. القوائم الموحدة للعناوين والمواعيد
+const titles = ["أخصائي", "استشاري", "أستاذ دكتور"];
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
     "القاهرة": ["مدينة نصر", "مصر الجديدة", "المعادي", "وسط البلد", "حلوان", "شبرا", "التجمع الخامس", "التجمع الأول", "الزمالك", "المقطم", "عين شمس", "السلام", "المرج", "الزيتون", "حدائق القبة", "روض الفرج"],
@@ -223,6 +224,19 @@ const handleUpdateProfile = async (e) => {
     <option value="">اختر التخصص</option>
     {specialties.map((spec) => (
       <option key={spec} value={spec}>{spec}</option>
+    ))}
+  </select>
+</div>
+<div style={sectionBox}>
+  <label>🏅 الدرجة الوظيفية:</label>
+  <select 
+    value={doctorData.title || ""} // الـ || "" تمنع ظهور كلمة null لو البيانات فاضية
+    onChange={(e) => setDoctorData({...doctorData, title: e.target.value})} 
+    style={inputStyle}
+  >
+    <option value="">اختر الدرجة الوظيفية</option>
+    {titles.map((t) => (
+      <option key={t} value={t}>{t}</option>
     ))}
   </select>
 </div>
