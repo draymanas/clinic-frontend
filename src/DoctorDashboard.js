@@ -203,8 +203,10 @@ const DoctorDashboard = ({ doctorId }) => {
             </select>
             <select value={doctorData.city} onChange={(e)=>setDoctorData({...doctorData, city: e.target.value})} style={inputStyle} disabled={!doctorData.governorate}>
               <option value="">اختر المدينة</option>
-              {doctorData.governorate && egyptLocations[doctorData.governorate].map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+             {/* أضفنا علامة الاستفهان ? بعد اسم المحافظة لضمان عدم حدوث Error لو القائمة فاضية */}
+{doctorData.governorate && egyptLocations[doctorData.governorate]?.map(c => (
+  <option key={c} value={c}>{c}</option>
+))}</select>
             <input type="text" placeholder="العنوان التفصيلي" value={doctorData.detailedAddress} onChange={(e)=>setDoctorData({...doctorData, detailedAddress: e.target.value})} style={inputStyle} />
           </div>
 
