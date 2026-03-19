@@ -212,7 +212,17 @@ const handleUpdateProfile = async (e) => {
     <label>👤 الاسم الظاهر:</label>
     <input type="text" value={doctorData.name} onChange={(e)=>setDoctorData({...doctorData, name: e.target.value})} style={inputStyle} />
   </div>
-
+{/* خانة التخصص الجديد */}
+<div style={sectionBox}>
+  <label>🎓 التخصص:</label>
+  <input 
+    type="text" 
+    value={doctorData.specialty} 
+    onChange={(e) => setDoctorData({...doctorData, specialty: e.target.value})} 
+    style={inputStyle} 
+    placeholder="مثلاً: استشاري طب الأطفال"
+  />
+</div>
   {/* --- الخانات الجديدة اللي طلبتها يا دكتور --- */}
   <div style={{ display: 'flex', gap: '10px' }}>
     <div style={{ flex: 1, ...sectionBox }}>
