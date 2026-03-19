@@ -199,11 +199,11 @@ const DoctorDashboard = ({ doctorId }) => {
             <label>📍 العنوان بالتفصيل:</label>
             <select value={doctorData.governorate} onChange={(e)=>setDoctorData({...doctorData, governorate: e.target.value, city: ''})} style={inputStyle}>
               <option value="">اختر المحافظة</option>
-              {Object.keys(locations).map(gov => <option key={gov} value={gov}>{gov}</option>)}
+              {Object.keys(egyptLocations).map(gov => <option key={gov} value={gov}>{gov}</option>)}
             </select>
             <select value={doctorData.city} onChange={(e)=>setDoctorData({...doctorData, city: e.target.value})} style={inputStyle} disabled={!doctorData.governorate}>
               <option value="">اختر المدينة</option>
-              {doctorData.governorate && locations[doctorData.governorate].map(c => <option key={c} value={c}>{c}</option>)}
+              {doctorData.governorate && egyptLocations[doctorData.governorate].map(c => <option key={c} value={c}>{c}</option>)}
             </select>
             <input type="text" placeholder="العنوان التفصيلي" value={doctorData.detailedAddress} onChange={(e)=>setDoctorData({...doctorData, detailedAddress: e.target.value})} style={inputStyle} />
           </div>
