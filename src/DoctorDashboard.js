@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 const specialties = ["عظام", "باطنة", "أطفال", "جلدية", "نساء وتوليد", "جراحة عامة", "علاج طبيعي", "أسنان", "رمد", "مخ وأعصاب"];
 // 1. القوائم الموحدة للعناوين والمواعيد
 const titles = ["أخصائي", "استشاري", "أستاذ دكتور"];
+const weekDays = ["السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
+const hoursArr = Array.from({ length: 12 }, (_, i) => i + 1);
+const minsArr = ["00", "15", "30", "45"];
+const periodsArr = ["صباحاً", "مساءً"];
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
     "القاهرة": ["مدينة نصر", "مصر الجديدة", "المعادي", "وسط البلد", "حلوان", "شبرا", "التجمع الخامس", "التجمع الأول", "الزمالك", "المقطم", "عين شمس", "السلام", "المرج", "الزيتون", "حدائق القبة", "روض الفرج"],
@@ -130,7 +134,17 @@ const handleUpdateProfile = async (e) => {
   formData.append('address', doctorData.detailedAddress);
 
   // 4. المواعيد والصورة
-  formData.append('availability', JSON.stringify(availability));
+// تجميع المواعيد في سطر واحد (نفس تنسيق التسجيل)
+const availabilityString = weekDays.map(day => {
+    const d = availability[day];
+    if (d?.startH && d?.endH) {
+        return `${day} (${d.startH}:${d.startM || '00'} ${d.startP || 'مساءً'} إلى ${d.endH}:${d.endM || '00'} ${d.endP || 'مساءً'})`;
+    }
+    return null;
+}).filter(Boolean).join(' - ');
+
+// إرسال النص الصافي للسيرفر
+formData.append('availability', availabilityString);
   if (selectedFile) formData.append('image', selectedFile);
 
   try {
@@ -278,6 +292,41 @@ const handleUpdateProfile = async (e) => {
     style={{...inputStyle, border: 'none'}} 
   />
   {selectedFile && <p style={{fontSize: '12px', color: '#2d6a4f'}}>✅ تم اختيار ملف: {selectedFile.name}</p>}
+</div>
+{/* --- كود تحديث المواعيد الجديد --- */}
+<div style={{ ...sectionBox, backgroundColor: '#f9f9f9', padding: '15px', marginTop: '15px', border: '1px solid #ddd' }}>
+  <h3 style={{ marginBottom: '15px', color: '#007bff', fontSize: '16px' }}>📅 تحديث مواعيد العيادة:</h3>
+  {weekDays.map((day) => (
+    <div key={day} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>
+      <span style={{ minWidth: '60px', fontWeight: 'bold', fontSize: '14px' }}>{day}</span>
+      
+      {/* وقت البدء */}
+      <select onChange={(e) => handleTimeChange(day, 'startH', e.target.value)} value={availability[day]?.startH || ''} style={{padding: '4px', borderRadius: '4px'}}>
+        <option value="">ساعة</option>
+        {hoursArr.map(h => <option key={h} value={h}>{h}</option>)}
+      </select>
+      <select onChange={(e) => handleTimeChange(day, 'startM', e.target.value)} value={availability[day]?.startM || '00'} style={{padding: '4px', borderRadius: '4px'}}>
+        {minsArr.map(m => <option key={m} value={m}>{m}</option>)}
+      </select>
+      <select onChange={(e) => handleTimeChange(day, 'startP', e.target.value)} value={availability[day]?.startP || 'مساءً'} style={{padding: '4px', borderRadius: '4px'}}>
+        {periodsArr.map(p => <option key={p} value={p}>{p}</option>)}
+      </select>
+
+      <span style={{fontSize: '12px'}}>إلى</span>
+
+      {/* وقت النهاية */}
+      <select onChange={(e) => handleTimeChange(day, 'endH', e.target.value)} value={availability[day]?.endH || ''} style={{padding: '4px', borderRadius: '4px'}}>
+        <option value="">ساعة</option>
+        {hoursArr.map(h => <option key={h} value={h}>{h}</option>)}
+      </select>
+      <select onChange={(e) => handleTimeChange(day, 'endM', e.target.value)} value={availability[day]?.endM || '00'} style={{padding: '4px', borderRadius: '4px'}}>
+        {minsArr.map(m => <option key={m} value={m}>{m}</option>)}
+      </select>
+      <select onChange={(e) => handleTimeChange(day, 'endP', e.target.value)} value={availability[day]?.endP || 'مساءً'} style={{padding: '4px', borderRadius: '4px'}}>
+        {periodsArr.map(p => <option key={p} value={p}>{p}</option>)}
+      </select>
+    </div>
+  ))}
 </div>
   </div>
           <button type="submit" style={saveBtn}>💾 حفظ التغييرات النهائية</button>
