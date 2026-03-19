@@ -110,34 +110,54 @@ const DoctorDashboard = ({ doctorId }) => {
     }));
   };
 
-  // دالة حفظ التعديلات النهائية
- const handleUpdateProfile = async (e) => {
+const handleUpdateProfile = async (e) => {
   e.preventDefault();
   const formData = new FormData();
+
+  // 1. البيانات الأساسية بالمسميات اللي السيرفر بيحبها
   formData.append('name', doctorData.name);
+  formData.append('specialty', doctorData.specialty);
+  formData.append('title', doctorData.title);
   formData.append('fee', doctorData.fee);
-  formData.append('booking_phone', doctorData.booking_phone); // تأكد من المسمى في قاعدة البيانات
-  formData.append('personal_phone', doctorData.personal_phone);
   
-  // دمج العنوان في حقل واحد كما فعلنا في التسجيل
-  const fullAddress = `${doctorData.governorate} - ${doctorData.city} - ${doctorData.detailedAddress}`;
-  formData.append('address', fullAddress); 
+  // 2. الموبايلات (تعديل المسميات لتطابق السيرفر)
+  formData.append('mobile', doctorData.booking_phone); 
+  formData.append('personal_mobile', doctorData.personal_phone);
+
+  // 3. الموقع (السيرفر بيعتبر city هي المحافظة و area هي المدينة)
+  formData.append('city', doctorData.governorate); 
+  formData.append('area', doctorData.city);
+  formData.append('address', doctorData.detailedAddress);
+
+  // 4. تحويل المواعيد لنص (نفس طريقة التسجيل)
+  const availabilityString = daysOfWeek.map(day => {
+    const d = availability[day];
+    if (d && d.active && d.start && d.end) {
+      return `${day} (من ${d.start} إلى ${d.end})`;
+    }
+    return null;
+  }).filter(Boolean).join(' - ');
   
-  formData.append('availability', JSON.stringify(availability));
+  formData.append('availability', availabilityString);
+
+  // 5. الصورة
   if (selectedFile) formData.append('image', selectedFile);
 
   try {
     const response = await fetch(`https://clinic-api-ig3d.onrender.com/api/update-doctor/${doctorId}`, {
-      method: 'PUT',
+      method: 'PUT', // أو POST حسب ما السيرفر مبرمج للتحديث، غالباً PUT صح
       body: formData,
     });
+
     if (response.ok) {
-      alert("✅ تم تحديث كل البيانات بنجاح!");
+      alert("✅ تم تحديث بيانات العيادة بنجاح!");
       setIsEditingProfile(false);
-      fetchDoctorData(); // دي مهمة جداً عشان البيانات تتحدث في الصفحة قدامك
+      fetchDoctorData();
+    } else {
+      alert("❌ فشل التحديث، تأكد من البيانات");
     }
   } catch (error) {
-    alert("حدث خطأ في الاتصال بالسيرفر");
+    alert("⚠️ خطأ في الاتصال بالسيرفر");
   }
 };
 
@@ -232,8 +252,18 @@ const DoctorDashboard = ({ doctorId }) => {
       {doctorData.governorate && egyptLocations[doctorData.governorate]?.map(c => <option key={c} value={c}>{c}</option>)}
     </select>
     <input type="text" placeholder="العنوان التفصيلي" value={doctorData.detailedAddress} onChange={(e)=>setDoctorData({...doctorData, detailedAddress: e.target.value})} style={inputStyle} />
+  {/* --- إعادة خانة رفع الصورة --- */}
+<div style={{...sectionBox, marginTop: '15px', border: '1px dashed #2d6a4f'}}>
+  <label>🖼️ تحديث الصورة الشخصية:</label>
+  <input 
+    type="file" 
+    accept="image/*" 
+    onChange={(e) => setSelectedFile(e.target.files[0])} 
+    style={{...inputStyle, border: 'none'}} 
+  />
+  {selectedFile && <p style={{fontSize: '12px', color: '#2d6a4f'}}>✅ تم اختيار ملف: {selectedFile.name}</p>}
+</div>
   </div>
-
           <button type="submit" style={saveBtn}>💾 حفظ التغييرات النهائية</button>
         </form>
       )}
