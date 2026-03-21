@@ -570,10 +570,16 @@ function AccountingPage({ doctors, appointments }) {
 
   // فلترة الحجوزات بناءً على الدكتور والشهر
 const doctorAppointments = appointments.filter(app => {
-    const appDate = new Date(app.date); // التأكد من استخدام حقل date
-    const isSameDoctor = app.doctorName === selectedDocName; // التأكد من doctorName
+    // 1. الربط بالـ ID (أمان أعلى ضد تشابه الأسماء)
+    const currentDoc = doctors.find(d => d.name === selectedDocName);
+    const isSameDoctor = Number(app.doctor_id) === Number(currentDoc?.id);
+
+    // 2. استخدام حقل booking_date الفعلي من الجدول
+    const appDate = new Date(app.booking_date);
     const isSameMonth = (appDate.getMonth() + 1) === parseInt(selectedMonth);
-    const isCompleted = app.status === 'completed'; // إضافة شرط الحالة لضمان الدقة
+
+    // 3. التأكد من أن الحالة مكتملة
+    const isCompleted = app.status === 'completed';
 
     return isSameDoctor && isSameMonth && isCompleted;
   });
