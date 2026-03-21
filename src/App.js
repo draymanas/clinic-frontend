@@ -569,9 +569,13 @@ function AccountingPage({ doctors, appointments }) {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
 
   // فلترة الحجوزات بناءً على الدكتور والشهر
-  const doctorAppointments = appointments.filter(app => {
-    const appDate = new Date(app.appointment_date);
-    return app.doctor_name === selectedDocName && (appDate.getMonth() + 1) === parseInt(selectedMonth);
+const doctorAppointments = appointments.filter(app => {
+    const appDate = new Date(app.date); // التأكد من استخدام حقل date
+    const isSameDoctor = app.doctorName === selectedDocName; // التأكد من doctorName
+    const isSameMonth = (appDate.getMonth() + 1) === parseInt(selectedMonth);
+    const isCompleted = app.status === 'completed'; // إضافة شرط الحالة لضمان الدقة
+
+    return isSameDoctor && isSameMonth && isCompleted;
   });
 
   // جلب بيانات الدكتور المختار (عشان نعرف سعر كشفه)
