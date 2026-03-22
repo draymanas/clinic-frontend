@@ -87,7 +87,10 @@ function DoctorRegister() {
             body: formData,
         });
 
-        if (res.ok) alert("✅ تم إرسال بياناتك وصورتك بنجاح!");
+       if (res.ok) {
+    alert("✅ تم إرسال بياناتك وصورتك بنجاح !");
+    fbq('track', 'CompleteRegistration');
+}
     };
 
     return (
