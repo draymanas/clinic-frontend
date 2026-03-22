@@ -86,10 +86,10 @@ function DoctorRegister() {
             method: 'POST',
             body: formData,
         });
-
-       if (res.ok) {
+if (res.ok) {
     alert("✅ تم إرسال بياناتك وصورتك بنجاح !");
-    fbq('track', 'CompleteRegistration');
+    // اضف window. قبل fbq عشان السيرفر ما يرفضش الـ Build
+    window.fbq('track', 'CompleteRegistration');
 }
     };
 
