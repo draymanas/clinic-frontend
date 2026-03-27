@@ -889,31 +889,22 @@ useEffect(() => {
 
       {/* 3. منطقة عرض المحتوى */}
      <main>
-  {/* 1. لو الرابط فيه /dr/ وفي نفس الوقت المستخدم مش دكتور داخل بلوحة تحكمه */}
-  {window.location.pathname.includes('/dr/') && activePage !== 'doctor_dashboard' && (
+  {/* 1. لو اللي داخل هو "الدكتور" نفسه، اعرضله لوحة التحكم (الصورة 172) كاملة */}
+  {activePage === 'doctor_dashboard' && currentUser?.role === 'doctor' && (
+    <DoctorDashboard doctorId={currentUser.id} />
+  )}
+
+  {/* 2. لو اللي فاتح هو "المريض" عن طريق الرابط، اعرضله صفحة الحجز فقط */}
+  {window.location.pathname.includes('/dr/') && currentUser?.role !== 'doctor' && (
     <div className="container mt-4">
-       <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
+      <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
     </div>
   )}
 
-  {/* 2. السيستم العادي بتاعك سيبه شغال دايماً */}
+  {/* 3. الصفحة الرئيسية والصفحات التانية سيبها زي ما هي */}
   {activePage === 'home' && !window.location.pathname.includes('/dr/') && (
     <BookingPage doctors={doctors} fetchData={fetchData} currentUser={currentUser} openLogin={() => setShowLoginModal(true)} />
   )}
-
-  {/* دي أهم حتة: لوحة تحكم الدكتور تفضل شغالة حتى لو فيه رابط مباشر */}
-  {activePage === 'doctor_dashboard' && currentUser?.role === 'doctor' && (
-    <DoctorDashboard doctorId={currentUser.id}>
-        {/* لو فيه رابط دكتور في العنوان، اعرضه جوه الداشبورد */}
-        {window.location.pathname.includes('/dr/') && (
-            <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
-        )}
-    </DoctorDashboard>
-  )}
-
-  {activePage === 'join' && <DoctorRegister />}
-  {activePage === 'admin' && isAdmin && <AdminPage doctors={doctors} appointments={appointments} fetchData={fetchData} />}
-  {activePage === 'accounting' && isAdmin && <AccountingPage doctors={doctors} appointments={appointments} />}
 </main>
     </div>
   );
