@@ -702,15 +702,18 @@ useEffect(() => {
 // --- أضف الكود الجديد هنا ---
 // البحث عن هذا الجزء وتعديله
 useEffect(() => {
-  const path = window.location.pathname; 
-  if (path.startsWith('/dr/')) { 
-    // استخراج الرقم اللي بعد /dr/
-    const idFromUrl = path.split('/dr/')[1];
-    if (idFromUrl) {
+    const path = window.location.pathname;
+    if (path.includes('/dr/')) {
+      // 1. استخراج الرقم
+      const idFromUrl = path.split('/dr/')[1];
+      
+      // 2. أهم خطوة: توجيه الـ React لفتح صفحة الحجز المباشر
       setActivePage('direct_booking_page');
+      
+      // ملحوظة: لو عندك متغير بيشيل الـ id بتاع الدكتور المختار، حدثه هنا برضه
+      // setSelectedDoctorId(idFromUrl); 
     }
-  }
-}, []);
+  }, []);
   const navBtnStyle = {
     background: 'none', border: 'none', color: '#fff', cursor: 'pointer',
     fontWeight: 'bold', fontSize: '16px', padding: '10px 15px', borderRadius: '8px',
