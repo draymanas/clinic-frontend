@@ -888,22 +888,20 @@ useEffect(() => {
       )}
 
       {/* 3. منطقة عرض المحتوى */}
-     <main>
-  {/* 1. لو اللي داخل هو "الدكتور" نفسه، اعرضله لوحة التحكم (الصورة 172) كاملة */}
-  {activePage === 'doctor_dashboard' && currentUser?.role === 'doctor' && (
+  <main>
+  {/* صفحة الدكتور تفتح كاملة (الصورة 172) */}
+  {activePage === 'doctor_dashboard' && (
     <DoctorDashboard doctorId={currentUser.id} />
   )}
 
-  {/* 2. لو اللي فاتح هو "المريض" عن طريق الرابط، اعرضله صفحة الحجز فقط */}
-  {window.location.pathname.includes('/dr/') && currentUser?.role !== 'doctor' && (
-    <div className="container mt-4">
-      <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
-    </div>
+  {/* الصفحة الرئيسية */}
+  {activePage === 'home' && (
+    <BookingPage doctors={doctors} currentUser={currentUser} />
   )}
 
-  {/* 3. الصفحة الرئيسية والصفحات التانية سيبها زي ما هي */}
-  {activePage === 'home' && !window.location.pathname.includes('/dr/') && (
-    <BookingPage doctors={doctors} fetchData={fetchData} currentUser={currentUser} openLogin={() => setShowLoginModal(true)} />
+  {/* رابط الحجز المباشر (للمريض فقط) */}
+  {window.location.pathname.includes('/dr/') && (
+    <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
   )}
 </main>
     </div>
