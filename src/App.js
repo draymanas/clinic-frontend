@@ -899,10 +899,9 @@ useEffect(() => {
     <BookingPage doctors={doctors} currentUser={currentUser} />
   )}
 
-  {/* رابط الحجز المباشر (للمريض فقط) */}
-  {window.location.pathname.includes('/dr/') && (
-    <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
-  )}
+ {window.location.pathname.includes('/dr/') && activePage === 'home' && (
+  <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
+)}
 </main>
     </div>
   );
