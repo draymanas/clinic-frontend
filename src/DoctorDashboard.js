@@ -182,8 +182,59 @@ const handleUpdateProfile = async (e) => {
           {isEditingProfile ? 'العودة لجدول الحجوزات' : '⚙️ تعديل ملفي الشخصي'}
         </button>
       </div>
-
+ </div>
       {!isEditingProfile ? (
+        <>
+          {/* --- كارت رابط الحجز المباشر (الجزء الجديد) --- */}
+          <div style={{ 
+            backgroundColor: '#e3f2fd', 
+            padding: '20px', 
+            borderRadius: '15px', 
+            border: '2px dashed #1a73e8',
+            marginBottom: '25px',
+            textAlign: 'right',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+          }}>
+            <h3 style={{ color: '#1a73e8', marginTop: 0, marginBottom: '10px' }}>🔗 رابط الحجز المباشر الخاص بك</h3>
+            <p style={{ fontSize: '14px', color: '#666', marginBottom: '15px' }}>
+              انسخ هذا الرابط وأرسله لمرضاك على واتساب أو فيسبوك للحجز عندك مباشرة:
+            </p>
+            
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <input 
+                readOnly 
+                value={`${window.location.origin}/dr/${doctorId}`} 
+                style={{ 
+                  flex: 1, 
+                  padding: '12px', 
+                  borderRadius: '8px', 
+                  border: '1px solid #bbdefb', 
+                  direction: 'ltr', 
+                  backgroundColor: '#fff',
+                  fontWeight: 'bold',
+                  color: '#1a73e8'
+                }}
+              />
+              <button 
+                onClick={() => {
+                  const link = `${window.location.origin}/dr/${doctorId}`;
+                  navigator.clipboard.writeText(link);
+                  alert("✅ تم نسخ رابط الحجز الخاص بك بنجاح!");
+                }}
+                style={{ 
+                  background: '#1a73e8', 
+                  color: '#fff', 
+                  border: 'none', 
+                  padding: '12px 25px', 
+                  borderRadius: '8px', 
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                نسخ الرابط
+              </button>
+            </div>
+          </div>
         /* --- القسم الأول: جدول الحجوزات (كودك الأصلي المعدل) --- */
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#fff', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>

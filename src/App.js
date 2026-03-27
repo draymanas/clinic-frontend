@@ -1,6 +1,9 @@
 import DoctorDashboard from './DoctorDashboard';
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+// 1. استيراد الصفحة في الأعلى
+import DirectBooking from './DirectBooking';
+
 
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
@@ -695,6 +698,15 @@ useEffect(() => {
         }
     }
 }, []);
+
+// --- أضف الكود الجديد هنا ---
+useEffect(() => {
+  const path = window.location.pathname; 
+  // لو الرابط يبدأ بـ /dr/ (زي ما اتفقنا للسهولة) أو /book/ حسب اختيارك
+  if (path.startsWith('/dr/')) { 
+    setActivePage('direct_booking_page');
+  }
+}, []);
   const navBtnStyle = {
     background: 'none', border: 'none', color: '#fff', cursor: 'pointer',
     fontWeight: 'bold', fontSize: '16px', padding: '10px 15px', borderRadius: '8px',
@@ -872,6 +884,7 @@ useEffect(() => {
 
       {/* 3. منطقة عرض المحتوى */}
       <main>
+        {activePage === 'direct_booking_page' && <DirectBooking />}
         {activePage === 'home' && (
             <BookingPage 
                 doctors={doctors} 
