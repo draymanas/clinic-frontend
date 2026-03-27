@@ -887,32 +887,35 @@ useEffect(() => {
       )}
 
       {/* 3. منطقة عرض المحتوى */}
-      <main>
-        {activePage === 'direct_booking_page' && <DirectBooking />}
-        {activePage === 'home' && (
-            <BookingPage 
-                doctors={doctors} 
-                fetchData={fetchData} 
-                currentUser={currentUser} 
-                openLogin={() => setShowLoginModal(true)} 
-            />
-        )}
-
-        {activePage === 'join' && <DoctorRegister />}
-
-        {/* عرض لوحة التحكم للطبيب المسجل فقط */}
-        {activePage === 'doctor_dashboard' && currentUser?.role === 'doctor' && (
-       <DoctorDashboard doctorId={currentUser.id} />
-        )}
-        {activePage === 'admin' && isAdmin && (
-            <AdminPage doctors={doctors} appointments={appointments} fetchData={fetchData} />
-        )}
-
-        {activePage === 'accounting' && isAdmin && (
-            <AccountingPage doctors={doctors} appointments={appointments} />
-        )}
-      </main>
-
+     <main>
+  {/* 1. لو الرابط فيه /dr/، افتح صفحة الدكتور وابعتلها الرقم اللي في العنوان */}
+  {window.location.pathname.includes('/dr/') ? (
+    <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
+  ) : (
+    /* 2. لو مفيش، كمل نظامك العادي بتاع امبارح */
+    <>
+      {activePage === 'home' && (
+        <BookingPage 
+          doctors={doctors} 
+          fetchData={fetchData} 
+          currentUser={currentUser} 
+          openLogin={() => setShowLoginModal(true)} 
+        />
+      )}
+      {activePage === 'direct_booking_page' && <DirectBooking />}
+      {activePage === 'join' && <DoctorRegister />}
+      {activePage === 'doctor_dashboard' && currentUser?.role === 'doctor' && (
+        <DoctorDashboard doctorId={currentUser.id} />
+      )}
+      {activePage === 'admin' && isAdmin && (
+        <AdminPage doctors={doctors} appointments={appointments} fetchData={fetchData} />
+      )}
+      {activePage === 'accounting' && isAdmin && (
+        <AccountingPage doctors={doctors} appointments={appointments} />
+      )}
+    </>
+  )}
+</main>
     </div>
   );
 }
