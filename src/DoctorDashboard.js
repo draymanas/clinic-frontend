@@ -168,8 +168,7 @@ const handleUpdateProfile = async (e) => {
   };
 
   if (loading) return <div style={{textAlign:'center', padding:'50px'}}>جاري التحميل...</div>;
-
-  return (
+return (
     <div style={{ padding: '20px', direction: 'rtl', fontFamily: 'Arial, sans-serif' }}>
       
       {/* هيدر الصفحة */}
@@ -182,10 +181,10 @@ const handleUpdateProfile = async (e) => {
           {isEditingProfile ? 'العودة لجدول الحجوزات' : '⚙️ تعديل ملفي الشخصي'}
         </button>
       </div>
- </div>
-      {!isEditingProfile ? (
+
+      { !isEditingProfile ? (
         <>
-          {/* --- كارت رابط الحجز المباشر (الجزء الجديد) --- */}
+          {/* --- كارت رابط الحجز المباشر --- */}
           <div style={{ 
             backgroundColor: '#e3f2fd', 
             padding: '20px', 
@@ -197,207 +196,142 @@ const handleUpdateProfile = async (e) => {
           }}>
             <h3 style={{ color: '#1a73e8', marginTop: 0, marginBottom: '10px' }}>🔗 رابط الحجز المباشر الخاص بك</h3>
             <p style={{ fontSize: '14px', color: '#666', marginBottom: '15px' }}>
-              انسخ هذا الرابط وأرسله لمرضاك على واتساب أو فيسبوك للحجز عندك مباشرة:
+              انسخ هذا الرابط وأرسله لمرضاك على واتساب للحجز عندك مباشرة:
             </p>
             
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
               <input 
                 readOnly 
                 value={`${window.location.origin}/dr/${doctorId}`} 
-                style={{ 
-                  flex: 1, 
-                  padding: '12px', 
-                  borderRadius: '8px', 
-                  border: '1px solid #bbdefb', 
-                  direction: 'ltr', 
-                  backgroundColor: '#fff',
-                  fontWeight: 'bold',
-                  color: '#1a73e8'
-                }}
+                style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid #bbdefb', direction: 'ltr', fontWeight: 'bold', color: '#1a73e8' }}
               />
               <button 
                 onClick={() => {
-                  const link = `${window.location.origin}/dr/${doctorId}`;
-                  navigator.clipboard.writeText(link);
-                  alert("✅ تم نسخ رابط الحجز الخاص بك بنجاح!");
+                  navigator.clipboard.writeText(`${window.location.origin}/dr/${doctorId}`);
+                  alert("✅ تم نسخ رابط الحجز بنجاح!");
                 }}
-                style={{ 
-                  background: '#1a73e8', 
-                  color: '#fff', 
-                  border: 'none', 
-                  padding: '12px 25px', 
-                  borderRadius: '8px', 
-                  cursor: 'pointer',
-                  fontWeight: 'bold'
-                }}
+                style={{ background: '#1a73e8', color: '#fff', border: 'none', padding: '12px 25px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
               >
                 نسخ الرابط
               </button>
             </div>
           </div>
-        /* --- القسم الأول: جدول الحجوزات (كودك الأصلي المعدل) --- */
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#fff', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-            <thead>
-              <tr style={{ backgroundColor: '#f1fcf9' }}>
-                <th style={paddingStyle}>اسم المريض</th>
-                <th style={paddingStyle}>الموبايل</th>
-                <th style={paddingStyle}>التاريخ</th>
-                <th style={paddingStyle}>سعر الكشف</th>
-                <th style={paddingStyle}>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {appointments.map((app) => (
-                <tr key={app.id} style={{ borderBottom: '1px solid #eee' }}>
-                  <td style={paddingStyle}>{app.patient_name}</td>
-                  <td style={paddingStyle}>{app.mobile}</td>
-                  <td style={paddingStyle}>{app.booking_date ? new Date(app.booking_date).toLocaleDateString('ar-EG') : 'غير محدد'}</td>
-                  <td style={paddingStyle}>{app.price} ج.م</td>
-                  <td style={paddingStyle}>
-                    {app.status === 'pending' ? (
-                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                        <button onClick={() => updateStatus(app.id, 'completed')} style={btnSuccess}>تأكيد حضور</button>
-                        <button onClick={() => updateStatus(app.id, 'absent')} style={btnDanger}>إبلاغ غياب</button>
-                      </div>
-                    ) : (
-                      <span style={{ color: app.status === 'completed' ? '#28a745' : '#dc3545', fontWeight: 'bold' }}>
-                        {app.status === 'completed' ? '✅ تم الحضور' : '❌ غائب'}
-                      </span>
-                    )}
-                  </td>
+
+          {/* --- جدول الحجوزات --- */}
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#fff', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#f1fcf9' }}>
+                  <th style={paddingStyle}>اسم المريض</th>
+                  <th style={paddingStyle}>الموبايل</th>
+                  <th style={paddingStyle}>التاريخ</th>
+                  <th style={paddingStyle}>سعر الكشف</th>
+                  <th style={paddingStyle}>الحالة</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {appointments.map((app) => (
+                  <tr key={app.id} style={{ borderBottom: '1px solid #eee' }}>
+                    <td style={paddingStyle}>{app.patient_name}</td>
+                    <td style={paddingStyle}>{app.mobile}</td>
+                    <td style={paddingStyle}>{app.booking_date ? new Date(app.booking_date).toLocaleDateString('ar-EG') : 'غير محدد'}</td>
+                    <td style={paddingStyle}>{app.price} ج.م</td>
+                    <td style={paddingStyle}>
+                      {app.status === 'pending' ? (
+                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                          <button onClick={() => updateStatus(app.id, 'completed')} style={btnSuccess}>تأكيد حضور</button>
+                          <button onClick={() => updateStatus(app.id, 'absent')} style={btnDanger}>إبلاغ غياب</button>
+                        </div>
+                      ) : (
+                        <span style={{ color: app.status === 'completed' ? '#28a745' : '#dc3545', fontWeight: 'bold' }}>
+                          {app.status === 'completed' ? '✅ تم الحضور' : '❌ غائب'}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </> /* <-- هذه القفلة كانت ناقصة عندك */
       ) : (
-        /* --- القسم الثاني: فورم التعديل الموحدة (مثل صفحة التسجيل) --- */
-<form onSubmit={handleUpdateProfile} style={formStyle}>
-  <h3 style={{textAlign:'center', color:'#2d6a4f'}}>تحديث بيانات العيادة</h3>
-  
-  <div style={sectionBox}>
-    <label>👤 الاسم الظاهر:</label>
-    <input type="text" value={doctorData.name} onChange={(e)=>setDoctorData({...doctorData, name: e.target.value})} style={inputStyle} />
-  </div>
-{/* خانة التخصص الجديد */}
-<div style={sectionBox}>
-  <label>🎓 التخصص:</label>
-  <select 
-    value={doctorData.specialty} 
-    onChange={(e) => setDoctorData({...doctorData, specialty: e.target.value})} 
-    style={inputStyle}
-  >
-    <option value="">اختر التخصص</option>
-    {specialties.map((spec) => (
-      <option key={spec} value={spec}>{spec}</option>
-    ))}
-  </select>
-</div>
-<div style={sectionBox}>
-  <label>🏅 الدرجة الوظيفية:</label>
-  <select 
-    value={doctorData.title || ""} // الـ || "" تمنع ظهور كلمة null لو البيانات فاضية
-    onChange={(e) => setDoctorData({...doctorData, title: e.target.value})} 
-    style={inputStyle}
-  >
-    <option value="">اختر الدرجة الوظيفية</option>
-    {titles.map((t) => (
-      <option key={t} value={t}>{t}</option>
-    ))}
-  </select>
-</div>
-  {/* --- الخانات الجديدة اللي طلبتها يا دكتور --- */}
-  <div style={{ display: 'flex', gap: '10px' }}>
-    <div style={{ flex: 1, ...sectionBox }}>
-      <label>💰 سعر الكشف:</label>
-      <input type="number" value={doctorData.fee} onChange={(e)=>setDoctorData({...doctorData, fee: e.target.value})} style={inputStyle} />
-    </div>
-    <div style={{ flex: 1, ...sectionBox }}>
-      <label>📞 رقم الحجز (للعيادة):</label>
-      <input type="text" value={doctorData.booking_phone} onChange={(e)=>setDoctorData({...doctorData, booking_phone: e.target.value})} style={inputStyle} />
-    </div>
-  </div>
+        <form onSubmit={handleUpdateProfile} style={formStyle}>
+          <h3 style={{textAlign:'center', color:'#2d6a4f'}}>تحديث بيانات العيادة</h3>
+          
+          <div style={sectionBox}>
+            <label>👤 الاسم الظاهر:</label>
+            <input type="text" value={doctorData.name} onChange={(e)=>setDoctorData({...doctorData, name: e.target.value})} style={inputStyle} />
+          </div>
 
-  <div style={sectionBox}>
-    <label>📱 الرقم الشخصي للدكتور:</label>
-    <input type="text" value={doctorData.personal_phone} onChange={(e)=>setDoctorData({...doctorData, personal_phone: e.target.value})} style={inputStyle} />
-  </div>
+          <div style={sectionBox}>
+            <label>🎓 التخصص:</label>
+            <select value={doctorData.specialty} onChange={(e) => setDoctorData({...doctorData, specialty: e.target.value})} style={inputStyle}>
+              <option value="">اختر التخصص</option>
+              {specialties.map((spec) => <option key={spec} value={spec}>{spec}</option>)}
+            </select>
+          </div>
 
-  <div style={sectionBox}>
-    <label>📍 العنوان بالتفصيل:</label>
-    <select value={doctorData.governorate} onChange={(e)=>setDoctorData({...doctorData, governorate: e.target.value, city: ''})} style={inputStyle}>
-      <option value="">اختر المحافظة</option>
-      {Object.keys(egyptLocations).map(gov => <option key={gov} value={gov}>{gov}</option>)}
-    </select>
-    <select value={doctorData.city} onChange={(e)=>setDoctorData({...doctorData, city: e.target.value})} style={inputStyle} disabled={!doctorData.governorate}>
-      <option value="">اختر المدينة</option>
-      {doctorData.governorate && egyptLocations[doctorData.governorate]?.map(c => <option key={c} value={c}>{c}</option>)}
-    </select>
-    <input type="text" placeholder="العنوان التفصيلي" value={doctorData.detailedAddress} onChange={(e)=>setDoctorData({...doctorData, detailedAddress: e.target.value})} style={inputStyle} />
-  {/* --- إعادة خانة رفع الصورة --- */}
-<div style={{...sectionBox, marginTop: '15px', border: '1px dashed #2d6a4f'}}>
-  <label>🖼️ تحديث الصورة الشخصية:</label>
-  <input 
-    type="file" 
-    accept="image/*" 
-    onChange={(e) => setSelectedFile(e.target.files[0])} 
-    style={{...inputStyle, border: 'none'}} 
-  />
-  {selectedFile && <p style={{fontSize: '12px', color: '#2d6a4f'}}>✅ تم اختيار ملف: {selectedFile.name}</p>}
-</div>
-{/* --- كود تحديث المواعيد الجديد --- */}
-<div style={{ ...sectionBox, backgroundColor: '#f9f9f9', padding: '15px', marginTop: '15px', border: '1px solid #ddd' }}>
-  <h3 style={{ marginBottom: '15px', color: '#007bff', fontSize: '16px' }}>📅 تحديث مواعيد العيادة:</h3>
-  {weekDays.map((day) => (
-    <div key={day} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>
-      <span style={{ minWidth: '60px', fontWeight: 'bold', fontSize: '14px' }}>{day}</span>
-      
-      {/* وقت البدء */}
-      <select onChange={(e) => handleTimeChange(day, 'startH', e.target.value)} value={availability[day]?.startH || ''} style={{padding: '4px', borderRadius: '4px'}}>
-        <option value="">ساعة</option>
-        {hoursArr.map(h => <option key={h} value={h}>{h}</option>)}
-      </select>
-      <select onChange={(e) => handleTimeChange(day, 'startM', e.target.value)} value={availability[day]?.startM || '00'} style={{padding: '4px', borderRadius: '4px'}}>
-        {minsArr.map(m => <option key={m} value={m}>{m}</option>)}
-      </select>
-      <select onChange={(e) => handleTimeChange(day, 'startP', e.target.value)} value={availability[day]?.startP || 'مساءً'} style={{padding: '4px', borderRadius: '4px'}}>
-        {periodsArr.map(p => <option key={p} value={p}>{p}</option>)}
-      </select>
+          <div style={sectionBox}>
+            <label>🏅 الدرجة الوظيفية:</label>
+            <select value={doctorData.title || ""} onChange={(e) => setDoctorData({...doctorData, title: e.target.value})} style={inputStyle}>
+              <option value="">اختر الدرجة الوظيفية</option>
+              {titles.map((t) => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
 
-      <span style={{fontSize: '12px'}}>إلى</span>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ flex: 1, ...sectionBox }}>
+              <label>💰 سعر الكشف:</label>
+              <input type="number" value={doctorData.fee} onChange={(e)=>setDoctorData({...doctorData, fee: e.target.value})} style={inputStyle} />
+            </div>
+            <div style={{ flex: 1, ...sectionBox }}>
+              <label>📞 رقم الحجز:</label>
+              <input type="text" value={doctorData.booking_phone} onChange={(e)=>setDoctorData({...doctorData, booking_phone: e.target.value})} style={inputStyle} />
+            </div>
+          </div>
 
-      {/* وقت النهاية */}
-      <select onChange={(e) => handleTimeChange(day, 'endH', e.target.value)} value={availability[day]?.endH || ''} style={{padding: '4px', borderRadius: '4px'}}>
-        <option value="">ساعة</option>
-        {hoursArr.map(h => <option key={h} value={h}>{h}</option>)}
-      </select>
-      <select onChange={(e) => handleTimeChange(day, 'endM', e.target.value)} value={availability[day]?.endM || '00'} style={{padding: '4px', borderRadius: '4px'}}>
-        {minsArr.map(m => <option key={m} value={m}>{m}</option>)}
-      </select>
-      <select onChange={(e) => handleTimeChange(day, 'endP', e.target.value)} value={availability[day]?.endP || 'مساءً'} style={{padding: '4px', borderRadius: '4px'}}>
-        {periodsArr.map(p => <option key={p} value={p}>{p}</option>)}
-      </select>
-    </div>
-  ))}
-</div>
-  </div>
+          <div style={sectionBox}>
+            <label>📍 العنوان:</label>
+            <select value={doctorData.governorate} onChange={(e)=>setDoctorData({...doctorData, governorate: e.target.value, city: ''})} style={inputStyle}>
+              <option value="">اختر المحافظة</option>
+              {Object.keys(egyptLocations).map(gov => <option key={gov} value={gov}>{gov}</option>)}
+            </select>
+            <select value={doctorData.city} onChange={(e)=>setDoctorData({...doctorData, city: e.target.value})} style={inputStyle} disabled={!doctorData.governorate}>
+              <option value="">اختر المدينة</option>
+              {doctorData.governorate && egyptLocations[doctorData.governorate]?.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <input type="text" placeholder="العنوان التفصيلي" value={doctorData.detailedAddress} onChange={(e)=>setDoctorData({...doctorData, detailedAddress: e.target.value})} style={inputStyle} />
+          </div>
+
+          <div style={{...sectionBox, marginTop: '15px', border: '1px dashed #2d6a4f'}}>
+            <label>🖼️ تحديث الصورة الشخصية:</label>
+            <input type="file" accept="image/*" onChange={(e) => setSelectedFile(e.target.files[0])} style={{...inputStyle, border: 'none'}} />
+          </div>
+
+          <div style={{ ...sectionBox, backgroundColor: '#f9f9f9', padding: '15px' }}>
+            <h3 style={{ fontSize: '16px', color: '#007bff' }}>📅 تحديث مواعيد العيادة:</h3>
+            {weekDays.map((day) => (
+              <div key={day} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', borderBottom: '1px solid #eee', paddingBottom: '5px' }}>
+                <span style={{ minWidth: '60px', fontWeight: 'bold' }}>{day}</span>
+                <select onChange={(e) => handleTimeChange(day, 'startH', e.target.value)} value={availability[day]?.startH || ''}>
+                  <option value="">ساعة</option>
+                  {hoursArr.map(h => <option key={h} value={h}>{h}</option>)}
+                </select>
+                <span>إلى</span>
+                <select onChange={(e) => handleTimeChange(day, 'endH', e.target.value)} value={availability[day]?.endH || ''}>
+                  <option value="">ساعة</option>
+                  {hoursArr.map(h => <option key={h} value={h}>{h}</option>)}
+                </select>
+                <select onChange={(e) => handleTimeChange(day, 'endP', e.target.value)} value={availability[day]?.endP || 'مساءً'}>
+                  {periodsArr.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
+            ))}
+          </div>
+          
           <button type="submit" style={saveBtn}>💾 حفظ التغييرات النهائية</button>
         </form>
       )}
     </div>
   );
 };
-
-// الستايلات الموحدة
-const paddingStyle = { padding: '15px', textAlign: 'center' };
-const btnSuccess = { backgroundColor: '#28a745', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' };
-const btnDanger = { backgroundColor: '#dc3545', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' };
-const formStyle = { maxWidth: '700px', margin: '0 auto', background: '#fff', padding: '20px', borderRadius: '12px', boxShadow:'0 4px 15px rgba(0,0,0,0.1)' };
-const sectionBox = { background: '#f8f9fa', padding: '15px', borderRadius: '8px', marginBottom: '15px', border: '1px solid #eee' };
-const inputStyle = { width: '100%', padding: '10px', marginTop: '5px', marginBottom: '10px', borderRadius: '6px', border: '1px solid #ccc', boxSizing: 'border-box' };
-const dayRow = { display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '10px', fontSize: '13px' };
-const smallSelect = { padding: '4px', borderRadius: '4px', border: '1px solid #ccc' };
-const saveBtn = { width: '100%', padding: '15px', background: '#28a745', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '16px', fontWeight:'bold' };
-
-export default DoctorDashboard;
