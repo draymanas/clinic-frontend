@@ -702,16 +702,13 @@ useEffect(() => {
 // --- أضف الكود الجديد هنا ---
 // البحث عن هذا الجزء وتعديله
 useEffect(() => {
-    const path = window.location.pathname;
-    if (path.includes('/dr/')) {
-      const idFromUrl = path.split('/dr/')[1];
-      // 1. خزن رقم الدكتور في state (لو مش موجودة اعملها)
-      setSelectedDoctorId(idFromUrl);
-      
-      // 2. امسح السطر ده لأنه هو اللي بيمسح لوحة التحكم
-      // setActivePage('direct_booking_page'); 
-    }
-  }, []);
+  const path = window.location.pathname;
+  if (path.includes('/dr/')) {
+    const idFromUrl = path.split('/dr/')[1];
+    setSelectedDoctorId(idFromUrl);
+    // السطر اللي كان بيغير الصفحة (setActivePage) اتمسح تماماً
+  }
+}, []);
   const navBtnStyle = {
     background: 'none', border: 'none', color: '#fff', cursor: 'pointer',
     fontWeight: 'bold', fontSize: '16px', padding: '10px 15px', borderRadius: '8px',
