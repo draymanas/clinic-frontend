@@ -11,22 +11,32 @@ const DirectBooking = () => {
     const [selectedSlot, setSelectedSlot] = useState('');
 
     // 2. جلب البيانات
-    useEffect(() => {
-        const pathParts = window.location.pathname.split('/');
-        const id = pathParts[pathParts.length - 1]; 
+ // 1. استخراج الـ ID من الرابط بشكل احترافي
+  const pathParts = window.location.pathname.split('/');
+  const id = pathParts.find(part => !isNaN(part) && part !== '' && part !== null);
 
-        setLoading(true);
-        axios.get(`https://clinic-api-ig3d.onrender.com/doctor-direct/${id}`)
-            .then(res => {
-                setDoctor(res.data);
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error("خطأ:", err);
-                setDoctor(null);
-                setLoading(false);
-            });
-    }, []); 
+  useEffect(() => {
+    if (id) {
+      setLoading(true);
+      // 2. تجربة الرابط اللوكال أولاً (لأنك مشغل السيرفر عندك دلوقتي)
+      // ملحوظة: لو رفعت الكود، هنغير ده لرابط ريندر
+     const apiUrl = `https://clinic-api-ig3d.onrender.com/doctor-direct/${id}`;
+      
+      console.log("🔗 جاري الاتصال بالعنوان:", apiUrl);
+
+      axios.get(apiUrl)
+        .then(res => {
+          console.log("✅ وصلت البيانات:", res.data);
+          setDoctor(res.data);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("❌ فشل جلب البيانات:", err);
+          setDoctor(null);
+          setLoading(false);
+        });
+    }
+  }, [id]);
 
     // 3. الدوال المساعدة
     const getNextDateForDay = (dayName) => {

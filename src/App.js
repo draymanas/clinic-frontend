@@ -700,11 +700,15 @@ useEffect(() => {
 }, []);
 
 // --- أضف الكود الجديد هنا ---
+// البحث عن هذا الجزء وتعديله
 useEffect(() => {
   const path = window.location.pathname; 
-  // لو الرابط يبدأ بـ /dr/ (زي ما اتفقنا للسهولة) أو /book/ حسب اختيارك
   if (path.startsWith('/dr/')) { 
-    setActivePage('direct_booking_page');
+    // استخراج الرقم اللي بعد /dr/
+    const idFromUrl = path.split('/dr/')[1];
+    if (idFromUrl) {
+      setActivePage('direct_booking_page');
+    }
   }
 }, []);
   const navBtnStyle = {

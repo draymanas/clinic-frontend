@@ -329,9 +329,20 @@ return (
             ))}
           </div>
           
-          <button type="submit" style={saveBtn}>💾 حفظ التغييرات النهائية</button>
+        <button type="submit" style={saveBtn}>💾 حفظ التغييرات النهائية</button>
         </form>
       )}
     </div>
   );
 };
+
+// --- من هنا تبدأ الستايلات (تأكد إنها خارج القوس اللي فوق) ---
+const paddingStyle = { padding: '15px', textAlign: 'center' };
+const btnSuccess = { backgroundColor: '#28a745', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' };
+const btnDanger = { backgroundColor: '#dc3545', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' };
+const formStyle = { maxWidth: '700px', margin: '0 auto', background: '#fff', padding: '20px', borderRadius: '12px', boxShadow:'0 4px 15px rgba(0,0,0,0.1)' };
+const sectionBox = { background: '#f8f9fa', padding: '15px', borderRadius: '8px', marginBottom: '15px', border: '1px solid #eee' };
+const inputStyle = { width: '100%', padding: '10px', marginTop: '5px', marginBottom: '10px', borderRadius: '6px', border: '1px solid #ccc', boxSizing: 'border-box' };
+const saveBtn = { width: '100%', padding: '15px', background: '#28a745', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '16px', fontWeight:'bold' };
+
+export default DoctorDashboard;
