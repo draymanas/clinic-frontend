@@ -704,14 +704,12 @@ useEffect(() => {
 useEffect(() => {
     const path = window.location.pathname;
     if (path.includes('/dr/')) {
-      // 1. استخراج الرقم
       const idFromUrl = path.split('/dr/')[1];
+      // 1. خزن رقم الدكتور في state (لو مش موجودة اعملها)
+      setSelectedDoctorId(idFromUrl);
       
-      // 2. أهم خطوة: توجيه الـ React لفتح صفحة الحجز المباشر
-      setActivePage('direct_booking_page');
-      
-      // ملحوظة: لو عندك متغير بيشيل الـ id بتاع الدكتور المختار، حدثه هنا برضه
-      // setSelectedDoctorId(idFromUrl); 
+      // 2. امسح السطر ده لأنه هو اللي بيمسح لوحة التحكم
+      // setActivePage('direct_booking_page'); 
     }
   }, []);
   const navBtnStyle = {
@@ -891,11 +889,14 @@ useEffect(() => {
 
       {/* 3. منطقة عرض المحتوى */}
      <main>
-  {/* 1. لو الرابط فيه /dr/، افتح صفحة الدكتور وابعتلها الرقم اللي في العنوان */}
+  {/* 1. لو الرابط فيه /dr/، اعرض صفحة الدكتور بس خليها جوه "برواز" الموقع العادي */}
   {window.location.pathname.includes('/dr/') ? (
-    <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
+    <div className="container mt-4">
+       {/* هنا بنعرض صفحة الدكتور بس بنسيب مجال للقوائم تظهر لو موجودة في الـ Header */}
+       <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
+    </div>
   ) : (
-    /* 2. لو مفيش، كمل نظامك العادي بتاع امبارح */
+    /* 2. نظامك العادي بتاع لوحة التحكم */
     <>
       {activePage === 'home' && (
         <BookingPage 
