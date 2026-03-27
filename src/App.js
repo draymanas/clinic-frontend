@@ -889,36 +889,31 @@ useEffect(() => {
 
       {/* 3. منطقة عرض المحتوى */}
      <main>
-  {/* 1. لو الرابط فيه /dr/، اعرض صفحة الدكتور بس خليها جوه "برواز" الموقع العادي */}
-  {window.location.pathname.includes('/dr/') ? (
+  {/* 1. لو الرابط فيه /dr/ وفي نفس الوقت المستخدم مش دكتور داخل بلوحة تحكمه */}
+  {window.location.pathname.includes('/dr/') && activePage !== 'doctor_dashboard' && (
     <div className="container mt-4">
-       {/* هنا بنعرض صفحة الدكتور بس بنسيب مجال للقوائم تظهر لو موجودة في الـ Header */}
        <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
     </div>
-  ) : (
-    /* 2. نظامك العادي بتاع لوحة التحكم */
-    <>
-      {activePage === 'home' && (
-        <BookingPage 
-          doctors={doctors} 
-          fetchData={fetchData} 
-          currentUser={currentUser} 
-          openLogin={() => setShowLoginModal(true)} 
-        />
-      )}
-      {activePage === 'direct_booking_page' && <DirectBooking />}
-      {activePage === 'join' && <DoctorRegister />}
-      {activePage === 'doctor_dashboard' && currentUser?.role === 'doctor' && (
-        <DoctorDashboard doctorId={currentUser.id} />
-      )}
-      {activePage === 'admin' && isAdmin && (
-        <AdminPage doctors={doctors} appointments={appointments} fetchData={fetchData} />
-      )}
-      {activePage === 'accounting' && isAdmin && (
-        <AccountingPage doctors={doctors} appointments={appointments} />
-      )}
-    </>
   )}
+
+  {/* 2. السيستم العادي بتاعك سيبه شغال دايماً */}
+  {activePage === 'home' && !window.location.pathname.includes('/dr/') && (
+    <BookingPage doctors={doctors} fetchData={fetchData} currentUser={currentUser} openLogin={() => setShowLoginModal(true)} />
+  )}
+
+  {/* دي أهم حتة: لوحة تحكم الدكتور تفضل شغالة حتى لو فيه رابط مباشر */}
+  {activePage === 'doctor_dashboard' && currentUser?.role === 'doctor' && (
+    <DoctorDashboard doctorId={currentUser.id}>
+        {/* لو فيه رابط دكتور في العنوان، اعرضه جوه الداشبورد */}
+        {window.location.pathname.includes('/dr/') && (
+            <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
+        )}
+    </DoctorDashboard>
+  )}
+
+  {activePage === 'join' && <DoctorRegister />}
+  {activePage === 'admin' && isAdmin && <AdminPage doctors={doctors} appointments={appointments} fetchData={fetchData} />}
+  {activePage === 'accounting' && isAdmin && <AccountingPage doctors={doctors} appointments={appointments} />}
 </main>
     </div>
   );
