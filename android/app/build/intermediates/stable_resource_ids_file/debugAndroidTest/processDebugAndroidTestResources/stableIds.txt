@@ -1,0 +1,2 @@
+online.doctoreg.test:style/WhiteBackgroundTheme = 0x7f010001
+online.doctoreg.test:style/WhiteBackgroundDialogTheme = 0x7f010000

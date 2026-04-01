@@ -1,0 +1,7 @@
+online.doctoreg.test.app-tracing-1.2.0-0 C:\Users\ayman ageep\.gradle\caches\8.14.3\transforms\dcfd9b438b7b1dc562c63a5efe9cf4a0\transformed\tracing-1.2.0\res
+online.doctoreg.test.app-core-1.7.0-1 C:\Users\ayman ageep\.gradle\caches\8.14.3\transforms\f3c8c5ab594c56ca9009b89515fbb52f\transformed\core-1.7.0\res
+online.doctoreg.test.app-androidTest-2 E:\DoctorPlatform\admin-web\android\app\build\generated\res\resValues\androidTest\debug
+online.doctoreg.test.app-updated_navigation_xml-3 E:\DoctorPlatform\admin-web\android\app\build\generated\updated_navigation_xml\debugAndroidTest
+online.doctoreg.test.app-mergeDebugAndroidTestResources-4 E:\DoctorPlatform\admin-web\android\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
+online.doctoreg.test.app-mergeDebugAndroidTestResources-5 E:\DoctorPlatform\admin-web\android\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
+online.doctoreg.test.app-debugAndroidTest-6 E:\DoctorPlatform\admin-web\android\app\build\intermediates\merged_res\debugAndroidTest\mergeDebugAndroidTestResources
