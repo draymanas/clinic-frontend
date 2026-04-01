@@ -45,7 +45,7 @@ const minsArr = ["00", "15", "30", "45"];
 const periodsArr = ["صباحاً", "مساءً"];
 
 const inputStyle = { padding: '12px', borderRadius: '8px', border: '1px solid #ddd', width: '100%', boxSizing: 'border-box' };
- 
+
 const getNextDateForDay = (dayName) => {
     const daysMap = { "الأحد": 0, "الاثنين": 1, "الثلاثاء": 2, "الأربعاء": 3, "الخميس": 4, "الجمعة": 5, "السبت": 6 };
     const targetDay = daysMap[dayName];
@@ -676,8 +676,7 @@ function App() {
   const [activePage, setActivePage] = useState('home'); 
   const [currentUser, setCurrentUser] = useState(null); 
   const [showLoginModal, setShowLoginModal] = useState(false); 
-  const [selectedDoctorId, setSelectedDoctorId] = useState(null); // <--- لازم يكون هنا
-  // ... باقي الـ States اللي عندك
+
   const fetchData = async () => {
     try {
       const resDocs = await fetch('https://clinic-api-ig3d.onrender.com/doctors');
@@ -708,14 +707,13 @@ useEffect(() => {
 // --- أضف الكود الجديد هنا ---
 // البحث عن هذا الجزء وتعديله
 useEffect(() => {
-    const path = window.location.pathname;
-    if (path.includes('/dr/')) {
-      const idFromUrl = path.split('/dr/')[1];
-      if (idFromUrl) {
-        setSelectedDoctorId(idFromUrl);
-      }
-    }
-  }, []); // سيبها فاضية لو عايزها تشتغل مرة واحدة بس عند التحميل
+  const path = window.location.pathname;
+  if (path.includes('/dr/')) {
+    const idFromUrl = path.split('/dr/')[1];
+    setSelectedDoctorId(idFromUrl);
+    // السطر اللي كان بيغير الصفحة (setActivePage) اتمسح تماماً
+  }
+}, []);
   const navBtnStyle = {
     background: 'none', border: 'none', color: '#fff', cursor: 'pointer',
     fontWeight: 'bold', fontSize: '16px', padding: '10px 15px', borderRadius: '8px',
