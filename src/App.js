@@ -45,7 +45,7 @@ const minsArr = ["00", "15", "30", "45"];
 const periodsArr = ["صباحاً", "مساءً"];
 
 const inputStyle = { padding: '12px', borderRadius: '8px', border: '1px solid #ddd', width: '100%', boxSizing: 'border-box' };
-
+const [selectedDoctorId, setSelectedDoctorId] = useState(null);
 const getNextDateForDay = (dayName) => {
     const daysMap = { "الأحد": 0, "الاثنين": 1, "الثلاثاء": 2, "الأربعاء": 3, "الخميس": 4, "الجمعة": 5, "السبت": 6 };
     const targetDay = daysMap[dayName];
@@ -707,13 +707,14 @@ useEffect(() => {
 // --- أضف الكود الجديد هنا ---
 // البحث عن هذا الجزء وتعديله
 useEffect(() => {
-  const path = window.location.pathname;
-  if (path.includes('/dr/')) {
-    const idFromUrl = path.split('/dr/')[1];
-    setSelectedDoctorId(idFromUrl);
-    // السطر اللي كان بيغير الصفحة (setActivePage) اتمسح تماماً
-  }
-}, []);
+    const path = window.location.pathname;
+    if (path.includes('/dr/')) {
+      const idFromUrl = path.split('/dr/')[1];
+      if (idFromUrl) {
+        setSelectedDoctorId(idFromUrl);
+      }
+    }
+  }, []); // سيبها فاضية لو عايزها تشتغل مرة واحدة بس عند التحميل
   const navBtnStyle = {
     background: 'none', border: 'none', color: '#fff', cursor: 'pointer',
     fontWeight: 'bold', fontSize: '16px', padding: '10px 15px', borderRadius: '8px',
