@@ -45,7 +45,7 @@ const minsArr = ["00", "15", "30", "45"];
 const periodsArr = ["صباحاً", "مساءً"];
 
 const inputStyle = { padding: '12px', borderRadius: '8px', border: '1px solid #ddd', width: '100%', boxSizing: 'border-box' };
-const [selectedDoctorId, setSelectedDoctorId] = useState(null);
+ 
 const getNextDateForDay = (dayName) => {
     const daysMap = { "الأحد": 0, "الاثنين": 1, "الثلاثاء": 2, "الأربعاء": 3, "الخميس": 4, "الجمعة": 5, "السبت": 6 };
     const targetDay = daysMap[dayName];
@@ -676,7 +676,8 @@ function App() {
   const [activePage, setActivePage] = useState('home'); 
   const [currentUser, setCurrentUser] = useState(null); 
   const [showLoginModal, setShowLoginModal] = useState(false); 
-
+  const [selectedDoctorId, setSelectedDoctorId] = useState(null); // <--- لازم يكون هنا
+  // ... باقي الـ States اللي عندك
   const fetchData = async () => {
     try {
       const resDocs = await fetch('https://clinic-api-ig3d.onrender.com/doctors');
