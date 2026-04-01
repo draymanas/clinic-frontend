@@ -33,12 +33,7 @@ const egyptLocations = {
 };
 
 const allGovernorates = Object.keys(egyptLocations);
-const medicalSpecialties = [
-  "الكل", "أسنان", "أطفال وحديثي الولادة", "أنف وأذن وحنجرة", "باطنة", "تغذية علاجية",
-  "جراحة أطفال", "جراحة أوعية دموية", "جراحة أورام", "جراحة تجميل", "جراحة سمنة ومناظير",
-  "عظام", "جراحة قلب وصدر", "جراحة مخ وأعصاب", "جراحة مسالك بولية", "جلدية",
-  "جهاز هضمي وكبد", "حساسية ومناعة", "رمد", "روماتيزم", "علاج طبيعي", "غدد صماء وسكري",
-  "امراض دم","قلب وأوعية دموية", "مخ وأعصاب", "نسا وتوليد", "نفسي"];
+const medicalSpecialties = ["باطنة", "أطفال", "جراحة عامة", "عظام", "رمد", "جلدية", "أسنان", "نساء وتوليد", "قلب وأوعية دموية", "مخ وأعصاب", "علاج طبيعي", "نفسية وعصبية", "مسالك بولية", "أنف وأذن وحنجرة"];
 const weekDays = ["السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
 const hoursArr = Array.from({ length: 12 }, (_, i) => i + 1);
 const minsArr = ["00", "15", "30", "45"];
@@ -707,13 +702,18 @@ useEffect(() => {
 // --- أضف الكود الجديد هنا ---
 // البحث عن هذا الجزء وتعديله
 useEffect(() => {
-  const path = window.location.pathname;
-  if (path.includes('/dr/')) {
-    const idFromUrl = path.split('/dr/')[1];
-    setSelectedDoctorId(idFromUrl);
-    // السطر اللي كان بيغير الصفحة (setActivePage) اتمسح تماماً
-  }
-}, []);
+    const path = window.location.pathname;
+    if (path.includes('/dr/')) {
+      // 1. استخراج الرقم
+      const idFromUrl = path.split('/dr/')[1];
+      
+      // 2. أهم خطوة: توجيه الـ React لفتح صفحة الحجز المباشر
+      setActivePage('direct_booking_page');
+      
+      // ملحوظة: لو عندك متغير بيشيل الـ id بتاع الدكتور المختار، حدثه هنا برضه
+      // setSelectedDoctorId(idFromUrl); 
+    }
+  }, []);
   const navBtnStyle = {
     background: 'none', border: 'none', color: '#fff', cursor: 'pointer',
     fontWeight: 'bold', fontSize: '16px', padding: '10px 15px', borderRadius: '8px',
@@ -890,23 +890,36 @@ useEffect(() => {
       )}
 
       {/* 3. منطقة عرض المحتوى */}
-  <main>
-  {/* صفحة الدكتور تفتح كاملة (الصورة 172) */}
-  {activePage === 'doctor_dashboard' && (
-    <DoctorDashboard doctorId={currentUser.id} />
+     <main>
+  {/* 1. لو الرابط فيه /dr/، افتح صفحة الدكتور وابعتلها الرقم اللي في العنوان */}
+  {window.location.pathname.includes('/dr/') ? (
+    <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
+  ) : (
+    /* 2. لو مفيش، كمل نظامك العادي بتاع امبارح */
+    <>
+      {activePage === 'home' && (
+        <BookingPage 
+          doctors={doctors} 
+          fetchData={fetchData} 
+          currentUser={currentUser} 
+          openLogin={() => setShowLoginModal(true)} 
+        />
+      )}
+      {activePage === 'direct_booking_page' && <DirectBooking />}
+      {activePage === 'join' && <DoctorRegister />}
+      {activePage === 'doctor_dashboard' && currentUser?.role === 'doctor' && (
+        <DoctorDashboard doctorId={currentUser.id} />
+      )}
+      {activePage === 'admin' && isAdmin && (
+        <AdminPage doctors={doctors} appointments={appointments} fetchData={fetchData} />
+      )}
+      {activePage === 'accounting' && isAdmin && (
+        <AccountingPage doctors={doctors} appointments={appointments} />
+      )}
+    </>
   )}
-
-  {/* الصفحة الرئيسية */}
-  {activePage === 'home' && (
-    <BookingPage doctors={doctors} currentUser={currentUser} />
-  )}
-
- {window.location.pathname.includes('/dr/') && activePage === 'home' && (
-  <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
-)}
 </main>
     </div>
   );
 }
 export default App;
- 
