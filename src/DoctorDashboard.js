@@ -4,7 +4,7 @@ const specialties = [
   "جراحة أطفال", "جراحة أوعية دموية", "جراحة أورام", "جراحة تجميل", "جراحة سمنة ومناظير",
   "عظام", "جراحة قلب وصدر", "جراحة مخ وأعصاب", "جراحة مسالك بولية", "جلدية",
   "جهاز هضمي وكبد", "حساسية ومناعة", "رمد", "روماتيزم", "علاج طبيعي", "غدد صماء وسكري",
-  "امراض دم","قلب وأوعية دموية", "مخ وأعصاب", "نسا وتوليد", "نفسي"
+  "جراحة عامه","امراض دم","قلب وأوعية دموية", "مخ وأعصاب", "نسا وتوليد", "نفسي"
 ];// 1. القوائم الموحدة للعناوين والمواعيد
 const titles = ["أخصائي", "استشاري", "أستاذ دكتور"];
 const weekDays = ["السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
@@ -131,18 +131,13 @@ const handleUpdateProfile = async (e) => {
     e.preventDefault();
     const formData = new FormData();
 
-    // تجميع المواعيد في سطر واحد (عشان نصلح الشاشة الحمراء)
-    const availabilityString = weekDays.map(day => {
-const d = availability[day];
-if (d?.startH && d?.endH) {
-  // هنا بنأكد إن كل وقت له الـ Period الخاصة بيه (startP للبداية و endP للنهاية)
-  const startPeriod = d.startP || 'صباحاً'; 
-  const endPeriod = d.endP || 'مساءً';
-  
-  return `${day} (${d.startH}:${d.startM || '00'} ${startPeriod} إلى ${d.endH}:${d.endM || '00'} ${endPeriod})`;
-}
-return null;
-}).filter(Boolean).join(' - ');
+        const availabilityString = weekDays.map(day => {
+            const d = scheduleDetails[day];
+            if (d?.startH && d?.endH) {
+                return `${day} (${d.startH}:${d.startM || '00'} ${d.startP || 'مساءً'} إلى ${d.endH}:${d.endM || '00'} ${d.endP || 'مساءً'})`;
+            }
+            return null;
+        }).filter(Boolean).join(' - ');
 
     // تعبئة البيانات
     formData.append('name', doctorData.name);
