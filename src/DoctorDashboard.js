@@ -312,24 +312,37 @@ return (
             <input type="file" accept="image/*" onChange={(e) => setSelectedFile(e.target.files[0])} style={{...inputStyle, border: 'none'}} />
           </div>
 
-          <div style={{ ...sectionBox, backgroundColor: '#f9f9f9', padding: '15px' }}>
-            <h3 style={{ fontSize: '16px', color: '#007bff' }}>📅 تحديث مواعيد العيادة:</h3>
-            {weekDays.map((day) => (
-              <div key={day} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', borderBottom: '1px solid #eee', paddingBottom: '5px' }}>
-                <span style={{ minWidth: '60px', fontWeight: 'bold' }}>{day}</span>
-                <select onChange={(e) => handleTimeChange(day, 'startH', e.target.value)} value={availability[day]?.startH || ''}>
-                  <option value="">ساعة</option>
-                  {hoursArr.map(h => <option key={h} value={h}>{h}</option>)}
-                </select>
-                <span>إلى</span>
-                <select onChange={(e) => handleTimeChange(day, 'endH', e.target.value)} value={availability[day]?.endH || ''}>
-                  <option value="">ساعة</option>
-                  {hoursArr.map(h => <option key={h} value={h}>{h}</option>)}
-                </select>
-                <select onChange={(e) => handleTimeChange(day, 'endP', e.target.value)} value={availability[day]?.endP || 'مساءً'}>
-                  {periodsArr.map(p => <option key={p} value={p}>{p}</option>)}
-                </select>
-              </div>
+<div style={{ ...sectionBox, backgroundColor: '#f9f9f9', padding: '15px' }}>
+  <h3 style={{ fontSize: '16px', color: '#007bff' }}>📅 تحديث مواعيد العيادة:</h3>
+  {weekDays.map((day) => (
+    <div key={day} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', borderBottom: '1px solid #eee', paddingBottom: '5px' }}>
+      <span style={{ minWidth: '60px', fontWeight: 'bold' }}>{day}</span>
+      
+      {/* 1. ساعة البداية */}
+      <select onChange={(e) => handleTimeChange(day, 'startH', e.target.value)} value={availability[day]?.startH || ''}>
+        <option value="">ساعة</option>
+        {hoursArr.map(h => <option key={h} value={h}>{h}</option>)}
+      </select>
+
+      {/* 2. فترة البداية (دي اللي كانت ناقصة يا بطل!) */}
+      <select onChange={(e) => handleTimeChange(day, 'startP', e.target.value)} value={availability[day]?.startP || 'صباحاً'}>
+        {periodsArr.map(p => <option key={p} value={p}>{p}</option>)}
+      </select>
+
+      <span>إلى</span>
+
+      {/* 3. ساعة النهاية */}
+      <select onChange={(e) => handleTimeChange(day, 'endH', e.target.value)} value={availability[day]?.endH || ''}>
+        <option value="">ساعة</option>
+        {hoursArr.map(h => <option key={h} value={h}>{h}</option>)}
+      </select>
+
+      {/* 4. فترة النهاية */}
+      <select onChange={(e) => handleTimeChange(day, 'endP', e.target.value)} value={availability[day]?.endP || 'مساءً'}>
+        {periodsArr.map(p => <option key={p} value={p}>{p}</option>)}
+      </select>
+    </div>
+
             ))}
           </div>
           
