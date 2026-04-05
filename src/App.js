@@ -31,6 +31,11 @@ const egyptLocations = {
     "مطروح": ["مرسى مطروح", "الحمام", "العلمين", "الضبعة", "السلوم", "سيوة"],
     "الوادي الجديد": ["الخارجة", "الداخلة", "الفرافرة", "باريس"]
 };
+const [fSpecialty, setFSpecialty] = React.useState("الكل");
+  const [fCity, setFCity] = React.useState("الكل");
+  const [fArea, setFArea] = React.useState("الكل");
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [loginPassword, setLoginPassword] = React.useState("");
 
 const allGovernorates = Object.keys(egyptLocations);
 const medicalSpecialties = [
@@ -712,8 +717,7 @@ function App() {
   const [activePage, setActivePage] = useState('home'); 
   const [currentUser, setCurrentUser] = useState(null); 
   const [showLoginModal, setShowLoginModal] = useState(false); 
-const [fArea, setFArea] = useState("الكل");
-const [loginPassword, setLoginPassword] = useState("");
+ 
   const fetchData = async () => {
     try {
       const resDocs = await fetch('https://clinic-api-ig3d.onrender.com/doctors');
