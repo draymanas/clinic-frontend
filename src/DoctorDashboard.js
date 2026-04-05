@@ -142,6 +142,12 @@ const handleUpdateProfile = async (e) => {
 
     // تعبئة البيانات
     formData.append('name', doctorData.name);
+    formData.append('bio', doctorData.bio || ""); // ضيفنا النبذة
+    
+    // إرسال الباسورد فقط إذا قام الدكتور بكتابة باسوورد جديد
+    if (doctorData.newPassword) {
+        formData.append('password', doctorData.newPassword);
+    }
     formData.append('specialty', doctorData.specialty);
     formData.append('title', doctorData.title);
     formData.append('fee', doctorData.fee);
@@ -283,17 +289,62 @@ return (
               {titles.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
+          {/* حقل النبذة التعريفية */}
+<div style={sectionBox}>
+  <label>📝 نبذة عن الدكتور (الخبرات والشهادات):</label>
+  <textarea 
+    value={doctorData.bio || ""} 
+    onChange={(e)=>setDoctorData({...doctorData, bio: e.target.value})} 
+    style={{...inputStyle, height: '100px', resize: 'none'}} 
+    placeholder="اكتب تفاصيل تخصصك وخبراتك هنا..."
+  />
+</div>
 
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <div style={{ flex: 1, ...sectionBox }}>
-              <label>💰 سعر الكشف:</label>
-              <input type="number" value={doctorData.fee} onChange={(e)=>setDoctorData({...doctorData, fee: e.target.value})} style={inputStyle} />
-            </div>
-            <div style={{ flex: 1, ...sectionBox }}>
-              <label>📞 رقم الحجز:</label>
-              <input type="text" value={doctorData.booking_phone} onChange={(e)=>setDoctorData({...doctorData, booking_phone: e.target.value})} style={inputStyle} />
-            </div>
-          </div>
+{/* حقل تغيير الباسورد */}
+<div style={sectionBox}>
+  <label>🔐 تغيير كلمة المرور (سيبها فاضية لو مش عايز تغيرها):</label>
+  <input 
+    type="password" 
+    placeholder="كلمة مرور جديدة" 
+    onChange={(e)=>setDoctorData({...doctorData, newPassword: e.target.value})} 
+    style={inputStyle} 
+  />
+</div>
+
+<div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '15px' }}>
+  {/* سعر الكشف */}
+  <div style={{ flex: 1, minWidth: '150px', ...sectionBox }}>
+    <label>💰 سعر الكشف:</label>
+    <input 
+      type="number" 
+      value={doctorData.fee || ""} 
+      onChange={(e)=>setDoctorData({...doctorData, fee: e.target.value})} 
+      style={inputStyle} 
+    />
+  </div>
+
+  {/* رقم الحجز (العيادة) -> بيروح لحقل mobile في سوبابيز */}
+  <div style={{ flex: 1, minWidth: '150px', ...sectionBox }}>
+    <label>📞 رقم الحجز:</label>
+    <input 
+      type="text" 
+      value={doctorData.mobile || ""} 
+      onChange={(e)=>setDoctorData({...doctorData, mobile: e.target.value})} 
+      style={inputStyle} 
+    />
+  </div>
+
+  {/* الموبايل الشخصي -> بيروح لحقل personal_mobile في سوبابيز */}
+  <div style={{ flex: 1, minWidth: '150px', ...sectionBox }}>
+    <label>📱 الموبايل الشخصي:</label>
+    <input 
+      type="text" 
+      value={doctorData.personal_mobile || ""} 
+      onChange={(e)=>setDoctorData({...doctorData, personal_mobile: e.target.value})} 
+      style={inputStyle} 
+    />
+  </div>
+</div>
 
           <div style={sectionBox}>
             <label>📍 العنوان:</label>

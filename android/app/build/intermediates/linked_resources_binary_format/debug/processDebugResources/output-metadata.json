@@ -4,7 +4,7 @@
     "type": "LINKED_RESOURCES_BINARY_FORMAT",
     "kind": "Directory"
   },
-  "applicationId": "online.doctoreg",
+  "applicationId": "com.doctorplatform.app",
   "variantName": "debug",
   "elements": [
     {

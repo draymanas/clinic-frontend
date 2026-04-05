@@ -1,3 +1,3 @@
-online.doctoreg.test
+com.doctorplatform.app.test
 style WhiteBackgroundDialogTheme
 style WhiteBackgroundTheme

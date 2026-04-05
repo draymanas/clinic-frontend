@@ -4,7 +4,7 @@
     "type": "COMPATIBLE_SCREEN_MANIFEST",
     "kind": "Directory"
   },
-  "applicationId": "online.doctoreg",
+  "applicationId": "com.doctorplatform.app",
   "variantName": "debug",
   "elements": []
 }

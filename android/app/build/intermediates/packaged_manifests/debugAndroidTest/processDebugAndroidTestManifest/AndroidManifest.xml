@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="online.doctoreg.test" >
+    package="com.doctorplatform.app.test" >
 
     <uses-sdk
         android:minSdkVersion="24"
@@ -10,8 +10,8 @@
         android:name="androidx.test.runner.AndroidJUnitRunner"
         android:functionalTest="false"
         android:handleProfiling="false"
-        android:label="Tests for online.doctoreg"
-        android:targetPackage="online.doctoreg" />
+        android:label="Tests for com.doctorplatform.app"
+        android:targetPackage="com.doctorplatform.app" />
 
     <queries>
         <package android:name="androidx.test.orchestrator" />

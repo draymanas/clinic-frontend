@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "online.doctoreg.test",
+  "applicationId": "com.doctorplatform.app.test",
   "variantName": "debugAndroidTest",
   "elements": [
     {

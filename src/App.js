@@ -60,7 +60,7 @@ const getNextDateForDay = (dayName) => {
 
 // --- 2. مكون تسجيل الدكتور (DoctorRegister) ---
 function DoctorRegister() {
-    const [newDoc, setNewDoc] = useState({ name: '', mobile: '', specialty: '', fee: '', address: '', personal_mobile: '', title: '', city: '', area: '' });
+    const [newDoc, setNewDoc] = useState({ name: '', mobile: '', specialty: '', fee: '', address: '', personal_mobile: '', title: '', city: '', area: '', password: '' });
     const [scheduleDetails, setScheduleDetails] = useState({});
     const [selectedFile, setSelectedFile] = useState(null);
 
@@ -75,12 +75,13 @@ function DoctorRegister() {
                 return `${day} (${d.startH}:${d.startM || '00'} ${d.startP || 'مساءً'} إلى ${d.endH}:${d.endM || '00'} ${d.endP || 'مساءً'})`;
             }
             return null;
-        }).filter(Boolean).join(' - ');
+        }).filter(Boolean).join(' - '); 
 
         const formData = new FormData();
         formData.append('name', newDoc.name);
         formData.append('mobile', newDoc.mobile);
         formData.append('specialty', newDoc.specialty);
+        formData.append('bio', newDoc.bio)
         formData.append('fee', newDoc.fee);
         formData.append('address', newDoc.address);
         formData.append('personal_mobile', newDoc.personal_mobile);
@@ -88,7 +89,8 @@ function DoctorRegister() {
         formData.append('city', newDoc.city);
         formData.append('area', newDoc.area);
         formData.append('availability', availabilityString);
-        
+        const finalPassword = newDoc.password.trim() === '' ? '1234' : newDoc.password;
+    formData.append('password', finalPassword);
         if (selectedFile) formData.append('image', selectedFile);
 
         const res = await fetch('https://clinic-api-ig3d.onrender.com/register-doctor', {
@@ -116,6 +118,11 @@ if (res.ok) {
                         <option value="">التخصص الطبي</option>
                         {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
+                    <textarea 
+    placeholder="نبذة مختصرة عنك (الخبرات، الشهادات، إلخ...)" 
+    onChange={e => setNewDoc({...newDoc, bio: e.target.value})} 
+    style={{...inputStyle, height: '80px', resize: 'none'}} 
+/>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     <select onChange={e => setNewDoc({...newDoc, city: e.target.value, area: ''})} style={inputStyle}>
@@ -145,6 +152,7 @@ if (res.ok) {
                 <input type="file" accept="image/*" onChange={(e) => setSelectedFile(e.target.files[0])} />
                 <input placeholder="موبايل الحجز" onChange={e => setNewDoc({...newDoc, mobile: e.target.value})} style={inputStyle} />
                 <input placeholder="موبايل شخصي (للتواصل)" onChange={e => setNewDoc({...newDoc, personal_mobile: e.target.value})} style={inputStyle} />
+                <input placeholder="كلمة المرور" type="password" onChange={e => setNewDoc({...newDoc, password: e.target.value})} style={inputStyle} />
                 <button onClick={handleRegister} style={{ padding: '15px', background: '#27ae60', color: '#fff', border: 'none', borderRadius: '10px', cursor: 'pointer' }}>إرسال البيانات</button>
             </div>
         </div>
