@@ -196,6 +196,7 @@ function BookingPage({ doctors, fetchData, currentUser, openLogin }) {
         d.is_active && 
         (fSpecialty === 'الكل' || d.specialty === fSpecialty) && 
         (fCity === 'الكل' || d.city === fCity) && 
+        (fArea === "الكل" || doc.area === fArea) && // السطر ده هو اللي هيشغل خانة أكتوبر
         d.name.includes(searchTerm)
     );
 
@@ -335,17 +336,43 @@ return (
         {/* 2. شريط البحث المنسق (الكبسولة) */}
         <div style={{ background: '#fff', padding: '15px 25px', borderRadius: '50px', marginBottom: '40px', boxShadow: '0 10px 30px rgba(0,0,0,0.08)', display: 'flex', gap: '15px', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', border: '1px solid #eee' }}>
           
-          <select onChange={e => setFSpecialty(e.target.value)} style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}>
-            <option value="الكل">كل التخصصات</option>
-            {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
+        <select 
+  onChange={e => setFSpecialty(e.target.value)} 
+  style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}
+>
+  <option value="الكل">كل التخصصات</option>
+  {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
+</select>
 
-          <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
+<div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
 
-          <select onChange={e => setFCity(e.target.value)} style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}>
-            <option value="الكل">كل المحافظات</option>
-            {Object.keys(egyptLocations).map(g => <option key={g} value={g}>{g}</option>)}
-          </select>
+{/* 2. فلتر المحافظة */}
+<select 
+  onChange={e => {
+    setFCity(e.target.value);
+    if (typeof setFArea === 'function') setFArea("الكل");
+  }} 
+  style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}
+>
+  <option value="الكل">كل المحافظات</option>
+  {Object.keys(egyptLocations).map(g => <option key={g} value={g}>{g}</option>)}
+</select>
+
+{/* 3. فلتر المنطقة (بيظهر بس لما تختار محافظة) */}
+{fCity && fCity !== "الكل" && (
+  <>
+    <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
+    <select 
+      onChange={e => setFArea(e.target.value)} 
+      style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer', color: '#4567b7', fontWeight: 'bold' }}
+    >
+      <option value="الكل">كل المناطق (أكتوبر..)</option>
+      {egyptLocations[fCity]?.map(area => (
+        <option key={area} value={area}>{area}</option>
+      ))}
+    </select>
+  </>
+)}
 
           <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
 
@@ -855,37 +882,61 @@ useEffect(() => {
     </div>
 )}
                 {/* إذا اختار طبيب: نطلب رقم الموبايل للتحقق */}
-{/* إذا اختار طبيب: نطلب رقم الموبايل للتحقق */}
+{/* إذا اختار طبيب: نطلب رقم الموبايل وكلمة المرور للتحقق */}
 {currentUser?.role === 'doctor_check' && (
-    <div style={{ display: 'grid', gap: '10px' }}>
-        <input 
-            placeholder="أدخل رقم الموبايل المسجل به" 
-            style={inputStyle} 
-            onKeyDown={async (e) => {
-                if(e.key === 'Enter') {
-                    // نبحث في الدكاترة عن هذا الرقم ويكون مفعل
-                    const doc = doctors.find(d => d.mobile === e.target.value && d.is_active);
-                    
-                    if(doc) {
-                        const doctorData = { ...doc, role: 'doctor' };
-                        
-                        // 1. تحديث الحالة الحالية
-                        setCurrentUser(doctorData);
-                        
-                        // 2. الحفظ في ذاكرة المتصفح (هذا هو الجزء الجديد)
-                        localStorage.setItem('saved_user', JSON.stringify(doctorData));
-                        
-                        // 3. التوجه للوحة التحكم وإغلاق المودال
-                        setActivePage('doctor_dashboard'); 
-                        setShowLoginModal(false);
-                    } else {
-                        alert("عذراً، هذا الرقم غير مسجل أو لم يتم تفعيل الحساب بعد.");
-                    }
-            }
-          }} 
-        />
-        <p style={{fontSize:'12px', color:'gray', textAlign:'center'}}>اكتب رقمك واضغط Enter للدخول</p>
-    </div>
+  <div style={{ display: 'grid', gap: '10px' }}>
+    <input 
+      id="login-mobile"
+      type="text"
+      placeholder="أدخل رقم الموبايل المسجل به" 
+      style={inputStyle} 
+    />
+
+    <input 
+      id="login-password"
+      type="password"
+      placeholder="أدخل كلمة المرور" 
+      style={inputStyle} 
+      onKeyDown={async (e) => {
+        if (e.key === 'Enter') {
+          // جلب القيم من الخانات باستخدام الـ ID
+          const mobileVal = document.getElementById('login-mobile').value;
+          const passwordVal = e.target.value;
+
+          if (!mobileVal || !passwordVal) {
+            alert("برجاء إدخال رقم الموبايل وكلمة المرور");
+            return;
+          }
+
+          // البحث في مصفوفة الدكاترة (doctors) عن الموبايل والباسورد
+          const doc = doctors.find(d => 
+            d.mobile === mobileVal && 
+            String(d.password) === String(passwordVal) && 
+            d.is_active
+          );
+
+          if (doc) {
+            const doctorData = { ...doc, role: 'doctor' };
+            
+            // 1. تحديث الحالة
+            setCurrentUser(doctorData);
+            
+            // 2. الحفظ في ذاكرة المتصفح
+            localStorage.setItem('saved_user', JSON.stringify(doctorData));
+            
+            // 3. التوجه للوحة التحكم وإغلاق المودال
+            setActivePage('doctor_dashboard'); 
+            setShowLoginModal(false);
+          } else {
+            alert("عذراً، بيانات الدخول غير صحيحة أو الحساب لم يفعل بعد.");
+          }
+        }
+      }} 
+    />
+    <p style={{ fontSize: '12px', color: '#666', textAlign: 'center', marginTop: '5px' }}>
+      اضغط Enter بعد كتابة كلمة المرور للدخول
+    </p>
+  </div>
 )}
                <button 
   onClick={() => { 
