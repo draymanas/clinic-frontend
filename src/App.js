@@ -882,60 +882,78 @@ useEffect(() => {
     </div>
 )}
                 {/* إذا اختار طبيب: نطلب رقم الموبايل للتحقق */}
-{/* إذا اختار طبيب: نطلب رقم الموبايل وكلمة المرور للتحقق */}
+{/* إذا اختار طبيب: نطلب البيانات في خانتين منفصلتين */}
 {currentUser?.role === 'doctor_check' && (
-  <div style={{ display: 'grid', gap: '10px' }}>
-    <input 
-      id="login-mobile"
-      type="text"
-      placeholder="أدخل رقم الموبايل المسجل به" 
-      style={inputStyle} 
-    />
+  <div style={{ display: 'grid', gap: '15px', marginTop: '10px' }}>
+    
+    <div style={{ textAlign: 'right' }}>
+      <label style={{ fontSize: '14px', color: '#4567b7', fontWeight: 'bold', marginBottom: '5px', display: 'block' }}>رقم الموبايل</label>
+      <input 
+        id="login-mobile"
+        type="text"
+        placeholder="01xxxxxxxxx" 
+        style={{ ...inputStyle, width: '100%', marginBottom: '0' }} 
+      />
+    </div>
 
-    <input 
-      id="login-password"
-      type="password"
-      placeholder="أدخل كلمة المرور" 
-      style={inputStyle} 
-      onKeyDown={async (e) => {
-        if (e.key === 'Enter') {
-          // جلب القيم من الخانات باستخدام الـ ID
-          const mobileVal = document.getElementById('login-mobile').value;
-          const passwordVal = e.target.value;
+    <div style={{ textAlign: 'right' }}>
+      <label style={{ fontSize: '14px', color: '#4567b7', fontWeight: 'bold', marginBottom: '5px', display: 'block' }}>كلمة المرور</label>
+      <input 
+        id="login-password"
+        type="password"
+        placeholder="••••••••" 
+        style={{ ...inputStyle, width: '100%', marginBottom: '0' }} 
+        onKeyDown={async (e) => {
+          if (e.key === 'Enter') {
+            const mobileVal = document.getElementById('login-mobile').value;
+            const passwordVal = e.target.value;
 
-          if (!mobileVal || !passwordVal) {
-            alert("برجاء إدخال رقم الموبايل وكلمة المرور");
-            return;
+            if (!mobileVal || !passwordVal) {
+              alert("برجاء إدخال رقم الموبايل وكلمة المرور");
+              return;
+            }
+
+            const doc = doctors.find(d => 
+              d.mobile === mobileVal && 
+              String(d.password) === String(passwordVal) && 
+              d.is_active
+            );
+
+            if (doc) {
+              const doctorData = { ...doc, role: 'doctor' };
+              setCurrentUser(doctorData);
+              localStorage.setItem('saved_user', JSON.stringify(doctorData));
+              setActivePage('doctor_dashboard'); 
+              setShowLoginModal(false);
+            } else {
+              alert("بيانات الدخول غير صحيحة، تأكد من الرقم والباسورد.");
+            }
           }
+        }} 
+      />
+    </div>
 
-          // البحث في مصفوفة الدكاترة (doctors) عن الموبايل والباسورد
-          const doc = doctors.find(d => 
-            d.mobile === mobileVal && 
-            String(d.password) === String(passwordVal) && 
-            d.is_active
-          );
-
-          if (doc) {
-            const doctorData = { ...doc, role: 'doctor' };
-            
-            // 1. تحديث الحالة
-            setCurrentUser(doctorData);
-            
-            // 2. الحفظ في ذاكرة المتصفح
-            localStorage.setItem('saved_user', JSON.stringify(doctorData));
-            
-            // 3. التوجه للوحة التحكم وإغلاق المودال
-            setActivePage('doctor_dashboard'); 
-            setShowLoginModal(false);
-          } else {
-            alert("عذراً، بيانات الدخول غير صحيحة أو الحساب لم يفعل بعد.");
-          }
-        }
-      }} 
-    />
-    <p style={{ fontSize: '12px', color: '#666', textAlign: 'center', marginTop: '5px' }}>
-      اضغط Enter بعد كتابة كلمة المرور للدخول
-    </p>
+    <button 
+      onClick={() => {
+        // لتفعيل الدخول بالضغط على زرار أيضاً وليس Enter فقط
+        const event = { key: 'Enter', target: { value: document.getElementById('login-password').value } };
+        // هنا نقوم باستدعاء نفس منطق الـ Enter
+        document.getElementById('login-password').dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
+        // ملحوظة: يفضل فصل الكود في دالة مستقلة، لكن هذا للسرعة الآن
+      }}
+      style={{
+        background: '#4567b7',
+        color: '#fff',
+        padding: '12px',
+        borderRadius: '8px',
+        border: 'none',
+        cursor: 'pointer',
+        fontWeight: 'bold',
+        marginTop: '10px'
+      }}
+    >
+      تسجيل الدخول
+    </button>
   </div>
 )}
                <button 
