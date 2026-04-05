@@ -712,7 +712,8 @@ function App() {
   const [activePage, setActivePage] = useState('home'); 
   const [currentUser, setCurrentUser] = useState(null); 
   const [showLoginModal, setShowLoginModal] = useState(false); 
-
+const [fArea, setFArea] = useState("الكل");
+const [loginPassword, setLoginPassword] = useState("");
   const fetchData = async () => {
     try {
       const resDocs = await fetch('https://clinic-api-ig3d.onrender.com/doctors');
