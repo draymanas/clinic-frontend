@@ -31,11 +31,6 @@ const egyptLocations = {
     "مطروح": ["مرسى مطروح", "الحمام", "العلمين", "الضبعة", "السلوم", "سيوة"],
     "الوادي الجديد": ["الخارجة", "الداخلة", "الفرافرة", "باريس"]
 };
-const [fSpecialty, setFSpecialty] = React.useState("الكل");
-  const [fCity, setFCity] = React.useState("الكل");
-  const [fArea, setFArea] = React.useState("الكل");
-  const [searchTerm, setSearchTerm] = React.useState("");
-  const [loginPassword, setLoginPassword] = React.useState("");
 
 const allGovernorates = Object.keys(egyptLocations);
 const medicalSpecialties = [
@@ -717,7 +712,7 @@ function App() {
   const [activePage, setActivePage] = useState('home'); 
   const [currentUser, setCurrentUser] = useState(null); 
   const [showLoginModal, setShowLoginModal] = useState(false); 
- 
+
   const fetchData = async () => {
     try {
       const resDocs = await fetch('https://clinic-api-ig3d.onrender.com/doctors');
@@ -887,79 +882,37 @@ useEffect(() => {
     </div>
 )}
                 {/* إذا اختار طبيب: نطلب رقم الموبايل للتحقق */}
-{/* إذا اختار طبيب: نطلب البيانات في خانتين منفصلتين */}
+{/* إذا اختار طبيب: نطلب رقم الموبايل للتحقق */}
 {currentUser?.role === 'doctor_check' && (
-  <div style={{ display: 'grid', gap: '15px', marginTop: '10px' }}>
-    
-    <div style={{ textAlign: 'right' }}>
-      <label style={{ fontSize: '14px', color: '#4567b7', fontWeight: 'bold', marginBottom: '5px', display: 'block' }}>رقم الموبايل</label>
-      <input 
-        id="login-mobile"
-        type="text"
-        placeholder="01xxxxxxxxx" 
-        style={{ ...inputStyle, width: '100%', marginBottom: '0' }} 
-      />
-    </div>
-
-    <div style={{ textAlign: 'right' }}>
-      <label style={{ fontSize: '14px', color: '#4567b7', fontWeight: 'bold', marginBottom: '5px', display: 'block' }}>كلمة المرور</label>
-      <input 
-        id="login-password"
-        type="password"
-        placeholder="••••••••" 
-        style={{ ...inputStyle, width: '100%', marginBottom: '0' }} 
-        onKeyDown={async (e) => {
-          if (e.key === 'Enter') {
-            const mobileVal = document.getElementById('login-mobile').value;
-            const passwordVal = e.target.value;
-
-            if (!mobileVal || !passwordVal) {
-              alert("برجاء إدخال رقم الموبايل وكلمة المرور");
-              return;
+    <div style={{ display: 'grid', gap: '10px' }}>
+        <input 
+            placeholder="أدخل رقم الموبايل المسجل به" 
+            style={inputStyle} 
+            onKeyDown={async (e) => {
+                if(e.key === 'Enter') {
+                    // نبحث في الدكاترة عن هذا الرقم ويكون مفعل
+                    const doc = doctors.find(d => d.mobile === e.target.value && d.is_active);
+                    
+                    if(doc) {
+                        const doctorData = { ...doc, role: 'doctor' };
+                        
+                        // 1. تحديث الحالة الحالية
+                        setCurrentUser(doctorData);
+                        
+                        // 2. الحفظ في ذاكرة المتصفح (هذا هو الجزء الجديد)
+                        localStorage.setItem('saved_user', JSON.stringify(doctorData));
+                        
+                        // 3. التوجه للوحة التحكم وإغلاق المودال
+                        setActivePage('doctor_dashboard'); 
+                        setShowLoginModal(false);
+                    } else {
+                        alert("عذراً، هذا الرقم غير مسجل أو لم يتم تفعيل الحساب بعد.");
+                    }
             }
-
-            const doc = doctors.find(d => 
-              d.mobile === mobileVal && 
-              String(d.password) === String(passwordVal) && 
-              d.is_active
-            );
-
-            if (doc) {
-              const doctorData = { ...doc, role: 'doctor' };
-              setCurrentUser(doctorData);
-              localStorage.setItem('saved_user', JSON.stringify(doctorData));
-              setActivePage('doctor_dashboard'); 
-              setShowLoginModal(false);
-            } else {
-              alert("بيانات الدخول غير صحيحة، تأكد من الرقم والباسورد.");
-            }
-          }
-        }} 
-      />
+          }} 
+        />
+        <p style={{fontSize:'12px', color:'gray', textAlign:'center'}}>اكتب رقمك واضغط Enter للدخول</p>
     </div>
-
-    <button 
-      onClick={() => {
-        // لتفعيل الدخول بالضغط على زرار أيضاً وليس Enter فقط
-        const event = { key: 'Enter', target: { value: document.getElementById('login-password').value } };
-        // هنا نقوم باستدعاء نفس منطق الـ Enter
-        document.getElementById('login-password').dispatchEvent(new KeyboardEvent('keydown', {'key': 'Enter'}));
-        // ملحوظة: يفضل فصل الكود في دالة مستقلة، لكن هذا للسرعة الآن
-      }}
-      style={{
-        background: '#4567b7',
-        color: '#fff',
-        padding: '12px',
-        borderRadius: '8px',
-        border: 'none',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-        marginTop: '10px'
-      }}
-    >
-      تسجيل الدخول
-    </button>
-  </div>
 )}
                <button 
   onClick={() => { 
