@@ -60,7 +60,7 @@ const getNextDateForDay = (dayName) => {
 
 // --- 2. مكون تسجيل الدكتور (DoctorRegister) ---
 function DoctorRegister() {
-    const [newDoc, setNewDoc] = useState({ name: '', mobile: '', specialty: '', fee: '', address: '', personal_mobile: '', title: '', city: '', area: '', password: '' });
+    const [newDoc, setNewDoc] = useState({ name: '', mobile: '', specialty: '',bio: '', fee: '', address: '', personal_mobile: '', title: '', city: '', area: '', password: '' });
     const [scheduleDetails, setScheduleDetails] = useState({});
     const [selectedFile, setSelectedFile] = useState(null);
 
@@ -419,7 +419,7 @@ return (
   
 </p>
 {doc.bio ? (
-  <p style={{ fontSize: '14px', color: '#555', fontStyle: 'italic', margin: '5px 0' }}>
+  <p style={{ fontSize: '14px', color: '#333', fontStyle: 'italic', margin: '5px 0' }}>
     "{doc.bio}"
   </p>
 ) : null}
