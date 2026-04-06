@@ -90,7 +90,7 @@ function DoctorRegister() {
         formData.append('area', newDoc.area);
         formData.append('availability', availabilityString);
         const finalPassword = newDoc.password.trim() === '' ? '1234' : newDoc.password;
-    formData.append('password', finalPassword);
+        formData.append('password', finalPassword);
         if (selectedFile) formData.append('image', selectedFile);
 
         const res = await fetch('https://clinic-api-ig3d.onrender.com/register-doctor', {
@@ -419,7 +419,7 @@ return (
   
 </p>
 {doc.bio ? (
-  <p style={{ fontSize: '14px', color: '#333', fontStyle: 'italic', margin: '5px 0' }}>
+  <p style={{ fontSize: '16px', color: '#333', fontStyle: 'italic', margin: '5px 0' }}>
     "{doc.bio}"
   </p>
 ) : null}
@@ -864,36 +864,58 @@ useEffect(() => {
     </div>
 )}
                 {/* إذا اختار طبيب: نطلب رقم الموبايل للتحقق */}
-{/* إذا اختار طبيب: نطلب رقم الموبايل للتحقق */}
+{/* إذا اختار طبيب: نطلب الموبايل والباسورد للتحقق */}
 {currentUser?.role === 'doctor_check' && (
     <div style={{ display: 'grid', gap: '10px' }}>
         <input 
-            placeholder="أدخل رقم الموبايل المسجل به" 
+            placeholder="رقم الموبايل المسجل" 
             style={inputStyle} 
-            onKeyDown={async (e) => {
-                if(e.key === 'Enter') {
-                    // نبحث في الدكاترة عن هذا الرقم ويكون مفعل
-                    const doc = doctors.find(d => d.mobile === e.target.value && d.is_active);
-                    
-                    if(doc) {
-                        const doctorData = { ...doc, role: 'doctor' };
-                        
-                        // 1. تحديث الحالة الحالية
-                        setCurrentUser(doctorData);
-                        
-                        // 2. الحفظ في ذاكرة المتصفح (هذا هو الجزء الجديد)
-                        localStorage.setItem('saved_user', JSON.stringify(doctorData));
-                        
-                        // 3. التوجه للوحة التحكم وإغلاق المودال
-                        setActivePage('doctor_dashboard'); 
-                        setShowLoginModal(false);
-                    } else {
-                        alert("عذراً، هذا الرقم غير مسجل أو لم يتم تفعيل الحساب بعد.");
-                    }
-            }
-          }} 
+            onChange={(e) => setCurrentUser({...currentUser, tempMobile: e.target.value})} 
         />
-        <p style={{fontSize:'12px', color:'gray', textAlign:'center'}}>اكتب رقمك واضغط Enter للدخول</p>
+        <input 
+            type="password"
+            placeholder="كلمة المرور" 
+            style={inputStyle} 
+            onChange={(e) => setCurrentUser({...currentUser, tempPassword: e.target.value})} 
+        />
+        <button 
+            onClick={() => {
+                // البحث بالرقم والباسورد معاً والتأكد من التفعيل
+                const doc = doctors.find(d => 
+                    d.mobile === currentUser.tempMobile && 
+                    d.password === currentUser.tempPassword && 
+                    d.is_active
+                );
+                
+                if(doc) {
+                    const doctorData = { ...doc, role: 'doctor' };
+                    
+                    // 1. تحديث الحالة
+                    setCurrentUser(doctorData);
+                    
+                    // 2. الحفظ في المتصفح
+                    localStorage.setItem('saved_user', JSON.stringify(doctorData));
+                    
+                    // 3. التوجه للوحة التحكم وإغلاق المودال
+                    setActivePage('doctor_dashboard'); 
+                    setShowLoginModal(false);
+                } else {
+                    alert("عذراً، رقم الموبايل أو كلمة المرور غير صحيحة، أو الحساب لم يفعل بعد.");
+                }
+            }}
+            style={{ 
+                background: '#3498db', 
+                color: '#fff', 
+                border: 'none', 
+                padding: '12px', 
+                borderRadius: '8px', 
+                cursor: 'pointer', 
+                fontWeight: 'bold',
+                marginTop: '5px'
+            }}
+        >
+            دخول لوحة التحكم
+        </button>
     </div>
 )}
                <button 
