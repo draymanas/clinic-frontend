@@ -141,22 +141,21 @@ const handleUpdateProfile = async (e) => {
     }).filter(Boolean).join(' - ');
 
     // تعبئة البيانات
-    formData.append('name', doctorData.name);
-    formData.append('bio', doctorData.bio || ""); // ضيفنا النبذة
-    
-    // إرسال الباسورد فقط إذا قام الدكتور بكتابة باسوورد جديد
-    if (doctorData.newPassword) {
-        formData.append('password', doctorData.newPassword);
-    }
-    formData.append('specialty', doctorData.specialty);
-    formData.append('title', doctorData.title);
-    formData.append('fee', doctorData.fee);
-    formData.append('mobile', doctorData.booking_phone);
-    formData.append('personal_mobile', doctorData.personal_phone);
-    formData.append('city', doctorData.governorate);
-    formData.append('area', doctorData.city);
-    formData.append('address', doctorData.detailedAddress);
-    formData.append('availability', availabilityString);
+ // ... داخل دالة handleUpdateProfile ...
+
+// تأكد إنك بتبعت الباسورد والنبذة بنفس الأسماء اللي السيرفر عارفها
+formData.append('name', doctorData.name);
+formData.append('mobile', doctorData.booking_phone); // الموبايل الأساسي
+formData.append('specialty', doctorData.specialty);
+formData.append('fee', doctorData.fee);
+formData.append('availability', availabilityString);
+formData.append('address', doctorData.detailedAddress);
+formData.append('personal_mobile', doctorData.personal_phone);
+formData.append('title', doctorData.title);
+formData.append('city', doctorData.governorate);
+formData.append('area', doctorData.city);
+formData.append('bio', doctorData.bio || ""); // النبذة
+formData.append('password', doctorData.newPassword || doctorData.password); // الباسورد الحالي أو الجديد
 
     if (selectedFile) formData.append('image', selectedFile);
 
