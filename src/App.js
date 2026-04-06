@@ -712,10 +712,10 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null); 
   const [showLoginModal, setShowLoginModal] = useState(false); 
   // تأكد إن السطور دي جوه القوس ده ومش براه
-  const [fSpecialty, setFSpecialty] = React.useState("الكل");
-  const [fCity, setFCity] = React.useState("الكل");
-  const [fArea, setFArea] = React.useState("الكل");
-  const [searchTerm, setSearchTerm] = React.useState("");
+const [fSpecialty, setFSpecialty] = useState("الكل");
+  const [fCity, setFCity] = useState("الكل");
+  const [fArea, setFArea] = useState("الكل");
+  const [searchTerm, setSearchTerm] = useState("");
   
   // باقي الكود بتاعك...
   const fetchData = async () => {
