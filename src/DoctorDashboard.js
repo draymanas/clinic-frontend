@@ -145,12 +145,12 @@ const handleUpdateProfile = async (e) => {
 
 // تأكد إنك بتبعت الباسورد والنبذة بنفس الأسماء اللي السيرفر عارفها
 formData.append('name', doctorData.name);
-formData.append('mobile', doctorData.booking_phone); // الموبايل الأساسي
+formData.append('mobile', doctorData.mobile);// الموبايل الأساسي
 formData.append('specialty', doctorData.specialty);
 formData.append('fee', doctorData.fee);
 formData.append('availability', availabilityString);
 formData.append('address', doctorData.detailedAddress);
-formData.append('personal_mobile', doctorData.personal_phone);
+formData.append('personal_mobile', doctorData.personal_mobile);
 formData.append('title', doctorData.title);
 formData.append('city', doctorData.governorate);
 formData.append('area', doctorData.city);
