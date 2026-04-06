@@ -141,6 +141,7 @@ const handleUpdateProfile = async (e) => {
     }).filter(Boolean).join(' - ');
 
     // تعبئة البيانات
+    // تعبئة البيانات
     formData.append('name', doctorData.name);
     formData.append('bio', doctorData.bio || ""); // ضيفنا النبذة
     
@@ -148,16 +149,17 @@ const handleUpdateProfile = async (e) => {
     if (doctorData.newPassword) {
         formData.append('password', doctorData.newPassword);
     }
+
     formData.append('specialty', doctorData.specialty);
     formData.append('title', doctorData.title);
     formData.append('fee', doctorData.fee);
-    formData.append('mobile', doctorData.booking_phone);
-    formData.append('personal_mobile', doctorData.personal_phone);
+  // التصحيح: نرسل المسميات اللي السيرفر مستنيها (mobile و personal_mobile)
+    formData.append('mobile', doctorData.mobile || ""); 
+    formData.append('personal_mobile', doctorData.personal_mobile || "");
     formData.append('city', doctorData.governorate);
     formData.append('area', doctorData.city);
     formData.append('address', doctorData.detailedAddress);
     formData.append('availability', availabilityString);
-
     if (selectedFile) formData.append('image', selectedFile);
 
     try {
@@ -311,40 +313,16 @@ return (
   />
 </div>
 
-<div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '15px' }}>
-  {/* سعر الكشف */}
-  <div style={{ flex: 1, minWidth: '150px', ...sectionBox }}>
-    <label>💰 سعر الكشف:</label>
-    <input 
-      type="number" 
-      value={doctorData.fee || ""} 
-      onChange={(e)=>setDoctorData({...doctorData, fee: e.target.value})} 
-      style={inputStyle} 
-    />
-  </div>
-
-  {/* رقم الحجز (العيادة) -> بيروح لحقل mobile في سوبابيز */}
-  <div style={{ flex: 1, minWidth: '150px', ...sectionBox }}>
-    <label>📞 رقم الحجز:</label>
-    <input 
-      type="text" 
-      value={doctorData.mobile || ""} 
-      onChange={(e)=>setDoctorData({...doctorData, mobile: e.target.value})} 
-      style={inputStyle} 
-    />
-  </div>
-
-  {/* الموبايل الشخصي -> بيروح لحقل personal_mobile في سوبابيز */}
-  <div style={{ flex: 1, minWidth: '150px', ...sectionBox }}>
-    <label>📱 الموبايل الشخصي:</label>
-    <input 
-      type="text" 
-      value={doctorData.personal_mobile || ""} 
-      onChange={(e)=>setDoctorData({...doctorData, personal_mobile: e.target.value})} 
-      style={inputStyle} 
-    />
-  </div>
-</div>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ flex: 1, ...sectionBox }}>
+              <label>💰 سعر الكشف:</label>
+              <input type="number" value={doctorData.fee} onChange={(e)=>setDoctorData({...doctorData, fee: e.target.value})} style={inputStyle} />
+            </div>
+            <div style={{ flex: 1, ...sectionBox }}>
+              <label>📞 رقم الحجز:</label>
+              <input type="text" value={doctorData.booking_phone} onChange={(e)=>setDoctorData({...doctorData, booking_phone: e.target.value})} style={inputStyle} />
+            </div>
+          </div>
 
           <div style={sectionBox}>
             <label>📍 العنوان:</label>
