@@ -31,7 +31,7 @@ const egyptLocations = {
     "مطروح": ["مرسى مطروح", "الحمام", "العلمين", "الضبعة", "السلوم", "سيوة"],
     "الوادي الجديد": ["الخارجة", "الداخلة", "الفرافرة", "باريس"]
 };
-
+const [fArea, setFArea] = React.useState("الكل");
 const allGovernorates = Object.keys(egyptLocations);
 const medicalSpecialties = [
   "الكل", "أسنان", "أطفال وحديثي الولادة", "أنف وأذن وحنجرة", "باطنة", "تغذية علاجية",
@@ -196,7 +196,7 @@ function BookingPage({ doctors, fetchData, currentUser, openLogin }) {
         d.is_active && 
         (fSpecialty === 'الكل' || d.specialty === fSpecialty) && 
         (fCity === 'الكل' || d.city === fCity) && 
-        (fArea === "الكل" || doc.area === fArea) && // السطر ده هو اللي هيشغل خانة أكتوبر
+       (fArea === "الكل" || d.area === fArea) && // لاحظ استخدمنا d.area وليس doc.area
         d.name.includes(searchTerm)
     );
 
