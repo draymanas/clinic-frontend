@@ -31,7 +31,8 @@ const egyptLocations = {
     "مطروح": ["مرسى مطروح", "الحمام", "العلمين", "الضبعة", "السلوم", "سيوة"],
     "الوادي الجديد": ["الخارجة", "الداخلة", "الفرافرة", "باريس"]
 };
- 
+
+const allGovernorates = Object.keys(egyptLocations);
 const medicalSpecialties = [
   "الكل", "أسنان", "أطفال وحديثي الولادة", "أنف وأذن وحنجرة", "باطنة", "تغذية علاجية",
   "جراحة أطفال", "جراحة أوعية دموية", "جراحة أورام", "جراحة تجميل", "جراحة سمنة ومناظير",
@@ -195,7 +196,6 @@ function BookingPage({ doctors, fetchData, currentUser, openLogin }) {
         d.is_active && 
         (fSpecialty === 'الكل' || d.specialty === fSpecialty) && 
         (fCity === 'الكل' || d.city === fCity) && 
-       (fArea === "الكل" || d.area === fArea) && // لاحظ استخدمنا d.area وليس doc.area
         d.name.includes(searchTerm)
     );
 
@@ -335,43 +335,17 @@ return (
         {/* 2. شريط البحث المنسق (الكبسولة) */}
         <div style={{ background: '#fff', padding: '15px 25px', borderRadius: '50px', marginBottom: '40px', boxShadow: '0 10px 30px rgba(0,0,0,0.08)', display: 'flex', gap: '15px', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', border: '1px solid #eee' }}>
           
-        <select 
-  onChange={e => setFSpecialty(e.target.value)} 
-  style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}
->
-  <option value="الكل">كل التخصصات</option>
-  {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
-</select>
+          <select onChange={e => setFSpecialty(e.target.value)} style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}>
+            <option value="الكل">كل التخصصات</option>
+            {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
 
-<div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
+          <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
 
-{/* 2. فلتر المحافظة */}
-<select 
-  onChange={e => {
-    setFCity(e.target.value);
-    if (typeof setFArea === 'function') setFArea("الكل");
-  }} 
-  style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}
->
-  <option value="الكل">كل المحافظات</option>
-  {Object.keys(egyptLocations).map(g => <option key={g} value={g}>{g}</option>)}
-</select>
-
-{/* 3. فلتر المنطقة (بيظهر بس لما تختار محافظة) */}
-{fCity && fCity !== "الكل" && (
-  <>
-    <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
-    <select 
-      onChange={e => setFArea(e.target.value)} 
-      style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer', color: '#4567b7', fontWeight: 'bold' }}
-    >
-      <option value="الكل">كل المناطق (أكتوبر..)</option>
-      {egyptLocations[fCity]?.map(area => (
-        <option key={area} value={area}>{area}</option>
-      ))}
-    </select>
-  </>
-)}
+          <select onChange={e => setFCity(e.target.value)} style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}>
+            <option value="الكل">كل المحافظات</option>
+            {Object.keys(egyptLocations).map(g => <option key={g} value={g}>{g}</option>)}
+          </select>
 
           <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
 
@@ -711,13 +685,7 @@ function App() {
   const [activePage, setActivePage] = useState('home'); 
   const [currentUser, setCurrentUser] = useState(null); 
   const [showLoginModal, setShowLoginModal] = useState(false); 
-  // تأكد إن السطور دي جوه القوس ده ومش براه
-const [fSpecialty, setFSpecialty] = useState("الكل");
-  const [fCity, setFCity] = useState("الكل");
-  const [fArea, setFArea] = useState("الكل");
-  const [searchTerm, setSearchTerm] = useState("");
-  
-  // باقي الكود بتاعك...
+
   const fetchData = async () => {
     try {
       const resDocs = await fetch('https://clinic-api-ig3d.onrender.com/doctors');
