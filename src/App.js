@@ -416,7 +416,16 @@ return (
 {/* دمج اللقب مع التخصص في سطر واحد بخط واضح */}
 <p style={{ fontSize: '18px', color: '#1a73e8', fontWeight: 'bold' }}>
   {doc.title} {doc.specialty}
-</p> <p style={{ 
+  
+</p>
+{doc.bio ? (
+  <p style={{ fontSize: '14px', color: '#555', fontStyle: 'italic', margin: '5px 0' }}>
+    "{doc.bio}"
+  </p>
+) : null}
+
+<p style={{ 
+  
   color: '#000000',      // اللون الأسود الصريح كما طلبت
   fontWeight: 'bold',    // جعل الخط عريض (واضح)
   fontSize: '15px',      // الحجم كما هو لم نغيره
