@@ -46,7 +46,15 @@ const minsArr = ["00", "15", "30", "45"];
 const periodsArr = ["صباحاً", "مساءً"];
 
 const inputStyle = { padding: '12px', borderRadius: '8px', border: '1px solid #ddd', width: '100%', boxSizing: 'border-box' };
-
+const getOptimizedImage = (url) => {
+  if (!url) return null;
+  // لو الرابط من سوبابيز، بنفعله خاصية التصغير والتحويل لـ webp
+  if (url.includes('supabase.co')) {
+    return url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + 
+           '?width=200&height=200&format=webp&quality=80';
+  }
+  return url;
+};
 const getNextDateForDay = (dayName) => {
     const daysMap = { "الأحد": 0, "الاثنين": 1, "الثلاثاء": 2, "الأربعاء": 3, "الخميس": 4, "الجمعة": 5, "السبت": 6 };
     const targetDay = daysMap[dayName];
@@ -434,8 +442,12 @@ return (
 }}>
     {doc.fee ? `${doc.fee} ج.م` : 'قيد التحديد'}
 </div>
-              <img src={doc.image_url || `https://ui-avatars.com/api/?name=${doc.name}&background=random&color=fff`} alt="doctor" style={{ width: '100px', height: '100px', borderRadius: '50%', marginBottom: '15px', objectFit: 'cover', border: '3px solid #f0f4f8' }} />
-             {/* تعديل الاسم ليكون كبير ومسبوق بكلمة دكتور */}
+              <img 
+  src={getOptimizedImage(doc.image_url) || `https://ui-avatars.com/api/?name=${encodeURIComponent(doc.name)}&background=random&color=fff`} 
+  alt={`دكتور ${doc.name} - حجز أطباء - منصة دكتور`} 
+  loading="lazy" 
+  style={{ width: '100px', height: '100px', borderRadius: '50%', marginBottom: '15px', objectFit: 'cover', border: '3px solid #f0f4f8' }} 
+/>{/* تعديل الاسم ليكون كبير ومسبوق بكلمة دكتور */}
 <h3 style={{ fontSize: '24px', fontWeight: 'bold', margin: '5px 0' }}>
   دكتور / {doc.name}
 </h3>
