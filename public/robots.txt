@@ -1,3 +1,5 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+
+# ربط ملف السايت ماب لتسهيل أرشفة صفحات الأطباء
+Sitemap: https://www.doctoreg.online/sitemap.xml
