@@ -1068,7 +1068,8 @@ export default function App() {
     const [doctorMode, setDoctorMode] = React.useState('login'); 
     const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
     const [appointments, setAppointments] = useState([]); // <--- تأكد من وجود هذا السطر
-
+    const [hasAgreedPrivacy, setHasAgreedPrivacy] = useState(localStorage.getItem('privacy_agreed') === 'true');
+    
 // ضيف دي تحت الـ States مباشرة جوه App
 React.useEffect(() => {
     if (activePage === 'admin_verify') {
@@ -1152,7 +1153,48 @@ useEffect(() => {
     return (
     // الـ useEffect // تأكد من إضافة activePage كاعتماد عشان يتحدث مع تغير الصفحة
         <div style={{ direction: 'rtl', fontFamily: 'Arial' }}>
-            
+ {/* --- بداية كود سياسة الخصوصية المضاف --- */}
+        {!hasAgreedPrivacy && (
+            <div style={{
+                position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+                backgroundColor: 'rgba(0,0,0,0.95)', zIndex: 99999, // تأكد أنه أعلى من أي شيء آخر
+                display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px'
+            }}>
+                <div style={{
+                    background: '#fff', padding: '25px', borderRadius: '20px',
+                    maxWidth: '400px', textAlign: 'center', direction: 'rtl'
+                }}>
+                    <h2 style={{ color: '#1a73e8' }}>سياسة الخصوصية 🛡️</h2>
+                    <p style={{ fontSize: '15px', lineHeight: '1.6', color: '#333', margin: '20px 0' }}>
+                        أهلاً بك في منصة دكتور. لتقديم خدمة حجز طبية متميزة ، نحتاج لجمع بيانات التواصل الأساسية.
+                        <br/><br/>
+                        استمرارك في استخدام التطبيق يعني موافقتك على 
+                        <a href="/privacy-policy.html" target="_blank" style={{ color: '#1a73e8', fontWeight: 'bold' }}> سياسة الخصوصية </a> الخاصة بنا.
+                    </p>
+                    
+                    <button 
+                        onClick={() => {
+                            localStorage.setItem('privacy_agreed', 'true');
+                            setHasAgreedPrivacy(true);
+                        }}
+                        style={{ ...landingBtnStyle, backgroundColor: '#27ae60', color: '#fff', width: '100%' }}
+                    >
+                        أوافق وأقبل الشروط
+                    </button>
+                    
+                    <button 
+                        onClick={async () => {
+                            const { App: CapApp } = await import('@capacitor/app');
+                            CapApp.exitApp(); 
+                        }}
+                        style={{ background: 'none', border: 'none', color: '#e74c3c', marginTop: '15px', cursor: 'pointer' }}
+                    >
+                        رفض وإغلاق التطبيق
+                    </button>
+                </div>
+            </div>
+        )}
+        {/* --- نهاية كود سياسة الخصوصية المضاف --- */}           
             {/* 1. الشاشة الرئيسية */}
             {activePage === 'landing' && <LandingPage onSelect={setActivePage} />}
 

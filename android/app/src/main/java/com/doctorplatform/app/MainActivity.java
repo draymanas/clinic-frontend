@@ -1,4 +1,4 @@
-package com.doctorplatform.app;
+package doctorplatform.HUAWEI;
 
 import com.getcapacitor.BridgeActivity;
 
