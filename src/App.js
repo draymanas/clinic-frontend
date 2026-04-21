@@ -461,25 +461,32 @@ return (
 </p>
 {/* الجزء المعدل للبايو مع خاصية المزيد */}
 {doc.bio ? (() => {
-    // مكون صغير داخل الخريطة (Map) لإدارة حالة كل دكتور لوحده
     const BioSection = () => {
         const [isExpanded, setIsExpanded] = React.useState(false);
+        
+        // ده الستايل اللي هيجبر النص يتقص
+        const truncatedStyle = {
+            fontSize: '15px',
+            color: '#444',
+            fontStyle: 'italic',
+            lineHeight: '1.5em',
+            margin: '5px 0',
+            // الثلاث سطور الجاية هي المسؤولة عن القص
+            display: '-webkit-box',
+            WebkitLineClamp: isExpanded ? 'unset' : '2', 
+            WebkitBoxDirection: 'vertical',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            // إضافة ارتفاع أقصى في حالة عدم التمدد لضمان ثبات الكارت
+            maxHeight: isExpanded ? 'none' : '3em', 
+        };
+
         return (
-            <div style={{ margin: '10px 0', width: '100%' }}>
-                <p style={{ 
-                    fontSize: '15px', 
-                    color: '#444', 
-                    fontStyle: 'italic',
-                    display: '-webkit-box',
-                    WebkitLineClamp: isExpanded ? 'unset' : '2', 
-                    WebkitBoxDirection: 'vertical',
-                    overflow: 'hidden',
-                    lineHeight: '1.6em',
-                    minHeight: !isExpanded ? '3.2em' : 'auto' // بيحافظ على توازن الكروت
-                }}>
+            <div style={{ width: '100%', minHeight: '80px' }}>
+                <p style={truncatedStyle}>
                     "{doc.bio}"
                 </p>
-                {doc.bio.length > 60 && ( // بيظهر الزرار فقط لو النص طويل فعلاً
+                {doc.bio.length > 50 && (
                     <button 
                         onClick={() => setIsExpanded(!isExpanded)}
                         style={{
@@ -489,8 +496,9 @@ return (
                             cursor: 'pointer',
                             fontSize: '13px',
                             fontWeight: 'bold',
-                            marginTop: '5px',
-                            padding: '0'
+                            padding: '0',
+                            display: 'block',
+                            margin: '0 auto'
                         }}
                     >
                         {isExpanded ? 'عرض أقل' : '... المزيد'}
@@ -500,8 +508,7 @@ return (
         );
     };
     return <BioSection />;
-})() : <div style={{ height: '60px' }}></div> /* مساحة فارغة لو مفيش بايو عشان الكروت تفضل متساوية */}
-
+})() : <div style={{ height: '80px' }}></div>}
 <p style={{ 
   
   color: '#000000',      // اللون الأسود الصريح كما طلبت
