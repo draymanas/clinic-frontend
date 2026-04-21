@@ -176,7 +176,8 @@ function BookingPage({ doctors, fetchData, currentUser, openLogin }) {
     const [showModal, setShowModal] = useState(false);
     const [showTicket, setShowTicket] = useState(false);
     const [patientData, setPatientData] = useState({ name: '', mobile: '' });
-
+    // دي بنحطها في أول الفنكشن خالص من فوق
+    const [isBioExpanded, setIsBioExpanded] = useState(false);
     // --- دالة تحويل اليوم إلى تاريخ رقمي (YYYY-MM-DD) ---
     const getNextDateForDay = (dayName) => {
         const days = { 
@@ -447,7 +448,8 @@ return (
   alt={`دكتور ${doc.name} - حجز أطباء - منصة دكتور`} 
   loading="lazy" 
   style={{ width: '100px', height: '100px', borderRadius: '50%', marginBottom: '15px', objectFit: 'cover', border: '3px solid #f0f4f8' }} 
-/>{/* تعديل الاسم ليكون كبير ومسبوق بكلمة دكتور */}
+/>
+{/* تعديل الاسم ليكون كبير ومسبوق بكلمة دكتور */}
 <h3 style={{ fontSize: '24px', fontWeight: 'bold', margin: '5px 0' }}>
   دكتور / {doc.name}
 </h3>
@@ -457,11 +459,48 @@ return (
   {doc.title} {doc.specialty}
   
 </p>
-{doc.bio ? (
-  <p style={{ fontSize: '16px', color: '#333', fontStyle: 'italic', margin: '5px 0' }}>
-    "{doc.bio}"
-  </p>
-) : null}
+{/* الجزء المعدل للبايو مع خاصية المزيد */}
+{doc.bio ? (() => {
+    // مكون صغير داخل الخريطة (Map) لإدارة حالة كل دكتور لوحده
+    const BioSection = () => {
+        const [isExpanded, setIsExpanded] = React.useState(false);
+        return (
+            <div style={{ margin: '10px 0', width: '100%' }}>
+                <p style={{ 
+                    fontSize: '15px', 
+                    color: '#444', 
+                    fontStyle: 'italic',
+                    display: '-webkit-box',
+                    WebkitLineClamp: isExpanded ? 'unset' : '2', 
+                    WebkitBoxDirection: 'vertical',
+                    overflow: 'hidden',
+                    lineHeight: '1.6em',
+                    minHeight: !isExpanded ? '3.2em' : 'auto' // بيحافظ على توازن الكروت
+                }}>
+                    "{doc.bio}"
+                </p>
+                {doc.bio.length > 60 && ( // بيظهر الزرار فقط لو النص طويل فعلاً
+                    <button 
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#007bff',
+                            cursor: 'pointer',
+                            fontSize: '13px',
+                            fontWeight: 'bold',
+                            marginTop: '5px',
+                            padding: '0'
+                        }}
+                    >
+                        {isExpanded ? 'عرض أقل' : '... المزيد'}
+                    </button>
+                )}
+            </div>
+        );
+    };
+    return <BioSection />;
+})() : <div style={{ height: '60px' }}></div> /* مساحة فارغة لو مفيش بايو عشان الكروت تفضل متساوية */}
 
 <p style={{ 
   
