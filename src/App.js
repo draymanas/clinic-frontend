@@ -340,7 +340,7 @@ return (
     <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50', margin: 0 }}>📞 دعم فني</p>
   </div>
 
-</div>
+
 </div>
       <div style={{ padding: '0 20px' }}>
 {/* 2. شريط البحث المنسق - Full Width Edition */}
