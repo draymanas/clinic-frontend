@@ -878,17 +878,27 @@ useEffect(() => {
   </button>
 )}
         {/* زر تسجيل الدخول الذكي */}
-        <div style={{ position: 'relative', left: '20px', display: 'flex', gap: '10px' }}>
-            {!currentUser ? (
-                <button onClick={() => setShowLoginModal(true)} style={{...navBtnStyle, background: '#27ae60', fontSize: '14px'}}>🔐 دخول</button>
-            ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-  <span>👤</span>
-  <span style={{ fontSize: '12px' }}>{isAdmin ? 'الأدمن' : currentUser.name}</span>
+{/* زر تسجيل الدخول الذكي - مستبدل بالكامل ليعود زر الخروج */}
+<div style={{ position: 'relative', left: '20px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+  {!currentUser ? (
+    <button onClick={() => setShowLoginModal(true)} style={{...navBtnStyle, background: '#27ae60', fontSize: '14px'}}>🔐 دخول</button>
+  ) : (
+    <>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <span>👤</span>
+        <span style={{ fontSize: '12px', color: '#fff' }}>{isAdmin ? 'الأدمن' : currentUser.name}</span>
+      </div>
+      
+      <button 
+        onClick={handleLogout} 
+        style={{...navBtnStyle, backgroundColor: '#e74c3c', fontSize: '12px', padding: '5px 10px'}}
+      >
+        خروج
+      </button>
+    </>
+  )}
 </div>
-            )}
-        </div>
-        </div>
+</div>
       </nav>
 
       {/* 2. نافذة تسجيل الدخول (Login Modal) */}
