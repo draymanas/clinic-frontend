@@ -277,22 +277,22 @@ return (
     borderRadius: '15px', // جعلت الزوايا دائرية أكثر لتناسب التصميم
     boxShadow: '0 4px 15px rgba(0,0,0,0.05)'
   }}>
-<div style={{
-  backgroundColor: '#f8d7da', // لون خلفية هادئ (مائل للأحمر الفاتح ليناسب لون الخط)
-  border: '2px solid #d32f2f', // إطار بلون أحمر غامق
-  borderRadius: '10px', // حواف مستديرة
-  padding: '15px 20px', // مسافة داخلية للمستطيل
-  textAlign: 'center', // جعل النص في المنتصف
-  margin: '20px auto', // مسافة خارجية
-  maxWidth: '90%', // عرض المستطيل
-  boxShadow: '0 4px 8px rgba(0,0,0,0.1)' // ظل خفيف لإعطاء عمق
+<div style={{ 
+  backgroundColor: '#e3f2fd', // لون خلفية أزرق فاتح مريح
+  padding: '30px', 
+  borderRadius: '15px', 
+  textAlign: 'center', 
+  border: '2px solid #bbdefb', // إطار خفيف متناسق مع الأزرق
+  boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
+  margin: '20px auto',
+  maxWidth: '1100px'
 }}>
   <p style={{ 
-    fontSize: '28px', // صغرنا الحجم قليلاً ليكون متناسقاً داخل المستطيل
-    color: '#d32f2f', 
+    fontSize: '28px', 
+    color: '#0d47a1', // لون نص أزرق غامق ليظهر بوضوح على الخلفية الفاتحة (أو استبدله بـ #ffffff لو فضلته أبيض)
     fontWeight: '900',
-    margin: 0, // إلغاء المسافات الافتراضية للـ p
-    lineHeight: '1.5' // تحسين المسافة بين السطور لو الجملة نزلت لسطرين
+    margin: 0, 
+    lineHeight: '1.5' 
   }}>
     احجز دكتورك الآن مع أكبر منصة لحجز الأطباء في مصر..نخبة من أفضل وأمهر الاستشاريين والأخصائيين..اختار الميعاد اللي يناسبك واحجز الآن.
   </p>
