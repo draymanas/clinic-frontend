@@ -342,70 +342,84 @@ return (
 
 </div>
 </div>
-      <div style={{ padding: '0 20px' }}>
-        {/* 2. شريط البحث المنسق (الكبسولة) */}
-       <div style={{ background: '#fff', padding: '15px 25px', borderRadius: '50px', marginBottom: '40px', boxShadow: '0 10px 30px rgba(0,0,0,0.08)', display: 'flex', gap: '15px', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', border: '1px solid #eee' }}>
-  
-  {/* اختيار التخصص */}
-  <select onChange={e => setFSpecialty(e.target.value)} style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}>
-    <option value="الكل">كل التخصصات</option>
-    {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
-  </select>
+{/* تعديل "شكلي" فقط - الحفاظ الكامل على المنطق الأصلي والمدن */}
+<div style={{ padding: '0 20px', width: '100%', boxSizing: 'border-box' }}>
+  <div style={{ 
+    background: '#fff', 
+    padding: '12px 20px', 
+    borderRadius: '12px', 
+    marginBottom: '40px', 
+    boxShadow: '0 10px 30px rgba(0,0,0,0.08)', 
+    display: 'flex', 
+    gap: '10px', 
+    alignItems: 'center', 
+    border: '1px solid #eee',
+    maxWidth: '1250px', 
+    margin: '0 auto' 
+  }}>
+    
+    {/* 1. اختيار التخصص - (سطر 350) */}
+    <select 
+      value={fSpecialty} 
+      onChange={e => setFSpecialty(e.target.value)} 
+      style={{ flex: 1, padding: '15px', fontSize: '18px', border: 'none', outline: 'none', background: '#fcfcfc', borderRadius: '8px' }}
+    >
+      <option value="الكل">كل التخصصات</option>
+      {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
+    </select>
 
-  <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
+    <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
 
-  {/* اختيار المحافظة */}
-  <select 
-    value={fCity}
-    onChange={e => {
-        setFCity(e.target.value);
-        setFArea("الكل"); // تصفير المدينة فوراً لما يغير المحافظة
-    }} 
-    style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}
-  >
-    <option value="الكل">كل المحافظات</option>
-    {Object.keys(egyptLocations).map(g => <option key={g} value={g}>{g}</option>)}
-  </select>
+    {/* 2. اختيار المحافظة - (سطر 358) */}
+    <select 
+      value={fCity} 
+      onChange={e => setFCity(e.target.value)} 
+      style={{ flex: 1, padding: '15px', fontSize: '18px', border: 'none', outline: 'none', background: '#fcfcfc', borderRadius: '8px' }}
+    >
+      <option value="الكل">كل المحافظات</option>
+      {[...new Set(doctors.map(d => d.city))].map(c => <option key={c} value={c}>{c}</option>)}
+    </select>
 
-  {/* اختيار المدينة - يظهر فقط لو اختار محافظة */}
-  {fCity !== 'الكل' && egyptLocations[fCity] && (
-    <>
-      <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
-      <select 
-        value={fArea} 
-        onChange={(e) => setFArea(e.target.value)} 
-        style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}
-      >
-        <option value="الكل">كل المدن/المناطق</option>
-        {egyptLocations[fCity].map(area => <option key={area} value={area}>{area}</option>)}
-      </select>
-    </>
-  )}
+    <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
 
-  <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
+    {/* 3. اختيار المدينة/المنطقة - (اللي كان بيتمسح بالخطأ) */}
+    <select 
+      value={fArea} 
+      onChange={e => setFArea(e.target.value)} 
+      style={{ flex: 1, padding: '15px', fontSize: '18px', border: 'none', outline: 'none', background: '#fcfcfc', borderRadius: '8px' }}
+    >
+      <option value="الكل">كل المدن/المناطق</option>
+      {/* الربط الديناميكي: اختيار المدن بناءً على المحافظة fCity */}
+      {[...new Set(doctors.filter(d => fCity === 'الكل' || d.city === fCity).map(d => d.area))].map(a => (
+        <option key={a} value={a}>{a}</option>
+      ))}
+    </select>
 
-  {/* البحث بالاسم */}
-  <input 
-    placeholder="ابحث عن دكتور..." 
-    onChange={e => setSearchTerm(e.target.value)} 
-    style={{ border: 'none', padding: '10px', width: '200px', outline: 'none', fontSize: '15px' }} 
-  />
+    <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
 
-         {/* التعديل: جعل الزر أضخم وأوضح */}
-<button style={{ 
-  background: '#1a73e8', 
-  color: '#fff', 
-  border: 'none', 
-  padding: '15px 40px', // زيادة المسافة داخل الزر
-  borderRadius: '10px', 
-  fontSize: '22px',      // تكبير الخط
-  fontWeight: 'bold',    // جعل الخط عريض
-  cursor: 'pointer',
-  transition: '0.3s'
-}}>
-  احجز دكتورك الآن ⚡
-</button>
-        </div>
+    {/* 4. إدخال اسم الدكتور - (سطر 382) */}
+    <input 
+      type="text" 
+      placeholder="ابحث عن دكتور..." 
+      value={searchTerm} 
+      onChange={e => setSearchTerm(e.target.value)} 
+      style={{ flex: 1.5, padding: '15px', fontSize: '18px', border: 'none', outline: 'none', background: '#fcfcfc', borderRadius: '8px' }} 
+    />
+
+    {/* زر البحث الأخضر */}
+    <button style={{ 
+      padding: '12px 40px', 
+      backgroundColor: '#28a745', 
+      color: '#fff', 
+      fontSize: '20px', 
+      fontWeight: 'bold', 
+      borderRadius: '8px', 
+      border: 'none', 
+      cursor: 'pointer' 
+    }}>
+      بحث
+    </button>
+  </div>
 
         {/* 3. قائمة الأطباء (البطاقات اللي انت عدلتها وشغالة تمام) */}
       <div style={{ 
