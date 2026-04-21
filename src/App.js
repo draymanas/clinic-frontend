@@ -342,23 +342,16 @@ return (
 
 </div>
 </div>
-{/* تعديل "شكلي" فقط - الحفاظ الكامل على المنطق الأصلي والمدن */}
-<div style={{ padding: '0 20px', width: '100%', boxSizing: 'border-box' }}>
+{/* شريط البحث - العودة للقوائم الكاملة (Static Lists) مع الحجم الكبير */}
+<div style={{ padding: '0 20px', width: '100%' }}>
   <div style={{ 
-    background: '#fff', 
-    padding: '12px 20px', 
-    borderRadius: '12px', 
-    marginBottom: '40px', 
-    boxShadow: '0 10px 30px rgba(0,0,0,0.08)', 
-    display: 'flex', 
-    gap: '10px', 
-    alignItems: 'center', 
-    border: '1px solid #eee',
-    maxWidth: '1250px', 
-    margin: '0 auto' 
+    background: '#fff', padding: '12px 20px', borderRadius: '12px', 
+    marginBottom: '40px', boxShadow: '0 10px 30px rgba(0,0,0,0.08)', 
+    display: 'flex', gap: '10px', alignItems: 'center', border: '1px solid #eee',
+    maxWidth: '1250px', margin: '0 auto' 
   }}>
     
-    {/* 1. اختيار التخصص - (سطر 350) */}
+    {/* 1. التخصص - يعرض كل التخصصات من المصفوفة فوق */}
     <select 
       value={fSpecialty} 
       onChange={e => setFSpecialty(e.target.value)} 
@@ -370,53 +363,45 @@ return (
 
     <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
 
-    {/* 2. اختيار المحافظة - (سطر 358) */}
+    {/* 2. المحافظة - يعرض القائمة الكاملة (الجيزة، القاهرة، البحر الأحمر...) */}
     <select 
       value={fCity} 
-      onChange={e => setFCity(e.target.value)} 
+      onChange={e => {
+        setFCity(e.target.value);
+        setFArea('الكل'); // تصفير المدينة عند تغيير المحافظة
+      }} 
       style={{ flex: 1, padding: '15px', fontSize: '18px', border: 'none', outline: 'none', background: '#fcfcfc', borderRadius: '8px' }}
     >
       <option value="الكل">كل المحافظات</option>
-      {[...new Set(doctors.map(d => d.city))].map(c => <option key={c} value={c}>{c}</option>)}
+      {/* استبدل 'allCitiesArray' باسم المصفوفة الشاملة اللي أنت معرفها فوق للمحافظات */}
+      {allCitiesArray.map(c => <option key={c} value={c}>{c}</option>)}
     </select>
 
     <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
 
-    {/* 3. اختيار المدينة/المنطقة - (اللي كان بيتمسح بالخطأ) */}
+    {/* 3. المدينة/المنطقة - يعرض كل المدن التابعة للمحافظة المختارة */}
     <select 
       value={fArea} 
       onChange={e => setFArea(e.target.value)} 
       style={{ flex: 1, padding: '15px', fontSize: '18px', border: 'none', outline: 'none', background: '#fcfcfc', borderRadius: '8px' }}
     >
       <option value="الكل">كل المدن/المناطق</option>
-      {/* الربط الديناميكي: اختيار المدن بناءً على المحافظة fCity */}
-      {[...new Set(doctors.filter(d => fCity === 'الكل' || d.city === fCity).map(d => d.area))].map(a => (
+      {/* هنا نستخدم مصفوفة المناطق الكاملة المرتبطة بالمحافظة */}
+      {allAreasData[fCity]?.map(a => (
         <option key={a} value={a}>{a}</option>
       ))}
     </select>
 
     <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
 
-    {/* 4. إدخال اسم الدكتور - (سطر 382) */}
+    {/* 4. اسم الدكتور */}
     <input 
-      type="text" 
-      placeholder="ابحث عن دكتور..." 
-      value={searchTerm} 
+      type="text" placeholder="ابحث عن دكتور..." value={searchTerm} 
       onChange={e => setSearchTerm(e.target.value)} 
       style={{ flex: 1.5, padding: '15px', fontSize: '18px', border: 'none', outline: 'none', background: '#fcfcfc', borderRadius: '8px' }} 
     />
 
-    {/* زر البحث الأخضر */}
-    <button style={{ 
-      padding: '12px 40px', 
-      backgroundColor: '#28a745', 
-      color: '#fff', 
-      fontSize: '20px', 
-      fontWeight: 'bold', 
-      borderRadius: '8px', 
-      border: 'none', 
-      cursor: 'pointer' 
-    }}>
+    <button style={{ padding: '12px 40px', backgroundColor: '#28a745', color: '#fff', fontSize: '20px', fontWeight: 'bold', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>
       بحث
     </button>
   </div>
