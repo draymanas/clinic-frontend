@@ -340,72 +340,73 @@ return (
     <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50', margin: 0 }}>📞 دعم فني</p>
   </div>
 
+
 </div>
-</div>
-      <div style={{ padding: '0 20px' }}>
-        {/* 2. شريط البحث المنسق (الكبسولة) */}
-       <div style={{ background: '#fff', padding: '15px 25px', borderRadius: '50px', marginBottom: '40px', boxShadow: '0 10px 30px rgba(0,0,0,0.08)', display: 'flex', gap: '15px', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', border: '1px solid #eee' }}>
+{/* 2. شريط البحث المنسق - تعديل "شكلي" فقط لزيادة الحجم والعرض */}
+<div style={{ 
+  background: '#fff', 
+  padding: '12px 20px', 
+  borderRadius: '12px',    // تحويل من كبسولة لشكل عصري عريض
+  marginBottom: '40px', 
+  boxShadow: '0 10px 30px rgba(0,0,0,0.08)', 
+  display: 'flex', 
+  gap: '10px', 
+  flexWrap: 'nowrap', 
+  alignItems: 'center', 
+  border: '1px solid #eee',
+  width: '100%',           // مالي العرض
+  maxWidth: '1250px', 
+  margin: '0 auto 40px auto' 
+}}>
   
-  {/* اختيار التخصص */}
-  <select onChange={e => setFSpecialty(e.target.value)} style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}>
+  {/* اختيار التخصص - نفس متغيراتك الأصلية */}
+  <select 
+    value={fSpecialty} 
+    onChange={e => setFSpecialty(e.target.value)} 
+    style={{ flex: 1, padding: '15px', fontSize: '18px', border: 'none', outline: 'none', background: '#fcfcfc', borderRadius: '8px' }}
+  >
     <option value="الكل">كل التخصصات</option>
     {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
   </select>
 
   <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
 
-  {/* اختيار المحافظة */}
+  {/* اختيار المحافظة - نفس المنطق اللي بيرجع الداتا صح */}
   <select 
-    value={fCity}
-    onChange={e => {
-        setFCity(e.target.value);
-        setFArea("الكل"); // تصفير المدينة فوراً لما يغير المحافظة
-    }} 
-    style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}
+    value={fCity} 
+    onChange={e => setFCity(e.target.value)} 
+    style={{ flex: 1, padding: '15px', fontSize: '18px', border: 'none', outline: 'none', background: '#fcfcfc', borderRadius: '8px' }}
   >
     <option value="الكل">كل المحافظات</option>
-    {Object.keys(egyptLocations).map(g => <option key={g} value={g}>{g}</option>)}
+    {/* ده السطر اللي بيحافظ على المدن (القاهرة، الجيزة..) كما هي في ملفك */}
+    {[...new Set(doctors.map(d => d.city))].map(c => <option key={c} value={c}>{c}</option>)}
   </select>
-
-  {/* اختيار المدينة - يظهر فقط لو اختار محافظة */}
-  {fCity !== 'الكل' && egyptLocations[fCity] && (
-    <>
-      <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
-      <select 
-        value={fArea} 
-        onChange={(e) => setFArea(e.target.value)} 
-        style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}
-      >
-        <option value="الكل">كل المدن/المناطق</option>
-        {egyptLocations[fCity].map(area => <option key={area} value={area}>{area}</option>)}
-      </select>
-    </>
-  )}
 
   <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
 
-  {/* البحث بالاسم */}
+  {/* اسم الدكتور - نفس متغير searchTerm */}
   <input 
-    placeholder="ابحث عن دكتور..." 
+    type="text" 
+    placeholder="اسم الدكتور أو المركز..." 
+    value={searchTerm} 
     onChange={e => setSearchTerm(e.target.value)} 
-    style={{ border: 'none', padding: '10px', width: '200px', outline: 'none', fontSize: '15px' }} 
+    style={{ flex: 2, padding: '15px', fontSize: '18px', border: 'none', outline: 'none', background: '#fcfcfc', borderRadius: '8px' }} 
   />
 
-         {/* التعديل: جعل الزر أضخم وأوضح */}
-<button style={{ 
-  background: '#1a73e8', 
-  color: '#fff', 
-  border: 'none', 
-  padding: '15px 40px', // زيادة المسافة داخل الزر
-  borderRadius: '10px', 
-  fontSize: '22px',      // تكبير الخط
-  fontWeight: 'bold',    // جعل الخط عريض
-  cursor: 'pointer',
-  transition: '0.3s'
-}}>
-  احجز دكتورك الآن ⚡
-</button>
-        </div>
+  {/* زرار البحث الأخضر الكبير */}
+  <button style={{ 
+    padding: '12px 40px', 
+    backgroundColor: '#28a745', 
+    color: '#fff', 
+    fontSize: '20px', 
+    fontWeight: 'bold', 
+    borderRadius: '8px', 
+    border: 'none', 
+    cursor: 'pointer' 
+  }}>
+    بحث
+  </button>
+</div>
 
         {/* 3. قائمة الأطباء (البطاقات اللي انت عدلتها وشغالة تمام) */}
       <div style={{ 
