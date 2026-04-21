@@ -342,10 +342,68 @@ return (
 
 </div>
 </div>
-      <div style={{ padding: '0 20px' }}>
-        {/* 2. شريط البحث المنسق (الكبسولة) */}
-       <div style={{ background: '#fff', padding: '15px 25px', borderRadius: '50px', marginBottom: '40px', boxShadow: '0 10px 30px rgba(0,0,0,0.08)', display: 'flex', gap: '15px', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', border: '1px solid #eee' }}>
-  
+     <div style={{ padding: '0 20px', width: '100%', boxSizing: 'border-box' }}>
+  {/* 2. شريط البحث المنسق (تعديل ليكون بعرض الصفحة بالكامل) */}
+  <div style={{ 
+    background: '#fff', 
+    padding: '10px 15px', 
+    borderRadius: '12px',    // قللنا الانحناء عشان يبان احترافي في العرض الكامل
+    marginBottom: '40px', 
+    boxShadow: '0 10px 30px rgba(0,0,0,0.08)', 
+    display: 'flex', 
+    gap: '10px', 
+    flexWrap: 'nowrap',    // يمنع العناصر تنزل تحت بعض في الكمبيوتر
+    justifyContent: 'center', 
+    alignItems: 'stretch', // عشان كل العناصر تكون بنفس الارتفاع
+    border: '1px solid #eee',
+    maxWidth: '1250px',    // أقصى عرض مريح للعين في الشاشات الكبيرة
+    margin: '0 auto'       // يوسطن الشريط في نص الشاشة
+  }}>
+    
+    {/* ستايل موحد للمربعات لزيادة حجم الخط والارتفاع */}
+    {/* طبق هذا الستايل على الـ Selects والـ Input */}
+    
+    <select style={{ flex: 1, padding: '15px', fontSize: '18px', border: '1px solid #f0f0f0', borderRadius: '8px', outline: 'none', backgroundColor: '#fcfcfc' }}>
+      <option>مخ وأعصاب</option>
+    </select>
+
+    <select style={{ flex: 1, padding: '15px', fontSize: '18px', border: '1px solid #f0f0f0', borderRadius: '8px', outline: 'none', backgroundColor: '#fcfcfc' }}>
+      <option>القاهرة</option>
+    </select>
+
+    <select style={{ flex: 1, padding: '15px', fontSize: '18px', border: '1px solid #f0f0f0', borderRadius: '8px', outline: 'none', backgroundColor: '#fcfcfc' }}>
+      <option>شبرا</option>
+    </select>
+
+    <input 
+      type="text" 
+      placeholder="أو اكتب اسم الدكتور..." 
+      style={{ 
+        flex: 2,           // المربع ده هيكون أعرض شوية من الباقيين
+        padding: '15px', 
+        fontSize: '18px', 
+        border: '1px solid #f0f0f0', 
+        borderRadius: '8px', 
+        outline: 'none' 
+      }} 
+    />
+
+    {/* زر البحث الأخضر الكبير */}
+    <button style={{ 
+      padding: '0 40px', 
+      fontSize: '20px', 
+      fontWeight: 'bold', 
+      backgroundColor: '#28a745', 
+      color: '#fff', 
+      border: 'none', 
+      borderRadius: '8px', 
+      cursor: 'pointer',
+      minHeight: '55px' 
+    }}>
+      بحث
+    </button>
+  </div>
+</div>
   {/* اختيار التخصص */}
   <select onChange={e => setFSpecialty(e.target.value)} style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}>
     <option value="الكل">كل التخصصات</option>
@@ -405,7 +463,7 @@ return (
 }}>
   احجز دكتورك الآن ⚡
 </button>
-        </div>
+        
 
         {/* 3. قائمة الأطباء (البطاقات اللي انت عدلتها وشغالة تمام) */}
       <div style={{ 
