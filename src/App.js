@@ -840,10 +840,26 @@ useEffect(() => {
       
       {/* 1. شريط التنقل العلوي (النافبار) */}
       <nav style={{ 
-        padding: '15px', background: '#2c3e50', display: 'flex', 
-        justifyContent: 'center', gap: '20px', alignItems: 'center',
-        position: 'sticky', top: 0, zIndex: 1000, boxShadow: '0 2px 10px rgba(0,0,0,0.2)'
+        padding: '8px 15px', // قللنا الـ padding شوية للموبايل
+        background: '#2c3e50', 
+        display: 'flex', 
+        justifyContent: 'space-between', // عشان اللوجو يروح يمين والزراير شمال
+        alignItems: 'center',
+        position: 'sticky', 
+        top: 0, 
+        zIndex: 1000, 
+        boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+        flexWrap: 'wrap', // يمنع التداخل في الموبايل
+        gap: '10px'
       }}>
+
+        {/* --- مكان اللوجو الجديد --- */}
+        <div style={{ color: '#fff', fontSize: '20px', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => setActivePage('home')}>
+          LOGO {/* حط هنا صورة اللوجو لما تجهز */}
+        </div>
+
+        {/* --- حاوية الزراير --- */}
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'nowrap' }}>
         <button onClick={() => setActivePage('home')} style={{...navBtnStyle, backgroundColor: activePage === 'home' ? '#3498db' : 'transparent'}}>🏠 الرئيسية</button>
         <button onClick={() => setActivePage('join')} style={{...navBtnStyle, backgroundColor: activePage === 'join' ? '#3498db' : 'transparent'}}>👨‍⚕️ انضمام طبيب</button>
         
@@ -862,15 +878,16 @@ useEffect(() => {
   </button>
 )}
         {/* زر تسجيل الدخول الذكي */}
-        <div style={{ position: 'absolute', left: '20px', display: 'flex', gap: '10px' }}>
+        <div style={{ position: 'relative', left: '20px', display: 'flex', gap: '10px' }}>
             {!currentUser ? (
                 <button onClick={() => setShowLoginModal(true)} style={{...navBtnStyle, background: '#27ae60', fontSize: '14px'}}>🔐 دخول</button>
             ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#fff' }}>
-                    <span style={{ fontSize: '14px' }}>👤 {isAdmin ? 'الأدمن' : currentUser.name}</span>
-                    <button onClick={handleLogout} style={{...navBtnStyle, background: '#e74c3c', fontSize: '12px', padding: '5px 10px'}}>خروج</button>
-                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  <span>👤</span>
+  <span style={{ fontSize: '12px' }}>{isAdmin ? 'الأدمن' : currentUser.name}</span>
+</div>
             )}
+        </div>
         </div>
       </nav>
 
