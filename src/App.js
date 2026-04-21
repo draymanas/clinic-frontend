@@ -342,7 +342,7 @@ return (
 
 
 </div>
-      <div style={{ padding: '0 20px' }}>
+     <div style={{ width: '100%' }}>
 {/* 2. شريط البحث المنسق - Full Width Edition */}
 <div style={{ 
     background: '#fff', 
