@@ -342,112 +342,70 @@ return (
 
 </div>
 </div>
-     <div style={{ padding: '0 20px', width: '100%', boxSizing: 'border-box' }}>
-  {/* 2. شريط البحث المنسق (تعديل ليكون بعرض الصفحة بالكامل) */}
-  <div style={{ 
+      <div style={{ padding: '0 20px' }}>
+{/* 2. شريط البحث المنسق - Full Width Edition */}
+<div style={{ 
     background: '#fff', 
-    padding: '10px 15px', 
-    borderRadius: '12px',    // قللنا الانحناء عشان يبان احترافي في العرض الكامل
+    padding: '10px 20px', 
+    borderRadius: '12px', 
     marginBottom: '40px', 
     boxShadow: '0 10px 30px rgba(0,0,0,0.08)', 
     display: 'flex', 
     gap: '10px', 
-    flexWrap: 'nowrap',    // يمنع العناصر تنزل تحت بعض في الكمبيوتر
-    justifyContent: 'center', 
-    alignItems: 'stretch', // عشان كل العناصر تكون بنفس الارتفاع
+    flexWrap: 'nowrap', 
+    alignItems: 'center', 
     border: '1px solid #eee',
-    maxWidth: '1250px',    // أقصى عرض مريح للعين في الشاشات الكبيرة
-    margin: '0 auto'       // يوسطن الشريط في نص الشاشة
-  }}>
-    
-    {/* ستايل موحد للمربعات لزيادة حجم الخط والارتفاع */}
-    {/* طبق هذا الستايل على الـ Selects والـ Input */}
-    
-    <select style={{ flex: 1, padding: '15px', fontSize: '18px', border: '1px solid #f0f0f0', borderRadius: '8px', outline: 'none', backgroundColor: '#fcfcfc' }}>
-      <option>مخ وأعصاب</option>
+    width: '100%',
+    maxWidth: '1200px',
+    margin: '0 auto 40px auto'
+}}>
+    {/* اختيار التخصص */}
+    <select 
+        value={fSpecialty}
+        onChange={e => setFSpecialty(e.target.value)} 
+        style={{ flex: 1, padding: '15px', fontSize: '18px', border: 'none', outline: 'none', background: '#fcfcfc', borderRadius: '8px' }}
+    >
+        <option value="الكل">كل التخصصات</option>
+        {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
     </select>
 
-    <select style={{ flex: 1, padding: '15px', fontSize: '18px', border: '1px solid #f0f0f0', borderRadius: '8px', outline: 'none', backgroundColor: '#fcfcfc' }}>
-      <option>القاهرة</option>
+    <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
+
+    {/* اختيار المحافظة */}
+    <select 
+        value={fCity}
+        onChange={e => setFCity(e.target.value)} 
+        style={{ flex: 1, padding: '15px', fontSize: '18px', border: 'none', outline: 'none', background: '#fcfcfc', borderRadius: '8px' }}
+    >
+        <option value="الكل">كل المحافظات</option>
+        {cities.map(c => <option key={c} value={c}>{c}</option>)}
     </select>
 
-    <select style={{ flex: 1, padding: '15px', fontSize: '18px', border: '1px solid #f0f0f0', borderRadius: '8px', outline: 'none', backgroundColor: '#fcfcfc' }}>
-      <option>شبرا</option>
-    </select>
+    <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
 
+    {/* إدخال اسم الدكتور */}
     <input 
-      type="text" 
-      placeholder="أو اكتب اسم الدكتور..." 
-      style={{ 
-        flex: 2,           // المربع ده هيكون أعرض شوية من الباقيين
-        padding: '15px', 
-        fontSize: '18px', 
-        border: '1px solid #f0f0f0', 
-        borderRadius: '8px', 
-        outline: 'none' 
-      }} 
+        type="text"
+        placeholder="اسم الدكتور أو المركز..."
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
+        style={{ flex: 2, padding: '15px', fontSize: '18px', border: 'none', outline: 'none', background: '#fcfcfc', borderRadius: '8px' }}
     />
 
-    {/* زر البحث الأخضر الكبير */}
+    {/* زر البحث */}
     <button style={{ 
-      padding: '0 40px', 
-      fontSize: '20px', 
-      fontWeight: 'bold', 
-      backgroundColor: '#28a745', 
-      color: '#fff', 
-      border: 'none', 
-      borderRadius: '8px', 
-      cursor: 'pointer',
-      minHeight: '55px' 
+        padding: '12px 35px', 
+        fontSize: '18px', 
+        fontWeight: 'bold', 
+        backgroundColor: '#28a745', 
+        color: '#fff', 
+        border: 'none', 
+        borderRadius: '8px', 
+        cursor: 'pointer' 
     }}>
-      بحث
+        بحث
     </button>
-  </div>
 </div>
-  {/* اختيار التخصص */}
-  <select onChange={e => setFSpecialty(e.target.value)} style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}>
-    <option value="الكل">كل التخصصات</option>
-    {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
-  </select>
-
-  <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
-
-  {/* اختيار المحافظة */}
-  <select 
-    value={fCity}
-    onChange={e => {
-        setFCity(e.target.value);
-        setFArea("الكل"); // تصفير المدينة فوراً لما يغير المحافظة
-    }} 
-    style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}
-  >
-    <option value="الكل">كل المحافظات</option>
-    {Object.keys(egyptLocations).map(g => <option key={g} value={g}>{g}</option>)}
-  </select>
-
-  {/* اختيار المدينة - يظهر فقط لو اختار محافظة */}
-  {fCity !== 'الكل' && egyptLocations[fCity] && (
-    <>
-      <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
-      <select 
-        value={fArea} 
-        onChange={(e) => setFArea(e.target.value)} 
-        style={{ border: 'none', padding: '10px', fontSize: '15px', outline: 'none', background: 'transparent', cursor: 'pointer' }}
-      >
-        <option value="الكل">كل المدن/المناطق</option>
-        {egyptLocations[fCity].map(area => <option key={area} value={area}>{area}</option>)}
-      </select>
-    </>
-  )}
-
-  <div style={{ width: '1px', height: '30px', background: '#eee' }}></div>
-
-  {/* البحث بالاسم */}
-  <input 
-    placeholder="ابحث عن دكتور..." 
-    onChange={e => setSearchTerm(e.target.value)} 
-    style={{ border: 'none', padding: '10px', width: '200px', outline: 'none', fontSize: '15px' }} 
-  />
 
          {/* التعديل: جعل الزر أضخم وأوضح */}
 <button style={{ 
@@ -463,7 +421,7 @@ return (
 }}>
   احجز دكتورك الآن ⚡
 </button>
-        
+        </div>
 
         {/* 3. قائمة الأطباء (البطاقات اللي انت عدلتها وشغالة تمام) */}
       <div style={{ 
