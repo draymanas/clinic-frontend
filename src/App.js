@@ -861,9 +861,14 @@ useEffect(() => {
         {/* --- حاوية الزراير --- */}
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'nowrap' }}>
         <button onClick={() => setActivePage('home')} style={{...navBtnStyle, backgroundColor: activePage === 'home' ? '#3498db' : 'transparent'}}>🏠 الرئيسية</button>
-       {!isAdmin && (
-  <button onClick={() => setActivePage('join')} style={{...navBtnStyle, backgroundColor: activePage === 'join' ? '#3498db' : 'transparent'}}>👨‍⚕️ انضمام طبيب</button>
-)} 
+       {(currentUser?.role !== 'admin' && currentUser?.role !== 'patient') && (
+  <button 
+    onClick={() => setActivePage('join')} 
+    style={{...navBtnStyle, backgroundColor: activePage === 'join' ? '#3498db' : 'transparent'}}
+  >
+    👨‍⚕️ انضمام طبيب
+  </button>
+)}
         {isAdmin && (
           <>
             <button onClick={() => setActivePage('admin')} style={{...navBtnStyle, backgroundColor: activePage === 'admin' ? '#e67e22' : 'transparent'}}>⚙️ الإدارة</button>
