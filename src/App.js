@@ -856,17 +856,25 @@ useEffect(() => {
         {/* --- مكان اللوجو الجديد --- */}
 <div 
   onClick={() => setActivePage('home')} 
-  style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+  style={{ 
+    cursor: 'pointer', 
+    display: 'flex', 
+    alignItems: 'center',
+    height: '100%' // نخلي الحاوية تاخد الارتفاع كامل
+  }}
 >
   <img 
-    src="/logo512.png"  // شلنا كلمة icons لأن الصورة في بابلك مباشرة
+    src="/logo512.png" 
     alt="منصة دكتور" 
     style={{ 
-      height: '45px',    
-      width: 'auto',     
-      objectFit: 'contain'
+      // كبرنا الارتفاع لـ 60px ليناسب الهيدر، واستخدمنا Object-fit عشان ميتمطش
+      height: '60px', 
+      maxHeight: '100%', // عشان ميخرجش بره الهيدر في الشاشات الأصغر
+      width: 'auto', 
+      objectFit: 'contain',
+      paddingRight: '10px' // مسافة صغيرة من اليمين عشان ميخبطش في طرف الشاشة
     }} 
-    onError={(e) => { e.target.src = "/logo.png" }} // حل احتياطي لو 512 فيها مشكلة يشغل التانية
+    onError={(e) => { e.target.src = "/logo.png" }} 
   />
 </div>
 
