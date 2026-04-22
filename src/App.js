@@ -861,8 +861,9 @@ useEffect(() => {
         {/* --- حاوية الزراير --- */}
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'nowrap' }}>
         <button onClick={() => setActivePage('home')} style={{...navBtnStyle, backgroundColor: activePage === 'home' ? '#3498db' : 'transparent'}}>🏠 الرئيسية</button>
-        <button onClick={() => setActivePage('join')} style={{...navBtnStyle, backgroundColor: activePage === 'join' ? '#3498db' : 'transparent'}}>👨‍⚕️ انضمام طبيب</button>
-        
+       {!isAdmin && (
+  <button onClick={() => setActivePage('join')} style={{...navBtnStyle, backgroundColor: activePage === 'join' ? '#3498db' : 'transparent'}}>👨‍⚕️ انضمام طبيب</button>
+)} 
         {isAdmin && (
           <>
             <button onClick={() => setActivePage('admin')} style={{...navBtnStyle, backgroundColor: activePage === 'admin' ? '#e67e22' : 'transparent'}}>⚙️ الإدارة</button>
@@ -885,20 +886,29 @@ useEffect(() => {
           ) : (
             <>
               {/* زرار الخروج بقى فوق خالص */}
-              <button 
-                onClick={handleLogout} 
-                style={{...navBtnStyle, backgroundColor: '#e74c3c', fontSize: '11px', padding: '2px 8px', width: '100%'}}
-              >
-                خروج
-              </button>
+              {/* زرار الخروج - تم تكبيره واستغلال المساحة الفوقية */}
+      <button 
+        onClick={handleLogout} 
+        style={{
+          ...navBtnStyle, 
+          backgroundColor: '#e74c3c', 
+          fontSize: '14px',        // كبرنا الخط شوية
+          padding: '8px 15px',     // زودنا المساحة جوه الزرار عشان يكبر أفقياً ورأسياً
+          width: '100%',           // عشان يملأ عرض العمود الصغير بتاعه
+          marginBottom: '5px',      // مسافة بسيطة بينه وبين أيقونة الشخص اللي تحته
+          marginTop: '2px'         // استغلال المساحة الفوقية اللي قولت عليها
+        }}
+      >
+        خروج
+      </button>
 
-              {/* الاسم والأيقونة تحت زرار الخروج */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: '1' }}>
-                <span style={{ fontSize: '16px' }}>👤</span>
-                <span style={{ fontSize: '10px', color: '#fff', textAlign: 'center' }}>
-                  {isAdmin ? 'الأدمن' : currentUser.name}
-                </span>
-              </div>
+      {/* الاسم والأيقونة تحت زرار الخروج */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: '1' }}>
+        <span style={{ fontSize: '18px' }}>👤</span>
+        <span style={{ fontSize: '10px', color: '#fff', textAlign: 'center' }}>
+          {isAdmin ? 'الأدمن' : currentUser.name}
+        </span>
+      </div>
             </>
           )}
         </div>
