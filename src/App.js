@@ -878,26 +878,30 @@ useEffect(() => {
   </button>
 )}
         {/* زر تسجيل الدخول الذكي */}
-{/* زر تسجيل الدخول الذكي - مستبدل بالكامل ليعود زر الخروج */}
-<div style={{ position: 'relative', left: '20px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-  {!currentUser ? (
-    <button onClick={() => setShowLoginModal(true)} style={{...navBtnStyle, background: '#27ae60', fontSize: '14px'}}>🔐 دخول</button>
-  ) : (
-    <>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <span>👤</span>
-        <span style={{ fontSize: '12px', color: '#fff' }}>{isAdmin ? 'الأدمن' : currentUser.name}</span>
-      </div>
-      
-      <button 
-        onClick={handleLogout} 
-        style={{...navBtnStyle, backgroundColor: '#e74c3c', fontSize: '12px', padding: '5px 10px'}}
-      >
-        خروج
-      </button>
-    </>
-  )} 
-</div>
+{/* زر تسجيل الدخول الذكي - نسخة منظمة (خروج فوق الاسم) */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
+          {!currentUser ? (
+            <button onClick={() => setShowLoginModal(true)} style={{...navBtnStyle, background: '#27ae60', fontSize: '14px'}}>🔐 دخول</button>
+          ) : (
+            <>
+              {/* زرار الخروج بقى فوق خالص */}
+              <button 
+                onClick={handleLogout} 
+                style={{...navBtnStyle, backgroundColor: '#e74c3c', fontSize: '11px', padding: '2px 8px', width: '100%'}}
+              >
+                خروج
+              </button>
+
+              {/* الاسم والأيقونة تحت زرار الخروج */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: '1' }}>
+                <span style={{ fontSize: '16px' }}>👤</span>
+                <span style={{ fontSize: '10px', color: '#fff', textAlign: 'center' }}>
+                  {isAdmin ? 'الأدمن' : currentUser.name}
+                </span>
+              </div>
+            </>
+          )}
+        </div>
 </div>
       </nav>
 
