@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 // 1. استيراد الصفحة في الأعلى
 import DirectBooking from './DirectBooking';
-
+import logo from './logo.png';
 
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
