@@ -859,13 +859,14 @@ useEffect(() => {
   style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
 >
   <img 
-    src="/icons/icon-512.webp"  // ده المسار المباشر للصورة اللي اخترناها
+    src="/logo512.png"  // شلنا كلمة icons لأن الصورة في بابلك مباشرة
     alt="منصة دكتور" 
     style={{ 
-      height: '45px',    // المقاس ده هيكون مثالي جداً ومريح للعين
-      width: 'auto',     // عشان يحافظ على أبعاد اللوجو ميبقاش ممطوط
+      height: '45px',    
+      width: 'auto',     
       objectFit: 'contain'
     }} 
+    onError={(e) => { e.target.src = "/logo.png" }} // حل احتياطي لو 512 فيها مشكلة يشغل التانية
   />
 </div>
 
