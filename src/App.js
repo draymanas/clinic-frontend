@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 // 1. استيراد الصفحة في الأعلى
 import DirectBooking from './DirectBooking';
-import logo from './logo.png';
+
 
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
@@ -859,12 +859,12 @@ useEffect(() => {
   style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
 >
   <img 
-    src="/logo.png" 
+    src="/icons/icon-512.webp"  // ده المسار المباشر للصورة اللي اخترناها
     alt="منصة دكتور" 
     style={{ 
-      height: '40px', 
-      width: 'auto', 
-      objectFit: 'contain' 
+      height: '45px',    // المقاس ده هيكون مثالي جداً ومريح للعين
+      width: 'auto',     // عشان يحافظ على أبعاد اللوجو ميبقاش ممطوط
+      objectFit: 'contain'
     }} 
   />
 </div>
