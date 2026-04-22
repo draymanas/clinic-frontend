@@ -854,9 +854,20 @@ useEffect(() => {
       }}>
 
         {/* --- مكان اللوجو الجديد --- */}
-        <div style={{ color: '#fff', fontSize: '20px', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => setActivePage('home')}>
-          LOGO {/* حط هنا صورة اللوجو لما تجهز */}
-        </div>
+<div 
+  onClick={() => setActivePage('home')} 
+  style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+>
+  <img 
+    src="/logo.png" 
+    alt="منصة دكتور" 
+    style={{ 
+      height: '40px', 
+      width: 'auto', 
+      objectFit: 'contain' 
+    }} 
+  />
+</div>
 
         {/* --- حاوية الزراير --- */}
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'nowrap' }}>
