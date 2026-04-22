@@ -880,8 +880,10 @@ useEffect(() => {
 
         {/* --- حاوية الزراير --- */}
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'nowrap' }}>
-        <button onClick={() => setActivePage('home')} style={{...navBtnStyle, backgroundColor: activePage === 'home' ? '#3498db' : 'transparent'}}>🏠 الرئيسية</button>
-       {(currentUser?.role !== 'admin' && currentUser?.role !== 'patient') && (
+        {currentUser?.role !== 'doctor' && (
+  <button onClick={() => setActivePage('home')} style={{...navBtnStyle, backgroundColor: activePage === 'home' ? '#3498db' : 'transparent'}}>🏠 الرئيسية</button>
+)}
+ {(currentUser?.role !== 'admin' && currentUser?.role !== 'patient') && (
   <button 
     onClick={() => setActivePage('join')} 
     style={{...navBtnStyle, backgroundColor: activePage === 'join' ? '#3498db' : 'transparent'}}
