@@ -1063,35 +1063,33 @@ useEffect(() => {
             onChange={(e) => setCurrentUser({...currentUser, tempPassword: e.target.value})} 
         />
         <button 
-            onClick={() => {
-                // البحث بالرقم والباسورد معاً والتأكد من التفعيل
-                const doc = doctors.find(d => 
-    String(d.id) === String(currentUser.tempId) && // البحث بالكود أولاً
-    d.mobile === currentUser.tempMobile && 
-    d.password === currentUser.tempPassword && 
-    d.is_active
-);
-                
-                if(doc) {
-                    const doctorData = { ...doc, role: 'doctor' };
+onClick={() => {
+    // 1. البحث بالثلاثي (الكود + الرقم + الباسورد)
+    const doc = doctors.find(d => 
+        String(d.id) === String(currentUser?.tempId) && 
+        d.mobile === currentUser?.tempMobile && 
+        d.password === currentUser?.tempPassword && 
+        d.is_active
+    );
 
-                    localStorage.setItem('saved_doctor_id', currentUser.tempId);
-    
-    setCurrentUser(doctorData);
-                    
-                    // 1. تحديث الحالة
-                    setCurrentUser(doctorData);
-                    
-                    // 2. الحفظ في المتصفح
-                    localStorage.setItem('saved_user', JSON.stringify(doctorData));
-                    
-                    // 3. التوجه للوحة التحكم وإغلاق المودال
-                    setActivePage('doctor_dashboard'); 
-                    setShowLoginModal(false);
-                } else {
-                    alert("عذراً، رقم الموبايل أو كلمة المرور غير صحيحة، أو الحساب لم يفعل بعد.");
-                }
-            }}
+    if (doc) {
+        // 2. تجهيز بيانات الطبيب مع الدور (Role)
+        const doctorData = { ...doc, role: 'doctor' };
+
+        // 3. الحفظ في الـ LocalStorage (عشان الموقع يفتكره)
+        localStorage.setItem('saved_doctor_id', doc.id); // حفظ الكود للخانة
+        localStorage.setItem('saved_user', JSON.stringify(doctorData)); // حفظ الجلسة كاملة
+
+        // 4. تحديث الحالة في البرنامج (مرة واحدة بس)
+        setCurrentUser(doctorData);
+
+        // 5. التوجه للوحة التحكم وإغلاق نافذة الدخول
+        setActivePage('doctor_dashboard'); 
+        setShowLoginModal(false);
+    } else {
+        alert("عذراً، تأكد من (الكود) أو (رقم الموبايل) أو (كلمة المرور)، أو أن الحساب لم يفعل بعد.");
+    }
+}}
             style={{ 
                 background: '#3498db', 
                 color: '#fff', 
