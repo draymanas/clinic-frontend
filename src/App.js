@@ -745,7 +745,7 @@ const doctorAppointments = appointments.filter(app => {
     <option value="">-- اختر الدكتور والفرع --</option>
     {doctors.map(d => (
       <option key={d.id} value={d.id}>
-        {d.name} - ({d.d.area || 'فرع عام'})
+        {d.name} - ({d.area || 'فرع عام'})
       </option>
     ))}
   </select>
