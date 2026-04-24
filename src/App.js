@@ -789,7 +789,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null); 
   const [showLoginModal, setShowLoginModal] = useState(false); 
   const [loginId, setLoginId] = useState(''); // ده عشان كود الدكتور
-
+  const [selectedDoctorId, setSelectedDoctorId] = useState(null);
   const fetchData = async () => {
     try {
       const resDocs = await fetch('https://clinic-api-ig3d.onrender.com/doctors');
