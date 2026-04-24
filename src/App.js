@@ -799,26 +799,32 @@ function App() {
     } catch (e) { console.error("Error fetching data"); }
   };
 // حط السطر ده في المكان اللي بتبدأ فيه عملية الـ Login للطلب
-const savedId = localStorage.getItem('saved_doctor_id');
-if (savedId && !currentUser.tempId) {
-    setCurrentUser(prev => ({...prev, tempId: savedId}));
-}
-  useEffect(() => { fetchData(); }, []);
+
 // --- بعد السطر 647 ---
 useEffect(() => {
+    // 1. جلب بيانات المستخدم المسجل فعلياً (لو موجود)
     const savedUser = localStorage.getItem('saved_user');
+    const savedId = localStorage.getItem('saved_doctor_id');
+
     if (savedUser) {
         const user = JSON.parse(savedUser);
         setCurrentUser(user);
-         
-        // توجيه تلقائي بناءً على الرول
+
+        // توجيه تلقائي بناءً على الروول
         if (user.role === 'doctor') {
             setActivePage('doctor_dashboard');
         } else if (user.role === 'admin') {
             setIsAdmin(true);
             setActivePage('admin_dashboard');
         }
+    } 
+    // 2. لو مفيش مستخدم مسجل دخول، بس فيه "كود دكتور" محفوظ
+    else if (savedId) {
+        setCurrentUser({ tempId: savedId }); 
     }
+
+    // جلب البيانات الأساسية من السيرفر
+    fetchData(); 
 }, []);
 
 // --- أضف الكود الجديد هنا ---
