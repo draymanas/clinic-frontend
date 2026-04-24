@@ -838,19 +838,17 @@ useEffect(() => {
     const path = window.location.pathname;
     
     if (path.includes('/dr/')) {
-      // 1. استخراج الكود
-      const idFromUrl = path.split('/dr/')[1];
-      
-      // 2. توجيه الـ React لفتح صفحة الحجز
-      setActivePage('direct_booking_page');
-      
-      // 3. تحديث الـ ID الخاص بالدكتور المختار
-      setSelectedDoctorId(idFromUrl); 
-
-      // 4. *** التركة هنا ***
-      // بنمسح الرابط من فوق وبنرجعه للرئيسية "/" بدون ما الصفحة تعمل Refresh
-      // كدة لو المريض حب يرجع للهوم، الرابط فوق بقى نضيف ومستعد
-      window.history.replaceState({}, '', '/');
+        const idFromUrl = path.split('/dr/')[1];
+        
+        // 1. ثبت بيانات الدكتور وصفحة الحجز فوراً
+        setSelectedDoctorId(idFromUrl); 
+        setActivePage('direct_booking_page');
+        
+        // 2. انتظر لحظة صغيرة جداً قبل مسح الرابط
+        // الـ 100 مللي ثانية دي كفيلة تخلي الـ React يلحق يفتح الصفحة
+        setTimeout(() => {
+            window.history.replaceState({}, '', '/');
+        }, 100); 
     }
 }, []);
   const navBtnStyle = {
