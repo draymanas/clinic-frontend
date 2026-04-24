@@ -836,17 +836,23 @@ else if (savedId) {
 // البحث عن هذا الجزء وتعديله
 useEffect(() => {
     const path = window.location.pathname;
+    
     if (path.includes('/dr/')) {
-      // 1. استخراج الرقم
+      // 1. استخراج الكود
       const idFromUrl = path.split('/dr/')[1];
       
-      // 2. أهم خطوة: توجيه الـ React لفتح صفحة الحجز المباشر
+      // 2. توجيه الـ React لفتح صفحة الحجز
       setActivePage('direct_booking_page');
       
-      // ملحوظة: لو عندك متغير بيشيل الـ id بتاع الدكتور المختار، حدثه هنا برضه
-      // setSelectedDoctorId(idFromUrl); 
+      // 3. تحديث الـ ID الخاص بالدكتور المختار
+      setSelectedDoctorId(idFromUrl); 
+
+      // 4. *** التركة هنا ***
+      // بنمسح الرابط من فوق وبنرجعه للرئيسية "/" بدون ما الصفحة تعمل Refresh
+      // كدة لو المريض حب يرجع للهوم، الرابط فوق بقى نضيف ومستعد
+      window.history.replaceState({}, '', '/');
     }
-  }, []);
+}, []);
   const navBtnStyle = {
     background: 'none', border: 'none', color: '#fff', cursor: 'pointer',
     fontWeight: 'bold', fontSize: '16px', padding: '10px 15px', borderRadius: '8px',
