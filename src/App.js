@@ -817,12 +817,17 @@ useEffect(() => {
             setIsAdmin(true);
             setActivePage('admin_dashboard');
         }
+        
     } 
     // 2. لو مفيش مستخدم مسجل دخول، بس فيه "كود دكتور" محفوظ
-    else if (savedId) {
-        setCurrentUser({ tempId: savedId }); 
+else if (savedId) {
+        setCurrentUser({ 
+            role: 'doctor_check', // عشان نضمن إن المودال يفتح على خانات الدكتور
+            tempId: savedId, 
+            tempMobile: '', 
+            tempPassword: '' 
+        });
     }
-
     // جلب البيانات الأساسية من السيرفر
     fetchData(); 
 }, []);
