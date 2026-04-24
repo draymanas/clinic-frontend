@@ -788,6 +788,7 @@ function App() {
   const [activePage, setActivePage] = useState('home'); 
   const [currentUser, setCurrentUser] = useState(null); 
   const [showLoginModal, setShowLoginModal] = useState(false); 
+  const [loginId, setLoginId] = useState(''); // ده عشان كود الدكتور
 
   const fetchData = async () => {
     try {
@@ -797,7 +798,11 @@ function App() {
       setAppointments(await resApps.json());
     } catch (e) { console.error("Error fetching data"); }
   };
-
+// حط السطر ده في المكان اللي بتبدأ فيه عملية الـ Login للطلب
+const savedId = localStorage.getItem('saved_doctor_id');
+if (savedId && !currentUser.tempId) {
+    setCurrentUser(prev => ({...prev, tempId: savedId}));
+}
   useEffect(() => { fetchData(); }, []);
 // --- بعد السطر 647 ---
 useEffect(() => {
@@ -1030,6 +1035,12 @@ useEffect(() => {
 {currentUser?.role === 'doctor_check' && (
     <div style={{ display: 'grid', gap: '10px' }}>
         <input 
+    placeholder="كود الدكتور (ID)" 
+    style={{...inputStyle, backgroundColor: '#fff9e6'}} // لون مميز للكود
+    value={currentUser.tempId || ''}
+    onChange={(e) => setCurrentUser({...currentUser, tempId: e.target.value})} 
+/>
+        <input 
             placeholder="رقم الموبايل المسجل" 
             style={inputStyle} 
             onChange={(e) => setCurrentUser({...currentUser, tempMobile: e.target.value})} 
@@ -1044,13 +1055,18 @@ useEffect(() => {
             onClick={() => {
                 // البحث بالرقم والباسورد معاً والتأكد من التفعيل
                 const doc = doctors.find(d => 
-                    d.mobile === currentUser.tempMobile && 
-                    d.password === currentUser.tempPassword && 
-                    d.is_active
-                );
+    String(d.id) === String(currentUser.tempId) && // البحث بالكود أولاً
+    d.mobile === currentUser.tempMobile && 
+    d.password === currentUser.tempPassword && 
+    d.is_active
+);
                 
                 if(doc) {
                     const doctorData = { ...doc, role: 'doctor' };
+
+                    localStorage.setItem('saved_doctor_id', currentUser.tempId);
+    
+    setCurrentUser(doctorData);
                     
                     // 1. تحديث الحالة
                     setCurrentUser(doctorData);
