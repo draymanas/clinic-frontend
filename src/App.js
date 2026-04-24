@@ -716,12 +716,12 @@ const doctorAppointments = appointments.filter(app => {
   });
 
   // جلب بيانات الدكتور المختار (عشان نعرف سعر كشفه)
-  const currentDoc = doctors.find(d => d.name === selectedDocName);
+ const currentDoc = doctors.find(d => Number(d.id) === Number(selectedDocId));
   const totalAmount = doctorAppointments.length * (currentDoc?.fee || 0);
   const platformFee = totalAmount * 0.20; // نسبة الـ 20%
   const finalMessage = `
 🧾 فاتورة مستحقات المنصة - شهر ${selectedMonth}
-👨‍⚕️ دكتور: ${selectedDocName}
+👨‍⚕️ دكتور: ${currentDoc?.name || 'غير محدد'}
 📊 عدد الحجوزات: ${doctorAppointments.length}
 💰 إجمالي الكشوفات: ${totalAmount} ج.م
 🏦 نسبة المنصة (20%): ${platformFee} ج.م
