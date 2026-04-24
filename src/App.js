@@ -823,7 +823,7 @@ useEffect(() => {
 else if (savedId) {
         setCurrentUser({ 
             role: 'doctor_check', // عشان نضمن إن المودال يفتح على خانات الدكتور
-            tempId: savedId, 
+            tempId: savedId || '', // <--- ده التغيير الجوهري
             tempMobile: '', 
             tempPassword: '' 
         });
