@@ -810,7 +810,7 @@ useEffect(() => {
     if (savedUser) {
         const user = JSON.parse(savedUser);
         setCurrentUser(user);
-        
+         
         // توجيه تلقائي بناءً على الرول
         if (user.role === 'doctor') {
             setActivePage('doctor_dashboard');
