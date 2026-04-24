@@ -696,13 +696,13 @@ function AdminPage({ doctors, appointments, fetchData }) {
 }
 
 function AccountingPage({ doctors, appointments }) {
-  const [selectedDocName, setSelectedDocName] = useState('');
+  const [selectedDocId, setSelectedDocId] = useState('');
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
 
   // فلترة الحجوزات بناءً على الدكتور والشهر
 const doctorAppointments = appointments.filter(app => {
     // 1. الربط بالـ ID (أمان أعلى ضد تشابه الأسماء)
-    const currentDoc = doctors.find(d => d.name === selectedDocName);
+    const currentDoc = doctors.find(d => d.id === parseInt(selectedDocId));
     const isSameDoctor = Number(app.doctor_id) === Number(currentDoc?.id);
 
     // 2. استخدام حقل booking_date الفعلي من الجدول
@@ -736,12 +736,21 @@ const doctorAppointments = appointments.filter(app => {
     <div style={{ padding: '30px', direction: 'rtl', backgroundColor: '#f4f7f6', minHeight: '100vh' }}>
       <h2 style={{ textAlign: 'center', color: '#2c3e50' }}>💰 نظام الحسابات والتحصيل</h2>
       
-      <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '20px' }}>
-        <select onChange={e => setSelectedDocName(e.target.value)} style={{ padding: '10px', borderRadius: '8px' }}>
-          <option value="">-- اختر الدكتور --</option>
-          {doctors.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
-        </select>
+     <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '20px' }}>
+  <select 
+    onChange={e => setSelectedDocId(e.target.value)} 
+    value={selectedDocId}
+    style={{ padding: '10px', borderRadius: '8px' }}
+  >
+    <option value="">-- اختر الدكتور والفرع --</option>
+    {doctors.map(d => (
+      <option key={d.id} value={d.id}>
+        {d.name} - ({d.clinic_location || 'فرع عام'})
+      </option>
+    ))}
+  </select>
 
+  {/* كود اختيار الشهر هيفضل زي ما هو تحتها */}
         <select onChange={e => setSelectedMonth(e.target.value)} value={selectedMonth} style={{ padding: '10px', borderRadius: '8px' }}>
           {Array.from({ length: 12 }, (_, i) => (
             <option key={i + 1} value={i + 1}>شهر {i + 1}</option>
@@ -749,7 +758,7 @@ const doctorAppointments = appointments.filter(app => {
         </select>
       </div>
 
-      {selectedDocName && (
+      {selectedDocId && (
         <div style={{ background: '#fff', padding: '20px', borderRadius: '15px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', maxWidth: '600px', margin: '0 auto' }}>
           <h3 style={{ borderBottom: '2px solid #eee', paddingBottom: '10px' }}>تفاصيل الفاتورة</h3>
           <p>عدد الحجوزات المكتملة: <b>{doctorAppointments.length}</b></p>
