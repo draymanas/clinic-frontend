@@ -975,8 +975,28 @@ useEffect(() => {
                 
                 <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
     <button onClick={() => setCurrentUser({role: 'patient'})} style={{flex:1, padding: '10px', cursor:'pointer', borderRadius: '8px', border: currentUser?.role === 'patient' ? '2px solid #3498db' : '1px solid #ddd'}}>أنا مريض</button>
-    <button onClick={() => setCurrentUser({role: 'doctor_check'})} style={{flex:1, padding: '10px', cursor:'pointer', borderRadius: '8px', border: currentUser?.role === 'doctor_check' ? '2px solid #3498db' : '1px solid #ddd'}}>أنا طبيب</button>
-    <button onClick={() => setCurrentUser({role: 'admin_check'})} style={{flex:1, padding: '10px', cursor:'pointer', borderRadius: '8px', border: currentUser?.role === 'admin_check' ? '2px solid #3498db' : '1px solid #ddd'}}>أنا أدمن</button>
+   <button 
+  onClick={() => {
+    // 1. روح هات الكود المحفوظ من ذاكرة المتصفح
+    const savedId = localStorage.getItem('saved_doctor_id') || '';
+    
+    // 2. حط الـ Role ومعاه الكود المحفوظ فوراً
+    setCurrentUser({
+      role: 'doctor_check',
+      tempId: savedId // كدة الكود هيظهر في الخانة أول ما تدوس على الزرار
+    });
+  }} 
+  style={{
+    flex:1, 
+    padding: '10px', 
+    cursor:'pointer', 
+    borderRadius: '8px', 
+    border: currentUser?.role === 'doctor_check' ? '2px solid #3498db' : '1px solid #ddd'
+  }}
+>
+  أنا طبيب
+</button>
+ <button onClick={() => setCurrentUser({role: 'admin_check'})} style={{flex:1, padding: '10px', cursor:'pointer', borderRadius: '8px', border: currentUser?.role === 'admin_check' ? '2px solid #3498db' : '1px solid #ddd'}}>أنا أدمن</button>
 </div>
 {currentUser?.role === 'patient' && (
     <div style={{ display: 'grid', gap: '10px' }}>
