@@ -521,8 +521,8 @@ return (
   {/* إضافة اختصار العنوان التفصيلي هنا */}
   {doc.address && (
     <span style={{ 
-      color: '#666666', // لون رمادي لتمييز العنوان عن المنطقة الأساسية
-      fontSize: '14px', 
+      color: '#070101', // لون رمادي لتمييز العنوان عن المنطقة الأساسية
+      fontSize: '16px', 
       marginRight: '8px',
       fontWeight: 'normal' // خط أخف قليلاً لراحة العين
     }}>
@@ -533,13 +533,13 @@ return (
 
 {/* مربع قيمة الكشف كما هو */}
 <div style={{
-    backgroundColor: '#fff5f5', 
-    border: '1px solid #ffcccc', 
+    backgroundColor: '#85df51', 
+    border: '1px solid #3f69df', 
     borderRadius: '8px',
     padding: '5px 15px',
     margin: '10px 0',
     display: 'inline-block', 
-    color: '#d9534f', 
+    color: '#070c03', 
     fontWeight: 'bold',
     fontSize: '15px'
 }}>
