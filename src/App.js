@@ -492,9 +492,9 @@ return (
                         style={{
                             background: 'none',
                             border: 'none',
-                            color: '#007bff',
+                            color: '#01060c',
                             cursor: 'pointer',
-                            fontSize: '13px',
+                            fontSize: '14px',
                             fontWeight: 'bold',
                             padding: '0',
                             display: 'block',
