@@ -273,7 +273,7 @@ return (
     maxWidth: '1200px',
     padding: '25px',
     backgroundColor: '#fff',
-    border: '2px solid #ff0000', 
+    border: '2px solid #3eeb09', 
     borderRadius: '15px', // جعلت الزوايا دائرية أكثر لتناسب التصميم
     boxShadow: '0 4px 15px rgba(0,0,0,0.05)'
   }}>
