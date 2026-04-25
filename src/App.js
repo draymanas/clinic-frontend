@@ -467,7 +467,7 @@ return (
         // ده الستايل اللي هيجبر النص يتقص
         const truncatedStyle = {
             fontSize: '15px',
-            color: '#444',
+            color: '#0c0404',
             fontStyle: 'italic',
             lineHeight: '1.5em',
             margin: '5px 0',
