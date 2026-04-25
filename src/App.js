@@ -545,8 +545,8 @@ return (
 }}>
     قيمة الكشف: {doc.fee || '0'} جنيه
 </div>
-<div style={{ color: '#0a0801', fontSize: '18px', marginBottom: '10px' }}>
-  ⭐⭐⭐⭐⭐ <span style={{ color: '#33e680', fontSize: '14px' }}>(5.0)</span>
+<div style={{ color: '#cfe743', fontSize: '18px', marginBottom: '10px' }}>
+  ⭐⭐⭐⭐⭐ <span style={{ color: '#010c06', fontSize: '14px' }}>(5.0)</span>
 </div>
               <button 
   onClick={() => {
