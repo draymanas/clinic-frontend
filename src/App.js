@@ -509,27 +509,44 @@ return (
     };
     return <BioSection />;
 })() : <div style={{ height: '80px' }}></div>}
+{/* سطر الموقع: المحافظة - المدينة - (أول 3 كلمات من العنوان) */}
 <p style={{ 
+  color: '#000000', 
+  fontWeight: 'bold', 
+  fontSize: '15px', 
+  marginBottom: '20px'
+}}>
+  📍 {doc.city} - {doc.area} 
   
-  color: '#000000',      // اللون الأسود الصريح كما طلبت
-  fontWeight: 'bold',    // جعل الخط عريض (واضح)
-  fontSize: '15px',      // الحجم كما هو لم نغيره
-  marginBottom: '20px'}}>📍 {doc.city} - {doc.area}</p>
-  <div style={{
-    backgroundColor: '#fff5f5', // خلفية حمراء فاتحة جداً
-    border: '1px solid #ffcccc', // إطار أحمر خفيف
+  {/* إضافة اختصار العنوان التفصيلي هنا */}
+  {doc.address && (
+    <span style={{ 
+      color: '#666666', // لون رمادي لتمييز العنوان عن المنطقة الأساسية
+      fontSize: '14px', 
+      marginRight: '8px',
+      fontWeight: 'normal' // خط أخف قليلاً لراحة العين
+    }}>
+      ({doc.address.split(' ').filter(word => word !== "").slice(0, 3).join(' ')}...)
+    </span>
+  )}
+</p>
+
+{/* مربع قيمة الكشف كما هو */}
+<div style={{
+    backgroundColor: '#fff5f5', 
+    border: '1px solid #ffcccc', 
     borderRadius: '8px',
     padding: '5px 15px',
     margin: '10px 0',
-    display: 'inline-block', // ليأخذ المستطيل حجم النص فقط
-    color: '#d9534f', // لون الخط أحمر هادئ
+    display: 'inline-block', 
+    color: '#d9534f', 
     fontWeight: 'bold',
     fontSize: '15px'
 }}>
     قيمة الكشف: {doc.fee || '0'} جنيه
 </div>
-<div style={{ color: '#ffc107', fontSize: '18px', marginBottom: '10px' }}>
-  ⭐⭐⭐⭐⭐ <span style={{ color: '#7f8c8d', fontSize: '14px' }}>(5.0)</span>
+<div style={{ color: '#0a0801', fontSize: '18px', marginBottom: '10px' }}>
+  ⭐⭐⭐⭐⭐ <span style={{ color: '#33e680', fontSize: '14px' }}>(5.0)</span>
 </div>
               <button 
   onClick={() => {
