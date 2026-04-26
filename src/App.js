@@ -358,7 +358,7 @@ return (
 
     {/* قسم التخصص */}
     <div style={{ flex: 1, padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
-      <label style={{ fontSize: '16px', color: '#777', marginRight: '10px' }}>أنا أبحث عن دكتور</label>
+      <label style={{ fontSize: '16px', color: '#0a0101', marginRight: '10px' }}>أنا أبحث عن دكتور</label>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <span style={{ fontSize: '18px', marginLeft: '5px' }}>🩺</span>
         <select onChange={e => setFSpecialty(e.target.value)} style={{ border: 'none', width: '100%', fontSize: '16px', fontWeight: 'bold', outline: 'none', cursor: 'pointer', background: 'transparent' }}>
@@ -370,7 +370,7 @@ return (
 
     {/* قسم المحافظة */}
     <div style={{ flex: 1, padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
-      <label style={{ fontSize: '16px', color: '#777', marginRight: '10px' }}>في محافظة</label>
+      <label style={{ fontSize: '16px', color: '#030101', marginRight: '10px' }}>في محافظة</label>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <span style={{ fontSize: '18px', marginLeft: '5px' }}>📍</span>
         <select 
@@ -387,7 +387,7 @@ return (
     {/* قسم المنطقة - يظهر فقط لو اختار محافظة */}
     {fCity !== 'الكل' && (
       <div style={{ flex: 1, padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
-        <label style={{ fontSize: '16px', color: '#777', marginRight: '10px' }}>في منطقة</label>
+        <label style={{ fontSize: '16px', color: '#080202', marginRight: '10px' }}>في منطقة</label>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <span style={{ fontSize: '18px', marginLeft: '5px' }}>🏘️</span>
           <select 
@@ -404,7 +404,7 @@ return (
 
     {/* قسم البحث بالاسم */}
     <div style={{ flex: 1.5, padding: '10px 15px', display: 'flex', flexDirection: 'column' }}>
-      <label style={{ fontSize: '16px', color: '#777', marginRight: '10px' }}>أو اكتب اسم الدكتور</label>
+      <label style={{ fontSize: '16px', color: '#070101', marginRight: '10px' }}>أو اكتب اسم الدكتور</label>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <span style={{ fontSize: '18px', marginLeft: '5px' }}>🔍</span>
         <input 
