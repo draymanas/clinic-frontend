@@ -358,9 +358,9 @@ return (
 
     {/* قسم التخصص */}
     <div style={{ flex: 1, padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
-      <label style={{ fontSize: '16px', color: '#0a0101', marginRight: '10px' }}>أنا أبحث عن دكتور</label>
+      <label style={{ fontSize: '18px', color: '#0a0101', marginRight: '10px' }}>أنا أبحث عن دكتور</label>
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: '18px', marginLeft: '5px' }}>🩺</span>
+        <span style={{ fontSize: '20px', marginLeft: '5px' }}>🩺</span>
         <select onChange={e => setFSpecialty(e.target.value)} style={{ border: 'none', width: '100%', fontSize: '16px', fontWeight: 'bold', outline: 'none', cursor: 'pointer', background: 'transparent' }}>
           <option value="الكل">اختبار التخصص</option>
           {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
@@ -370,9 +370,9 @@ return (
 
     {/* قسم المحافظة */}
     <div style={{ flex: 1, padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
-      <label style={{ fontSize: '16px', color: '#030101', marginRight: '10px' }}>في محافظة</label>
+      <label style={{ fontSize: '20px', color: '#030101', marginRight: '10px' }}>في محافظة</label>
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: '18px', marginLeft: '5px' }}>📍</span>
+        <span style={{ fontSize: '20px', marginLeft: '5px' }}>📍</span>
         <select 
           value={fCity}
           onChange={e => { setFCity(e.target.value); setFArea("الكل"); }} 
@@ -394,9 +394,9 @@ return (
     opacity: fCity === 'الكل' ? 0.6 : 1, // جعل اللون باهت قليلاً لو غير مفعل
     transition: '0.3s'
 }}>
-  <label style={{ fontSize: '12px', color: '#777', marginRight: '10px' }}>في منطقة</label>
+  <label style={{ fontSize: '20px', color: '#0a0202', marginRight: '10px' }}>في منطقة</label>
   <div style={{ display: 'flex', alignItems: 'center' }}>
-    <span style={{ fontSize: '18px', marginLeft: '5px' }}>🏘️</span>
+    <span style={{ fontSize: '20px', marginLeft: '5px' }}>🏘️</span>
     <select 
       disabled={fCity === 'الكل'} // تعطيل القائمة لو مفيش محافظة
       value={fArea} 
@@ -404,7 +404,7 @@ return (
       style={{ 
           border: 'none', 
           width: '100%', 
-          fontSize: '16px', 
+          fontSize: '20px', 
           fontWeight: 'bold', 
           outline: 'none', 
           cursor: fCity === 'الكل' ? 'not-allowed' : 'pointer', 
@@ -422,9 +422,9 @@ return (
 
     {/* قسم البحث بالاسم */}
     <div style={{ flex: 1.5, padding: '10px 15px', display: 'flex', flexDirection: 'column' }}>
-      <label style={{ fontSize: '16px', color: '#070101', marginRight: '10px' }}>أو اكتب اسم الدكتور</label>
+      <label style={{ fontSize: '20px', color: '#070101', marginRight: '10px' }}>أو اكتب اسم الدكتور</label>
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: '18px', marginLeft: '5px' }}>🔍</span>
+        <span style={{ fontSize: '20px', marginLeft: '5px' }}>🔍</span>
         <input 
           placeholder="الدكتور " 
           onChange={e => setSearchTerm(e.target.value)} 
