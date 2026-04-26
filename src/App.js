@@ -417,13 +417,13 @@ return (
 }}>
           {filtered.map(doc => (
             <div key={doc.id} style={{
-  backgroundColor: '#fff',
+  backgroundColor: '#7bfbff',
   padding: '25px',
   borderRadius: '20px',    // زوايا دائرية
   width: '300px',
   textAlign: 'center',
-  border: '1px solid #eee', // إطار خفيف
-  boxShadow: '0 6px 18px rgba(0,0,0,0.06)', // ظل هادئ واحترافي
+  border: '1px solid #0a0202', // إطار خفيف
+  boxShadow: '0 6px 18px rgba(41, 38, 38, 0.06)', // ظل هادئ واحترافي
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center'
