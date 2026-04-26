@@ -384,23 +384,41 @@ return (
       </div>
     </div>
 
-    {/* قسم المنطقة - يظهر فقط لو اختار محافظة */}
-    {fCity !== 'الكل' && (
-      <div style={{ flex: 1, padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
-        <label style={{ fontSize: '16px', color: '#080202', marginRight: '10px' }}>في منطقة</label>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <span style={{ fontSize: '18px', marginLeft: '5px' }}>🏘️</span>
-          <select 
-            value={fArea} 
-            onChange={(e) => setFArea(e.target.value)} 
-            style={{ border: 'none', width: '100%', fontSize: '16px', fontWeight: 'bold', outline: 'none', cursor: 'pointer', background: 'transparent' }}
-          >
-            <option value="الكل">اختيار المنطقة</option>
-            {egyptLocations[fCity]?.map(area => <option key={area} value={area}>{area}</option>)}
-          </select>
-        </div>
-      </div>
-    )}
+   {/* قسم المنطقة - ظاهر دائماً لكن مفعل بشرط */}
+<div style={{ 
+    flex: 1, 
+    padding: '10px 15px', 
+    display: 'flex', 
+    flexDirection: 'column', 
+    borderLeft: '1px solid #eee',
+    opacity: fCity === 'الكل' ? 0.6 : 1, // جعل اللون باهت قليلاً لو غير مفعل
+    transition: '0.3s'
+}}>
+  <label style={{ fontSize: '12px', color: '#777', marginRight: '10px' }}>في منطقة</label>
+  <div style={{ display: 'flex', alignItems: 'center' }}>
+    <span style={{ fontSize: '18px', marginLeft: '5px' }}>🏘️</span>
+    <select 
+      disabled={fCity === 'الكل'} // تعطيل القائمة لو مفيش محافظة
+      value={fArea} 
+      onChange={(e) => setFArea(e.target.value)} 
+      style={{ 
+          border: 'none', 
+          width: '100%', 
+          fontSize: '16px', 
+          fontWeight: 'bold', 
+          outline: 'none', 
+          cursor: fCity === 'الكل' ? 'not-allowed' : 'pointer', 
+          background: 'transparent' 
+      }}
+    >
+      <option value="الكل">اختيار المنطقة</option>
+      {/* لو فيه محافظة، اعرض مناطقها.. لو مفيش، القائمة هتفضل فاضية (فقط "الكل") */}
+      {fCity !== 'الكل' && egyptLocations[fCity]?.map(area => (
+          <option key={area} value={area}>{area}</option>
+      ))}
+    </select>
+  </div>
+</div>
 
     {/* قسم البحث بالاسم */}
     <div style={{ flex: 1.5, padding: '10px 15px', display: 'flex', flexDirection: 'column' }}>
