@@ -349,7 +349,7 @@ return (
       marginBottom: '40px', 
       boxShadow: '0 15px 40px rgba(0,0,0,0.12)', 
       display: 'flex', 
-      flexWrap: 'nowrap', 
+      flexWrap: 'wrap', 
       alignItems: 'stretch', 
       border: '1px solid #ddd',
       overflow: 'hidden', // عشان الزرار ياخد شكل الحواف من الطرف
@@ -357,7 +357,7 @@ return (
   }}>
 
     {/* قسم التخصص */}
-    <div style={{ flex: 1, padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
+    <div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
       <label style={{ fontSize: '18px', color: '#0a0101', marginRight: '10px' }}>أنا أبحث عن دكتور</label>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <span style={{ fontSize: '20px', marginLeft: '5px' }}>🩺</span>
@@ -369,7 +369,7 @@ return (
     </div>
 
     {/* قسم المحافظة */}
-    <div style={{ flex: 1, padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
+    <div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
       <label style={{ fontSize: '20px', color: '#030101', marginRight: '10px' }}>في محافظة</label>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <span style={{ fontSize: '20px', marginLeft: '5px' }}>📍</span>
@@ -386,7 +386,8 @@ return (
 
    {/* قسم المنطقة - ظاهر دائماً لكن مفعل بشرط */}
 <div style={{ 
-    flex: 1, 
+    flex: '1 1 250px', 
+    minWidth: '200px',
     padding: '10px 15px', 
     display: 'flex', 
     flexDirection: 'column', 
@@ -421,7 +422,7 @@ return (
 </div>
 
     {/* قسم البحث بالاسم */}
-    <div style={{ flex: 1.5, padding: '10px 15px', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column' }}>
       <label style={{ fontSize: '20px', color: '#070101', marginRight: '10px' }}>أو اكتب اسم الدكتور</label>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <span style={{ fontSize: '20px', marginLeft: '5px' }}>🔍</span>
@@ -435,6 +436,7 @@ return (
 
     {/* زر البحث (العملاق الأحمر) مثل الصورة */}
     <button style={{ 
+      
         background: '#7cf046', // اللون الأحمر الصريح
         color: '#000000', 
         border: 'none', 
@@ -445,7 +447,9 @@ return (
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        minWidth: '150px'
+        minWidth: '150px',
+        minHeight: '60px',
+        flex: '1 1 100%'
     }}>
       ابحث 🔍
     </button>
