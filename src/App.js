@@ -477,7 +477,7 @@ return (
   alignItems: 'center'
 }}>
             <div style={{ 
-    position: 'absolute', 
+    position: 'relative', 
     top: '15px', 
     left: '15px', 
     backgroundColor: '#e7f3ff', 
