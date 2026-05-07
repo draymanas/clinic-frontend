@@ -490,6 +490,24 @@ return (
     zIndex: 10 // لضمان عدم اختفائه خلف الصورة
 }}>
     {doc.fee ? `${doc.fee} ج.م` : 'قيد التحديد'}
+    {doc.featured && (
+  <div style={{
+    position: 'absolute',
+    top: '15px',
+    left: '15px',
+    background: 'linear-gradient(45deg, #FFD700, #FFAC00)',
+    color: '#000',
+    padding: '4px 12px',
+    borderRadius: '8px',
+    fontWeight: 'bold',
+    fontSize: '12px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+    zIndex: 20,
+    border: '1px solid #CC9900'
+  }}>
+    مميز
+  </div>
+)}
 </div>
               <img 
   src={getOptimizedImage(doc.image_url) || `https://ui-avatars.com/api/?name=${encodeURIComponent(doc.name)}&background=random&color=fff`} 
