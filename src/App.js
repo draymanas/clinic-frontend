@@ -478,17 +478,7 @@ return (
   alignItems: 'center'
 }}>
             <div style={{ 
-    position: 'absolute', 
-        top: '10px',
-        left: '10px',
-    backgroundColor: '#e7f3ff', 
-    color: '#007bff', 
-    padding: '5px 12px', 
-    borderRadius: '12px', 
-    fontWeight: 'bold',
-    fontSize: '14px',
-    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-    zIndex: 10 // لضمان عدم اختفائه خلف الصورة
+
 }}>
  {doc.featured && (
   <div style={{
