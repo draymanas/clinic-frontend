@@ -489,20 +489,19 @@ return (
     boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
     zIndex: 10 // لضمان عدم اختفائه خلف الصورة
 }}>
-    {doc.fee ? `${doc.fee} ج.م` : 'قيد التحديد'}
-    {doc.featured && (
+ {doc.featured && (
   <div style={{
     position: 'absolute',
-    top: '15px',
-    left: '15px',
+    top: '10px',          // مسافة بسيطة من السقف
+    left: '10px',         // أقصى اليسار كما طلبت
     background: 'linear-gradient(45deg, #FFD700, #FFAC00)',
     color: '#000',
-    padding: '4px 12px',
-    borderRadius: '8px',
+    padding: '5px 15px',
+    borderRadius: '10px',
     fontWeight: 'bold',
-    fontSize: '12px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-    zIndex: 20,
+    fontSize: '14px',
+    boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+    zIndex: 100,          // عشان تضمن إنها فوق أي حاجة
     border: '1px solid #CC9900'
   }}>
     مميز
