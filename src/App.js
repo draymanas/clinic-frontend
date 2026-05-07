@@ -465,6 +465,7 @@ return (
 }}>
           {filtered.map(doc => (
             <div key={doc.id} style={{
+              position: 'relative',
   backgroundColor: '#7bfbff',
   padding: '25px',
   borderRadius: '20px',    // زوايا دائرية
@@ -477,9 +478,9 @@ return (
   alignItems: 'center'
 }}>
             <div style={{ 
-    position: 'relative', 
-    top: '15px', 
-    left: '15px', 
+    position: 'absolute', 
+        top: '10px',
+        left: '10px',
     backgroundColor: '#e7f3ff', 
     color: '#007bff', 
     padding: '5px 12px', 
