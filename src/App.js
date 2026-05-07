@@ -490,7 +490,7 @@ return (
     padding: '8px 22px',          // تكبير المساحة الداخلية (عرض وطول)
     borderRadius: '12px',         // زوايا انسيابية مع الحجم الجديد
     fontWeight: '900',            // خط عريض جداً (Extra Bold)
-    fontSize: '18px',             // تكبير حجم الخط ليكون واضح جداًboxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+    fontSize: '24px',             // تكبير حجم الخط ليكون واضح جداًboxShadow: '0 4px 10px rgba(0,0,0,0.15)',
     zIndex: 100,          // عشان تضمن إنها فوق أي حاجة
     border: '1px solid #ebbc2e'
   }}>
