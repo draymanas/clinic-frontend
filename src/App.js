@@ -483,17 +483,16 @@ return (
  {doc.featured && (
   <div style={{
     position: 'absolute',
-    top: '10px',          // مسافة بسيطة من السقف
-    left: '10px',         // أقصى اليسار كما طلبت
-    background: 'linear-gradient(45deg, #FFD700, #FFAC00)',
+    top: '15px', 
+    left: '15px', 
+    background: 'linear-gradient(45deg, #f7e167, #f3e567)', // تدرج ذهبي لامع
     color: '#000',
-    padding: '5px 15px',
-    borderRadius: '10px',
-    fontWeight: 'bold',
-    fontSize: '14px',
-    boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+    padding: '8px 22px',          // تكبير المساحة الداخلية (عرض وطول)
+    borderRadius: '12px',         // زوايا انسيابية مع الحجم الجديد
+    fontWeight: '900',            // خط عريض جداً (Extra Bold)
+    fontSize: '18px',             // تكبير حجم الخط ليكون واضح جداًboxShadow: '0 4px 10px rgba(0,0,0,0.15)',
     zIndex: 100,          // عشان تضمن إنها فوق أي حاجة
-    border: '1px solid #CC9900'
+    border: '1px solid #ebbc2e'
   }}>
     مميز
   </div>
