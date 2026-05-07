@@ -463,7 +463,8 @@ return (
   justifyContent: 'center', 
   padding: '40px 10px'   // مساحة داخلية لضمان عدم التصاق الكروت بحواف الشاشة
 }}>
-          {filtered.map(doc => (
+  
+          {filtered.slice().sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)).map(doc => (
             <div key={doc.id} style={{
               position: 'relative',
   backgroundColor: '#7bfbff',
