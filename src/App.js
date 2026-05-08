@@ -209,7 +209,64 @@ function BookingPage({ doctors, fetchData, currentUser, openLogin }) {
         (fArea === 'الكل' || d.area === fArea) &&
         d.name.includes(searchTerm)
     );
+// جوا الفانكشن BookingPage وقبل الـ return
+const specialties = [
+    { name: 'أسنان', icon: '🦷', count: 1830 },
+    { name: 'باطنة', icon: '🩺', count: 1150 },
+    { name: 'عظام', icon: '🦴', count: 887 },
+    // باقي التخصصات...
+    { name: 'نساء وتوليد', icon: '🤰', count: 1026 },
+    { name: 'جلدية', icon: '🧴', count: 578 },
+    { name: 'مخ وأعصاب', icon: '🧠', count: 548 },
+    { name: 'قلب وأوعية دموية', icon: '❤️', count: 517 },
+    { name: 'أنف وأذن وحنجرة', icon: '👂', count: 486 },
+    { name: 'جهاز هضمي ومناظير', icon: '🫃', count: 459 },
+    { name: 'مسالك بولية', icon: '🩻', count: 428 },
+    { name: 'سكر وغدد صماء', icon: '🧪', count: 372 },
+    { name: 'صدر', icon: '🫁', count: 341 },
+    { name: 'عيون', icon: '👁️', count: 342 },
+    { name: 'أورام', icon: '🎗️', count: 289 },
+    { name: 'جراحة عمود فقري', icon: '🦴', count: 268 },
+    { name: 'أطفال وحديثي الولادة', icon: '👶', count: 711 },
+    { name: 'جراحة عامة', icon: '🔪', count: 910 },
+    { name: 'طب طبيعي وإصابات', icon: '🏃', count: 546 },
+    { name: 'تخسيس وتغذية', icon: '🥗', count: 618 },
+    { name: 'نفسي', icon: '🧠', count: 1018 },
 
+    // تخصصات إضافية
+    { name: 'طب الأسرة', icon: '👨‍⚕️', count: 980 },
+    { name: 'روماتيزم ومناعة', icon: '🛡️', count: 315 },
+    { name: 'أمراض دم', icon: '🩸', count: 205 },
+    { name: 'حساسية ومناعة', icon: '🌿', count: 276 },
+    { name: 'أمراض معدية', icon: '🦠', count: 198 },
+    { name: 'علاج الألم', icon: '💉', count: 174 },
+    { name: 'طب طوارئ', icon: '🚑', count: 265 },
+    { name: 'عناية مركزة', icon: '🏥', count: 320 },
+    { name: 'أشعة', icon: '🩻', count: 245 },
+    { name: 'تحاليل', icon: '🧫', count: 190 },
+    { name: 'طب نووي', icon: '☢️', count: 130 },
+    { name: 'قسطرة قلب', icon: '❤️‍🩹', count: 120 },
+    { name: 'جراحة تجميل', icon: '✨', count: 340 },
+    { name: 'علاج طبيعي', icon: '🧘', count: 410 },
+    { name: 'تقويم أسنان', icon: '😁', count: 280 },
+    { name: 'سمعيات وتخاطب', icon: '🗣️', count: 122 },
+    { name: 'ذكورة وعقم', icon: '👨', count: 175 },
+    { name: 'مناظير', icon: '🔬', count: 144 },
+    { name: 'جراحة مخ وأعصاب', icon: '🧠', count: 211 },
+    { name: 'جراحة أوعية دموية', icon: '🫀', count: 136 },
+    { name: 'طب رياضي', icon: '⚽', count: 98 },
+    { name: 'طب الشيخوخة', icon: '👴', count: 87 },
+    { name: 'تأهيل حركي', icon: '♿', count: 102 },
+    { name: 'أمراض كبد', icon: '🫀', count: 166 },
+    { name: 'كلى', icon: '🩺', count: 241 },
+    { name: 'جراحة أطفال', icon: '👦', count: 132 },
+    { name: 'تجميل الأسنان', icon: '✨', count: 220 },
+    { name: 'طب نفسي أطفال', icon: '🧒', count: 155 },
+    { name: 'علاج إدمان', icon: '🚭', count: 76 },
+    { name: 'تغذية علاجية', icon: '🍎', count: 267 },
+    { name: 'قابلة وولادة', icon: '👩‍🍼', count: 95 }
+
+];
     const handleConfirm = async () => {
         try {
             // 1. استخراج اسم اليوم (مثل "السبت")
@@ -455,6 +512,38 @@ return (
     </button>
   </div>
 </div>
+{/* بداية جدول التخصصات الجديد */}
+<div style={{ direction: 'rtl', padding: '20px' }}>
+    <h2 style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '20px' }}>اختار التخصص اللي محتاجه:</h2>
+    <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', 
+        gap: '15px' 
+    }}>
+        {specialties.map((spec) => (
+            <div key={spec.name} 
+                onClick={() => setFSpecialty(spec.name)} // ربط الضغطة بالفلترة الموجودة في كودك
+                style={{
+                    border: '2px solid #3debd3', 
+                    borderRadius: '20px',
+                    padding: '15px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    background: '#fff'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#f0fff4'}
+                onMouseLeave={(e) => e.currentTarget.style.background = '#fff'}
+            >
+                <div style={{ fontSize: '30px', marginBottom: '10px' }}>{spec.icon}</div>
+                <div style={{ fontWeight: 'bold', color: '#000' }}>{spec.name}</div>
+                <div style={{ fontSize: '12px', color: '#666' }}>{spec.count} دكتور</div>
+            </div>
+        ))}
+    </div>
+</div>
+{/* نهاية جدول التخصصات */}
+
         {/* 3. قائمة الأطباء (البطاقات اللي انت عدلتها وشغالة تمام) */}
       <div style={{ 
   display: 'flex', 
