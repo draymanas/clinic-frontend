@@ -231,7 +231,7 @@ const specialties = [
     { name: 'نفسي', icon: '🧠', count: 1018 },
 
     { name: 'روماتيزم', icon: '🛡️', count: 315 },
-    { name: 'أمراض دم', icon: '🩸', count: 205 },
+    { name: 'امراض دم', icon: '🩸', count: 205 },
     { name: 'حساسية ومناعة', icon: '🌿', count: 276 },
     { name: 'علاج الألم', icon: '💉', count: 174 },
     { name: 'أشعة', icon: '🩻', count: 245 },
