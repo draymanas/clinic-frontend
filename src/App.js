@@ -176,7 +176,7 @@ function BookingPage({ doctors, fetchData, currentUser, openLogin }) {
     const [showModal, setShowModal] = useState(false);
     const [showTicket, setShowTicket] = useState(false);
     const [patientData, setPatientData] = useState({ name: '', mobile: '' });
-    const doctorsListRef = useRef(null);
+const doctorsListRef = React.useRef(null); // أضف React. قبلها
     // دي بنحطها في أول الفنكشن خالص من فوق
     const [isBioExpanded, setIsBioExpanded] = useState(false);
     // --- دالة تحويل اليوم إلى تاريخ رقمي (YYYY-MM-DD) ---
