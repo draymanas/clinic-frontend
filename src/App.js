@@ -230,7 +230,7 @@ const specialties = [
     { name: 'علاج طبيعي', icon: '🏃', count: 546 },
     { name: 'نفسي', icon: '🧠', count: 1018 },
 
-    { name: 'روماتيزم ', icon: '🛡️', count: 315 },
+    { name: 'روماتيزم', icon: '🛡️', count: 315 },
     { name: 'أمراض دم', icon: '🩸', count: 205 },
     { name: 'حساسية ومناعة', icon: '🌿', count: 276 },
     { name: 'علاج الألم', icon: '💉', count: 174 },
