@@ -176,6 +176,7 @@ function BookingPage({ doctors, fetchData, currentUser, openLogin }) {
     const [showModal, setShowModal] = useState(false);
     const [showTicket, setShowTicket] = useState(false);
     const [patientData, setPatientData] = useState({ name: '', mobile: '' });
+    const doctorsListRef = useRef(null);
     // دي بنحطها في أول الفنكشن خالص من فوق
     const [isBioExpanded, setIsBioExpanded] = useState(false);
     // --- دالة تحويل اليوم إلى تاريخ رقمي (YYYY-MM-DD) ---
@@ -497,7 +498,7 @@ return (
 </div>
 {/* بداية جدول التخصصات الجديد */}
 <div style={{ direction: 'rtl', padding: '20px' }}>
-    <h2 style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '20px' }}>اختار التخصص اللي محتاجه:</h2>
+    <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '20px' }}>اختار التخصص اللي محتاجه:</h2>
     <div style={{ 
         display: 'grid', 
         gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', 
@@ -505,8 +506,17 @@ return (
     }}>
         {specialties.map((spec) => (
             <div key={spec.name} 
-                onClick={() => setFSpecialty(spec.name)} // ربط الضغطة بالفلترة الموجودة في كودك
-                style={{
+                onClick={() => {
+    setFSpecialty(spec.name); // 1. تفعيل الفلترة
+    
+    // 2. التحرك لقسم الأطباء بسلاسة
+    setTimeout(() => {
+        doctorsListRef.current?.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+        });
+    }, 100); // تأخير بسيط للتأكد من تحديث القائمة أولاً
+}}style={{
                     border: '2px solid #3debd3', 
                     borderRadius: '20px',
                     padding: '15px',
@@ -528,7 +538,10 @@ return (
 {/* نهاية جدول التخصصات */}
 
         {/* 3. قائمة الأطباء (البطاقات اللي انت عدلتها وشغالة تمام) */}
-      <div style={{ 
+      {/* السطر 532 في ملفك بعد التعديل */}
+<div ref={doctorsListRef} style={{
+    display: 'flex',
+    gap: '35px',
   display: 'flex', 
   gap: '35px',           // زودنا المسافة بين الكروت قليلاً
   flexWrap: 'wrap', 
