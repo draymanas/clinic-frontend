@@ -308,105 +308,110 @@ return (
     دكتور <span style={{ color: '#2c3e50', fontWeight: '300' }}>| DOCTOR</span>
   </h1>
   <p style={{ color: '#7f8c8d', fontSize: '20px', marginTop: '10px' }}>احجز طبيبك الآن بكل سهولة</p>
-
-{/* بداية منطقة التعديل: تقسيم الشاشة لـ 3 أقسام */}
+{/* بداية منطقة التعديل الشاملة */}
 <div style={{
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr 1fr', // تقسيم 3 أعمدة متساوية
+  display: 'flex',
+  flexDirection: (typeof window !== 'undefined' && window.innerWidth < 768) ? 'column' : 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
   gap: '20px',
-  width: '95%',
-  margin: '40px auto',
-  alignItems: 'start'
+  padding: '20px',
+  direction: 'rtl'
 }}>
 
-  {/* القسم الأول (يمين): المستطيل التعريفي - تحول لعمودي */}
- {/* القسم الأول (يمين): المستطيل التعريفي - تم تصغيره للنص */}
-<div style={{
+  {/* القسم الأول (يمين): المستطيل التعريفي */}
+  <div style={{
     border: '2px solid #3eeb09', 
     borderRadius: '15px',
     backgroundColor: '#e3f2fd',
-    padding: '12px 20px', // قللنا الـ padding للنص عشان ينكمش على الكلام
-    width: 'fit-content', // يخلي المستطيل على قد محتواه بس
-    maxWidth: '400px',    // يمنعه إنه يفرش بالعرض أوي
-    margin: '10px auto',  // يوسطه ويسيب مسافة
+    padding: '12px 20px',
+    width: 'fit-content',
+    maxWidth: '400px',
+    margin: '10px auto',
     display: 'flex',
     alignItems: 'center',
-    boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
-}}>
+    boxShadow: '0 4px 10px rgba(0,0,0,0.05)',
+    flex: (typeof window !== 'undefined' && window.innerWidth < 768) ? 'none' : '1'
+  }}>
     <p style={{ 
-        fontSize: '22px', // صغرنا الخط شوية عشان يتناسب مع الحجم الجديد
+        fontSize: '22px', 
         color: '#0d47a1', 
         fontWeight: '800', 
         lineHeight: '2', 
         margin: 0,
-        textAlign: 'center' // الكلام يبقى في النص
+        textAlign: 'center'
     }}>
         احجز دكتورك الآن مع أكبر منصة لحجز الأطباء في مصر.. نخبة من أفضل وأمهر الاستشاريين والأخصائيين.. اختار الميعاد اللي يناسبك واحجز الآن.
     </p>
-</div>
+  </div>
 
-  {/* القسم الثاني (منتصف): الصورة وزر الحجز الشخصي */}
+  {/* القسم الثاني (منتصف): الصورة وزر الحجز */}
   <div style={{ 
     textAlign: 'center', 
     display: 'flex', 
-    flexDirection: 'column', // يضمن ترتيب العناصر رأسيًا (فوق بعض)
+    flexDirection: 'column', 
     alignItems: 'center', 
-    padding: '20px' 
-}}>
+    padding: '20px',
+    flex: '1'
+  }}>
     <img 
-  src="/10.png"  // ✅ هذا هو المسار الصحيح للصور الموجودة في public
-  alt="دكتور أيمن عجيب" 
-  style={{ 
-width: '400px', // هذا الحجم سيجعلها تظهر كـ "مستطيل" متوسط الحجم بدل العرض الكامل
-    height: 'auto', // يحافظ على تناسق الطول مع العرض الأصلي للصورة
-    borderRadius: '10px', // حواف منحنية بسيطة جداً (مش دائرية)
-    boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-    marginBottom: '10px'
-  }} 
-/>
+      src="/10.png" 
+      alt="دكتور أيمن عجيب" 
+      style={{ 
+        width: (typeof window !== 'undefined' && window.innerWidth < 768) ? '90%' : '400px',
+        maxWidth: '400px',
+        height: 'auto',
+        borderRadius: '10px',
+        boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+        marginBottom: '10px'
+      }} 
+    />
     <button 
-  onClick={() => setActivePage('ayman-profile')} 
-  style={{
-    width: '100%',
-    maxWidth: '400px', // يمنع الزرار من التمدد بشكل مبالغ فيه عالفاضي
-    margin: '10px auto', // يوسط الزرار ويترك مسافة
-    padding: '12px 20px', // تقليل التبطين لتصغير الارتفاع
-    backgroundColor: '#1a73e8',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '12px',
-    fontSize: '22px',
-    fontWeight: '700',
-    cursor: 'pointer',
-    display: 'block' // لضمان أنه يأخذ سطر لوحده ولا يتداخل مع غيره
-  }}
->
-  احجز مباشرة الان مع الدكتور ايمن عجيب
-</button>
+      onClick={() => setActivePage('ayman-profile')} 
+      style={{
+        width: '100%',
+        maxWidth: '400px',
+        margin: '10px auto',
+        padding: '12px 20px',
+        backgroundColor: '#1a73e8',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '12px',
+        fontSize: '22px',
+        fontWeight: '700',
+        cursor: 'pointer',
+        display: 'block'
+      }}
+    >
+      احجز مباشرة الان مع الدكتور ايمن عجيب
+    </button>
   </div>
 
-  {/* القسم الثالث (يسار): العدادات - تحولت لعمودية */}
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', justifyContent: 'center', height: '100%' }}>
-    
+  {/* القسم الثالث (يسار): العدادات */}
+  <div style={{ 
+    display: 'flex', 
+    flexDirection: (typeof window !== 'undefined' && window.innerWidth < 768) ? 'row' : 'column',
+    flexWrap: 'wrap',
+    gap: '30px', 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    flex: '1'
+  }}>
     <div style={{ textAlign: 'center' }}>
       <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #1a73e8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 'bold', color: '#1a73e8', margin: '0 auto 10px', backgroundColor: '#fff' }}>+1000</div>
       <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>👨‍⚕️ طبيب متخصص</p>
     </div>
-
     <div style={{ textAlign: 'center' }}>
       <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #2e7d32', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 'bold', color: '#2e7d32', margin: '0 auto 10px', backgroundColor: '#fff' }}>+10,000</div>
       <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>✅ حجز ناجح</p>
     </div>
-
     <div style={{ textAlign: 'center' }}>
       <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #f57c00', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 'bold', color: '#f57c00', margin: '0 auto 10px', backgroundColor: '#fff' }}>24/7</div>
       <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>📞 دعم فني</p>
     </div>
-
-  
+  </div>
 </div>
 
-</div>
 <div style={{ padding: '0 20px', maxWidth: '1200px', margin: '0 auto' }}>
   {/* شريط البحث المطور - تصميم (البار العريض) */}
   <div style={{ 
