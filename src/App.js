@@ -320,49 +320,69 @@ return (
 }}>
 
   {/* القسم الأول (يمين): المستطيل التعريفي - تحول لعمودي */}
-  <div style={{
+ {/* القسم الأول (يمين): المستطيل التعريفي - تم تصغيره للنص */}
+<div style={{
     border: '2px solid #3eeb09', 
     borderRadius: '15px',
     backgroundColor: '#e3f2fd',
-    padding: '25px',
-    height: '100%',
+    padding: '12px 20px', // قللنا الـ padding للنص عشان ينكمش على الكلام
+    width: 'fit-content', // يخلي المستطيل على قد محتواه بس
+    maxWidth: '400px',    // يمنعه إنه يفرش بالعرض أوي
+    margin: '10px auto',  // يوسطه ويسيب مسافة
     display: 'flex',
-    alignItems: 'center'
-  }}>
-    <p style={{ fontSize: '22px', color: '#0d47a1', fontWeight: '900', lineHeight: '1.6', margin: 0 }}>
-      احجز دكتورك الآن مع أكبر منصة لحجز الأطباء في مصر..نخبة من أفضل وأمهر الاستشاريين والأخصائيين..اختار الميعاد اللي يناسبك واحجز الآن.
+    alignItems: 'center',
+    boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
+}}>
+    <p style={{ 
+        fontSize: '22px', // صغرنا الخط شوية عشان يتناسب مع الحجم الجديد
+        color: '#0d47a1', 
+        fontWeight: '800', 
+        lineHeight: '2', 
+        margin: 0,
+        textAlign: 'center' // الكلام يبقى في النص
+    }}>
+        احجز دكتورك الآن مع أكبر منصة لحجز الأطباء في مصر.. نخبة من أفضل وأمهر الاستشاريين والأخصائيين.. اختار الميعاد اللي يناسبك واحجز الآن.
     </p>
-  </div>
+</div>
 
   {/* القسم الثاني (منتصف): الصورة وزر الحجز الشخصي */}
-  <div style={{ textAlign: 'center' }}>
+  <div style={{ 
+    textAlign: 'center', 
+    display: 'flex', 
+    flexDirection: 'column', // يضمن ترتيب العناصر رأسيًا (فوق بعض)
+    alignItems: 'center', 
+    padding: '20px' 
+}}>
     <img 
   src="/10.png"  // ✅ هذا هو المسار الصحيح للصور الموجودة في public
   alt="دكتور أيمن عجيب" 
   style={{ 
-    width: '100%', 
-    borderRadius: '15px', 
-    boxShadow: '0 4px 15px rgba(0,0,0,0.1)' 
+width: '280px', // هذا الحجم سيجعلها تظهر كـ "مستطيل" متوسط الحجم بدل العرض الكامل
+    height: 'auto', // يحافظ على تناسق الطول مع العرض الأصلي للصورة
+    borderRadius: '10px', // حواف منحنية بسيطة جداً (مش دائرية)
+    boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+    marginBottom: '10px'
   }} 
 />
     <button 
-  onClick={() => setActivePage('ayman-profile')} // بدلاً من window.location
+  onClick={() => setActivePage('ayman-profile')} 
   style={{
-        width: '100%',
-        marginTop: '15px',
-        padding: '20px',
-        backgroundColor: '#1a73e8',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '15px',
-        fontSize: '20px',
-        fontWeight: '900',
-        cursor: 'pointer',
-        boxShadow: '0 4px 10px rgba(26,115,232,0.3)'
-      }}
-    >
-      احجز مع دكتور أيمن الآن
-    </button>
+    width: '100%',
+    maxWidth: '300px', // يمنع الزرار من التمدد بشكل مبالغ فيه عالفاضي
+    margin: '10px auto', // يوسط الزرار ويترك مسافة
+    padding: '12px 20px', // تقليل التبطين لتصغير الارتفاع
+    backgroundColor: '#1a73e8',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '12px',
+    fontSize: '18px',
+    fontWeight: '700',
+    cursor: 'pointer',
+    display: 'block' // لضمان أنه يأخذ سطر لوحده ولا يتداخل مع غيره
+  }}
+>
+  احجز مباشرة الان مع الدكتور ايمن عجيب
+</button>
   </div>
 
   {/* القسم الثالث (يسار): العدادات - تحولت لعمودية */}
