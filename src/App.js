@@ -492,24 +492,50 @@ return (
   </div>
 </div>
 
-    {/* قسم البحث بالاسم */}
-    <div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column' }}>
-      <label style={{ fontSize: '20px', color: '#070101', marginRight: '10px' }}>أو اكتب اسم الدكتور</label>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: '24px', marginLeft: '5px' }}>🔍</span>
-        <input 
-          placeholder="الدكتور " 
-          onChange={e => setSearchTerm(e.target.value)} 
-          style={{ border: 'none', width: '100%', outline: 'none', fontSize: '20px', fontWeight: 'bold' }} 
-        />
-      </div>
+   {/* قسم البحث بالاسم - نفس المقاسات والخطوط بالضبط */}
+<div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column' }}>
+  <label style={{ fontSize: '20px', color: '#070101', marginRight: '10px' }}>أو اكتب اسم الدكتور</label>
+  <div style={{ display: 'flex', alignItems: 'center' }}>
+    <span style={{ fontSize: '24px', marginLeft: '5px' }}>🔍</span>
+    <input 
+      placeholder="الدكتور " 
+      onChange={e => {
+        setSearchTerm(e.target.value); // وظيفتك الأصلية
+      }}
+      // إضافة التمرير عند الضغط على Enter دون تغيير التنسيق
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          doctorsListRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }}
+      style={{ 
+        border: 'none', 
+        width: '100%', 
+        outline: 'none', 
+        fontSize: '20px', // نفس خطك 20
+        fontWeight: 'bold' // نفس الثقل
+      }} 
+    />
+  </div>
+
     </div>
 
     {/* زر البحث (العملاق الأحمر) مثل الصورة */}
-    <button style={{ 
-      
-        background: '#7cf046', // اللون الأحمر الصريح
-        color: '#000000', 
+    <button 
+    onClick={() => {
+        handleSearch(); // تنفيذ البحث
+        
+        // التحرك لقسم الأطباء (سطر 572)
+        setTimeout(() => {
+            doctorsListRef.current?.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }, 150);
+    }}
+    style={{ 
+        background: '#7cf046', 
+        color: '#000', 
         border: 'none', 
         padding: '0 40px', 
         fontSize: '28px', 
@@ -518,12 +544,12 @@ return (
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        minWidth: '150px',
         minHeight: '60px',
         flex: '1 1 100%'
-    }}>
-      ابحث 🔍
-    </button>
+    }}
+>
+    ابحث 🔍
+</button>
   </div>
 </div>
 {/* بداية جدول التخصصات الجديد */}
