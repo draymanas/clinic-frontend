@@ -168,7 +168,7 @@ if (res.ok) {
         </div>
     );
 }
-function BookingPage({ doctors, fetchData, currentUser, openLogin }) {
+function BookingPage({ doctors, fetchData, currentUser, openLogin, setActivePage }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [fSpecialty, setFSpecialty] = useState('الكل');
     const [fCity, setFCity] = useState('الكل');
@@ -1326,10 +1326,11 @@ onClick={() => {
           fetchData={fetchData} 
           currentUser={currentUser} 
           openLogin={() => setShowLoginModal(true)} 
+          setActivePage={setActivePage} // <--- ضيف السطر ده هنا بالظبط
         />
       )}
       {/* السطر الجديد لصفحة البورتفوليو الخاصة بك */}
-    {activePage === 'ayman-profile' && <AymanProfile setActivePage={setActivePage} />}
+    {activePage === 'ayman-profile' && <AymanProfile setActivePage={(val) => setActivePage(val)} />}
       {activePage === 'direct_booking_page' && <DirectBooking />}
       {activePage === 'join' && <DoctorRegister />}
       {activePage === 'doctor_dashboard' && currentUser?.role === 'doctor' && (

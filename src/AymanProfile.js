@@ -1,6 +1,5 @@
 import React from 'react';
-import { FaMapMarkerAlt, FaCalendarCheck, FaStethoscope } from 'react-icons/fa';
-
+import { FaMapMarkerAlt, FaCalendarCheck, FaStethoscope, FaArrowRight } from 'react-icons/fa';
 const AymanProfile = ({ setActivePage }) => {
   return (
     <div style={{ direction: 'rtl', backgroundColor: '#f8fafc', minHeight: '100vh', paddingBottom: '50px' }}>
