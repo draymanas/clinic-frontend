@@ -359,7 +359,7 @@ return (
     alt="دكتور أيمن عجيب" 
     onClick={() => {
       // 1. الانتقال لصفحة البروفايل الشخصي (تأكد من الاسم الصحيح هنا)
-      setActivePage('AymanProfile'); 
+      setActivePage('ayman-profile'); 
       
       // 2. الصعود لأول الصفحة الجديدة
       window.scrollTo({ top: 0, behavior: 'smooth' });
