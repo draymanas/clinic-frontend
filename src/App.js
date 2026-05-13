@@ -521,29 +521,29 @@ return (
     </div>
 
     {/* زر البحث (العملاق الأحمر) مثل الصورة */}
-    <button 
+   <button 
     onClick={() => {
-        handleSearch(); // تنفيذ البحث
-        
-        // التحرك لقسم الأطباء (سطر 572)
+        // بما أن البحث أوتوماتيك، الزرار هنا وظيفته فقط "التوجيه" للنتائج
+        // حذفنا handleSearch لأن البحث يتم تلقائياً عند تغيير الاختيارات
         setTimeout(() => {
             doctorsListRef.current?.scrollIntoView({ 
                 behavior: 'smooth', 
                 block: 'start' 
             });
-        }, 150);
+        }, 100);
     }}
     style={{ 
         background: '#7cf046', 
-        color: '#000', 
+        color: '#000000', 
         border: 'none', 
         padding: '0 40px', 
-        fontSize: '28px', 
+        fontSize: '28px', // مقاسك الأصلي
         fontWeight: 'bold', 
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        minWidth: '150px',
         minHeight: '60px',
         flex: '1 1 100%'
     }}
