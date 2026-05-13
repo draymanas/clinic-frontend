@@ -1,6 +1,8 @@
 import DoctorDashboard from './DoctorDashboard';
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import AymanProfile from './AymanProfile';
+import doctorImage from './10.png'; // تأكد من المسار الصحيح
 // 1. استيراد الصفحة في الأعلى
 import DirectBooking from './DirectBooking';
 
@@ -307,79 +309,78 @@ return (
   </h1>
   <p style={{ color: '#7f8c8d', fontSize: '20px', marginTop: '10px' }}>احجز طبيبك الآن بكل سهولة</p>
 
-  {/* الآن ضع المستطيل الأحمر هنا مرة واحدة فقط واحذف أي كود "h1" إضافي تحته */}
+{/* بداية منطقة التعديل: تقسيم الشاشة لـ 3 أقسام */}
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: '1fr 1fr 1fr', // تقسيم 3 أعمدة متساوية
+  gap: '20px',
+  width: '95%',
+  margin: '40px auto',
+  alignItems: 'start'
+}}>
+
+  {/* القسم الأول (يمين): المستطيل التعريفي - تحول لعمودي */}
   <div style={{
-    margin: '30px auto',
-    width: '90%',
-    maxWidth: '1200px',
-    padding: '25px',
-    backgroundColor: '#fff',
     border: '2px solid #3eeb09', 
-    borderRadius: '15px', // جعلت الزوايا دائرية أكثر لتناسب التصميم
-    boxShadow: '0 4px 15px rgba(0,0,0,0.05)'
+    borderRadius: '15px',
+    backgroundColor: '#e3f2fd',
+    padding: '25px',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center'
   }}>
-<div style={{ 
-  backgroundColor: '#e3f2fd', // لون خلفية أزرق فاتح مريح
-  padding: '30px', 
-  borderRadius: '15px', 
-  textAlign: 'center', 
-  border: '2px solid #bbdefb', // إطار خفيف متناسق مع الأزرق
-  boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
-  margin: '20px auto',
-  maxWidth: '1100px'
-}}>
-  <p style={{ 
-    fontSize: '28px', 
-    color: '#0d47a1', // لون نص أزرق غامق ليظهر بوضوح على الخلفية الفاتحة (أو استبدله بـ #ffffff لو فضلته أبيض)
-    fontWeight: '900',
-    margin: 0, 
-    lineHeight: '1.5' 
-  }}>
-    احجز دكتورك الآن مع أكبر منصة لحجز الأطباء في مصر..نخبة من أفضل وأمهر الاستشاريين والأخصائيين..اختار الميعاد اللي يناسبك واحجز الآن.
-  </p>
-</div>
+    <p style={{ fontSize: '22px', color: '#0d47a1', fontWeight: '900', lineHeight: '1.6', margin: 0 }}>
+      احجز دكتورك الآن مع أكبر منصة لحجز الأطباء في مصر..نخبة من أفضل وأمهر الاستشاريين والأخصائيين..اختار الميعاد اللي يناسبك واحجز الآن.
+    </p>
   </div>
-{/* قسم العدادات الإحصائية - Trust Counters */}
-<div style={{ 
-  display: 'flex', 
-  justifyContent: 'center', 
-  gap: '30px', 
-  flexWrap: 'wrap', 
-  margin: '20px 0 40px 0' 
-}}>
+
+  {/* القسم الثاني (منتصف): الصورة وزر الحجز الشخصي */}
+  <div style={{ textAlign: 'center' }}>
+    <img 
+      src="10.png" 
+      alt="دكتور أيمن عجيب" 
+      style={{ width: '100%', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} 
+    />
+    <button 
+  onClick={() => setActivePage('ayman-profile')} // بدلاً من window.location
+  style={{
+        width: '100%',
+        marginTop: '15px',
+        padding: '20px',
+        backgroundColor: '#1a73e8',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '15px',
+        fontSize: '20px',
+        fontWeight: '900',
+        cursor: 'pointer',
+        boxShadow: '0 4px 10px rgba(26,115,232,0.3)'
+      }}
+    >
+      احجز مع دكتور أيمن الآن
+    </button>
+  </div>
+
+  {/* القسم الثالث (يسار): العدادات - تحولت لعمودية */}
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', justifyContent: 'center', height: '100%' }}>
+    
+    <div style={{ textAlign: 'center' }}>
+      <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #1a73e8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 'bold', color: '#1a73e8', margin: '0 auto 10px', backgroundColor: '#fff' }}>+1000</div>
+      <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>👨‍⚕️ طبيب متخصص</p>
+    </div>
+
+    <div style={{ textAlign: 'center' }}>
+      <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #2e7d32', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 'bold', color: '#2e7d32', margin: '0 auto 10px', backgroundColor: '#fff' }}>+10,000</div>
+      <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>✅ حجز ناجح</p>
+    </div>
+
+    <div style={{ textAlign: 'center' }}>
+      <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #f57c00', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 'bold', color: '#f57c00', margin: '0 auto 10px', backgroundColor: '#fff' }}>24/7</div>
+      <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>📞 دعم فني</p>
+    </div>
+
   
-  {/* العداد الأول: الأطباء */}
-  <div style={{ textAlign: 'center', width: '140px' }}>
-    <div style={{
-      width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #1a73e8',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: '18px', fontWeight: 'bold', color: '#1a73e8',
-      margin: '0 auto 10px', backgroundColor: '#fff', boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
-    }}>+1000</div>
-    <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50', margin: 0 }}>👨‍⚕️ طبيب متخصص</p>
-  </div>
-
-  {/* العداد الثاني: الحجوزات */}
-  <div style={{ textAlign: 'center', width: '140px' }}>
-    <div style={{
-      width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #2e7d32',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: '18px', fontWeight: 'bold', color: '#2e7d32',
-      margin: '0 auto 10px', backgroundColor: '#fff', boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
-    }}>+10,000</div>
-    <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50', margin: 0 }}>✅ حجز ناجح</p>
-  </div>
-
-  {/* العداد الثالث: الدعم الفني */}
-  <div style={{ textAlign: 'center', width: '140px' }}>
-    <div style={{
-      width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #f57c00',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontSize: '18px', fontWeight: 'bold', color: '#f57c00',
-      margin: '0 auto 10px', backgroundColor: '#fff', boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
-    }}>24/7</div>
-    <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50', margin: 0 }}>📞 دعم فني</p>
-  </div>
+</div>
 
 </div>
 <div style={{ padding: '0 20px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -1323,6 +1324,8 @@ onClick={() => {
           openLogin={() => setShowLoginModal(true)} 
         />
       )}
+      {/* السطر الجديد لصفحة البورتفوليو الخاصة بك */}
+    {activePage === 'ayman-profile' && <AymanProfile setActivePage={setActivePage} />}
       {activePage === 'direct_booking_page' && <DirectBooking />}
       {activePage === 'join' && <DoctorRegister />}
       {activePage === 'doctor_dashboard' && currentUser?.role === 'doctor' && (
