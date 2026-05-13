@@ -345,27 +345,36 @@ return (
     </p>
   </div>
 
-  {/* القسم الثاني (منتصف): الصورة وزر الحجز */}
-  <div style={{ 
-    textAlign: 'center', 
-    display: 'flex', 
-    flexDirection: 'column', 
-    alignItems: 'center', 
-    padding: '20px',
-    flex: '1'
-  }}>
-    <img 
-      src="/10.png" 
-      alt="دكتور أيمن عجيب" 
-      style={{ 
-        width: (typeof window !== 'undefined' && window.innerWidth < 768) ? '90%' : '400px',
-        maxWidth: '400px',
-        height: 'auto',
-        borderRadius: '10px',
-        boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-        marginBottom: '10px'
-      }} 
-    />
+{/* القسم الثاني (منتصف): الصورة وزر الحجز */}
+<div style={{ 
+  textAlign: 'center', 
+  display: 'flex', 
+  flexDirection: 'column', 
+  alignItems: 'center', 
+  padding: '20px',
+  flex: '1'
+}}>
+  <img 
+    src="/10.png" 
+    alt="دكتور أيمن عجيب" 
+    onClick={() => {
+      // 1. الانتقال لصفحة البروفايل الشخصي (تأكد من الاسم الصحيح هنا)
+      setActivePage('AymanProfile'); 
+      
+      // 2. الصعود لأول الصفحة الجديدة
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }}
+    style={{ 
+      width: (typeof window !== 'undefined' && window.innerWidth < 768) ? '90%' : '400px',
+      maxWidth: '400px',
+      height: 'auto',
+      borderRadius: '10px',
+      boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+      marginBottom: '10px',
+      // السطر ده هو اللي بيغير شكل الماوس ليد (Cursor)
+      cursor: 'pointer' 
+    }} 
+  />
     <button 
       onClick={() => setActivePage('ayman-profile')} 
       style={{
