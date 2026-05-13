@@ -337,10 +337,14 @@ return (
   {/* القسم الثاني (منتصف): الصورة وزر الحجز الشخصي */}
   <div style={{ textAlign: 'center' }}>
     <img 
-      src="10.png" 
-      alt="دكتور أيمن عجيب" 
-      style={{ width: '100%', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }} 
-    />
+  src="/10.png"  // ✅ هذا هو المسار الصحيح للصور الموجودة في public
+  alt="دكتور أيمن عجيب" 
+  style={{ 
+    width: '100%', 
+    borderRadius: '15px', 
+    boxShadow: '0 4px 15px rgba(0,0,0,0.1)' 
+  }} 
+/>
     <button 
   onClick={() => setActivePage('ayman-profile')} // بدلاً من window.location
   style={{
