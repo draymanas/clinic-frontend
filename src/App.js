@@ -357,7 +357,7 @@ return (
   src="/10.png"  // ✅ هذا هو المسار الصحيح للصور الموجودة في public
   alt="دكتور أيمن عجيب" 
   style={{ 
-width: '280px', // هذا الحجم سيجعلها تظهر كـ "مستطيل" متوسط الحجم بدل العرض الكامل
+width: '400px', // هذا الحجم سيجعلها تظهر كـ "مستطيل" متوسط الحجم بدل العرض الكامل
     height: 'auto', // يحافظ على تناسق الطول مع العرض الأصلي للصورة
     borderRadius: '10px', // حواف منحنية بسيطة جداً (مش دائرية)
     boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
@@ -368,14 +368,14 @@ width: '280px', // هذا الحجم سيجعلها تظهر كـ "مستطيل"
   onClick={() => setActivePage('ayman-profile')} 
   style={{
     width: '100%',
-    maxWidth: '300px', // يمنع الزرار من التمدد بشكل مبالغ فيه عالفاضي
+    maxWidth: '400px', // يمنع الزرار من التمدد بشكل مبالغ فيه عالفاضي
     margin: '10px auto', // يوسط الزرار ويترك مسافة
     padding: '12px 20px', // تقليل التبطين لتصغير الارتفاع
     backgroundColor: '#1a73e8',
     color: '#fff',
     border: 'none',
     borderRadius: '12px',
-    fontSize: '18px',
+    fontSize: '22px',
     fontWeight: '700',
     cursor: 'pointer',
     display: 'block' // لضمان أنه يأخذ سطر لوحده ولا يتداخل مع غيره
