@@ -2,7 +2,7 @@ import DoctorDashboard from './DoctorDashboard';
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import AymanProfile from './AymanProfile';
-import doctorImage from './10.png'; // تأكد من المسار الصحيح
+
 // 1. استيراد الصفحة في الأعلى
 import DirectBooking from './DirectBooking';
 
