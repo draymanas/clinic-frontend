@@ -74,7 +74,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
             <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4' }}> علاج الانزلاق الغضروفي القطني والعنقي </div>
             
   <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    علاج الانزلاق الغضروفي القطني والعنقي، اختناق الأعصاب، وعرق النسا
+    علاج الم اسفل الظهر و عرق النسا
   </div>
 
   <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
@@ -90,8 +90,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
   </div>
 
   <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    الدوخة وعدم الاتزان، الرعشة، ضعف الذاكرة والنسيان، والزهايمر
-  </div>
+    الدوخة وعدم الاتزان والرعشة  </div>
 
   <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
     الحركات اللاإرادية، وجلطات المخ ونزيف المخ بكافة أنواعه
@@ -105,6 +104,9 @@ const AymanProfile = ({ setActivePage, navigate }) => {
     اضطرابات الغدة النخامية
   </div>
 
+<div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+  ضعف الذاكرة والنسيان، والزهايمر
+</div>
   {/* خدمات الأطفال */}
 
   <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
