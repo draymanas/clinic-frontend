@@ -319,32 +319,82 @@ return (
   direction: 'rtl'
 }}>
 
-  {/* القسم الأول (يمين): المستطيل التعريفي */}
+  {/* القسم الأول (يمين): حاوية المستطيلات */}
   <div style={{
-    border: '2px solid #3eeb09', 
-    borderRadius: '15px',
-    backgroundColor: '#e3f2fd',
-    padding: '12px 20px',
-    width: 'fit-content',
-    maxWidth: '400px',
-    margin: '10px auto',
     display: 'flex',
-    alignItems: 'center',
-    boxShadow: '0 4px 10px rgba(0,0,0,0.05)',
-    flex: (typeof window !== 'undefined' && window.innerWidth < 768) ? 'none' : '1'
+    flexDirection: 'column',
+    gap: '15px', // مسافة بين مستطيل التطبيق والمستطيل التعريفي
+    flex: (typeof window !== 'undefined' && window.innerWidth < 768) ? 'none' : '1',
+    maxWidth: '400px',
+    margin: '10px auto'
   }}>
-    <p style={{ 
-        fontSize: '22px', 
-        color: '#0d47a1', 
-        fontWeight: '800', 
-        lineHeight: '2', 
-        margin: 0,
-        textAlign: 'center'
-    }}>
-        احجز دكتورك الآن مع أكبر منصة لحجز الأطباء في مصر.. نخبة من أفضل وأمهر الاستشاريين والأخصائيين.. اختار الميعاد اللي يناسبك واحجز الآن.
-    </p>
-  </div>
 
+{/* 1. مستطيل تحميل التطبيق (نسخة الأندرويد فقط) */}
+    <div style={{
+      background: 'linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%)', // غيرنا اللون لأخضر خفيف يتماشى مع أندرويد
+      padding: '20px',
+      borderRadius: '15px',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+      border: '1px solid #c8e6c9',
+      textAlign: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '12px'
+    }}>
+      <h3 style={{ color: '#2c3e50', margin: 0, fontSize: '18px', fontWeight: 'bold' }}>
+        📱 حمل تطبيق منصة دكتور للأندرويد
+      </h3>
+      <p style={{ margin: 0, fontSize: '14px', color: '#666' }}>احجز موعدك بضغطة واحدة من موبايلك</p>
+      
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <button 
+          onClick={() => window.open('https://play.google.com/store/apps/details?id=com.doctorplatform.app&pcampaignid=web_share', '_blank')}
+          style={{
+            background: '#2c3e50', 
+            color: '#fff', 
+            border: 'none', 
+            padding: '12px 30px', // كبرنا الزرار أفقياً
+            borderRadius: '10px', 
+            cursor: 'pointer', 
+            fontSize: '16px', 
+            fontWeight: 'bold',
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '10px',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+            transition: 'transform 0.2s'
+          }}
+          onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
+          onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
+        >
+          <span>تحميل من Google Play</span>
+          <span style={{ fontSize: '24px' }}>🤖</span>
+        </button>
+      </div>
+    </div>
+
+    {/* 2. المستطيل التعريفي (الحالي) */}
+    <div style={{
+      border: '2px solid #3eeb09', 
+      borderRadius: '15px',
+      backgroundColor: '#e3f2fd',
+      padding: '12px 20px',
+      display: 'flex',
+      alignItems: 'center',
+      boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
+    }}>
+      <p style={{ 
+          fontSize: '22px', // قللنا الخط سنة عشان التوازن
+          color: '#0d47a1', 
+          fontWeight: '800', 
+          lineHeight: '1.8', 
+          margin: 0,
+          textAlign: 'center'
+      }}>
+          احجز دكتورك الآن مع أكبر منصة لحجز الأطباء في مصر.. نخبة من أفضل وأمهر الاستشاريين والأخصائيين.. اختار الميعاد اللي يناسبك واحجز الآن.
+      </p>
+    </div>
+  </div>
 {/* القسم الثاني (منتصف): الصورة وزر الحجز */}
 <div style={{ 
   textAlign: 'center', 
