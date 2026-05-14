@@ -341,16 +341,16 @@ return (
       flexDirection: 'column',
       gap: '12px'
     }}>
-      <h3 style={{ color: '#2c3e50', margin: 0, fontSize: '18px', fontWeight: 'bold' }}>
+      <h3 style={{ color: '#0c1218', margin: 0, fontSize: '22px', fontWeight: 'bold' }}>
         📱 حمل تطبيق منصة دكتور للأندرويد
       </h3>
-      <p style={{ margin: 0, fontSize: '14px', color: '#666' }}>احجز موعدك بضغطة واحدة من موبايلك</p>
+      <p style={{ margin: 0, fontSize: '18px', color: '#131111' }}>احجز موعدك بضغطة واحدة من موبايلك</p>
       
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <button 
           onClick={() => window.open('https://play.google.com/store/apps/details?id=com.doctorplatform.app&pcampaignid=web_share', '_blank')}
           style={{
-            background: '#2c3e50', 
+            background: '#0a960a', 
             color: '#fff', 
             border: 'none', 
             padding: '12px 30px', // كبرنا الزرار أفقياً
