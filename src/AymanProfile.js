@@ -43,7 +43,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
             <p style={{ color: '#666', fontSize: '14px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع  </p>
             <button 
               onClick={() => window.open('https://www.doctoreg.online/dr/40')}
-              style={{ width: '100%', marginTop: '24px', fontSize: '20px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
+              style={{ width: '100%', marginTop: '24px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
             >
               <FaCalendarCheck /> حجز موعد (أكتوبر)
             </button>
@@ -66,12 +66,70 @@ const AymanProfile = ({ setActivePage, navigate }) => {
         {/* قسم الخدمات */}
         <div style={{ background: '#fff', borderRadius: '20px', padding: '30px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', marginBottom: '30px' }}>
           <h2 style={{ color: '#1a73e8', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <FaStethoscope /> خدمات العيادة والمميزات
+            <FaStethoscope /> خدمات العيادة  
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
             <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4' }}>جراحات العمود الفقري الميكروسكوبية</div>
             <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4' }}>علاج اختناق الأعصاب والم اليد والكتفين</div>
             <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4' }}> علاج الانزلاق الغضروفي القطني والعنقي </div>
+            
+  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+    علاج الانزلاق الغضروفي القطني والعنقي، اختناق الأعصاب، وعرق النسا
+  </div>
+
+  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+    ألم اليد والكتفين، والصداع بكافة أنواعه
+  </div>
+
+  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+    التهاب الأعصاب الطرفية والتهابات العصب السابع والعصب الخامس
+  </div>
+
+  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+    آلام أسفل الظهر والرجلين
+  </div>
+
+  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+    الدوخة وعدم الاتزان، الرعشة، ضعف الذاكرة والنسيان، والزهايمر
+  </div>
+
+  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+    الحركات اللاإرادية، وجلطات المخ ونزيف المخ بكافة أنواعه
+  </div>
+
+  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+    نوبات الإغماء المتكررة والتشنجات
+  </div>
+
+  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+    اضطرابات الغدة النخامية
+  </div>
+
+  {/* خدمات الأطفال */}
+
+  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+    التشنجات ونوبات الصرع، وزيادة الكهرباء على المخ
+  </div>
+
+  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+    تأخر النمو البدني والحركي، وتأخر النمو العقلي
+  </div>
+
+  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+    صعوبات التعلم، وتأخر النطق، وضعف الذاكرة
+  </div>
+
+  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+    فرط الحركة وتشتت الانتباه (ADHD)، والتوحد
+  </div>
+
+  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+    علاج الاستسقاء الدماغي (المياه الزائدة على المخ)
+  </div>
+
+  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
+    الحركات اللاإرادية، والشلل الدماغي، وضمور العضلات، والتهابات الأعصاب
+  </div>
           </div>
         </div>
       </div>
