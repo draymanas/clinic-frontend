@@ -1402,6 +1402,12 @@ onClick={() => {
 
   {/* 5. صفحة الحجز المباشر (الديناميكية) */}
   <Route path="/dr/:doctorCode" element={<DirectBooking />} />
+
+  {/* 6. صفحة الإدارة (للأدمن فقط) */}
+  <Route path="/admin" element={<AdminPanel />} /> 
+
+  {/* 7. صفحة الحسابات */}
+  <Route path="/accounting" element={<AccountingPage />} />
 </Routes>
 </main>
     </div>
