@@ -40,7 +40,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
           <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #1a73e8' }}>
             <FaMapMarkerAlt style={{ fontSize: '30px', color: '#1a73e8' }} />
             <h3 style={{ margin: '15px 0' }}>فرع أكتوبر</h3>
-            <p style={{ color: '#666', fontSize: '14px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع  </p>
+            <p style={{ color: '#141313', fontSize: '16px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع  </p>
             <button 
               onClick={() => window.open('https://www.doctoreg.online/dr/40')}
               style={{ width: '100%', marginTop: '24px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
@@ -53,7 +53,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
           <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #2e7d32' }}>
             <FaMapMarkerAlt style={{ fontSize: '30px', color: '#2e7d32' }} />
             <h3 style={{ margin: '15px 0' }}>فرع شبرا</h3>
-            <p style={{ color: '#666', fontSize: '14px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث - بجوار محطة مترو الخلفاوي</p>
+            <p style={{ color: '#141313', fontSize: '16px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث - بجوار محطة مترو الخلفاوي</p>
             <button 
               onClick={() => window.open('https://www.doctoreg.online/dr/138')}
               style={{ width: '100%', marginTop: '24px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
