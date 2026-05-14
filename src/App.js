@@ -1,6 +1,6 @@
 import DoctorDashboard from './DoctorDashboard';
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import AymanProfile from './AymanProfile';
 
 // 1. استيراد الصفحة في الأعلى
@@ -168,7 +168,7 @@ if (res.ok) {
         </div>
     );
 }
-function BookingPage({ doctors, fetchData, currentUser, openLogin, setActivePage }) {
+function BookingPage({ doctors, fetchData, currentUser, navigate, openLogin, setActivePage }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [fSpecialty, setFSpecialty] = useState('الكل');
     const [fCity, setFCity] = useState('الكل');
@@ -354,16 +354,13 @@ return (
   padding: '20px',
   flex: '1'
 }}>
-  <img 
-    src="/10.png" 
-    alt="دكتور أيمن عجيب" 
-    onClick={() => {
-      // 1. الانتقال لصفحة البروفايل الشخصي (تأكد من الاسم الصحيح هنا)
-      setActivePage('ayman-profile'); 
-      
-      // 2. الصعود لأول الصفحة الجديدة
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }}
+<img 
+  src="/10.png" 
+  alt="دكتور أيمن عجيب" 
+  onClick={() => {
+    navigate('/dr_ayman_aguib'); // ده الرابط الجديد اللي اتفقنا عليه
+    window.scrollTo(0, 0); // عشان الصفحة تطلع لفوق أول ما تفتح
+  }}
     style={{ 
       width: (typeof window !== 'undefined' && window.innerWidth < 768) ? '90%' : '400px',
       maxWidth: '400px',
@@ -376,7 +373,7 @@ return (
     }} 
   />
     <button 
-      onClick={() => setActivePage('ayman-profile')} 
+      onClick={() => navigate('/dr_ayman_aguib')}
       style={{
         width: '100%',
         maxWidth: '400px',
@@ -1007,6 +1004,7 @@ const doctorAppointments = appointments.filter(app => {
 }
 // -// --- 5. المكون الرئيسي (App) ---
 function App() {
+    const navigate = useNavigate();
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false); 
@@ -1015,6 +1013,7 @@ function App() {
   const [showLoginModal, setShowLoginModal] = useState(false); 
   const [loginId, setLoginId] = useState(''); // ده عشان كود الدكتور
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
+
   const fetchData = async () => {
     try {
       const resDocs = await fetch('https://clinic-api-ig3d.onrender.com/doctors');
@@ -1037,10 +1036,10 @@ useEffect(() => {
 
         // توجيه تلقائي بناءً على الروول
         if (user.role === 'doctor') {
-            setActivePage('doctor_dashboard');
+            navigate('/dashboard');
         } else if (user.role === 'admin') {
             setIsAdmin(true);
-            setActivePage('admin_dashboard');
+            navigate('/admin');
         }
         
     } 
@@ -1065,9 +1064,9 @@ useEffect(() => {
     if (path.includes('/dr/')) {
         const idFromUrl = path.split('/dr/')[1];
         
-        // 1. ثبت صفحة الدكتور والـ ID فوراً (ده ملوش علاقة بالانتظار)
-        setSelectedDoctorId(idFromUrl); 
-        setActivePage('direct_booking_page');
+      // 1. ثبت صفحة الدكتور والـ ID فوراً (ده ملوش علاقة بالانتظار)
+setSelectedDoctorId(idFromUrl); 
+navigate(`/dr/${idFromUrl}`); // استبدل setActivePage بـ navigate
         
         // 2. الانتظار لمدة 5 ثوانٍ قبل "تنظيف" الرابط من فوق
         // الـ 5000 تعني 5000 مللي ثانية = 5 ثوانٍ
@@ -1088,10 +1087,11 @@ useEffect(() => {
   const handleLogout = () => {
     setIsAdmin(false);
     setCurrentUser(null);
-    setActivePage('home');
+    navigate('/')
   };
 
   return (
+    
     <div style={{ direction: 'rtl', fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f7f6', minHeight: '100vh' }}>
       
       {/* 1. شريط التنقل العلوي (النافبار) */}
@@ -1111,7 +1111,7 @@ useEffect(() => {
 
         {/* --- مكان اللوجو الجديد --- */}
 <div 
-  onClick={() => setActivePage('home')} 
+ onClick={() => navigate('/')}
   style={{ 
     cursor: 'pointer', 
     display: 'flex', 
@@ -1137,11 +1137,11 @@ useEffect(() => {
         {/* --- حاوية الزراير --- */}
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'nowrap' }}>
         {currentUser?.role !== 'doctor' && (
-  <button onClick={() => setActivePage('home')} style={{...navBtnStyle, backgroundColor: activePage === 'home' ? '#3498db' : 'transparent'}}>🏠 الرئيسية</button>
+  <button onClick={() => navigate('/')} style={{...navBtnStyle, backgroundColor: window.location.pathname === '/' ? '#3498db' : 'transparent'}}>🏠 الرئيسية</button>
 )}
  {(currentUser?.role !== 'admin' && currentUser?.role !== 'patient') && (
   <button 
-    onClick={() => setActivePage('join')} 
+    onClick={() => navigate('/join')} 
     style={{...navBtnStyle, backgroundColor: activePage === 'join' ? '#3498db' : 'transparent'}}
   >
     👨‍⚕️ انضمام طبيب
@@ -1149,13 +1149,13 @@ useEffect(() => {
 )}
         {isAdmin && (
           <>
-            <button onClick={() => setActivePage('admin')} style={{...navBtnStyle, backgroundColor: activePage === 'admin' ? '#e67e22' : 'transparent'}}>⚙️ الإدارة</button>
-            <button onClick={() => setActivePage('accounting')} style={{...navBtnStyle, backgroundColor: activePage === 'accounting' ? '#e67e22' : 'transparent'}}>💰 الحسابات</button>
+            <button onClick={() => navigate('/admin')} style={{...navBtnStyle, backgroundColor: activePage === 'admin' ? '#e67e22' : 'transparent'}}>⚙️ الإدارة</button>
+            <button onClick={() => navigate('/accounting')} style={{...navBtnStyle, backgroundColor: activePage === 'accounting' ? '#e67e22' : 'transparent'}}>💰 الحسابات</button>
           </>
         )}
            {currentUser?.role === 'doctor' && (
   <button 
-    onClick={() => setActivePage('doctor_dashboard')} 
+    onClick={() => navigate('/dashboard')}
     style={{...navBtnStyle, backgroundColor: activePage === 'doctor_dashboard' ? '#2ecc71' : 'transparent', color: '#fff'}}
   >
     📊 لوحة التحكم
@@ -1280,7 +1280,7 @@ useEffect(() => {
                     
                     setIsAdmin(true);
                     setCurrentUser(adminData);
-                    setActivePage('admin'); // تأكد أن اسم الصفحة 'admin' أو 'admin_dashboard' حسب كودك
+                   navigate('/admin');// تأكد أن اسم الصفحة 'admin' أو 'admin_dashboard' حسب كودك
                     
                     // --- السطر السحري للحفظ ---
                     localStorage.setItem('saved_user', JSON.stringify(adminData));
@@ -1335,7 +1335,7 @@ onClick={() => {
         setCurrentUser(doctorData);
 
         // 5. التوجه للوحة التحكم وإغلاق نافذة الدخول
-        setActivePage('doctor_dashboard'); 
+        navigate('/dashboard');
         setShowLoginModal(false);
     } else {
         alert("عذراً، تأكد من (الكود) أو (رقم الموبايل) أو (كلمة المرور)، أو أن الحساب لم يفعل بعد.");
@@ -1373,39 +1373,39 @@ onClick={() => {
       )}
 
       {/* 3. منطقة عرض المحتوى */}
-     <main>
-  {/* 1. لو الرابط فيه /dr/، افتح صفحة الدكتور وابعتلها الرقم اللي في العنوان */}
-  {window.location.pathname.includes('/dr/') ? (
-    <DirectBooking doctorId={window.location.pathname.split('/dr/')[1]} />
-  ) : (
-    /* 2. لو مفيش، كمل نظامك العادي بتاع امبارح */
-    <>
-      {activePage === 'home' && (
-        <BookingPage 
-          doctors={doctors} 
-          fetchData={fetchData} 
-          currentUser={currentUser} 
-          openLogin={() => setShowLoginModal(true)} 
-          setActivePage={setActivePage} // <--- ضيف السطر ده هنا بالظبط
-        />
-      )}
-      {/* السطر الجديد لصفحة البورتفوليو الخاصة بك */}
-    {activePage === 'ayman-profile' && <AymanProfile setActivePage={(val) => setActivePage(val)} />}
-      {activePage === 'direct_booking_page' && <DirectBooking />}
-      {activePage === 'join' && <DoctorRegister />}
-      {activePage === 'doctor_dashboard' && currentUser?.role === 'doctor' && (
-        <DoctorDashboard doctorId={currentUser.id} />
-      )}
-      {activePage === 'admin' && isAdmin && (
-        <AdminPage doctors={doctors} appointments={appointments} fetchData={fetchData} />
-      )}
-      {activePage === 'accounting' && isAdmin && (
-        <AccountingPage doctors={doctors} appointments={appointments} />
-      )}
-    </>
-  )}
+     <main><Routes>
+  {/* 1. الصفحة الرئيسية (الهوم) */}
+  <Route path="/" element={
+    <BookingPage 
+      doctors={doctors} 
+      fetchData={fetchData} 
+      currentUser={currentUser} 
+      openLogin={() => setShowLoginModal(true)} 
+      setActivePage={setActivePage} 
+      navigate={navigate}  // <--- السطر ده موجود؟ وكاتب navigate={navigate} ؟
+    />
+  } />
+
+  {/* 2. صفحتك الشخصية - باسمك */}
+ <Route path="/dr_ayman_aguib" element={
+  <AymanProfile 
+    setActivePage={setActivePage} 
+    navigate={navigate} // لازم السطر ده يكون موجود هنا
+  />
+} />
+
+  {/* 3. صفحة انضمام طبيب */}
+  <Route path="/join" element={<DoctorRegister />} />
+
+  {/* 4. لوحة تحكم الأطباء */}
+  <Route path="/dashboard" element={<DoctorDashboard doctorId={currentUser?.id} />} />
+
+  {/* 5. صفحة الحجز المباشر (الديناميكية) */}
+  <Route path="/dr/:doctorCode" element={<DirectBooking />} />
+</Routes>
 </main>
     </div>
+    
   );
 }
 export default App;

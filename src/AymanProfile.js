@@ -1,11 +1,11 @@
 import React from 'react';
 import { FaMapMarkerAlt, FaCalendarCheck, FaStethoscope, FaArrowRight } from 'react-icons/fa';
-const AymanProfile = ({ setActivePage }) => {
+const AymanProfile = ({ setActivePage, navigate }) => {
   return (
     <div style={{ direction: 'rtl', backgroundColor: '#f8fafc', minHeight: '100vh', paddingBottom: '50px' }}>
       <div style={{ padding: '15px', backgroundColor: '#fff', borderBottom: '1px solid #eee' }}>
         <button 
-          onClick={() => setActivePage('home')} // هذه هي الدالة التي تعيد المستخدم للرئيسية
+          onClick={() => navigate('/')} // هذه هي الدالة التي تعيد المستخدم للرئيسية
           style={{
             display: 'flex',
             alignItems: 'center',
