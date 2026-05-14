@@ -25,15 +25,13 @@ const AymanProfile = ({ setActivePage, navigate }) => {
       <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '60px 20px', textAlign: 'center' }}>
         <h1 style={{ fontSize: '38px', fontWeight: '900', margin: '0 0 10px 0' }}>دكتور أيمن عجيب</h1>
         <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب وجراحة العمود الفقري</p>
-        <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#eef5f4' }}>{'>'}خبرة أكثر من 20 عاماً</p>
-        <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#f0f7f6' }}>{'>'}احجز موعدك الآن</p>
+        <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#eef5f4' }}>خبرة أكثر من 20 عاماً</p>
+        <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#f0f7f6' }}>احجز موعدك الآن</p>
      
       </div>
 
       <div style={{ maxWidth: '1000px', margin: '-40px auto 0', padding: '0 20px' }}>
         
-        
-
         {/* قسم الفروع والحجز المباشر */}
         
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
@@ -41,11 +39,11 @@ const AymanProfile = ({ setActivePage, navigate }) => {
           {/* فرع أكتوبر */}
           <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #1a73e8' }}>
             <FaMapMarkerAlt style={{ fontSize: '30px', color: '#1a73e8' }} />
-            <h3 style={{ margin: '15px 0' }}>فرع مدينة 6 أكتوبر</h3>
-            <p style={{ color: '#666', fontSize: '14px' }}>المحور المركزي - استهداف منطقة أكتوبر</p>
+            <h3 style={{ margin: '15px 0' }}>فرع أكتوبر</h3>
+            <p style={{ color: '#666', fontSize: '14px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع  </p>
             <button 
               onClick={() => window.open('https://www.doctoreg.online/dr/40')}
-              style={{ width: '100%', marginTop: '20px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
+              style={{ width: '100%', marginTop: '24px', fontSize: '20px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
             >
               <FaCalendarCheck /> حجز موعد (أكتوبر)
             </button>
@@ -58,7 +56,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
             <p style={{ color: '#666', fontSize: '14px' }}>شارع شبرا الرئيسي - بجوار محطة المترو</p>
             <button 
               onClick={() => window.open('https://www.doctoreg.online/dr/138')}
-              style={{ width: '100%', marginTop: '20px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
+              style={{ width: '100%', marginTop: '24px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
             >
               <FaCalendarCheck /> حجز موعد (شبرا)
             </button>
