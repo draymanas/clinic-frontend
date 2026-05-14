@@ -23,24 +23,14 @@ const AymanProfile = ({ setActivePage, navigate }) => {
       </div>
       {/* الهيدر الشخصي */}
       <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '60px 20px', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '35px', fontWeight: '900', margin: '0 0 10px 0' }}>دكتور أيمن عجيب</h1>
-        <p style={{ fontSize: '20px', opacity: '0.9' }}>استشاري المخ والأعصاب وجراحة العمود الفقري</p>
-        <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#3debd3' }}>خبرة أكثر من 20 عاماً</p>
+        <h1 style={{ fontSize: '38px', fontWeight: '900', margin: '0 0 10px 0' }}>دكتور أيمن عجيب</h1>
+        <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب وجراحة العمود الفقري</p>
+        <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#3debd3' }}>خبرة أكثر من 20 عاماً</p>
       </div>
 
       <div style={{ maxWidth: '1000px', margin: '-40px auto 0', padding: '0 20px' }}>
         
-        {/* قسم الخدمات */}
-        <div style={{ background: '#fff', borderRadius: '20px', padding: '30px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', marginBottom: '30px' }}>
-          <h2 style={{ color: '#1a73e8', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <FaStethoscope /> خدمات العيادة والمميزات
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
-            <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4' }}>جراحات العمود الفقري الميكروسكوبية</div>
-            <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4' }}>علاج آلام الأعصاب والصرع والجلطات</div>
-            <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4' }}>أحدث تقنيات رسم المخ والأعصاب</div>
-          </div>
-        </div>
+        
 
         {/* قسم الفروع والحجز المباشر */}
         <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#2c3e50' }}>احجز موعدك الآن في الفرع الأقرب لك</h2>
@@ -72,6 +62,17 @@ const AymanProfile = ({ setActivePage, navigate }) => {
             </button>
           </div>
 
+        </div>
+        {/* قسم الخدمات */}
+        <div style={{ background: '#fff', borderRadius: '20px', padding: '30px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', marginBottom: '30px' }}>
+          <h2 style={{ color: '#1a73e8', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <FaStethoscope /> خدمات العيادة والمميزات
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
+            <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4' }}>جراحات العمود الفقري الميكروسكوبية</div>
+            <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4' }}>علاج اختناق الأعصاب والم اليد والكتفين</div>
+            <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4' }}> علاج الانزلاق الغضروفي القطني والعنقي </div>
+          </div>
         </div>
       </div>
     </div>
