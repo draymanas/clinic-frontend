@@ -25,7 +25,9 @@ const AymanProfile = ({ setActivePage, navigate }) => {
       <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '60px 20px', textAlign: 'center' }}>
         <h1 style={{ fontSize: '38px', fontWeight: '900', margin: '0 0 10px 0' }}>دكتور أيمن عجيب</h1>
         <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب وجراحة العمود الفقري</p>
-        <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#3debd3' }}>خبرة أكثر من 20 عاماً</p>
+        <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#eef5f4' }}>{'>'}خبرة أكثر من 20 عاماً</p>
+        <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#f0f7f6' }}>{'>'}احجز موعدك الآن</p>
+     
       </div>
 
       <div style={{ maxWidth: '1000px', margin: '-40px auto 0', padding: '0 20px' }}>
@@ -33,7 +35,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
         
 
         {/* قسم الفروع والحجز المباشر */}
-        <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#2c3e50' }}>احجز موعدك الآن في الفرع الأقرب لك</h2>
+        
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
           
           {/* فرع أكتوبر */}
