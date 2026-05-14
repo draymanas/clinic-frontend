@@ -78,30 +78,30 @@ const AymanProfile = ({ setActivePage, navigate }) => {
   </div>
 
   <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    ألم اليد والكتفين، والصداع بكافة أنواعه
+    الصداع النصفي و كافة انواع الصداع  
   </div>
 
   <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    التهاب الأعصاب الطرفية والتهابات العصب السابع والعصب الخامس
+    التهابات العصب السابع والعصب الخامس
   </div>
 
   <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    آلام أسفل الظهر والرجلين
+    التهاب الأعصاب الطرفية و ألم القدمين
   </div>
 
   <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
     الدوخة وعدم الاتزان والرعشة  </div>
 
   <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    الحركات اللاإرادية، وجلطات المخ ونزيف المخ بكافة أنواعه
+     جلطات المخ ونزيف المخ بكافة أنواعه
   </div>
 
   <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    نوبات الإغماء المتكررة والتشنجات
+    نوبات الإغماء المتكررة و ارتفاع ضغط المخ و ارتشاح العصب البصري
   </div>
 
   <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    اضطرابات الغدة النخامية
+    اضطرابات الغدة النخامية والحركات اللارادية والرعاش
   </div>
 
 <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
