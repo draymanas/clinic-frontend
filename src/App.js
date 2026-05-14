@@ -341,10 +341,10 @@ return (
       flexDirection: 'column',
       gap: '12px'
     }}>
-      <h3 style={{ color: '#0c1218', margin: 0, fontSize: '22px', fontWeight: 'bold' }}>
-        📱 حمل تطبيق منصة دكتور للأندرويد
+      <h3 style={{ color: '#0c1218', margin: 0, fontSize: '24px', fontWeight: 'bold' }}>
+        📱 حمل تطبيق دكتور للأندرويد
       </h3>
-      <p style={{ margin: 0, fontSize: '18px', color: '#131111' }}>احجز موعدك بضغطة واحدة من موبايلك</p>
+      <p style={{ margin: 0, fontSize: '20px', color: '#131111' }}>احجز موعدك بضغطة واحدة من موبايلك</p>
       
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <button 
@@ -368,7 +368,7 @@ return (
           onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
         >
           <span>تحميل من Google Play</span>
-          <span style={{ fontSize: '24px' }}>🤖</span>
+          
         </button>
       </div>
     </div>
