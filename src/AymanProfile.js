@@ -58,7 +58,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
               onClick={() => window.open('https://www.doctoreg.online/dr/138')}
               style={{ width: '100%', marginTop: '24px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
             >
-              <FaCalendarCheck />حجز موعد (شبرا)
+              <FaCalendarCheck /> حجز موعد (شبرا)
             </button>
           </div>
 
