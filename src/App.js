@@ -204,14 +204,24 @@ const doctorsListRef = React.useRef(null); // أضف React. قبلها
         // إرجاع بصيغة YYYY-MM-DD لضمان قبول قاعدة البيانات (PostgreSQL)
         return resultDate.toISOString().split('T')[0];
     };
-
-    const filtered = doctors.filter(d => 
-        d.is_active && 
-        (fSpecialty === 'الكل' || d.specialty === fSpecialty) && 
-        (fCity === 'الكل' || d.city === fCity) && 
-        (fArea === 'الكل' || d.area === fArea) &&
-        d.name.includes(searchTerm)
-    );
+const filtered = doctors
+  .filter(d => 
+    d.is_active &&
+    (fSpecialty === 'الكل' || d.specialty === fSpecialty) &&
+    (fCity === 'الكل' || d.city === fCity) &&
+    (fArea === 'الكل' || d.area === fArea) &&
+    d.name.includes(searchTerm)
+  )
+  .sort((a, b) => {
+    // الترتيب حسب sort_order (الرقم الأقل يظهر أولاً)
+    const orderA = a.sort_order ?? 999;
+    const orderB = b.sort_order ?? 999;
+    
+    if (orderA !== orderB) return orderA - orderB;
+    
+    // لو متساويين في الترتيب، المميز (featured) يظهر أولاً
+    return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0);
+  });
 // جوا الفانكشن BookingPage وقبل الـ return
 const specialties = [
     { name: 'أسنان', icon: '🦷', count: 1830 },
