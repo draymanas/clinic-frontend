@@ -353,10 +353,10 @@ return (
             background: '#0a960a', 
             color: '#fff', 
             border: 'none', 
-            padding: '12px 30px', // كبرنا الزرار أفقياً
+            padding: '16px 30px', // كبرنا الزرار أفقياً
             borderRadius: '10px', 
             cursor: 'pointer', 
-            fontSize: '16px', 
+            fontSize: '20px', 
             fontWeight: 'bold',
             display: 'flex', 
             alignItems: 'center', 
