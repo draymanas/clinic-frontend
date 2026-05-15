@@ -935,21 +935,48 @@ function AdminPage({ doctors, appointments, fetchData }) {
     const handleDelete = async (id) => { if(window.confirm("حذف؟")){ await fetch(`https://clinic-api-ig3d.onrender.com/delete-doctor/${id}`, {method:'DELETE'}); fetchData(); } };
     const handleToggle = async (id, s) => { await fetch(`https://clinic-api-ig3d.onrender.com/toggle-doctor/${id}`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:s})}); fetchData(); };
 
+const handleOrderChange = async (id, newOrder) => {
+        try {
+            await fetch(`https://clinic-api-ig3d.onrender.com/update-doctor-order/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sort_order: newOrder || 999 })
+            });
+            fetchData(); // تحديث عشان الترتيب يظهر فوراً
+        } catch (err) {
+            console.error("Error updating order:", err);
+        }
+    };
+
     return (
         <div style={{ padding: '20px', direction: 'rtl' }}>
             <h2 style={{textAlign:'center'}}>📊 إدارة الأطباء</h2>
             <table style={{width:'100%', background:'#fff', borderCollapse:'collapse', marginBottom:'40px'}}>
-                <thead style={{background:'#eee'}}><tr align="right"><th>الدكتور</th><th>المكان</th><th>الحالة</th><th>الإجراء</th></tr></thead>
+                <thead style={{background:'#eee'}}><tr align="right"><th>الدكتور</th><th>المكان</th><th>الحالة</th><th style={{ textAlign: 'center' }}>الترتيب</th><th>الإجراء</th></tr></thead>
                 <tbody>
                     {doctors.map(d => (
                         <tr key={d.id} style={{borderBottom:'1px solid #eee'}}>
                             <td style={{padding:'10px'}}>{d.name}</td>
                             <td>{d.city}</td>
                             <td>{d.is_active ? '✅ مفعل' : '❌ متوقف'}</td>
+                            <td style={{ textAlign: 'center' }}>
+                                <input 
+                                    type="number" 
+                                    defaultValue={d.sort_order === 999 ? '' : d.sort_order}
+                                    placeholder="999"
+                                    style={{ 
+                                        width: '50px', 
+                                        textAlign: 'center', 
+                                        border: '1px solid #ddd', 
+                                        borderRadius: '4px' 
+                                    }}
+                                    onBlur={(e) => handleOrderChange(d.id, e.target.value)}
+                                />
+                            </td>
                             <td>
                                 <button onClick={() => handleToggle(d.id, !d.is_active)} style={{background: d.is_active ? '#f39c12' : '#27ae60', color:'#fff', border:'none', padding:'5px', borderRadius:'5px'}}>{d.is_active ? 'إيقاف' : 'تفعيل'}</button>
                                 <button onClick={() => handleDelete(d.id)} style={{color:'red', marginLeft:'10px', background:'none', border:'none'}}>حذف</button>
-                            </td>
+                               </td>
                         </tr>
                     ))}
                 </tbody>
