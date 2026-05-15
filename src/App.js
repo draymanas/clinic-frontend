@@ -997,8 +997,7 @@ const handleOrderChange = async (id, newOrder) => {
                             <td>
                                 <button onClick={() => handleToggle(d.id, !d.is_active)} style={{background: d.is_active ? '#f39c12' : '#27ae60', color:'#fff', border:'none', padding:'5px', borderRadius:'5px'}}>{d.is_active ? 'إيقاف' : 'تفعيل'}</button>
                                 <button onClick={() => handleDelete(d.id)} style={{color:'red', marginLeft:'10px', background:'none', border:'none'}}>حذف</button>
-                                <button onClick={() => handleFeaturedToggle(d.id, d.featured)} style={{color:'gold', marginLeft:'10px', background:'none', border:'none'}}>تمييز</button>
-                               </td>
+                                </td>
                         </tr>
                     ))}
                 </tbody>
