@@ -935,6 +935,16 @@ function AdminPage({ doctors, appointments, fetchData }) {
     const handleDelete = async (id) => { if(window.confirm("حذف؟")){ await fetch(`https://clinic-api-ig3d.onrender.com/delete-doctor/${id}`, {method:'DELETE'}); fetchData(); } };
     const handleToggle = async (id, s) => { await fetch(`https://clinic-api-ig3d.onrender.com/toggle-doctor/${id}`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:s})}); fetchData(); };
 
+const [adminSearch, setAdminSearch] = React.useState(''); // للبحث بالاسم
+const [adminSpecialty, setAdminSpecialty] = React.useState('الكل'); // للفلترة بالتخصص
+
+const filteredAdminDoctors = doctors.filter(d => {
+    const matchName = d.name.toLowerCase().includes(adminSearch.toLowerCase());
+    const matchSpecialty = adminSpecialty === 'الكل' || d.specialty === adminSpecialty;
+    return matchName && matchSpecialty;
+});
+
+
 const handleFeaturedToggle = async (id, currentStatus) => {
     try {
         await fetch(`https://clinic-api-ig3d.onrender.com/update-doctor-featured/${id}`, {
@@ -964,10 +974,69 @@ const handleOrderChange = async (id, newOrder) => {
     return (
         <div style={{ padding: '20px', direction: 'rtl' }}>
             <h2 style={{textAlign:'center'}}>📊 إدارة الأطباء</h2>
+            <div style={{ 
+    display: 'flex', 
+    gap: '15px', 
+    marginBottom: '20px', 
+    backgroundColor: '#f8f9fa', 
+    padding: '15px', 
+    borderRadius: '10px' 
+}}>
+    <input 
+        type="text" 
+        placeholder="🔍 ابحث باسم الدكتور..." 
+        style={{ flex: 2, padding: '10px', borderRadius: '5px', border: '1px solid #ddd' }}
+        onChange={(e) => setAdminSearch(e.target.value)}
+    />
+    
+    <select 
+        style={{ flex: 1, padding: '10px', borderRadius: '5px', border: '1px solid #ddd' }}
+        onChange={(e) => setAdminSpecialty(e.target.value)}
+    >
+        <option value="الكل">كل التخصصات</option>
+        <option value="باطنة">باطنة</option>
+        <option value="أطفال">أطفال</option>
+        <option value="أسنان">أسنان</option>
+        <option value="باطنة">باطنة</option>
+<option value="أطفال">أطفال</option>
+<option value="أسنان">أسنان</option>
+<option value="أطفال وحديثي الولادة">أطفال وحديثي الولادة</option>
+<option value="أنف وأذن وحنجرة">أنف وأذن وحنجرة</option>
+<option value="تغذية علاجية">تغذية علاجية</option>
+<option value="جراحة أطفال">جراحة أطفال</option>
+<option value="جراحة أوعية دموية">جراحة أوعية دموية</option>
+<option value="جراحة أورام">جراحة أورام</option>
+<option value="جراحة تجميل">جراحة تجميل</option>
+<option value="جراحة سمنة ونحافة">جراحة سمنة ونحافة</option>
+<option value="عظام">عظام</option>
+<option value="جراحة قلب وصدر">جراحة قلب وصدر</option>
+<option value="جراحة مخ وأعصاب">جراحة مخ وأعصاب</option>
+<option value="جراحة مسالك بولية">جراحة مسالك بولية</option>
+<option value="جلدية">جلدية</option>
+<option value="جهاز هضمي وكبد">جهاز هضمي وكبد</option>
+<option value="حساسية ومناعة">حساسية ومناعة</option>
+<option value="رمد">رمد</option>
+<option value="روماتيزم">روماتيزم</option>
+<option value="ذكورة وعقم">ذكورة وعقم</option>
+<option value="علاج طبيعي">علاج طبيعي</option>
+<option value="غدد صماء وسكري">غدد صماء وسكري</option>
+<option value="جراحة عامه">جراحة عامه</option>
+<option value="امراض دم">امراض دم</option>
+<option value="قلب وأوعية دموية">قلب وأوعية دموية</option>
+<option value="مخ وأعصاب">مخ وأعصاب</option>
+<option value="نسا وتوليد">نسا وتوليد</option>
+<option value="تخاطب">تخاطب</option>
+<option value="كلى">كلى</option>
+<option value="جراحة عمود فقري">جراحة عمود فقري</option>
+<option value="صدر">صدر</option>
+<option value="نفسي أطفال">نفسي أطفال</option>
+<option value="نفسي">نفسي</option>
+    </select>
+</div>
             <table style={{width:'100%', background:'#fff', borderCollapse:'collapse', marginBottom:'40px'}}>
                 <thead style={{background:'#eee'}}><tr align="right"><th>الدكتور</th><th>المكان</th><th>مميز</th><th>الحالة</th><th style={{ textAlign: 'center' }}>الترتيب</th><th>الإجراء</th></tr></thead>
                 <tbody>
-                    {doctors.map(d => (
+                    {filteredAdminDoctors.map(d => (
                         <tr key={d.id} style={{borderBottom:'1px solid #eee'}}>
                             <td style={{padding:'10px'}}>{d.name}</td>
                             <td>{d.city}</td>
