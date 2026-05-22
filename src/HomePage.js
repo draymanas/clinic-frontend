@@ -1,5 +1,6 @@
 // HomePage.js
 import React, { useState, useRef } from 'react';
+import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 
 // الثوابت اللي كانت في الـ App.js، ممكن تجيبها من ملف منفصل (constants.js مثلاً)
@@ -87,6 +88,19 @@ function HomePage() {
     const [fSpecialty, setFSpecialty] = useState('الكل');
     const [fCity, setFCity] = useState('الكل');
     const [fArea, setFArea] = useState('الكل');
+    const orgSchema = {
+        "@context": "https://schema.org",
+        "@type": "MedicalOrganization",
+        "name": "دكتور | DOCTOR",
+        "url": "https://www.doctoreg.online/",
+        "description": "أكبر منصة لحجز الأطباء في مصر، تضم نخبة من أفضل الاستشاريين والأخصائيين في جميع التخصصات الطبية.",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer service",
+            "areaServed": "EG",
+            "availableLanguage": "Arabic"
+        }
+    };
 
     const handleSearchRedirect = (specialty = 'الكل', city = 'الكل', area = 'الكل', name = '') => {
         const params = new URLSearchParams();
@@ -97,9 +111,17 @@ function HomePage() {
         navigate(`/search?${params.toString()}`);
     };
 
-    return (
+   return (
         <div style={{ backgroundColor: '#f0f4f8', minHeight: '100vh', direction: 'rtl' }}>
-            <div style={{ textAlign: 'center', padding: '40px 0', background: '#fff' }}>
+            {/* 3. إضافة الـ Helmet لضبط العنوان والوصف والـ Schema */}
+            <Helmet>
+                <title>دكتور | منصة حجز الأطباء الأولى في مصر</title>
+                <meta name="description" content="احجز موعدك مع أفضل الأطباء والاستشاريين في مصر. تغطية شاملة لجميع التخصصات الطبية، حجز سهل ومباشر عبر الإنترنت." />
+                <script type="application/ld+json">
+                    {JSON.stringify(orgSchema)}
+                </script>
+            </Helmet>
+             <div style={{ textAlign: 'center', padding: '40px 0', background: '#fff' }}>
                 <h1 style={{ fontSize: '85px', fontWeight: '900', margin: 0, color: '#1a73e8', textTransform: 'uppercase' }}>
                     دكتور <span style={{ color: '#2c3e50', fontWeight: '300' }}>| DOCTOR</span>
                 </h1>
