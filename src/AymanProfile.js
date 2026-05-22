@@ -1,11 +1,37 @@
 import React from 'react';
+import { Helmet } from 'react-helmet'; // 1. استيراد المكتبة
 import { FaMapMarkerAlt, FaCalendarCheck, FaStethoscope, FaArrowRight } from 'react-icons/fa';
+
 const AymanProfile = ({ setActivePage, navigate }) => {
+  
+  // 2. تعريف البيانات المنظمة (Structured Data)
+  const schemaData = {
+    "@context": "https://schema.org/",
+    "@type": "Physician",
+    "name": "دكتور أيمن عجيب",
+    "url": "https://www.doctoreg.online/dr_ayman_aguib",
+    "description": "استشاري المخ والأعصاب وجراحة العمود الفقري بخبرة أكثر من 20 عاماً.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "مصر",
+      "addressCountry": "EG"
+    }
+  };
+
   return (
     <div style={{ direction: 'rtl', backgroundColor: '#f8fafc', minHeight: '100vh', paddingBottom: '50px' }}>
+      {/* 3. إضافة الـ Helmet لضبط العنوان و الـ Schema */}
+      <Helmet>
+        <title>دكتور أيمن عجيب | استشاري المخ والأعصاب</title>
+        <meta name="description" content="احجز موعدك مع دكتور أيمن عجيب استشاري المخ والأعصاب وجراحة العمود الفقري بخبرة أكثر من 20 عاماً." />
+        <script type="application/ld+json">
+          {JSON.stringify(schemaData)}
+        </script>
+      </Helmet>
+
       <div style={{ padding: '15px', backgroundColor: '#fff', borderBottom: '1px solid #eee' }}>
         <button 
-          onClick={() => navigate('/')} // هذه هي الدالة التي تعيد المستخدم للرئيسية
+          onClick={() => navigate('/')}
           style={{
             display: 'flex',
             alignItems: 'center',
