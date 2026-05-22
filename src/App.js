@@ -1,14 +1,18 @@
+// App.js
 import DoctorDashboard from './DoctorDashboard';
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import AymanProfile from './AymanProfile';
 
-// 1. استيراد الصفحة في الأعلى
+// استيراد المكونات الجديدة
+import HomePage from './HomePage'; // الصفحة الرئيسية الجديدة
+import SearchPage from './SearchPage'; // صفحة البحث الجديدة
 import DirectBooking from './DirectBooking';
 
 
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
+    // ... (احتفظ بالثوابت هنا إذا لم تنقلها إلى ملف منفصل)
     "القاهرة": ["مدينة نصر", "مصر الجديدة", "المعادي", "وسط البلد", "حلوان", "شبرا", "التجمع الخامس", "التجمع الأول", "الزمالك", "المقطم", "عين شمس", "السلام", "المرج", "الزيتون", "حدائق القبة", "روض الفرج"],
     "الجيزة": ["الدقي", "المهندسين", "العجوزة", "6 أكتوبر", "الشيخ زايد", "الهرم", "فيصل", "البدرشين", "الصف", "أبو النمرس", "الحوامدية", "كرداسة", "أوسيم"],
     "الإسكندرية": ["سموحة", "سيدي جابر", "محرم بك", "المنتزه", "لوران", "سيدي بشر", "العصافرة", "ميامي", "العجمي", "الدخيلة", "الورديان"],
@@ -33,8 +37,6 @@ const egyptLocations = {
     "مطروح": ["مرسى مطروح", "الحمام", "العلمين", "الضبعة", "السلوم", "سيوة"],
     "الوادي الجديد": ["الخارجة", "الداخلة", "الفرافرة", "باريس"]
 };
-
-const allGovernorates = Object.keys(egyptLocations);
 const medicalSpecialties = [
   "الكل", "أسنان", "أطفال وحديثي الولادة", "أنف وأذن وحنجرة", "باطنة", "تغذية علاجية",
   "جراحة أطفال", "جراحة أوعية دموية", "جراحة أورام", "جراحة تجميل", "جراحة سمنة ونحافة",
@@ -42,15 +44,12 @@ const medicalSpecialties = [
   "جهاز هضمي وكبد", "حساسية ومناعة", "رمد", "روماتيزم", "ذكورة وعقم", "علاج طبيعي", "غدد صماء وسكري",
   "جراحة عامه","امراض دم","قلب وأوعية دموية", "مخ وأعصاب", "نسا وتوليد", "تخاطب", "كلى", "جراحة عمود فقري", "صدر", "نفسي أطفال", "نفسي"
 ];
-const weekDays = ["السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
-const hoursArr = Array.from({ length: 12 }, (_, i) => i + 1);
-const minsArr = ["00", "15", "30", "45"];
-const periodsArr = ["صباحاً", "مساءً"];
+
 
 const inputStyle = { padding: '12px', borderRadius: '8px', border: '1px solid #ddd', width: '100%', boxSizing: 'border-box' };
+
 const getOptimizedImage = (url) => {
   if (!url) return null;
-  // لو الرابط من سوبابيز، بنفعله خاصية التصغير والتحويل لـ webp
   if (url.includes('supabase.co')) {
     return url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + 
            '?width=200&height=200&format=webp&quality=80';
@@ -68,11 +67,16 @@ const getNextDateForDay = (dayName) => {
     return resultDate.toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' });
 };
 
-// --- 2. مكون تسجيل الدكتور (DoctorRegister) ---
+// ... (DoctorRegister, AdminPage, AccountingPage تبقى كما هي أو تنقل لملفاتها الخاصة)
+
+// مكون تسجيل الدكتور (DoctorRegister)
 function DoctorRegister() {
     const [newDoc, setNewDoc] = useState({ name: '', mobile: '', specialty: '',bio: '', fee: '', address: '', personal_mobile: '', title: '', city: '', area: '', password: '' });
     const [scheduleDetails, setScheduleDetails] = useState({});
     const [selectedFile, setSelectedFile] = useState(null);
+    const weekDays = ["السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
+    const hoursArr = Array.from({ length: 12 }, (_, i) => i + 1);
+    const periodsArr = ["صباحاً", "مساءً"];
 
     const handleTimeChange = (day, field, value) => {
         setScheduleDetails(prev => ({ ...prev, [day]: { ...prev[day], [field]: value } }));
@@ -107,11 +111,10 @@ function DoctorRegister() {
             method: 'POST',
             body: formData,
         });
-if (res.ok) {
-    alert("✅ تم إرسال بياناتك وصورتك بنجاح !");
-    // اضف window. قبل fbq عشان السيرفر ما يرفضش الـ Build
-    window.fbq('track', 'CompleteRegistration');
-}
+        if (res.ok) {
+            alert("✅ تم إرسال بياناتك وصورتك بنجاح !");
+            window.fbq('track', 'CompleteRegistration');
+        }
     };
 
     return (
@@ -129,15 +132,15 @@ if (res.ok) {
                         {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                     <textarea 
-    placeholder="نبذة مختصرة عنك (الخبرات، الشهادات، إلخ...)" 
-    onChange={e => setNewDoc({...newDoc, bio: e.target.value})} 
-    style={{...inputStyle, height: '80px', resize: 'none'}} 
-/>
+                        placeholder="نبذة مختصرة عنك (الخبرات، الشهادات، إلخ...)" 
+                        onChange={e => setNewDoc({...newDoc, bio: e.target.value})} 
+                        style={{...inputStyle, height: '80px', resize: 'none'}} 
+                    />
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                     <select onChange={e => setNewDoc({...newDoc, city: e.target.value, area: ''})} style={inputStyle}>
                         <option value="">المحافظة</option>
-                        {allGovernorates.map(g => <option key={g} value={g}>{g}</option>)}
+                        {Object.keys(egyptLocations).map(g => <option key={g} value={g}>{g}</option>)}
                     </select>
                     <select onChange={e => setNewDoc({...newDoc, area: e.target.value})} disabled={!newDoc.city} style={inputStyle}>
                         <option value="">المدينة/المنطقة</option>
@@ -168,769 +171,8 @@ if (res.ok) {
         </div>
     );
 }
-function BookingPage({ doctors, fetchData, currentUser, navigate, openLogin, setActivePage }) {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [fSpecialty, setFSpecialty] = useState('الكل');
-    const [fCity, setFCity] = useState('الكل');
-    const [fArea, setFArea] = useState('الكل');
-    const [selectedDoc, setSelectedDoc] = useState(null);
-    const [selectedSlot, setSelectedSlot] = useState('');
-    const [showModal, setShowModal] = useState(false);
-    const [showTicket, setShowTicket] = useState(false);
-    const [patientData, setPatientData] = useState({ name: '', mobile: '' });
-const doctorsListRef = React.useRef(null); // أضف React. قبلها
-    // دي بنحطها في أول الفنكشن خالص من فوق
-    const [isBioExpanded, setIsBioExpanded] = useState(false);
-    // --- دالة تحويل اليوم إلى تاريخ رقمي (YYYY-MM-DD) ---
-    const getNextDateForDay = (dayName) => {
-        const days = { 
-            'الأحد': 0, 'الاثنين': 1, 'الثلاثاء': 2, 'الأربعاء': 3, 
-            'الخميس': 4, 'الجمعة': 5, 'السبت': 6 
-        };
-        // تنظيف النص من أي فواصل أو مسافات زائدة
-        const cleanDayName = dayName.replace('،', '').trim();
-        const targetDay = days[cleanDayName];
-        
-        const now = new Date();
-        const resultDate = new Date();
-        
-        // حساب الفرق بين اليوم الحالي واليوم المستهدف
-        let diff = (targetDay + 7 - now.getDay()) % 7;
-        // إذا كان اليوم هو نفس اليوم ولكن الوقت قد فات أو نريد السبت القادم دائماً
-        if (diff === 0) diff = 7; 
 
-        resultDate.setDate(now.getDate() + diff);
-        
-        // إرجاع بصيغة YYYY-MM-DD لضمان قبول قاعدة البيانات (PostgreSQL)
-        return resultDate.toISOString().split('T')[0];
-    };
-const filtered = doctors
-  .filter(d => 
-    d.is_active &&
-    (fSpecialty === 'الكل' || d.specialty === fSpecialty) &&
-    (fCity === 'الكل' || d.city === fCity) &&
-    (fArea === 'الكل' || d.area === fArea) &&
-    d.name.includes(searchTerm)
-  )
-  .sort((a, b) => {
-    // الترتيب حسب sort_order (الرقم الأقل يظهر أولاً)
-    const orderA = a.sort_order ?? 999;
-    const orderB = b.sort_order ?? 999;
-    
-    if (orderA !== orderB) return orderA - orderB;
-    
-    // لو متساويين في الترتيب، المميز (featured) يظهر أولاً
-    return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0);
-  });
-// جوا الفانكشن BookingPage وقبل الـ return
-const specialties = [
-    { name: 'أسنان', icon: '🦷', count: 1830 },
-    { name: 'باطنة', icon: '🩺', count: 1150 },
-    { name: 'عظام', icon: '🦴', count: 887 },
-    { name: 'نسا وتوليد', icon: '🤰', count: 1026 },
-    { name: 'جلدية', icon: '🧴', count: 578 },
-    { name: 'مخ وأعصاب', icon: '🧠', count: 548 },
-    { name: 'قلب وأوعية دموية', icon: '❤️', count: 517 },
-    { name: 'أنف وأذن وحنجرة', icon: '👂', count: 486 },
-    { name: 'جراحة مسالك بولية', icon: '🩻', count: 428 },
-    { name: 'غدد صماء وسكري', icon: '🧪', count: 372 },
-    { name: 'صدر', icon: '🫁', count: 341 },
-    { name: 'رمد', icon: '👁️', count: 342 },
-    { name: 'جراحة أورام', icon: '🎗️', count: 289 },
-    { name: 'جراحة عمود فقري', icon: '🦴', count: 268 },
-    { name: 'أطفال وحديثي الولادة', icon: '👶', count: 711 },
-    { name: 'جراحة عامه', icon: '🫀', count: 910 },
-    { name: 'علاج طبيعي', icon: '🏃', count: 546 },
-    { name: 'نفسي', icon: '🧠', count: 1018 },
-
-    { name: 'روماتيزم', icon: '🛡️', count: 315 },
-    { name: 'امراض دم', icon: '🩸', count: 205 },
-    { name: 'حساسية ومناعة', icon: '🌿', count: 276 },
-    { name: 'علاج الألم', icon: '💉', count: 174 },
-    { name: 'أشعة', icon: '🩻', count: 245 },
-    { name: 'تحاليل', icon: '🧫', count: 190 },
-    { name: 'جراحة قلب وصدر', icon: '❤️‍🩹', count: 120 },
-    { name: 'جراحة تجميل', icon: '✨', count: 340 },
-    { name: 'تخاطب', icon: '🗣️', count: 122 },
-    { name: 'ذكورة وعقم', icon: '👨', count: 175 },
-    { name: 'جراحة مخ وأعصاب', icon: '🧠', count: 211 },
-    { name: 'جراحة أوعية دموية', icon: '🫀', count: 136 },
-    { name: 'جهاز هضمي وكبد', icon: '🫀', count: 166 },
-    { name: 'كلى', icon: '🩺', count: 241 },
-    { name: 'جراحة أطفال', icon: '👦', count: 132 },
-    { name: 'نفسي أطفال', icon: '🧒', count: 155 },
-    { name: 'جراحة سمنة ونحافة', icon: '🚭', count: 76 },
-    { name: 'تغذية علاجية', icon: '🍎', count: 267 }
-
-];
-    const handleConfirm = async () => {
-        try {
-            // 1. استخراج اسم اليوم (مثل "السبت")
-            const dayName = selectedSlot.split(' ')[0]; 
-            
-            // 2. الحصول على التاريخ الرقمي (2026-03-14)
-            const actualDate = getNextDateForDay(dayName); 
-
-            const bookingData = {
-                doctor_id: selectedDoc.id,
-                doctor_name: selectedDoc.name,
-                patient_name: patientData.name,
-                mobile: patientData.mobile,
-                appointment_date: actualDate, // التاريخ الرقمي للسيرفر
-                price: selectedDoc.fee,
-                status: 'pending'
-            };
-
-            const response = await fetch('https://clinic-api-ig3d.onrender.com/book-appointment', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(bookingData),
-            });
-
-            if (response.ok) {
-                await fetchData();
-                setShowModal(false);
-                
-                // 3. تحديث النص للتذكرة (عرض التاريخ مع الوقت للمريض)
-                const timePart = selectedSlot.split(' ').slice(1).join(' ');
-                setSelectedSlot(`${dayName} ${actualDate} | ${timePart}`);
-                
-                setShowTicket(true);
-            } else {
-                const errorResult = await response.json();
-                alert("فشل الحجز: " + errorResult.error);
-            }
-        } catch (error) {
-            console.error("Error during booking:", error);
-            alert("حدث خطأ أثناء الاتصال بالسيرفر");
-        }
-};
-
-// ... باقي الـ return الخاص بالمكون (JSX) ...
-return (
-    <div style={{ backgroundColor: '#f0f4f8', minHeight: '100vh', direction: 'rtl' }}>
-      
-      {/* 1. اسم الموقع الكبير - DOCTOR */}
-      {/* التعديل: تكبير الحجم وزيادة المساحة */}
-{/* هذا هو الجزء الأصلي الذي يظهر فيه الاسم - اتركه كما هو أو عدله مرة واحدة فقط */}
-<div style={{ textAlign: 'center', padding: '40px 0', background: '#fff' }}>
-  <h1 style={{ fontSize: '85px', fontWeight: '900', margin: 0, color: '#1a73e8', textTransform: 'uppercase' }}>
-    دكتور <span style={{ color: '#2c3e50', fontWeight: '300' }}>| DOCTOR</span>
-  </h1>
-  <p style={{ color: '#7f8c8d', fontSize: '20px', marginTop: '10px' }}>احجز طبيبك الآن بكل سهولة</p>
-{/* بداية منطقة التعديل الشاملة */}
-<div style={{
-  display: 'flex',
-  flexDirection: (typeof window !== 'undefined' && window.innerWidth < 768) ? 'column' : 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: '20px',
-  padding: '20px',
-  direction: 'rtl'
-}}>
-
-  {/* القسم الأول (يمين): حاوية المستطيلات */}
-  <div style={{
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '15px', // مسافة بين مستطيل التطبيق والمستطيل التعريفي
-    flex: (typeof window !== 'undefined' && window.innerWidth < 768) ? 'none' : '1',
-    maxWidth: '400px',
-    margin: '10px auto'
-  }}>
-
-{/* 1. مستطيل تحميل التطبيق (نسخة الأندرويد فقط) */}
-    <div style={{
-      background: 'linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%)', // غيرنا اللون لأخضر خفيف يتماشى مع أندرويد
-      padding: '20px',
-      borderRadius: '15px',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-      border: '1px solid #c8e6c9',
-      textAlign: 'center',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '12px'
-    }}>
-      <h3 style={{ color: '#0c1218', margin: 0, fontSize: '24px', fontWeight: 'bold' }}>
-        📱 حمل تطبيق دكتور للأندرويد
-      </h3>
-      <p style={{ margin: 0, fontSize: '20px', color: '#131111' }}>احجز موعدك بضغطة واحدة من موبايلك</p>
-      
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <button 
-          onClick={() => window.open('https://play.google.com/store/apps/details?id=com.doctorplatform.app&pcampaignid=web_share', '_blank')}
-          style={{
-            background: '#0a960a', 
-            color: '#fff', 
-            border: 'none', 
-            padding: '16px 30px', // كبرنا الزرار أفقياً
-            borderRadius: '10px', 
-            cursor: 'pointer', 
-            fontSize: '20px', 
-            fontWeight: 'bold',
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '10px',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-            transition: 'transform 0.2s'
-          }}
-          onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-          onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-        >
-          <span>تحميل من Google Play</span>
-          
-        </button>
-      </div>
-    </div>
-
-    {/* 2. المستطيل التعريفي (الحالي) */}
-    <div style={{
-      border: '2px solid #3eeb09', 
-      borderRadius: '15px',
-      backgroundColor: '#e3f2fd',
-      padding: '12px 20px',
-      display: 'flex',
-      alignItems: 'center',
-      boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
-    }}>
-      <p style={{ 
-          fontSize: '22px', // قللنا الخط سنة عشان التوازن
-          color: '#0d47a1', 
-          fontWeight: '800', 
-          lineHeight: '1.8', 
-          margin: 0,
-          textAlign: 'center'
-      }}>
-          احجز دكتورك الآن مع أكبر منصة لحجز الأطباء في مصر.. نخبة من أفضل وأمهر الاستشاريين والأخصائيين.. اختار الميعاد اللي يناسبك واحجز الآن.
-      </p>
-    </div>
-  </div>
-{/* القسم الثاني (منتصف): الصورة وزر الحجز */}
-<div style={{ 
-  textAlign: 'center', 
-  display: 'flex', 
-  flexDirection: 'column', 
-  alignItems: 'center', 
-  padding: '20px',
-  flex: '1'
-}}>
-<img 
-  src="/10.png" 
-  alt="دكتور أيمن عجيب" 
-  onClick={() => {
-    navigate('/dr_ayman_aguib'); // ده الرابط الجديد اللي اتفقنا عليه
-    window.scrollTo(0, 0); // عشان الصفحة تطلع لفوق أول ما تفتح
-  }}
-    style={{ 
-      width: (typeof window !== 'undefined' && window.innerWidth < 768) ? '90%' : '400px',
-      maxWidth: '400px',
-      height: 'auto',
-      borderRadius: '10px',
-      boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-      marginBottom: '10px',
-      // السطر ده هو اللي بيغير شكل الماوس ليد (Cursor)
-      cursor: 'pointer' 
-    }} 
-  />
-    <button 
-      onClick={() => navigate('/dr_ayman_aguib')}
-      style={{
-        width: '100%',
-        maxWidth: '400px',
-        margin: '10px auto',
-        padding: '12px 20px',
-        backgroundColor: '#1a73e8',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '12px',
-        fontSize: '22px',
-        fontWeight: '700',
-        cursor: 'pointer',
-        display: 'block'
-      }}
-    >
-      احجز مباشرة الان مع الدكتور ايمن عجيب
-    </button>
-  </div>
-
-  {/* القسم الثالث (يسار): العدادات */}
-  <div style={{ 
-    display: 'flex', 
-    flexDirection: (typeof window !== 'undefined' && window.innerWidth < 768) ? 'row' : 'column',
-    flexWrap: 'wrap',
-    gap: '30px', 
-    justifyContent: 'center', 
-    alignItems: 'center',
-    flex: '1'
-  }}>
-    <div style={{ textAlign: 'center' }}>
-      <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #1a73e8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 'bold', color: '#1a73e8', margin: '0 auto 10px', backgroundColor: '#fff' }}>+1000</div>
-      <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>👨‍⚕️ طبيب متخصص</p>
-    </div>
-    <div style={{ textAlign: 'center' }}>
-      <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #2e7d32', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 'bold', color: '#2e7d32', margin: '0 auto 10px', backgroundColor: '#fff' }}>+10,000</div>
-      <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>✅ حجز ناجح</p>
-    </div>
-    <div style={{ textAlign: 'center' }}>
-      <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #f57c00', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 'bold', color: '#f57c00', margin: '0 auto 10px', backgroundColor: '#fff' }}>24/7</div>
-      <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>📞 دعم فني</p>
-    </div>
-  </div>
-</div>
-
-<div style={{ padding: '0 20px', maxWidth: '1200px', margin: '0 auto' }}>
-  {/* شريط البحث المطور - تصميم (البار العريض) */}
-  <div style={{ 
-      background: '#fff', 
-      borderRadius: '15px', 
-      marginBottom: '40px', 
-      boxShadow: '0 15px 40px rgba(0,0,0,0.12)', 
-      display: 'flex', 
-      flexWrap: 'wrap', 
-      alignItems: 'stretch', 
-      border: '1px solid #ddd',
-      overflow: 'hidden', // عشان الزرار ياخد شكل الحواف من الطرف
-      direction: 'rtl'
-  }}>
-
-    {/* قسم التخصص */}
-    <div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
-      <label style={{ fontSize: '18px', color: '#0a0101', marginRight: '10px' }}>أنا أبحث عن دكتور</label>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: '24px', marginLeft: '5px' }}>🩺</span>
-        <select onChange={e => setFSpecialty(e.target.value)} style={{ border: 'none', width: '100%', fontSize: '16px', fontWeight: 'bold', outline: 'none', cursor: 'pointer', background: 'transparent' }}>
-          <option value="الكل">اختيار التخصص</option>
-          {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
-        </select>
-      </div>
-    </div>
-
-    {/* قسم المحافظة */}
-    <div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
-      <label style={{ fontSize: '20px', color: '#030101', marginRight: '10px' }}>في محافظة</label>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: '24px', marginLeft: '5px' }}>📍</span>
-        <select 
-          value={fCity}
-          onChange={e => { setFCity(e.target.value); setFArea("الكل"); }} 
-          style={{ border: 'none', width: '100%', fontSize: '16px', fontWeight: 'bold', outline: 'none', cursor: 'pointer', background: 'transparent' }}
-        >
-          <option value="الكل">كل المحافظات</option>
-          {Object.keys(egyptLocations).map(g => <option key={g} value={g}>{g}</option>)}
-        </select>
-      </div>
-    </div>
-
-   {/* قسم المنطقة - ظاهر دائماً لكن مفعل بشرط */}
-<div style={{ 
-    flex: '1 1 250px', 
-    minWidth: '200px',
-    padding: '10px 15px', 
-    display: 'flex', 
-    flexDirection: 'column', 
-    borderLeft: '1px solid #eee',
-    opacity: fCity === 'الكل' ? 0.6 : 1, // جعل اللون باهت قليلاً لو غير مفعل
-    transition: '0.3s'
-}}>
-  <label style={{ fontSize: '20px', color: '#0a0202', marginRight: '10px' }}>في منطقة</label>
-  <div style={{ display: 'flex', alignItems: 'center' }}>
-    <span style={{ fontSize: '24px', marginLeft: '5px' }}>🏘️</span>
-    <select 
-      disabled={fCity === 'الكل'} // تعطيل القائمة لو مفيش محافظة
-      value={fArea} 
-      onChange={(e) => setFArea(e.target.value)} 
-      style={{ 
-          border: 'none', 
-          width: '100%', 
-          fontSize: '20px', 
-          fontWeight: 'bold', 
-          outline: 'none', 
-          cursor: fCity === 'الكل' ? 'not-allowed' : 'pointer', 
-          background: 'transparent' 
-      }}
-    >
-      <option value="الكل">اختيار المنطقة</option>
-      {/* لو فيه محافظة، اعرض مناطقها.. لو مفيش، القائمة هتفضل فاضية (فقط "الكل") */}
-      {fCity !== 'الكل' && egyptLocations[fCity]?.map(area => (
-          <option key={area} value={area}>{area}</option>
-      ))}
-    </select>
-  </div>
-</div>
-
-   {/* قسم البحث بالاسم - نفس المقاسات والخطوط بالضبط */}
-<div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column' }}>
-  <label style={{ fontSize: '20px', color: '#070101', marginRight: '10px' }}>أو اكتب اسم الدكتور</label>
-  <div style={{ display: 'flex', alignItems: 'center' }}>
-    <span style={{ fontSize: '24px', marginLeft: '5px' }}>🔍</span>
-    <input 
-      placeholder="الدكتور " 
-      onChange={e => {
-        setSearchTerm(e.target.value); // وظيفتك الأصلية
-      }}
-      // إضافة التمرير عند الضغط على Enter دون تغيير التنسيق
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          doctorsListRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }}
-      style={{ 
-        border: 'none', 
-        width: '100%', 
-        outline: 'none', 
-        fontSize: '20px', // نفس خطك 20
-        fontWeight: 'bold' // نفس الثقل
-      }} 
-    />
-  </div>
-
-    </div>
-
-    {/* زر البحث (العملاق الأحمر) مثل الصورة */}
-   <button 
-    onClick={() => {
-        // بما أن البحث أوتوماتيك، الزرار هنا وظيفته فقط "التوجيه" للنتائج
-        // حذفنا handleSearch لأن البحث يتم تلقائياً عند تغيير الاختيارات
-        setTimeout(() => {
-            doctorsListRef.current?.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'start' 
-            });
-        }, 100);
-    }}
-    style={{ 
-        background: '#7cf046', 
-        color: '#000000', 
-        border: 'none', 
-        padding: '0 40px', 
-        fontSize: '28px', // مقاسك الأصلي
-        fontWeight: 'bold', 
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minWidth: '150px',
-        minHeight: '60px',
-        flex: '1 1 100%'
-    }}
->
-    ابحث 🔍
-</button>
-  </div>
-</div>
-{/* بداية جدول التخصصات الجديد */}
-<div style={{ direction: 'rtl', padding: '20px' }}>
-    <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '20px' }}>اختار التخصص اللي محتاجه:</h2>
-    <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', 
-        gap: '15px' 
-    }}>
-        {specialties.map((spec) => (
-            <div key={spec.name} 
-                onClick={() => {
-    setFSpecialty(spec.name); // 1. تفعيل الفلترة
-    
-    // 2. التحرك لقسم الأطباء بسلاسة
-    setTimeout(() => {
-        doctorsListRef.current?.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start' 
-        });
-    }, 100); // تأخير بسيط للتأكد من تحديث القائمة أولاً
-}}style={{
-                    border: '2px solid #3debd3', 
-                    borderRadius: '20px',
-                    padding: '15px',
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    transition: '0.3s',
-                    background: '#fff'
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = '#f0fff4'}
-                onMouseLeave={(e) => e.currentTarget.style.background = '#fff'}
-            >
-                <div style={{ fontSize: '30px', marginBottom: '10px' }}>{spec.icon}</div>
-                <div style={{ fontWeight: 'bold', color: '#000' }}>{spec.name}</div>
-                <div style={{ fontSize: '12px', color: '#666' }}>{spec.count} دكتور</div>
-            </div>
-        ))}
-    </div>
-</div>
-{/* نهاية جدول التخصصات */}
-
-        {/* 3. قائمة الأطباء (البطاقات اللي انت عدلتها وشغالة تمام) */}
-      {/* السطر 532 في ملفك بعد التعديل */}
-<div ref={doctorsListRef} style={{
-    display: 'flex',
-    gap: '35px',
-  display: 'flex', 
-  gap: '35px',           // زودنا المسافة بين الكروت قليلاً
-  flexWrap: 'wrap', 
-  justifyContent: 'center', 
-  padding: '40px 10px'   // مساحة داخلية لضمان عدم التصاق الكروت بحواف الشاشة
-}}>
-  
-          {filtered.slice().sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)).map(doc => (
-            <div key={doc.id} style={{
-              position: 'relative',
-  backgroundColor: '#7bfbff',
-  padding: '25px',
-  borderRadius: '20px',    // زوايا دائرية
-  width: '300px',
-  textAlign: 'center',
-  border: '1px solid #0a0202', // إطار خفيف
-  boxShadow: '0 6px 18px rgba(41, 38, 38, 0.06)', // ظل هادئ واحترافي
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center'
-}}>
-            <div style={{ 
-
-}}>
- {doc.featured && (
-  <div style={{
-    position: 'absolute',
-    top: '15px', 
-    left: '15px', 
-    background: 'linear-gradient(45deg, #f7e167, #f3e567)', // تدرج ذهبي لامع
-    color: '#000',
-    padding: '8px 22px',          // تكبير المساحة الداخلية (عرض وطول)
-    borderRadius: '12px',         // زوايا انسيابية مع الحجم الجديد
-    fontWeight: '1000',
-    textShadow: '1px 1px 0px rgba(255,255,255,0.3)', // ظل فاتح يخلي الخط "ينطق"
-    letterSpacing: '1px',         // مسافة بسيطة بين الحروف لزيادة الوضوح            // خط عريض جداً (Extra Bold)
-    fontSize: '28px',             // تكبير حجم الخط ليكون واضح جداًboxShadow: '0 4px 10px rgba(0,0,0,0.15)',
-    zIndex: 100,          // عشان تضمن إنها فوق أي حاجة
-    border: '1px solid #ebbc2e'
-  }}>
-    مُمَيز
-  </div>
-)}
-</div>
-              <img 
-  src={getOptimizedImage(doc.image_url) || `https://ui-avatars.com/api/?name=${encodeURIComponent(doc.name)}&background=random&color=fff`} 
-  alt={`دكتور ${doc.name} - حجز أطباء - منصة دكتور`} 
-  loading="lazy" 
-  style={{ width: '100px', height: '100px', borderRadius: '50%', marginBottom: '15px', objectFit: 'cover', border: '3px solid #f0f4f8' }} 
-/>
-{/* تعديل الاسم ليكون كبير ومسبوق بكلمة دكتور */}
-<h3 style={{ fontSize: '24px', fontWeight: 'bold', margin: '5px 0' }}>
-  دكتور / {doc.name}
-</h3>
-
-{/* دمج اللقب مع التخصص في سطر واحد بخط واضح */}
-<p style={{ fontSize: '18px', color: '#1a73e8', fontWeight: 'bold' }}>
-  {doc.title} {doc.specialty}
-  
-</p>
-{/* الجزء المعدل للبايو مع خاصية المزيد */}
-{doc.bio ? (() => {
-    const BioSection = () => {
-        const [isExpanded, setIsExpanded] = React.useState(false);
-        
-        // ده الستايل اللي هيجبر النص يتقص
-        const truncatedStyle = {
-            fontSize: '15px',
-            color: '#0c0404',
-            fontStyle: 'italic',
-            lineHeight: '1.5em',
-            margin: '5px 0',
-            // الثلاث سطور الجاية هي المسؤولة عن القص
-            display: '-webkit-box',
-            WebkitLineClamp: isExpanded ? 'unset' : '2', 
-            WebkitBoxDirection: 'vertical',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            // إضافة ارتفاع أقصى في حالة عدم التمدد لضمان ثبات الكارت
-            maxHeight: isExpanded ? 'none' : '3em', 
-        };
-
-        return (
-            <div style={{ width: '100%', minHeight: '80px' }}>
-                <p style={truncatedStyle}>
-                    "{doc.bio}"
-                </p>
-                {doc.bio.length > 50 && (
-                    <button 
-                        onClick={() => setIsExpanded(!isExpanded)}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            color: '#01060c',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            fontWeight: 'bold',
-                            padding: '0',
-                            display: 'block',
-                            margin: '0 auto'
-                        }}
-                    >
-                        {isExpanded ? 'عرض أقل' : '... المزيد'}
-                    </button>
-                )}
-            </div>
-        );
-    };
-    return <BioSection />;
-})() : <div style={{ height: '80px' }}></div>}
-{/* سطر الموقع: المحافظة - المدينة - (أول 3 كلمات من العنوان) */}
-<p style={{ 
-  color: '#000000', 
-  fontWeight: 'bold', 
-  fontSize: '15px', 
-  marginBottom: '20px'
-}}>
-  📍 {doc.city} - {doc.area} 
-  
-  {/* إضافة اختصار العنوان التفصيلي هنا */}
-  {doc.address && (
-    <span style={{ 
-      color: '#070101', // لون رمادي لتمييز العنوان عن المنطقة الأساسية
-      fontSize: '16px', 
-      marginRight: '8px',
-      fontWeight: 'normal' // خط أخف قليلاً لراحة العين
-    }}>
-      ({doc.address.split(' ').filter(word => word !== "").slice(0, 3).join(' ')}...)
-    </span>
-  )}
-</p>
-
-{/* مربع قيمة الكشف كما هو */}
-<div style={{
-    backgroundColor: '#85df51', 
-    border: '1px solid #3f69df', 
-    borderRadius: '8px',
-    padding: '5px 15px',
-    margin: '10px 0',
-    display: 'inline-block', 
-    color: '#070c03', 
-    fontWeight: 'bold',
-    fontSize: '15px'
-}}>
-    قيمة الكشف: {doc.fee || '0'} جنيه
-</div>
-<div style={{ color: '#cfe743', fontSize: '18px', marginBottom: '10px' }}>
-  ⭐⭐⭐⭐⭐ <span style={{ color: '#010c06', fontSize: '14px' }}>(5.0)</span>
-</div>
-              <button 
-  onClick={() => {
-    if (!currentUser) {
-      // لو مفيش مستخدم مسجل، افتح نافذة تسجيل الدخول اللي في الـ App
-      openLogin(); 
-    } else {
-      // لو مسجل دخول (سواء مريض أو أدمن)، افتح نافذة الحجز
-      setSelectedDoc(doc); 
-      setShowModal(true);
-    }
-  }} 
-  style={{ 
-    background: 'linear-gradient(45deg, #1a73e8, #0d47a1)', 
-    color: '#fff', 
-    border: 'none', 
-    padding: '12px', 
-    borderRadius: '12px', 
-    width: '100%', 
-    marginTop: '15px', 
-    fontWeight: 'bold', 
-    cursor: 'pointer',
-    transition: '0.3s',
-    boxShadow: '0 4px 15px rgba(26, 115, 232, 0.3)'
-  }}
-  onMouseOver={(e) => e.target.style.transform = 'scale(1.02)'}
-  onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
->
-  {currentUser ? 'احجز موعدك الآن' : 'سجل دخول للحجز'}
-</button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-            {showModal && (
-                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <div style={{ backgroundColor: '#fff', padding: '25px', borderRadius: '15px', width: '350px' }}>
-                        <h3>حجز د. {selectedDoc.name}</h3>
-                        <select onChange={e => setSelectedSlot(e.target.value)} style={inputStyle}>
-                            <option value="">اختر اليوم</option>
-                            {selectedDoc.availability.split(' - ').map(slot => <option key={slot} value={slot}>{getNextDateForDay(slot.split(' ')[0])} | {slot}</option>)}
-                        </select>
-                        <input placeholder="اسم المريض" onChange={e => setPatientData({...patientData, name: e.target.value})} style={{...inputStyle, marginTop:'10px'}} />
-                        <input placeholder="رقم الموبايل" onChange={e => setPatientData({...patientData, mobile: e.target.value})} style={{...inputStyle, marginTop:'10px'}} />
-                        <button onClick={handleConfirm} style={{ width: '100%', padding: '12px', background: '#3498db', color: '#fff', marginTop: '15px', border:'none', borderRadius:'8px' }}>تأكيد</button>
-                        <button onClick={() => setShowModal(false)} style={{ width: '100%', marginTop: '10px', color: 'red', border:'none', background:'none' }}>إلغاء</button>
-                    </div>
-                </div>
-            )}
-
-            {showTicket && (
-  <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.9)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000 }}>
-    <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '15px', textAlign: 'right', width: '350px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
-      <h2 style={{ color: '#2c3e50', borderBottom: '2px solid #3498db', paddingBottom: '10px' }}>🎟️ تذكرة الحجز</h2>
-      <p><b>👤 المريض:</b> {patientData.name}</p>
-      <p><b>👨‍⚕️ الدكتور:</b> {selectedDoc.name}</p>
-      <p><b>📅 الموعد:</b> {selectedSlot}</p>
-      <p><b>📍 عنوان العيادة:</b> {selectedDoc?.address}</p>
-      <p><b>📞 رقم العيادة:</b> {selectedDoc?.mobile}</p>
-      {/* كود عرض السعر داخل تذكرة الحجز */}
-<div style={{
-    marginTop: '15px',
-    padding: '12px',
-    backgroundColor: '#fff9db', // لون أصفر خفيف يعطي إيحاء بالفاتورة
-    borderRight: '5px solid #fcc419',
-    borderRadius: '4px',
-    textAlign: 'right'
-}}>
-    <span style={{ fontSize: '16px', color: '#666' }}>قيمة الكشف المطلوبة:</span>
-    <h3 style={{ margin: '5px 0 0 0', color: '#e67e22', fontWeight: 'bold' }}>
-        {selectedDoc.fee} ج.م
-    </h3>
-    <small style={{ color: '#999' }}>* يتم الدفع عند الحضور للعيادة</small>
-</div>
-{/* تنويه لقطة الشاشة */}
-<div style={{
-    marginTop: '20px',
-    padding: '10px',
-    backgroundColor: '#e7f3ff', // لون أزرق فاتح جداً
-    border: '1px dashed #007bff',
-    borderRadius: '8px',
-    textAlign: 'center',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '8px'
-}}>
-    <span style={{ fontSize: '20px' }}>📸</span>
-    <span style={{ color: '#0056b3', fontWeight: 'bold', fontSize: '14px' }}>
-        من فضلك خذ لقطة شاشة (Screenshot) للتذكرة  
-    </span>
-</div>
-      {/* زرار الواتساب الجديد */}
-      <button 
-        onClick={() => {
-          const message = `تأكيد حجز موعد:\nالمريض: ${patientData.name}\nمع الدكتور: ${selectedDoc.name}\nالموعد: ${selectedSlot}`;
-          const whatsappUrl = `https://wa.me/2${selectedDoc.mobile}?text=${encodeURIComponent(message)}`;
-          window.open(whatsappUrl, '_blank');
-        }} 
-        style={{ width: '100%', padding: '12px', background: '#25D366', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', marginTop: '15px', fontSize: '15px' }}
-      >
-        🟢 إرسال عبر واتساب العيادة
-      </button>
-
-      <button 
-        onClick={() => window.location.reload()} 
-        style={{ width: '100%', padding: '10px', background: '#eee', color: '#333', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '10px' }}
-      >
-        إغلاق
-      </button>
-    </div>
-  </div>
-)}
-        </div>
-    );
-}
-
-// --- 4. مكون صفحة الإدارة (AdminPage) ---
+// مكون صفحة الإدارة (AdminPage)
 function AdminPage({ doctors, appointments, fetchData }) {
     const handleDelete = async (id) => { if(window.confirm("حذف؟")){ await fetch(`https://clinic-api-ig3d.onrender.com/delete-doctor/${id}`, {method:'DELETE'}); fetchData(); } };
     const handleToggle = async (id, s) => { await fetch(`https://clinic-api-ig3d.onrender.com/toggle-doctor/${id}`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:s})}); fetchData(); };
@@ -994,43 +236,7 @@ const handleOrderChange = async (id, newOrder) => {
         onChange={(e) => setAdminSpecialty(e.target.value)}
     >
         <option value="الكل">كل التخصصات</option>
-        <option value="باطنة">باطنة</option>
-        <option value="أطفال">أطفال</option>
-        <option value="أسنان">أسنان</option>
-        <option value="باطنة">باطنة</option>
-<option value="أطفال">أطفال</option>
-<option value="أسنان">أسنان</option>
-<option value="أطفال وحديثي الولادة">أطفال وحديثي الولادة</option>
-<option value="أنف وأذن وحنجرة">أنف وأذن وحنجرة</option>
-<option value="تغذية علاجية">تغذية علاجية</option>
-<option value="جراحة أطفال">جراحة أطفال</option>
-<option value="جراحة أوعية دموية">جراحة أوعية دموية</option>
-<option value="جراحة أورام">جراحة أورام</option>
-<option value="جراحة تجميل">جراحة تجميل</option>
-<option value="جراحة سمنة ونحافة">جراحة سمنة ونحافة</option>
-<option value="عظام">عظام</option>
-<option value="جراحة قلب وصدر">جراحة قلب وصدر</option>
-<option value="جراحة مخ وأعصاب">جراحة مخ وأعصاب</option>
-<option value="جراحة مسالك بولية">جراحة مسالك بولية</option>
-<option value="جلدية">جلدية</option>
-<option value="جهاز هضمي وكبد">جهاز هضمي وكبد</option>
-<option value="حساسية ومناعة">حساسية ومناعة</option>
-<option value="رمد">رمد</option>
-<option value="روماتيزم">روماتيزم</option>
-<option value="ذكورة وعقم">ذكورة وعقم</option>
-<option value="علاج طبيعي">علاج طبيعي</option>
-<option value="غدد صماء وسكري">غدد صماء وسكري</option>
-<option value="جراحة عامه">جراحة عامه</option>
-<option value="امراض دم">امراض دم</option>
-<option value="قلب وأوعية دموية">قلب وأوعية دموية</option>
-<option value="مخ وأعصاب">مخ وأعصاب</option>
-<option value="نسا وتوليد">نسا وتوليد</option>
-<option value="تخاطب">تخاطب</option>
-<option value="كلى">كلى</option>
-<option value="جراحة عمود فقري">جراحة عمود فقري</option>
-<option value="صدر">صدر</option>
-<option value="نفسي أطفال">نفسي أطفال</option>
-<option value="نفسي">نفسي</option>
+        {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
     </select>
 </div>
             <table style={{width:'100%', background:'#fff', borderCollapse:'collapse', marginBottom:'40px'}}>
@@ -1043,7 +249,7 @@ const handleOrderChange = async (id, newOrder) => {
                             <td style={{ textAlign: 'center' }}>
     <input 
         type="checkbox" 
-        checked={d.featured} 
+        checked={d.featured} // تم تغيير `featured` إلى `featured`
         onChange={() => handleFeaturedToggle(d.id, d.featured)}
         style={{ cursor: 'pointer', transform: 'scale(1.2)' }}
     />
@@ -1149,7 +355,6 @@ const doctorAppointments = appointments.filter(app => {
     ))}
   </select>
 
-  {/* كود اختيار الشهر هيفضل زي ما هو تحتها */}
         <select onChange={e => setSelectedMonth(e.target.value)} value={selectedMonth} style={{ padding: '10px', borderRadius: '8px' }}>
           {Array.from({ length: 12 }, (_, i) => (
             <option key={i + 1} value={i + 1}>شهر {i + 1}</option>
@@ -1179,6 +384,7 @@ const doctorAppointments = appointments.filter(app => {
     </div>
   );
 }
+
 // -// --- 5. المكون الرئيسي (App) ---
 function App() {
     const navigate = useNavigate();
@@ -1188,7 +394,7 @@ function App() {
   const [activePage, setActivePage] = useState('home'); 
   const [currentUser, setCurrentUser] = useState(null); 
   const [showLoginModal, setShowLoginModal] = useState(false); 
-  const [loginId, setLoginId] = useState(''); // ده عشان كود الدكتور
+  const [loginId, setLoginId] = useState(''); 
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
 
   const fetchData = async () => {
@@ -1199,11 +405,8 @@ function App() {
       setAppointments(await resApps.json());
     } catch (e) { console.error("Error fetching data"); }
   };
-// حط السطر ده في المكان اللي بتبدأ فيه عملية الـ Login للطلب
 
-// --- بعد السطر 647 ---
 useEffect(() => {
-    // 1. جلب بيانات المستخدم المسجل فعلياً (لو موجود)
     const savedUser = localStorage.getItem('saved_user');
     const savedId = localStorage.getItem('saved_doctor_id');
 
@@ -1211,7 +414,6 @@ useEffect(() => {
         const user = JSON.parse(savedUser);
         setCurrentUser(user);
 
-        // توجيه تلقائي بناءً على الروول
         if (user.role === 'doctor') {
             navigate('/dashboard');
         } else if (user.role === 'admin') {
@@ -1219,36 +421,28 @@ useEffect(() => {
             navigate('/admin');
         }
         
-    } 
-    // 2. لو مفيش مستخدم مسجل دخول، بس فيه "كود دكتور" محفوظ
-else if (savedId) {
+    } else if (savedId) {
         setCurrentUser({ 
-            role: 'doctor_check', // عشان نضمن إن المودال يفتح على خانات الدكتور
-            tempId: savedId || '', // <--- ده التغيير الجوهري
+            role: 'doctor_check', 
+            tempId: savedId || '', 
             tempMobile: '', 
             tempPassword: '' 
         });
     }
-    // جلب البيانات الأساسية من السيرفر
     fetchData(); 
 }, []);
 
-// --- أضف الكود الجديد هنا ---
-// البحث عن هذا الجزء وتعديله
+
 useEffect(() => {
     const path = window.location.pathname;
     
     if (path.includes('/dr/')) {
         const idFromUrl = path.split('/dr/')[1];
         
-      // 1. ثبت صفحة الدكتور والـ ID فوراً (ده ملوش علاقة بالانتظار)
-setSelectedDoctorId(idFromUrl); 
-navigate(`/dr/${idFromUrl}`); // استبدل setActivePage بـ navigate
+        setSelectedDoctorId(idFromUrl); 
+        navigate(`/dr/${idFromUrl}`); 
         
-        // 2. الانتظار لمدة 5 ثوانٍ قبل "تنظيف" الرابط من فوق
-        // الـ 5000 تعني 5000 مللي ثانية = 5 ثوانٍ
         setTimeout(() => {
-            // كدة بعد 5 ثوانٍ، الرابط فوق هيرجع لـ / بس المريض هيفضل جوه صفحة الدكتور
             window.history.replaceState({}, '', '/');
             console.log("تم تنظيف الرابط بنجاح بعد 5 ثوانٍ");
         }, 5000); 
@@ -1260,10 +454,11 @@ navigate(`/dr/${idFromUrl}`); // استبدل setActivePage بـ navigate
     transition: '0.3s'
   };
 
-  // دالة تسجيل الخروج
   const handleLogout = () => {
     setIsAdmin(false);
     setCurrentUser(null);
+    localStorage.removeItem('saved_user'); // إزالة بيانات المستخدم عند الخروج
+    localStorage.removeItem('saved_doctor_id'); // إزالة كود الدكتور
     navigate('/')
   };
 
@@ -1273,16 +468,16 @@ navigate(`/dr/${idFromUrl}`); // استبدل setActivePage بـ navigate
       
       {/* 1. شريط التنقل العلوي (النافبار) */}
       <nav style={{ 
-        padding: '8px 15px', // قللنا الـ padding شوية للموبايل
+        padding: '8px 15px', 
         background: '#2c3e50', 
         display: 'flex', 
-        justifyContent: 'space-between', // عشان اللوجو يروح يمين والزراير شمال
+        justifyContent: 'space-between', 
         alignItems: 'center',
         position: 'sticky', 
         top: 0, 
         zIndex: 1000, 
         boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-        flexWrap: 'wrap', // يمنع التداخل في الموبايل
+        flexWrap: 'wrap', 
         gap: '10px'
       }}>
 
@@ -1293,19 +488,18 @@ navigate(`/dr/${idFromUrl}`); // استبدل setActivePage بـ navigate
     cursor: 'pointer', 
     display: 'flex', 
     alignItems: 'center',
-    height: '100%' // نخلي الحاوية تاخد الارتفاع كامل
+    height: '100%' 
   }}
 >
   <img 
     src="/logo512.png" 
     alt="منصة دكتور" 
     style={{ 
-      // كبرنا الارتفاع لـ 60px ليناسب الهيدر، واستخدمنا Object-fit عشان ميتمطش
       height: '60px', 
-      maxHeight: '100%', // عشان ميخرجش بره الهيدر في الشاشات الأصغر
+      maxHeight: '100%', 
       width: 'auto', 
       objectFit: 'contain',
-      paddingRight: '10px' // مسافة صغيرة من اليمين عشان ميخبطش في طرف الشاشة
+      paddingRight: '10px' 
     }} 
     onError={(e) => { e.target.src = "/logo.png" }} 
   />
@@ -1338,31 +532,26 @@ navigate(`/dr/${idFromUrl}`); // استبدل setActivePage بـ navigate
     📊 لوحة التحكم
   </button>
 )}
-        {/* زر تسجيل الدخول الذكي */}
-{/* زر تسجيل الدخول الذكي - نسخة منظمة (خروج فوق الاسم) */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
           {!currentUser ? (
             <button onClick={() => setShowLoginModal(true)} style={{...navBtnStyle, background: '#27ae60', fontSize: '14px'}}>🔐 دخول</button>
           ) : (
             <>
-              {/* زرار الخروج بقى فوق خالص */}
-              {/* زرار الخروج - تم تكبيره واستغلال المساحة الفوقية */}
       <button 
         onClick={handleLogout} 
         style={{
           ...navBtnStyle, 
           backgroundColor: '#e74c3c', 
-          fontSize: '14px',        // كبرنا الخط شوية
-          padding: '8px 15px',     // زودنا المساحة جوه الزرار عشان يكبر أفقياً ورأسياً
-          width: '100%',           // عشان يملأ عرض العمود الصغير بتاعه
-          marginBottom: '5px',      // مسافة بسيطة بينه وبين أيقونة الشخص اللي تحته
-          marginTop: '2px'         // استغلال المساحة الفوقية اللي قولت عليها
+          fontSize: '14px',        
+          padding: '8px 15px',     
+          width: '100%',           
+          marginBottom: '5px',      
+          marginTop: '2px'         
         }}
       >
         خروج
       </button>
 
-      {/* الاسم والأيقونة تحت زرار الخروج */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: '1' }}>
         <span style={{ fontSize: '18px' }}>👤</span>
         <span style={{ fontSize: '10px', color: '#fff', textAlign: 'center' }}>
@@ -1385,13 +574,10 @@ navigate(`/dr/${idFromUrl}`); // استبدل setActivePage بـ navigate
     <button onClick={() => setCurrentUser({role: 'patient'})} style={{flex:1, padding: '10px', cursor:'pointer', borderRadius: '8px', border: currentUser?.role === 'patient' ? '2px solid #3498db' : '1px solid #ddd'}}>أنا مريض</button>
    <button 
   onClick={() => {
-    // 1. روح هات الكود المحفوظ من ذاكرة المتصفح
     const savedId = localStorage.getItem('saved_doctor_id') || '';
-    
-    // 2. حط الـ Role ومعاه الكود المحفوظ فوراً
     setCurrentUser({
       role: 'doctor_check',
-      tempId: savedId // كدة الكود هيظهر في الخانة أول ما تدوس على الزرار
+      tempId: savedId 
     });
   }} 
   style={{
@@ -1420,13 +606,8 @@ navigate(`/dr/${idFromUrl}`); // استبدل setActivePage بـ navigate
         />
         <button 
             onClick={() => { 
-                // 1. التأكد من أن البيانات تم حفظها في الذاكرة الدائمة للمتصفح
                 localStorage.setItem('saved_user', JSON.stringify(currentUser));
-                
-                // 2. إغلاق النافذة
                 setShowLoginModal(false); 
-                
-                // تنبيه بسيط للمستخدم (اختياري)
                 console.log("تم حفظ بيانات الدخول بنجاح");
             }} 
             style={{ 
@@ -1452,14 +633,12 @@ navigate(`/dr/${idFromUrl}`); // استبدل setActivePage بـ navigate
             style={inputStyle} 
             onKeyDown={(e) => {
                 if(e.key === 'Enter' && e.target.value === 'admin123') {
-                    // بيانات الآدمن التي سيتم حفظها
                     const adminData = {name: 'Admin', role: 'admin'};
                     
                     setIsAdmin(true);
                     setCurrentUser(adminData);
-                   navigate('/admin');// تأكد أن اسم الصفحة 'admin' أو 'admin_dashboard' حسب كودك
+                   navigate('/admin');
                     
-                    // --- السطر السحري للحفظ ---
                     localStorage.setItem('saved_user', JSON.stringify(adminData));
                     
                     setShowLoginModal(false);
@@ -1469,13 +648,11 @@ navigate(`/dr/${idFromUrl}`); // استبدل setActivePage بـ navigate
         <p style={{fontSize:'12px', color:'gray', textAlign: 'center'}}>اضغط Enter بعد كتابة الباسورد</p>
     </div>
 )}
-                {/* إذا اختار طبيب: نطلب رقم الموبايل للتحقق */}
-{/* إذا اختار طبيب: نطلب الموبايل والباسورد للتحقق */}
-{currentUser?.role === 'doctor_check' && (
+                {currentUser?.role === 'doctor_check' && (
     <div style={{ display: 'grid', gap: '10px' }}>
         <input 
     placeholder="كود الدكتور (ID)" 
-    style={{...inputStyle, backgroundColor: '#fff9e6'}} // لون مميز للكود
+    style={{...inputStyle, backgroundColor: '#fff9e6'}} 
     value={currentUser.tempId || ''}
     onChange={(e) => setCurrentUser({...currentUser, tempId: e.target.value})} 
 />
@@ -1492,7 +669,6 @@ navigate(`/dr/${idFromUrl}`); // استبدل setActivePage بـ navigate
         />
         <button 
 onClick={() => {
-    // 1. البحث بالثلاثي (الكود + الرقم + الباسورد)
     const doc = doctors.find(d => 
         String(d.id) === String(currentUser?.tempId) && 
         d.mobile === currentUser?.tempMobile && 
@@ -1501,17 +677,13 @@ onClick={() => {
     );
 
     if (doc) {
-        // 2. تجهيز بيانات الطبيب مع الدور (Role)
         const doctorData = { ...doc, role: 'doctor' };
 
-        // 3. الحفظ في الـ LocalStorage (عشان الموقع يفتكره)
-        localStorage.setItem('saved_doctor_id', doc.id); // حفظ الكود للخانة
-        localStorage.setItem('saved_user', JSON.stringify(doctorData)); // حفظ الجلسة كاملة
+        localStorage.setItem('saved_doctor_id', doc.id); 
+        localStorage.setItem('saved_user', JSON.stringify(doctorData)); 
 
-        // 4. تحديث الحالة في البرنامج (مرة واحدة بس)
         setCurrentUser(doctorData);
 
-        // 5. التوجه للوحة التحكم وإغلاق نافذة الدخول
         navigate('/dashboard');
         setShowLoginModal(false);
     } else {
@@ -1536,8 +708,6 @@ onClick={() => {
                <button 
   onClick={() => { 
     setShowLoginModal(false); 
-    // إذا لم يكن هناك مستخدم حقيقي سجل دخوله (يعني لسه في مرحلة الاختيار أو إدخال البيانات)
-    // نقوم بتصفير currentUser ليرجع المودال للحالة الأصلية في المرة القادمة
     if (!currentUser?.id && !isAdmin) {
       setCurrentUser(null); 
     }
@@ -1550,56 +720,60 @@ onClick={() => {
       )}
 
       {/* 3. منطقة عرض المحتوى */}
-     <main><Routes>
-  {/* 1. الصفحة الرئيسية (الهوم) */}
-  <Route path="/" element={
-    <BookingPage 
-      doctors={doctors} 
-      fetchData={fetchData} 
-      currentUser={currentUser} 
-      openLogin={() => setShowLoginModal(true)} 
-      setActivePage={setActivePage} 
-      navigate={navigate}  // <--- السطر ده موجود؟ وكاتب navigate={navigate} ؟
-    />
-  } />
+     <main>
+        <Routes>
+            {/* الصفحة الرئيسية الجديدة */}
+            <Route path="/" element={<HomePage />} />
 
-  {/* 2. صفحتك الشخصية - باسمك */}
- <Route path="/dr_ayman_aguib" element={
-  <AymanProfile 
-    setActivePage={setActivePage} 
-    navigate={navigate} // لازم السطر ده يكون موجود هنا
-  />
-} />
-
-  {/* 3. صفحة انضمام طبيب */}
-  <Route path="/join" element={<DoctorRegister />} />
-
-  {/* 4. لوحة تحكم الأطباء */}
-  <Route path="/dashboard" element={<DoctorDashboard doctorId={currentUser?.id} />} />
-
-  {/* 5. صفحة الحجز المباشر (الديناميكية) */}
-  <Route path="/dr/:doctorCode" element={<DirectBooking />} />
-
-{/* 6. صفحة الإدارة (AdminPage) */}
-          <Route path="/admin" element={
-            <AdminPage 
-              doctors={doctors} 
-              appointments={appointments} 
-              fetchData={fetchData} 
+            {/* صفحة البحث الجديدة */}
+            <Route 
+                path="/search" 
+                element={
+                    <SearchPage 
+                        doctors={doctors} 
+                        fetchData={fetchData} 
+                        currentUser={currentUser} 
+                        openLogin={() => setShowLoginModal(true)} 
+                    />
+                } 
             />
-          } />
 
-          {/* 7. صفحة الحسابات (AccountingPage) */}
-          <Route path="/accounting" element={
-            <AccountingPage 
-              doctors={doctors} 
-              appointments={appointments} 
-            />
-          } />
-</Routes>
-</main>
+            {/* صفحتك الشخصية - باسمك */}
+            <Route path="/dr_ayman_aguib" element={
+                <AymanProfile 
+                    setActivePage={setActivePage} 
+                    navigate={navigate} 
+                />
+            } />
+
+            {/* صفحة انضمام طبيب */}
+            <Route path="/join" element={<DoctorRegister />} />
+
+            {/* لوحة تحكم الأطباء */}
+            <Route path="/dashboard" element={<DoctorDashboard doctorId={currentUser?.id} />} />
+
+            {/* صفحة الحجز المباشر (الديناميكية) */}
+            <Route path="/dr/:doctorCode" element={<DirectBooking />} />
+
+            {/* صفحة الإدارة (AdminPage) */}
+            <Route path="/admin" element={
+                <AdminPage 
+                    doctors={doctors} 
+                    appointments={appointments} 
+                    fetchData={fetchData} 
+                />
+            } />
+
+            {/* صفحة الحسابات (AccountingPage) */}
+            <Route path="/accounting" element={
+                <AccountingPage 
+                    doctors={doctors} 
+                    appointments={appointments} 
+                />
+            } />
+        </Routes>
+    </main>
     </div>
-    
   );
 }
 export default App;
