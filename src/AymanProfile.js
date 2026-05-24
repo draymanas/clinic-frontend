@@ -1,61 +1,83 @@
-import React from 'react';
-import { Helmet } from 'react-helmet'; // 1. استيراد المكتبة
-import { FaMapMarkerAlt, FaCalendarCheck, FaStethoscope, FaArrowRight } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { Helmet } from 'react-helmet';
+import { FaMapMarkerAlt, FaStethoscope, FaArrowRight } from 'react-icons/fa';
 
 const AymanProfile = ({ setActivePage, navigate }) => {
-  
-  // 2. تعريف البيانات المنظمة (Structured Data)
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({ name: '', phone: '' });
+
   const schemaData = {
     "@context": "https://schema.org/",
     "@type": "Physician",
     "name": "دكتور أيمن عجيب",
     "url": "https://www.doctoreg.online/dr_ayman_aguib",
     "description": "استشاري المخ والأعصاب وجراحة العمود الفقري بخبرة أكثر من 20 عاماً.",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "مصر",
-      "addressCountry": "EG"
-    }
+    "address": { "@type": "PostalAddress", "addressLocality": "مصر", "addressCountry": "EG" }
   };
 
+  const sendToTelegram = async (e) => {
+  e.preventDefault();
+  
+  // تجهيز الرسالة
+  const message = `طلب حجز أونلاين جديد:%0Aالاسم: ${formData.name}%0Aرقم الواتساب: ${formData.phone}`;
+  
+  // استخدام التوكين و الـ ID الخاص بك
+  const token = '8639669118:AAGOpN9rtWDl_J3kmhoBK3PddqI14jPqEgw';
+  const chatId = '6635887452'; 
+  const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${message}`;
+  
+  try {
+    const response = await fetch(url);
+    if (response.ok) {
+      alert('تم إرسال طلبك بنجاح، سنتواصل معك قريباً!');
+      setShowModal(false);
+    } else {
+      alert('حدث خطأ أثناء الإرسال، حاول مرة أخرى.');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('تعذر الاتصال بخادم التليجرام.');
+  }
+};
+
   return (
-    <div style={{ direction: 'rtl', backgroundColor: '#f8fafc', minHeight: '100vh', paddingBottom: '50px' }}>
-      {/* 3. إضافة الـ Helmet لضبط العنوان و الـ Schema */}
+  <div style={{ direction: 'rtl', backgroundColor: '#f8fafc', minHeight: '100vh', paddingBottom: '50px' }}>
       <Helmet>
         <title>دكتور أيمن عجيب | استشاري المخ والأعصاب</title>
-        <meta name="description" content="احجز موعدك مع دكتور أيمن عجيب استشاري المخ والأعصاب وجراحة العمود الفقري بخبرة أكثر من 20 عاماً." />
-        <script type="application/ld+json">
-          {JSON.stringify(schemaData)}
-        </script>
+        <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
       </Helmet>
 
-      <div style={{ padding: '15px', backgroundColor: '#fff', borderBottom: '1px solid #eee' }}>
-        <button 
-          onClick={() => navigate('/')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'none',
-            border: 'none',
-            color: '#1a73e8',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            cursor: 'pointer'
-          }}
-        >
+      {/* النافذة المنبثقة */}
+      {showModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+          <form onSubmit={sendToTelegram} style={{ background: '#fff', padding: '30px', borderRadius: '20px', width: '90%', maxWidth: '400px', color: '#333' }}>
+            <h2>طلب حجز</h2>
+            <input required placeholder="الاسم بالكامل" style={{ width: '100%', padding: '10px', margin: '10px 0' }} onChange={(e) => setFormData({...formData, name: e.target.value})} />
+            <input required placeholder="رقم الواتساب (كود الدولة +)" style={{ width: '100%', padding: '10px', margin: '10px 0' }} onChange={(e) => setFormData({...formData, phone: e.target.value})} />
+            <button type="submit" style={{ width: '100%', padding: '10px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '5px' }}>إرسال الطلب</button>
+            <button type="button" onClick={() => setShowModal(false)} style={{ width: '100%', marginTop: '10px' }}>إغلاق</button>
+          </form>
+        </div>
+      )}
+
+      {/* زر العودة */}
+      <div style={{ padding: '15px', backgroundColor: '#fff' }}>
+        <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', color: '#1a73e8', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <FaArrowRight /> العودة للرئيسية
         </button>
       </div>
-      {/* الهيدر الشخصي */}
-      <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '60px 20px', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '38px', fontWeight: '900', margin: '0 0 10px 0' }}>دكتور أيمن عجيب</h1>
-        <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب وجراحة العمود الفقري</p>
-        <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#eef5f4' }}>خبرة أكثر من 20 عاماً</p>
-        <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#f0f7f6' }}>احجز موعدك الآن</p>
-     
-      </div>
 
+      {/* الهيدر الشخصي */}
+      <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '40px 20px', textAlign: 'center' }}>
+        <h1 style={{ margin: '0 0 10px 0' }}>دكتور أيمن عجيب</h1>
+        <p style={{ fontSize: '20px', opacity: '0.9' }}>استشاري المخ والأعصاب وجراحة العمود الفقري</p>
+        {/* الزر الجديد */}
+        <button onClick={() => setShowModal(true)} style={{ marginTop: '20px', padding: '12px 30px', background: '#ffeb3b', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer' }}>
+          حجز موعد أونلاين الآن
+        </button>
+      </div>
+      {/* ... باقي الكود الأصلي */}
+    
       <div style={{ maxWidth: '1000px', margin: '-40px auto 0', padding: '0 20px' }}>
         
         {/* قسم الفروع والحجز المباشر */}
@@ -66,7 +88,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
           <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #1a73e8' }}>
             <FaMapMarkerAlt style={{ fontSize: '30px', color: '#1a73e8' }} />
             <h3 style={{ margin: '15px 0' }}>فرع أكتوبر</h3>
-            <p style={{ color: '#141313', fontSize: '16px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع  </p>
+            <p style={{ color: '#141313', fontSize: '20px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع  </p>
             <button 
               onClick={() => window.open('https://www.doctoreg.online/dr/40')}
               style={{ width: '100%', marginTop: '24px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
@@ -79,7 +101,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
           <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #2e7d32' }}>
             <FaMapMarkerAlt style={{ fontSize: '30px', color: '#2e7d32' }} />
             <h3 style={{ margin: '15px 0' }}>فرع شبرا</h3>
-            <p style={{ color: '#141313', fontSize: '16px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث /الخلفاوي</p>
+            <p style={{ color: '#141313', fontSize: '20px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث /الخلفاوي</p>
             <button 
               onClick={() => window.open('https://www.doctoreg.online/dr/138')}
               style={{ width: '100%', marginTop: '24px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
