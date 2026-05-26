@@ -1,34 +1,44 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { servicesData } from './servicesData'; // تأكد أن المسار صحيح
+import { servicesData } from './servicesData';
 
 const ServiceDetails = () => {
   const { serviceId } = useParams();
   const navigate = useNavigate();
   const service = servicesData.find(s => s.id === serviceId);
 
-// أضف هذا السطر هنا:
-  console.log("الـ ID المطلوب هو:", serviceId);
-  console.log("البيانات الموجودة في الملف هي:", servicesData);
-  console.log("هل وجدنا الخدمة؟:", service);
-
-  if (!service) {
-    return <div style={{padding: '50px', textAlign: 'center'}}>عذراً، هذه الخدمة غير متوفرة حالياً.</div>;
-  }
-  
+  if (!service) return <div>عذراً، هذه الخدمة غير متوفرة.</div>;
 
   return (
     <div style={{ padding: '40px', direction: 'rtl', maxWidth: '800px', margin: 'auto' }}>
-      <button onClick={() => navigate(-1)} style={{ marginBottom: '20px' }}>العودة للخلف</button>
+      <button onClick={() => navigate(-1)}>العودة للخلف</button>
       <h1>{service.title}</h1>
       <img src={service.image} alt={service.title} style={{ width: '100%', borderRadius: '20px' }} />
-      <div style={{ marginTop: '20px' }}>
-         <h3>شرح الخدمة:</h3>
-         <p>{service.description}</p>
-         <h3>طرق العلاج:</h3>
-         <p>{service.treatment}</p>
-      </div>
-      <button onClick={() => navigate('/booking')} style={{marginTop: '20px', padding: '10px 20px'}}>احجز موعد الآن</button>
+      
+      <h3>مقدمة:</h3>
+      <p>{service.introduction}</p>
+
+      {/* عرض قائمة الأعراض */}
+      <h3>الأعراض:</h3>
+      <ul>{service.symptoms?.map((s, i) => <li key={i}>{s}</li>)}</ul>
+
+      {/* عرض قائمة الأسباب */}
+      <h3>الأسباب:</h3>
+      <ul>{service.causes?.map((c, i) => <li key={i}>{c}</li>)}</ul>
+
+      <h3>التشخيص:</h3>
+      <p>{service.diagnosis}</p>
+      
+      <h3>طرق العلاج:</h3>
+      <p>{service.treatment}</p>
+
+      <h3>تفاصيل الجراحة:</h3>
+      <p>{service.surgeryDetails}</p>
+
+      <h3>لماذا تختارنا:</h3>
+      <p>{service.whyChooseUs}</p>
+
+      <button onClick={() => navigate('/booking')}>احجز موعد الآن</button>
     </div>
   );
 };
