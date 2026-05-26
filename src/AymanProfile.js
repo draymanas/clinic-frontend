@@ -73,10 +73,9 @@ const AymanProfile = ({ setActivePage, navigate }) => {
         <p style={{ fontSize: '20px', opacity: '0.9' }}>استشاري المخ والأعصاب وجراحة العمود الفقري</p>
         {/* الزر الجديد */}
         <button onClick={() => setShowModal(true)} style={{ marginTop: '20px', fontSize: '20px', padding: '16px 36px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer' }}>
-          حجز موعد أونلاين الآن
+         <h1 style={{ margin: '0 0 10px 0' }}>حجز موعد اونلاين الان عبر الفديو</h1>
         </button>
       </div>
-      {/* ... باقي الكود الأصلي */}
     
       <div style={{ maxWidth: '1000px', margin: '-40px auto 0', padding: '0 20px' }}>
         
