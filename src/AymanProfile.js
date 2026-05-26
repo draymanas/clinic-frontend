@@ -43,7 +43,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
   return (
   <div style={{ direction: 'rtl', backgroundColor: '#f8fafc', minHeight: '100vh', paddingBottom: '50px' }}>
       <Helmet>
-        <title>دكتور أيمن عجيب | استشاري المخ والأعصاب</title>
+        <title>دكتور أيمن عجيب | استشاري المخ والأعصاب والعمود الفقري</title>
         <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
       </Helmet>
 
@@ -70,7 +70,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
       {/* الهيدر الشخصي */}
       <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '40px 20px', textAlign: 'center' }}>
         <h1 style={{ margin: '0 0 10px 0' }}>دكتور أيمن عجيب</h1>
-        <p style={{ fontSize: '20px', opacity: '0.9' }}>استشاري المخ والأعصاب وجراحة العمود الفقري</p>
+        <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب وجراحة العمود الفقري</p>
         {/* الزر الجديد */}
         <button onClick={() => setShowModal(true)} style={{ marginTop: '20px', fontSize: '20px', padding: '16px 36px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer' }}>
          <h1 style={{ margin: '0 0 10px 0' }}>حجز موعد اونلاين الان عبر الفيديو</h1>
