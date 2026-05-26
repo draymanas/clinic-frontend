@@ -38,8 +38,24 @@ const ServiceDetails = () => {
       <h3>لماذا تختارنا:</h3>
       <p>{service.whyChooseUs}</p>
 
-      <button onClick={() => navigate('/booking')}>احجز موعد الآن</button>
+    {/* استبدل زر الحجز القديم بهذه الأزرار الجديدة */}
+      <div style={{ marginTop: '30px' }}>
+        <button 
+          onClick={() => window.open('https://www.doctoreg.online/dr/40', '_blank')} 
+          style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
+        >
+          حجز موعد (الرابط 1)
+        </button>
+
+        <button 
+          onClick={() => window.open('https://www.doctoreg.online/dr/138', '_blank')} 
+          style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
+        >
+          حجز موعد (الرابط 2)
+        </button>
+      </div>
     </div>
+    
   );
 };
 
