@@ -16,32 +16,28 @@ const AymanProfile = ({ setActivePage, navigate }) => {
   };
 
   const sendToTelegram = async (e) => {
-  e.preventDefault();
-  
-  // تجهيز الرسالة
-  const message = `طلب حجز أونلاين جديد:%0Aالاسم: ${formData.name}%0Aرقم الواتساب: ${formData.phone}`;
-  
-  // استخدام التوكين و الـ ID الخاص بك
-  const token = '8639669118:AAGOpN9rtWDl_J3kmhoBK3PddqI14jPqEgw';
-  const chatId = '6635887452'; 
-  const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${message}`;
-  
-  try {
-    const response = await fetch(url);
-    if (response.ok) {
-      alert('تم إرسال طلبك بنجاح، سنتواصل معك قريباً!');
-      setShowModal(false);
-    } else {
-      alert('حدث خطأ أثناء الإرسال، حاول مرة أخرى.');
+    e.preventDefault();
+    const message = `طلب حجز أونلاين جديد:%0Aالاسم: ${formData.name}%0Aرقم الواتساب: ${formData.phone}`;
+    const token = '8639669118:AAGOpN9rtWDl_J3kmhoBK3PddqI14jPqEgw';
+    const chatId = '6635887452'; 
+    const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${message}`;
+    
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        alert('تم إرسال طلبك بنجاح، سنتواصل معك قريباً!');
+        setShowModal(false);
+      } else {
+        alert('حدث خطأ أثناء الإرسال، حاول مرة أخرى.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('تعذر الاتصال بخادم التليجرام.');
     }
-  } catch (error) {
-    console.error('Error:', error);
-    alert('تعذر الاتصال بخادم التليجرام.');
-  }
-};
+  };
 
   return (
-  <div style={{ direction: 'rtl', backgroundColor: '#f8fafc', minHeight: '100vh', paddingBottom: '50px' }}>
+    <div style={{ direction: 'rtl', backgroundColor: '#f8fafc', minHeight: '100vh', paddingBottom: '50px' }}>
       <Helmet>
         <title>دكتور أيمن عجيب | استشاري المخ والأعصاب والعمود الفقري</title>
         <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
@@ -53,7 +49,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
           <form onSubmit={sendToTelegram} style={{ background: '#fff', padding: '30px', borderRadius: '20px', width: '90%', maxWidth: '400px', color: '#333' }}>
             <h2>طلب حجز</h2>
             <input required placeholder="الاسم بالكامل" style={{ width: '100%', padding: '10px', margin: '10px 0' }} onChange={(e) => setFormData({...formData, name: e.target.value})} />
-            <input required placeholder="رقم الواتساب (كود الدولة +)" style={{ width: '100%', padding: '10px', margin: '10px 0' }} onChange={(e) => setFormData({...formData, phone: e.target.value})} />
+            <input required placeholder="رقم الواتساب" style={{ width: '100%', padding: '10px', margin: '10px 0' }} onChange={(e) => setFormData({...formData, phone: e.target.value})} />
             <button type="submit" style={{ width: '100%', padding: '10px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '5px' }}>إرسال الطلب</button>
             <button type="button" onClick={() => setShowModal(false)} style={{ width: '100%', marginTop: '10px' }}>إغلاق</button>
           </form>
@@ -67,48 +63,43 @@ const AymanProfile = ({ setActivePage, navigate }) => {
         </button>
       </div>
 
-      {/* الهيدر الشخصي */}
+      {/* الهيدر */}
       <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '40px 20px', textAlign: 'center' }}>
-        <h1 style={{ margin: '0 0 10px 0' }}>دكتور أيمن عجيب</h1>
+        <h1>دكتور أيمن عجيب</h1>
         <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب وجراحة العمود الفقري</p>
-        {/* الزر الجديد */}
-        <button onClick={() => setShowModal(true)} style={{ marginTop: '20px', fontSize: '20px', padding: '16px 36px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer' }}>
-         <h1 style={{ margin: '0 0 10px 0' }}>حجز موعد اونلاين الان عبر الفيديو</h1>
+        <button onClick={() => setShowModal(true)} style={{ marginTop: '20px', fontSize: '18px', padding: '16px 36px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer' }}>
+          حجز موعد اونلاين الان عبر الفيديو
         </button>
       </div>
     
-      <div style={{ maxWidth: '1000px', margin: '-40px auto 0', padding: '0 20px' }}>
+      <div style={{ maxWidth: '1000px', margin: '20px auto 0', padding: '0 20px' }}>
         
-        {/* قسم الفروع والحجز المباشر */}
-        
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+        {/* قسم الفروع - مصمم ليكون عمودياً على الموبايل وبجانب بعض على الكمبيوتر */}
+        <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+            gap: '20px' 
+        }}>
           
           {/* فرع أكتوبر */}
           <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #1a73e8' }}>
             <FaMapMarkerAlt style={{ fontSize: '30px', color: '#1a73e8' }} />
-            <h3 style={{ margin: '15px 0' }}>فرع أكتوبر</h3>
-            <p style={{ color: '#141313', fontSize: '20px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع  </p>
-            <button 
-              onClick={() => window.open('https://www.doctoreg.online/dr/40')}
-              style={{ width: '100%', marginTop: '24px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
-            >
-               حجز موعد (أكتوبر)
+            <h3>فرع أكتوبر</h3>
+            <p style={{ fontSize: '18px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع</p>
+            <button onClick={() => window.open('https://www.doctoreg.online/dr/40')} style={{ width: '100%', marginTop: '15px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
+              حجز موعد (أكتوبر)
             </button>
           </div>
 
           {/* فرع شبرا */}
           <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #2e7d32' }}>
             <FaMapMarkerAlt style={{ fontSize: '30px', color: '#2e7d32' }} />
-            <h3 style={{ margin: '15px 0' }}>فرع شبرا</h3>
-            <p style={{ color: '#141313', fontSize: '20px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث /الخلفاوي</p>
-            <button 
-              onClick={() => window.open('https://www.doctoreg.online/dr/138')}
-              style={{ width: '100%', marginTop: '24px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
-            >
+            <h3>فرع شبرا</h3>
+            <p style={{ fontSize: '18px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث /الخلفاوي</p>
+            <button onClick={() => window.open('https://www.doctoreg.online/dr/138')} style={{ width: '100%', marginTop: '15px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
               حجز موعد (شبرا)
             </button>
           </div>
-
         </div>
         {/* قسم الخدمات */}
         <div style={{ background: '#fff', borderRadius: '20px', padding: '30px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', marginBottom: '30px' }}>
