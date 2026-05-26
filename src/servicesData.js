@@ -1,12 +1,12 @@
 // src/servicesData.js
 
 export const servicesData = [
-  { 
-    id: 'spine-surgery',
-    title: 'جراحات العمود الفقري الميكروسكوبية',
-    description: 'تشخيص وعلاج مشاكل العمود الفقري باستخدام أحدث تقنيات الجراحة الميكروسكوبية الدقيقة.',
-    treatment: 'تتم الجراحة باستخدام الميكروسكوب الجراحي لتقليل الألم وتسريع التعافي.',
-    image: '/images/spine-surgery.jpg'
+{ 
+    id: 'spine-surgery', 
+    title: 'جراحات العمود الفقري الميكروسكوبية', 
+    description: 'هذا شرح تجريبي لخدمة جراحة العمود الفقري.', 
+    treatment: 'طريقة العلاج تتم عبر تقنيات حديثة.',
+    image: 'https://via.placeholder.com/800x400' 
   },
 
   { 
