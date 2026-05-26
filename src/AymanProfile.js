@@ -1,8 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { FaMapMarkerAlt, FaStethoscope, FaArrowRight } from 'react-icons/fa';
-import { servicesData } from '../servicesData'; // الاستيراد
-import { useNavigate } from 'react-router-dom';
+import { servicesData } from './servicesData';
+
 
 const AymanProfile = ({ setActivePage, navigate: propNavigate }) => { 
   const [showModal, setShowModal] = useState(false);
