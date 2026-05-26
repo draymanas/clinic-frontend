@@ -44,14 +44,14 @@ const ServiceDetails = () => {
           onClick={() => window.open('https://www.doctoreg.online/dr/40', '_blank')} 
           style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
         >
-          حجز موعد (الرابط 1)
+          حجز موعدالان 
         </button>
 
         <button 
           onClick={() => window.open('https://www.doctoreg.online/dr/138', '_blank')} 
           style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
         >
-          حجز موعد (الرابط 2)
+          حجز موعدالان 
         </button>
       </div>
     </div>
