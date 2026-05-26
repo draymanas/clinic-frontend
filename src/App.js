@@ -3,7 +3,8 @@ import DoctorDashboard from './DoctorDashboard';
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import AymanProfile from './AymanProfile';
-
+// في بداية ملف App.js (مع الـ imports الأخرى)
+import ServiceDetails from './ServiceDetails';
 // استيراد المكونات الجديدة
 import HomePage from './HomePage'; // الصفحة الرئيسية الجديدة
 import SearchPage from './SearchPage'; // صفحة البحث الجديدة
