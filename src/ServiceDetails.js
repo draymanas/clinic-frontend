@@ -7,9 +7,15 @@ const ServiceDetails = () => {
   const navigate = useNavigate();
   const service = servicesData.find(s => s.id === serviceId);
 
+// أضف هذا السطر هنا:
+  console.log("الـ ID المطلوب هو:", serviceId);
+  console.log("البيانات الموجودة في الملف هي:", servicesData);
+  console.log("هل وجدنا الخدمة؟:", service);
+
   if (!service) {
     return <div style={{padding: '50px', textAlign: 'center'}}>عذراً، هذه الخدمة غير متوفرة حالياً.</div>;
   }
+  
 
   return (
     <div style={{ padding: '40px', direction: 'rtl', maxWidth: '800px', margin: 'auto' }}>
