@@ -1,7 +1,7 @@
 // src/components/ServiceDetails.js
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { servicesData } from '../servicesData';
+import { servicesData } from './servicesData';
 
 const ServiceDetails = () => {
   const { serviceId } = useParams();
