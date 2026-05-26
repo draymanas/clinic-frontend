@@ -115,7 +115,7 @@ const AymanProfile = ({ setActivePage, navigate: propNavigate }) => {
     {servicesData.map((s) => (
       <div 
         key={s.id} 
-        onClick={() => navigate(`/service/${s.id}`)} 
+        onClick={() => navigate(`/service/${s.id}`)}
         style={{ 
           cursor: 'pointer', 
           padding: '20px', 
