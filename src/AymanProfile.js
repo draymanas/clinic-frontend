@@ -67,7 +67,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
       <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '40px 20px', textAlign: 'center' }}>
         <h1>دكتور أيمن عجيب</h1>
         <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب وجراحة العمود الفقري</p>
-        <button onClick={() => setShowModal(true)} style={{ marginTop: '20px', fontSize: '18px', padding: '16px 36px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer' }}>
+        <button onClick={() => setShowModal(true)} style={{ marginTop: '20px', fontSize: '24px', padding: '16px 36px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer' }}>
           حجز موعد اونلاين الان عبر الفيديو
         </button>
       </div>
@@ -86,7 +86,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
             <FaMapMarkerAlt style={{ fontSize: '30px', color: '#1a73e8' }} />
             <h3>فرع أكتوبر</h3>
             <p style={{ fontSize: '18px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع</p>
-            <button onClick={() => window.open('https://www.doctoreg.online/dr/40')} style={{ width: '100%', marginTop: '15px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
+            <button onClick={() => window.open('https://www.doctoreg.online/dr/40')} style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
               حجز موعد (أكتوبر)
             </button>
           </div>
@@ -96,7 +96,7 @@ const AymanProfile = ({ setActivePage, navigate }) => {
             <FaMapMarkerAlt style={{ fontSize: '30px', color: '#2e7d32' }} />
             <h3>فرع شبرا</h3>
             <p style={{ fontSize: '18px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث /الخلفاوي</p>
-            <button onClick={() => window.open('https://www.doctoreg.online/dr/138')} style={{ width: '100%', marginTop: '15px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
+            <button onClick={() => window.open('https://www.doctoreg.online/dr/138')} style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
               حجز موعد (شبرا)
             </button>
           </div>
