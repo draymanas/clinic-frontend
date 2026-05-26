@@ -46,7 +46,7 @@ export const servicesData = [
   seoDescription:
     'تعرف على أحدث طرق جراحات العمود الفقري الميكروسكوبية لعلاج الانزلاق الغضروفي وضغط الأعصاب وآلام الظهر والرقبة بأحدث التقنيات الطبية.',
 
-  image: '/images/spine-surgery.jpg'
+  image: '/spine-surgery.png'
   },
 
   { 
