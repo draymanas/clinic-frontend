@@ -746,6 +746,9 @@ onClick={() => {
                 />
             } />
 
+              {/* هذا هو السطر الذي ينقصك */}
+              <Route path="/service/:serviceId" element={<ServiceDetails />} />
+
             {/* صفحة انضمام طبيب */}
             <Route path="/join" element={<DoctorRegister />} />
 
