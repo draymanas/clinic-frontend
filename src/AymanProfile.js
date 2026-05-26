@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { FaMapMarkerAlt, FaStethoscope, FaArrowRight } from 'react-icons/fa';
+import { servicesData } from '../servicesData'; // الاستيراد
+import { useNavigate } from 'react-router-dom';
 
-const AymanProfile = ({ setActivePage, navigate }) => {
+const AymanProfile = ({ setActivePage, navigate: propNavigate }) => { 
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({ name: '', phone: '' });
-
+  const navigate = useNavigate();
   const schemaData = {
     "@context": "https://schema.org/",
     "@type": "Physician",
@@ -102,77 +104,34 @@ const AymanProfile = ({ setActivePage, navigate }) => {
           </div>
         </div>
         {/* قسم الخدمات */}
-        <div style={{ background: '#fff', borderRadius: '20px', padding: '30px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', marginBottom: '30px' }}>
-          <h2 style={{ color: '#1a73e8', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <FaStethoscope /> خدمات العيادة  
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
-            <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4' }}>جراحات العمود الفقري الميكروسكوبية</div>
-            <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4' }}>علاج اختناق الأعصاب والم اليد والكتفين</div>
-            <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4' }}> علاج الانزلاق الغضروفي القطني والعنقي </div>
-            
-  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    علاج الم اسفل الظهر و عرق النسا
-  </div>
-
-  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    الصداع النصفي و كافة انواع الصداع  
-  </div>
-
-  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    التهابات العصب السابع والعصب الخامس
-  </div>
-
-  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    التهاب الأعصاب الطرفية و ألم القدمين
-  </div>
-
-  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    الدوخة وعدم الاتزان والرعشة  </div>
-
-  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-     جلطات المخ ونزيف المخ بكافة أنواعه
-  </div>
-
-  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    نوبات الإغماء المتكررة و ارتفاع ضغط المخ و ارتشاح العصب البصري
-  </div>
-
-  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    اضطرابات الغدة النخامية والحركات اللارادية والرعاش
-  </div>
-
-<div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-  ضعف الذاكرة والنسيان، والزهايمر
-</div>
-  {/* خدمات الأطفال */}
-
-  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    التشنجات ونوبات الصرع، وزيادة الكهرباء على المخ
-  </div>
-
-  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    تأخر النمو البدني والحركي، وتأخر النمو العقلي
-  </div>
-
-  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    صعوبات التعلم، وتأخر النطق، وضعف الذاكرة
-  </div>
-
-  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    فرط الحركة وتشتت الانتباه (ADHD)، والتوحد
-  </div>
-
-  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    علاج الاستسقاء الدماغي (المياه الزائدة على المخ)
-  </div>
-
-  <div style={{ padding: '15px', borderRight: '4px solid #3debd3', background: '#f0fff4', borderRadius: '12px' }}>
-    الحركات اللاإرادية، والشلل الدماغي، وضمور العضلات، والتهابات الأعصاب
-  </div>
-          </div>
-        </div>
+       {/* قسم الخدمات - مستبدل بالكود الديناميكي */}
+<div style={{ background: '#fff', borderRadius: '20px', padding: '30px', marginTop: '30px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}>
+  <h2 style={{ color: '#1a73e8', display: 'flex', alignItems: 'center', gap: '10px' }}>
+    <FaStethoscope /> خدمات العيادة 
+  </h2>
+  
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
+    {servicesData.map((s) => (
+      <div 
+        key={s.id} 
+        onClick={() => navigate(`/service/${s.id}`)} 
+        style={{ 
+          cursor: 'pointer', 
+          padding: '20px', 
+          borderRight: '4px solid #3debd3', 
+          background: '#f0fff4', 
+          borderRadius: '12px',
+          textAlign: 'center',
+          transition: 'transform 0.2s'
+        }}
+        onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+        onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+      >
+        {s.title}
       </div>
+    ))}
+  </div>
+</div></div>
     </div>
   );
 };
