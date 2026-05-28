@@ -107,7 +107,7 @@ const sendToTelegram = async (e) => {
           onClick={() => window.open('https://www.doctoreg.online/dr/138', '_blank')} 
           style={{ width: '100%', marginTop: '20px', fontSize: '24px', padding: '15px', background: '#3bb441', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
         >
-          حجز موعدالان فرع شبرا
+          حجز موعد الان فرع شبرا
         </button>
         {/* الزر الثالث الجديد */}
   <button 
