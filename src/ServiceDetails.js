@@ -42,17 +42,25 @@ const ServiceDetails = () => {
       <div style={{ marginTop: '30px' }}>
         <button 
           onClick={() => window.open('https://www.doctoreg.online/dr/40', '_blank')} 
-          style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
+          style={{ width: '100%', marginTop: '20px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
         >
           حجز موعدالان فرع أكتوبر
         </button>
 
         <button 
           onClick={() => window.open('https://www.doctoreg.online/dr/138', '_blank')} 
-          style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
+          style={{ width: '100%', marginTop: '20px', fontSize: '24px', padding: '15px', background: '#3bb441', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
         >
           حجز موعدالان فرع شبرا
         </button>
+        {/* الزر الثالث الجديد */}
+  <button 
+    onClick={() => setShowModal(true)} 
+    style={{ width: '100%', marginTop: '20px', fontSize: '24px', padding: '15px', background: '#b541f8', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', color: '#fdf9f9' }}
+  >
+    حجز موعد أونلاين عبر الفيديو
+  </button>
+
       </div>
     </div>
     
