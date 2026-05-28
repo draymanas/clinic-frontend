@@ -91,7 +91,7 @@ const sendToTelegram = async (e) => {
       <h3>تفاصيل الجراحة:</h3>
       <p>{service.surgeryDetails}</p>
 
-      <h3>لماذا تختارنا:</h3>
+      <h3>لماذا تختار الدكتور ايمن عجيب:</h3>
       <p>{service.whyChooseUs}</p>
 
     {/* استبدل زر الحجز القديم بهذه الأزرار الجديدة */}
