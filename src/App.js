@@ -9,7 +9,7 @@ import ServiceDetails from './ServiceDetails';
 import HomePage from './HomePage'; // الصفحة الرئيسية الجديدة
 import SearchPage from './SearchPage'; // صفحة البحث الجديدة
 import DirectBooking from './DirectBooking';
-
+import QandA from './QandA'; // تأكد من المسار
 
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
@@ -767,6 +767,9 @@ onClick={() => {
                     fetchData={fetchData} 
                 />
             } />
+
+// في ملف App.js أضف هذا السطر في مكان الـ Routes
+<Route path="/free-consultations" element={<QandA />} />
 
             {/* صفحة الحسابات (AccountingPage) */}
             <Route path="/accounting" element={
