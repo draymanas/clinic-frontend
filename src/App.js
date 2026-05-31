@@ -182,34 +182,37 @@ function AdminPage({ doctors, appointments, fetchData }) {
 const [adminSearch, setAdminSearch] = React.useState(''); // للبحث بالاسم
 const [adminSpecialty, setAdminSpecialty] = React.useState('الكل'); // للفلترة بالتخصص
 const [consultations, setConsultations] = React.useState([]);
-const API_URL = "https://clinic-api-ig3d.onrender.com/consultations"; // تأكد من المسار الصحيح للاستشارات في الـ API الخاص بك
 
-// دالة لجلب الاستشارات من الـ API
+// الرابط الأساسي لـ API الأدمن
+const ADMIN_API_URL = "https://clinic-api-ig3d.onrender.com/api/admin/consultations";
+
 const fetchConsultations = async () => {
     try {
-        const response = await fetch(API_URL);
+        const response = await fetch(ADMIN_API_URL);
         if (!response.ok) throw new Error("فشل في جلب البيانات");
         const data = await response.json();
         setConsultations(data);
     } catch (error) {
         console.error("Error fetching consultations:", error);
-        alert("حدث خطأ أثناء جلب الاستشارات");
+        alert("حدث خطأ أثناء جلب الاستشارات من السيرفر");
     }
 };
+
+React.useEffect(() => { 
+    fetchConsultations(); 
+}, []);
 
 // استدعاء الدالة عند تحميل الصفحة
 React.useEffect(() => { 
     fetchConsultations(); 
 }, []);
 
-const handleAnswerSubmit = async (id, answerText, currentStatus = 'answered') => {
+const handleAnswerSubmit = async (id, answerText, currentStatus) => {
     try {
-        const response = await fetch(`${API_URL}/${id}`, {
-            method: 'PUT', // أو PATCH حسب نظام الـ API الخاص بك
+        const response = await fetch(`${ADMIN_API_URL}/${id}`, {
+            method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
-                // إذا كان الـ API يحتاج توثيق Token ضع السطر التالي:
-                // 'Authorization': `Bearer YOUR_TOKEN` 
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 answer: answerText,
@@ -218,14 +221,14 @@ const handleAnswerSubmit = async (id, answerText, currentStatus = 'answered') =>
         });
 
         if (response.ok) {
-            alert("تم تحديث البيانات بنجاح!");
-            fetchConsultations(); // إعادة تحديث القائمة
+            alert("تم الرد وتحديث الحالة بنجاح!");
+            fetchConsultations(); // إعادة تحديث القائمة لرؤية التغييرات فوراً
         } else {
             throw new Error("فشل التحديث في السيرفر");
         }
     } catch (error) {
         console.error("Error updating consultation:", error);
-        alert("حدث خطأ أثناء الإرسال");
+        alert("حدث خطأ أثناء إرسال الرد");
     }
 };
 
