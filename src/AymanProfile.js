@@ -63,41 +63,72 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
     {/* مودال الاستشارة المحدث */}
 {showConsultModal && (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-        <form 
-            onSubmit={async (e) => {
-                e.preventDefault();
-                // 1. إظهار رسالة انتظار
-                alert("جاري الإرسال، يرجى الانتظار...");
-                
-                try {
-                   // بدلاً من رابط الـ localhost، استخدم رابط الـ API المرفوع على Render
-const res = await fetch('https://clinic-api-ig3d.onrender.com/api/consultations', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(formData)
-});
-                    
-                    const data = await res.json();
-                    
-                    if (data.success) {
-                        alert('تم استلام سؤالك بنجاح وسنقوم بالرد عليه قريباً!');
-                        setShowConsultModal(false); // سيغلق المودال الآن
-                    } else {
-                        alert('حدث خطأ: ' + data.message);
-                    }
-                } catch (error) {
-                    alert('خطأ في الاتصال بالسيرفر. تأكد من تشغيل السيرفر!');
-                }
-            }} 
-            style={{ background: '#fff', padding: '30px', borderRadius: '20px', width: '90%', maxWidth: '400px' }}
-        >
-            <h2>إرسال استشارة طبية</h2>
-            <input required placeholder="الاسم" onChange={(e) => setFormData({...formData, name: e.target.value})} />
-            <input required placeholder="الموبايل" onChange={(e) => setFormData({...formData, phone: e.target.value})} />
-            <textarea required placeholder="اكتب سؤالك هنا..." onChange={(e) => setFormData({...formData, question: e.target.value})} />
-            <button type="submit" style={{ background: '#1a73e8', color: '#fff', padding: '10px', width: '100%' }}>إرسال الاستشارة</button>
-            <button type="button" onClick={() => setShowConsultModal(false)} style={{ marginTop: '10px', width: '100%' }}>إغلاق</button>
-        </form>
+       <form 
+    onSubmit={async (e) => {
+        e.preventDefault();
+        alert("جاري الإرسال، يرجى الانتظار...");
+        
+        try {
+            const res = await fetch('https://clinic-api-ig3d.onrender.com/api/consultations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            
+            const data = await res.json();
+            
+            if (data.success) {
+                alert('تم استلام سؤالك بنجاح وسنقوم بالرد عليه قريباً!');
+                setShowConsultModal(false); 
+            } else {
+                alert('حدث خطأ: ' + (data.message || 'غير معروف'));
+            }
+        } catch (error) {
+            console.error(error);
+            alert('خطأ في الاتصال بالسيرفر. تأكد من تشغيل السيرفر!');
+        }
+    }} 
+    style={{ background: '#fff', padding: '30px', borderRadius: '20px', width: '90%', maxWidth: '500px', margin: 'auto' }}
+>
+    <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>إرسال استشارة طبية</h2>
+    
+    <input 
+        required 
+        placeholder="الاسم" 
+        style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }} 
+        onChange={(e) => setFormData({...formData, name: e.target.value})} 
+    />
+    
+    <input 
+        required 
+        placeholder="الموبايل" 
+        style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }} 
+        onChange={(e) => setFormData({...formData, phone: e.target.value})} 
+    />
+    
+    <textarea 
+        required 
+        placeholder="اكتب سؤالك هنا..." 
+        rows="6" 
+        style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box', minHeight: '120px' }} 
+        onChange={(e) => setFormData({...formData, question: e.target.value})} 
+    />
+    
+    <button 
+        type="submit" 
+        style={{ background: '#1a73e8', color: '#fff', padding: '15px', width: '100%', fontSize: '18px', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '10px' }}
+    >
+        إرسال الاستشارة
+    </button>
+    
+    <button 
+        type="button" 
+        onClick={() => setShowConsultModal(false)} 
+        style={{ marginTop: '15px', padding: '10px', width: '100%', fontSize: '16px', background: '#f8f9fa', border: '1px solid #ccc', borderRadius: '8px', cursor: 'pointer' }}
+    >
+        إغلاق
+    </button>
+</form>
     </div>
 )}
       {/* زر العودة */}
