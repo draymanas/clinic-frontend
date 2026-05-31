@@ -102,7 +102,9 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
           حجز موعد اونلاين الان عبر الفيديو
         </button>
       </div>
-    
+    <Link to="/free-consultations">
+   <button>الأسئلة والأجوبة (استشارات مجانية)</button>
+</Link>
       <div style={{ maxWidth: '1000px', margin: '20px auto 0', padding: '0 20px' }}>
         
         {/* قسم الفروع - مصمم ليكون عمودياً على الموبايل وبجانب بعض على الكمبيوتر */}
