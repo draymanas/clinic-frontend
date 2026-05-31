@@ -178,8 +178,56 @@ function AdminPage({ doctors, appointments, fetchData }) {
     const handleDelete = async (id) => { if(window.confirm("حذف؟")){ await fetch(`https://clinic-api-ig3d.onrender.com/delete-doctor/${id}`, {method:'DELETE'}); fetchData(); } };
     const handleToggle = async (id, s) => { await fetch(`https://clinic-api-ig3d.onrender.com/toggle-doctor/${id}`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:s})}); fetchData(); };
 
+
 const [adminSearch, setAdminSearch] = React.useState(''); // للبحث بالاسم
 const [adminSpecialty, setAdminSpecialty] = React.useState('الكل'); // للفلترة بالتخصص
+const [consultations, setConsultations] = React.useState([]);
+const API_URL = "https://clinic-api-ig3d.onrender.com/consultations"; // تأكد من المسار الصحيح للاستشارات في الـ API الخاص بك
+
+// دالة لجلب الاستشارات من الـ API
+const fetchConsultations = async () => {
+    try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error("فشل في جلب البيانات");
+        const data = await response.json();
+        setConsultations(data);
+    } catch (error) {
+        console.error("Error fetching consultations:", error);
+        alert("حدث خطأ أثناء جلب الاستشارات");
+    }
+};
+
+// استدعاء الدالة عند تحميل الصفحة
+React.useEffect(() => { 
+    fetchConsultations(); 
+}, []);
+
+const handleAnswerSubmit = async (id, answerText, currentStatus = 'answered') => {
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'PUT', // أو PATCH حسب نظام الـ API الخاص بك
+            headers: {
+                'Content-Type': 'application/json',
+                // إذا كان الـ API يحتاج توثيق Token ضع السطر التالي:
+                // 'Authorization': `Bearer YOUR_TOKEN` 
+            },
+            body: JSON.stringify({
+                answer: answerText,
+                status: currentStatus
+            })
+        });
+
+        if (response.ok) {
+            alert("تم تحديث البيانات بنجاح!");
+            fetchConsultations(); // إعادة تحديث القائمة
+        } else {
+            throw new Error("فشل التحديث في السيرفر");
+        }
+    } catch (error) {
+        console.error("Error updating consultation:", error);
+        alert("حدث خطأ أثناء الإرسال");
+    }
+};
 
 const filteredAdminDoctors = doctors.filter(d => {
     const matchName = d.name.toLowerCase().includes(adminSearch.toLowerCase());
@@ -297,6 +345,69 @@ const handleOrderChange = async (id, newOrder) => {
                     ))}
                 </tbody>
             </table>
+           <div>
+    <h2 style={{textAlign:'center', marginTop:'50px'}}>💬 استشارات المرضى</h2>
+    <table style={{width:'100%', background:'#fff', borderCollapse:'collapse', marginBottom:'50px'}}>
+        <thead style={{background:'#1a73e8', color:'#fff'}}>
+            <tr>
+                <th style={{padding:'12px'}}>الاسم</th>
+                <th style={{padding:'12px'}}>السؤال</th>
+                <th style={{padding:'12px'}}>الحالة</th>
+                <th style={{padding:'12px'}}>الإجابة</th>
+                <th style={{padding:'12px'}}>إجراء</th>
+            </tr>
+        </thead>
+        <tbody>
+            {consultations.map(c => {
+                // حفظ نص الإجابة المؤقت لكل استشارة داخل الـ DOM أو يمكنك استخدام state مخصصة لكل سطر
+                let localAnswer = c.answer || ""; 
+                let localStatus = c.status;
+
+                return (
+                    <tr key={c.id} style={{borderBottom:'1px solid #eee', textAlign: 'center'}}>
+                        <td style={{padding:'10px'}}>{c.name}</td>
+                        <td style={{padding:'10px', maxWidth:'300px', textTransform:'capitalize'}}>{c.question}</td>
+                        <td style={{padding:'10px'}}>
+                            {/* قائمة منسدلة لتغيير الحالة يدوياً */}
+                            <select 
+                                defaultValue={c.status}
+                                onChange={(e) => { localStatus = e.target.value; }}
+                                style={{padding:'5px', borderRadius:'4px', border:'1px solid #ccc'}}
+                            >
+                                <option value="pending">⏳ معلق</option>
+                                <option value="answered">✅ تم الرد</option>
+                                <option value="cancelled">❌ ملغي</option>
+                            </select>
+                        </td>
+                        <td style={{padding:'10px'}}>
+                            <textarea 
+                                placeholder="اكتب الرد هنا..." 
+                                defaultValue={c.answer}
+                                style={{width:'90%', padding:'5px', minHeight:'40px', borderRadius:'4px'}}
+                                onChange={(e) => { localAnswer = e.target.value; }}
+                            />
+                        </td>
+                        <td style={{padding:'10px'}}>
+                            <button 
+                                onClick={() => handleAnswerSubmit(c.id, localAnswer, localStatus)}
+                                style={{
+                                    background: '#1a73e8', 
+                                    color: '#fff', 
+                                    border: 'none', 
+                                    padding: '6px 12px', 
+                                    borderRadius: '4px', 
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                حفظ والتحديث
+                            </button>
+                        </td>
+                    </tr>
+                );
+            })}
+        </tbody>
+    </table>
+</div>
         </div>
     );
 }
