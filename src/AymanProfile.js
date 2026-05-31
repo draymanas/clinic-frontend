@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { FaMapMarkerAlt, FaStethoscope, FaArrowRight } from 'react-icons/fa';
 import { servicesData } from './servicesData';
-
+import { Link } from 'react-router-dom';
 
 const AymanProfile = ({ setActivePage, navigate: propNavigate }) => { 
 // أضف هذه الأسطر في بداية المكون (مكان الـ useState القديمة)
