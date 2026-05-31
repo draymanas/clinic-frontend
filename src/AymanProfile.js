@@ -174,19 +174,31 @@ const res = await fetch('https://clinic-api-ig3d.onrender.com/api/consultations'
     ))}
   </div>
 </div></div>
-  {/* قسم الاستشارات المجانية */}
+{/* قسم الاستشارات المجانية */}
 <div style={{ padding: '30px', background: '#e3f2fd', borderRadius: '20px', marginTop: '40px', textAlign: 'center', margin: '20px' }}>
   <h3 style={{ color: '#1565c0' }}>استشارة طبية مجانية أونلاين</h3>
   <p>أرسل سؤالك الطبي وسأقوم بالرد عليه في أقرب وقت لإفادة الجميع.</p>
-  <button 
-    onClick={() => setShowConsultModal(true)} 
-    style={{ padding: '15px 40px', background: '#1565c0', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '20px', cursor: 'pointer' }}
-  >
-    إسأل دكتور أيمن
-  </button>
-      <Link to="/free-consultations">
-   <button>الأسئلة والأجوبة (استشارات مجانية)</button>
-</Link>
+  
+  <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginTop: '20px', flexWrap: 'wrap' }}>
+    
+    {/* زر إسأل دكتور أيمن */}
+    <button 
+      onClick={() => setShowConsultModal(true)} 
+      style={{ padding: '15px 40px', background: '#1565c0', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '20px', cursor: 'pointer', fontWeight: 'bold' }}
+    >
+      إسأل دكتور أيمن
+    </button>
+
+    {/* زر عرض الأسئلة والأجوبة */}
+    <Link to="/free-consultations" style={{ textDecoration: 'none' }}>
+      <button 
+        style={{ padding: '15px 40px', background: '#f2945b', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '20px', cursor: 'pointer', fontWeight: 'bold' }}
+      >
+        الأسئلة والأجوبة
+      </button>
+    </Link>
+    
+  </div>
 </div>
     </div>
     
