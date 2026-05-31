@@ -182,7 +182,8 @@ function AdminPage({ doctors, appointments, fetchData }) {
 const [adminSearch, setAdminSearch] = React.useState(''); // للبحث بالاسم
 const [adminSpecialty, setAdminSpecialty] = React.useState('الكل'); // للفلترة بالتخصص
 const [consultations, setConsultations] = React.useState([]);
-
+const selectElement = document.getElementById(`status-${c.id}`);
+const textareaElement = document.getElementById(`answer-${c.id}`);
 // الرابط الأساسي لـ API الأدمن
 const ADMIN_API_URL = "https://clinic-api-ig3d.onrender.com/api/admin/consultations";
 
