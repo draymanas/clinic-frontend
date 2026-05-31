@@ -70,11 +70,12 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
                 alert("جاري الإرسال، يرجى الانتظار...");
                 
                 try {
-                    const res = await fetch('http://localhost:5000/api/consultations', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(formData)
-                    });
+                   // بدلاً من رابط الـ localhost، استخدم رابط الـ API المرفوع على Render
+const res = await fetch('https://clinic-api-ig3d.onrender.com/api/consultations', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(formData)
+});
                     
                     const data = await res.json();
                     
