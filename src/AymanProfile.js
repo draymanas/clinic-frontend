@@ -51,13 +51,41 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
       {/* النافذة المنبثقة */}
       {showBookingModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-          <form onSubmit={sendToTelegram} style={{ background: '#fff', padding: '30px', borderRadius: '20px', width: '90%', maxWidth: '400px', color: '#333' }}>
-            <h2>طلب حجز</h2>
-            <input required placeholder="الاسم بالكامل" style={{ width: '100%', padding: '10px', margin: '10px 0' }} onChange={(e) => setFormData({...formData, name: e.target.value})} />
-            <input required placeholder="رقم الواتساب" style={{ width: '100%', padding: '10px', margin: '10px 0' }} onChange={(e) => setFormData({...formData, phone: e.target.value})} />
-            <button type="submit" style={{ width: '100%', padding: '10px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '5px' }}>إرسال الطلب</button>
-            <button type="button" onClick={() => setShowBookingModal(false)} style={{ width: '100%', marginTop: '10px' }}>إغلاق</button>
-          </form>
+        <form 
+    onSubmit={sendToTelegram} 
+    style={{ background: '#fff', padding: '30px', borderRadius: '20px', width: '90%', maxWidth: '500px', margin: 'auto', boxSizing: 'border-box' }}
+>
+    <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>طلب حجز</h2>
+    
+    <input 
+        required 
+        placeholder="الاسم بالكامل" 
+        style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }} 
+        onChange={(e) => setFormData({...formData, name: e.target.value})} 
+    />
+    
+    <input 
+        required 
+        placeholder="رقم الواتساب" 
+        style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }} 
+        onChange={(e) => setFormData({...formData, phone: e.target.value})} 
+    />
+    
+    <button 
+        type="submit" 
+        style={{ background: '#1a73e8', color: '#fff', padding: '15px', width: '100%', fontSize: '18px', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '10px' }}
+    >
+        إرسال الطلب
+    </button>
+    
+    <button 
+        type="button" 
+        onClick={() => setShowBookingModal(false)} 
+        style={{ marginTop: '15px', padding: '10px', width: '100%', fontSize: '16px', background: '#f8f9fa', border: '1px solid #ccc', borderRadius: '8px', cursor: 'pointer' }}
+    >
+        إغلاق
+    </button>
+</form>
         </div>
       )}
     {/* مودال الاستشارة المحدث */}
