@@ -6,8 +6,10 @@ import { servicesData } from './servicesData';
 
 
 const AymanProfile = ({ setActivePage, navigate: propNavigate }) => { 
-  const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({ name: '', phone: '' });
+// أضف هذه الأسطر في بداية المكون (مكان الـ useState القديمة)
+const [showBookingModal, setShowBookingModal] = useState(false);
+const [showConsultModal, setShowConsultModal] = useState(false); // مودال جديد
+const [formData, setFormData] = useState({ name: '', phone: '', question: '' }); // أضفنا question
   const navigate = useNavigate();
   const schemaData = {
     "@context": "https://schema.org/",
@@ -29,7 +31,7 @@ const AymanProfile = ({ setActivePage, navigate: propNavigate }) => {
       const response = await fetch(url);
       if (response.ok) {
         alert('تم إرسال طلبك بنجاح، سنتواصل معك قريباً!');
-        setShowModal(false);
+        setShowBookingModal(false);
       } else {
         alert('حدث خطأ أثناء الإرسال، حاول مرة أخرى.');
       }
@@ -47,18 +49,44 @@ const AymanProfile = ({ setActivePage, navigate: propNavigate }) => {
       </Helmet>
 
       {/* النافذة المنبثقة */}
-      {showModal && (
+      {showBookingModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
           <form onSubmit={sendToTelegram} style={{ background: '#fff', padding: '30px', borderRadius: '20px', width: '90%', maxWidth: '400px', color: '#333' }}>
             <h2>طلب حجز</h2>
             <input required placeholder="الاسم بالكامل" style={{ width: '100%', padding: '10px', margin: '10px 0' }} onChange={(e) => setFormData({...formData, name: e.target.value})} />
             <input required placeholder="رقم الواتساب" style={{ width: '100%', padding: '10px', margin: '10px 0' }} onChange={(e) => setFormData({...formData, phone: e.target.value})} />
             <button type="submit" style={{ width: '100%', padding: '10px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '5px' }}>إرسال الطلب</button>
-            <button type="button" onClick={() => setShowModal(false)} style={{ width: '100%', marginTop: '10px' }}>إغلاق</button>
+            <button type="button" onClick={() => setShowBookingModal(false)} style={{ width: '100%', marginTop: '10px' }}>إغلاق</button>
           </form>
         </div>
       )}
-
+     {/* مودال الاستشارة الجديد */}
+{showConsultModal && (
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+        <form 
+            onSubmit={async (e) => {
+                e.preventDefault();
+                const res = await fetch('http://localhost:5000/api/consultations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                if ((await res.json()).success) {
+                    alert('تم إرسال استشارتك بنجاح!');
+                    setShowConsultModal(false);
+                }
+            }} 
+            style={{ background: '#fff', padding: '30px', borderRadius: '20px', width: '90%', maxWidth: '400px' }}
+        >
+            <h2>إرسال استشارة طبية</h2>
+            <input required placeholder="الاسم" onChange={(e) => setFormData({...formData, name: e.target.value})} />
+            <input required placeholder="الموبايل" onChange={(e) => setFormData({...formData, phone: e.target.value})} />
+            <textarea required placeholder="اكتب سؤالك هنا..." onChange={(e) => setFormData({...formData, question: e.target.value})} />
+            <button type="submit">إرسال الاستشارة</button>
+            <button type="button" onClick={() => setShowConsultModal(false)}>إغلاق</button>
+        </form>
+    </div>
+)}
       {/* زر العودة */}
       <div style={{ padding: '15px', backgroundColor: '#fff' }}>
         <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', color: '#1a73e8', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -70,7 +98,7 @@ const AymanProfile = ({ setActivePage, navigate: propNavigate }) => {
       <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '40px 20px', textAlign: 'center' }}>
         <h1>دكتور أيمن عجيب</h1>
         <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب وجراحة العمود الفقري</p>
-        <button onClick={() => setShowModal(true)} style={{ marginTop: '20px', fontSize: '24px', padding: '16px 36px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer' }}>
+        <button onClick={() => setShowBookingModal(true)} style={{ marginTop: '20px', fontSize: '24px', padding: '16px 36px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer' }}>
           حجز موعد اونلاين الان عبر الفيديو
         </button>
       </div>
@@ -138,7 +166,7 @@ const AymanProfile = ({ setActivePage, navigate: propNavigate }) => {
   <h3 style={{ color: '#1565c0' }}>استشارة طبية مجانية أونلاين</h3>
   <p>أرسل سؤالك الطبي وسأقوم بالرد عليه في أقرب وقت لإفادة الجميع.</p>
   <button 
-    onClick={() => setShowModal(true)} 
+    onClick={() => setShowConsultModal(true)} 
     style={{ padding: '15px 40px', background: '#1565c0', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '20px', cursor: 'pointer' }}
   >
     إسأل دكتور أيمن
