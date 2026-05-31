@@ -60,20 +60,32 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
           </form>
         </div>
       )}
-     {/* مودال الاستشارة الجديد */}
+    {/* مودال الاستشارة المحدث */}
 {showConsultModal && (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
         <form 
             onSubmit={async (e) => {
                 e.preventDefault();
-                const res = await fetch('http://localhost:5000/api/consultations', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                });
-                if ((await res.json()).success) {
-                    alert('تم إرسال استشارتك بنجاح!');
-                    setShowConsultModal(false);
+                // 1. إظهار رسالة انتظار
+                alert("جاري الإرسال، يرجى الانتظار...");
+                
+                try {
+                    const res = await fetch('http://localhost:5000/api/consultations', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    const data = await res.json();
+                    
+                    if (data.success) {
+                        alert('تم استلام سؤالك بنجاح وسنقوم بالرد عليه قريباً!');
+                        setShowConsultModal(false); // سيغلق المودال الآن
+                    } else {
+                        alert('حدث خطأ: ' + data.message);
+                    }
+                } catch (error) {
+                    alert('خطأ في الاتصال بالسيرفر. تأكد من تشغيل السيرفر!');
                 }
             }} 
             style={{ background: '#fff', padding: '30px', borderRadius: '20px', width: '90%', maxWidth: '400px' }}
@@ -82,8 +94,8 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
             <input required placeholder="الاسم" onChange={(e) => setFormData({...formData, name: e.target.value})} />
             <input required placeholder="الموبايل" onChange={(e) => setFormData({...formData, phone: e.target.value})} />
             <textarea required placeholder="اكتب سؤالك هنا..." onChange={(e) => setFormData({...formData, question: e.target.value})} />
-            <button type="submit">إرسال الاستشارة</button>
-            <button type="button" onClick={() => setShowConsultModal(false)}>إغلاق</button>
+            <button type="submit" style={{ background: '#1a73e8', color: '#fff', padding: '10px', width: '100%' }}>إرسال الاستشارة</button>
+            <button type="button" onClick={() => setShowConsultModal(false)} style={{ marginTop: '10px', width: '100%' }}>إغلاق</button>
         </form>
     </div>
 )}
