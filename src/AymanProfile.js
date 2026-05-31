@@ -115,9 +115,7 @@ const res = await fetch('https://clinic-api-ig3d.onrender.com/api/consultations'
           حجز موعد اونلاين الان عبر الفيديو
         </button>
       </div>
-    <Link to="/free-consultations">
-   <button>الأسئلة والأجوبة (استشارات مجانية)</button>
-</Link>
+
       <div style={{ maxWidth: '1000px', margin: '20px auto 0', padding: '0 20px' }}>
         
         {/* قسم الفروع - مصمم ليكون عمودياً على الموبايل وبجانب بعض على الكمبيوتر */}
@@ -186,6 +184,9 @@ const res = await fetch('https://clinic-api-ig3d.onrender.com/api/consultations'
   >
     إسأل دكتور أيمن
   </button>
+      <Link to="/free-consultations">
+   <button>الأسئلة والأجوبة (استشارات مجانية)</button>
+</Link>
 </div>
     </div>
     
