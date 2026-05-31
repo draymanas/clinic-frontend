@@ -256,8 +256,21 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
         الأسئلة والأجوبة
       </button>
     </Link>
+   {/* زر حمل تطبيق دكتور الآن الجديد */}
+    <a 
+      href="https://play.google.com/store/apps/details?id=com.doctorplatform.app&pcampaignid=web_share" 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      style={{ textDecoration: 'none' }}
+    >
+      <button 
+        style={{ padding: '15px 40px', background: '#4ed855', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '20px', cursor: 'pointer', fontWeight: 'bold' }}
+      >
+        حمل تطبيق دكتور الآن 📱
+      </button>
+    </a>
     
-  </div>
+</div>
 </div>
     </div>
     
