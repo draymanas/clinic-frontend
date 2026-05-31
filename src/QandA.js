@@ -15,7 +15,7 @@ const QandA = () => {
 
   return (
     <div style={{ maxWidth: '800px', margin: '40px auto', padding: '20px', direction: 'rtl', fontFamily: 'Arial' }}>
-      <h1 style={{ textAlign: 'center', color: '#1a73e8' }}>أسئلة المرضى وإجابات د. أيمن عجيب</h1>
+      <h1 style={{ textAlign: 'center', color: '#1a73e8' }}>استشارات مجانية </h1>
       
       {questions.map(q => (
         <div key={q.id} style={{ border: '1px solid #ddd', padding: '20px', marginBottom: '20px', borderRadius: '15px', background: '#fff' }}>
