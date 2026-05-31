@@ -349,7 +349,8 @@ const handleOrderChange = async (id, newOrder) => {
                 </tbody>
             </table>
            <div>
-    <h2 style={{textAlign:'center', marginTop:'50px'}}>💬 استشارات المرضى</h2>
+   <div>
+    <h2 style={{textAlign:'center', marginTop:'50px'}}>💬 استشارات المرضى (لوحة التحكم)</h2>
     <table style={{width:'100%', background:'#fff', borderCollapse:'collapse', marginBottom:'50px'}}>
         <thead style={{background:'#1a73e8', color:'#fff'}}>
             <tr>
@@ -362,16 +363,15 @@ const handleOrderChange = async (id, newOrder) => {
         </thead>
         <tbody>
             {consultations.map(c => {
-                // حفظ نص الإجابة المؤقت لكل استشارة داخل الـ DOM أو يمكنك استخدام state مخصصة لكل سطر
+                // متغيرات مؤقتة لحفظ التعديلات التي يقوم بها الأدمن في السطر الحالي قبل الضغط على حفظ
                 let localAnswer = c.answer || ""; 
-                let localStatus = c.status;
+                let localStatus = c.status || "pending";
 
                 return (
                     <tr key={c.id} style={{borderBottom:'1px solid #eee', textAlign: 'center'}}>
                         <td style={{padding:'10px'}}>{c.name}</td>
-                        <td style={{padding:'10px', maxWidth:'300px', textTransform:'capitalize'}}>{c.question}</td>
+                        <td style={{padding:'10px', maxWidth:'300px', whiteSpace:'pre-wrap'}}>{c.question}</td>
                         <td style={{padding:'10px'}}>
-                            {/* قائمة منسدلة لتغيير الحالة يدوياً */}
                             <select 
                                 defaultValue={c.status}
                                 onChange={(e) => { localStatus = e.target.value; }}
@@ -379,14 +379,13 @@ const handleOrderChange = async (id, newOrder) => {
                             >
                                 <option value="pending">⏳ معلق</option>
                                 <option value="answered">✅ تم الرد</option>
-                                <option value="cancelled">❌ ملغي</option>
                             </select>
                         </td>
                         <td style={{padding:'10px'}}>
                             <textarea 
                                 placeholder="اكتب الرد هنا..." 
                                 defaultValue={c.answer}
-                                style={{width:'90%', padding:'5px', minHeight:'40px', borderRadius:'4px'}}
+                                style={{width:'90%', padding:'5px', minHeight:'50px', borderRadius:'4px'}}
                                 onChange={(e) => { localAnswer = e.target.value; }}
                             />
                         </td>
@@ -410,6 +409,7 @@ const handleOrderChange = async (id, newOrder) => {
             })}
         </tbody>
     </table>
+</div>
 </div>
         </div>
     );
