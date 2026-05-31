@@ -6,7 +6,8 @@ const QandA = () => {
   useEffect(() => {
     document.title = "استشارات مجانية | دكتور أيمن عجيب";
     // جلب الأسئلة التي تم الرد عليها من السيرفر الخاص بك
-    fetch('http://localhost:5000/api/consultations/answered')
+   // تم تعديل الرابط ليتصل بالسيرفر المرفوع على Render
+    fetch('https://clinic-api-ig3d.onrender.com/api/consultations/answered')
       .then(res => res.json())
       .then(data => setQuestions(data))
       .catch(err => console.error("Error fetching Q&A:", err));
