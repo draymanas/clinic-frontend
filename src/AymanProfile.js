@@ -188,7 +188,7 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
           <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #1a73e8' }}>
             <FaMapMarkerAlt style={{ fontSize: '30px', color: '#1a73e8' }} />
             <h3>فرع أكتوبر</h3>
-            <p style={{ fontSize: '20x' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع</p>
+            <p style={{ fontSize: '20px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع</p>
             <button onClick={() => window.open('https://www.doctoreg.online/dr/40')} style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
               حجز موعد (أكتوبر)
             </button>
