@@ -16,7 +16,7 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
     "@type": "Physician",
     "name": "دكتور أيمن عجيب",
     "url": "https://www.doctoreg.online/dr_ayman_aguib",
-    "description": "استشاري المخ والأعصاب وجراحة العمود الفقري بخبرة أكثر من 20 عاماً.",
+    "description": "استشاري المخ والأعصاب و العمود الفقري بخبرة أكثر من 20 عاماً.",
     "address": { "@type": "PostalAddress", "addressLocality": "مصر", "addressCountry": "EG" }
   };
 
@@ -94,7 +94,7 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
        <form 
     onSubmit={async (e) => {
         e.preventDefault();
-        alert("جاري الإرسال، يرجى الانتظار...");
+        alert("تم إرسال الاستشارة،...");
         
         try {
             const res = await fetch('https://clinic-api-ig3d.onrender.com/api/consultations', {
@@ -169,7 +169,7 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
       {/* الهيدر */}
       <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '40px 20px', textAlign: 'center' }}>
         <h1>دكتور أيمن عجيب</h1>
-        <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب وجراحة العمود الفقري</p>
+        <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب و العمود الفقري</p>
         <button onClick={() => setShowBookingModal(true)} style={{ marginTop: '20px', fontSize: '24px', padding: '16px 36px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer' }}>
           حجز موعد اونلاين الان عبر الفيديو
         </button>
@@ -188,7 +188,7 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
           <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #1a73e8' }}>
             <FaMapMarkerAlt style={{ fontSize: '30px', color: '#1a73e8' }} />
             <h3>فرع أكتوبر</h3>
-            <p style={{ fontSize: '18px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع</p>
+            <p style={{ fontSize: '20x' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع</p>
             <button onClick={() => window.open('https://www.doctoreg.online/dr/40')} style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
               حجز موعد (أكتوبر)
             </button>
@@ -198,7 +198,7 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
           <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #2e7d32' }}>
             <FaMapMarkerAlt style={{ fontSize: '30px', color: '#2e7d32' }} />
             <h3>فرع شبرا</h3>
-            <p style={{ fontSize: '18px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث /الخلفاوي</p>
+            <p style={{ fontSize: '20px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث /الخلفاوي</p>
             <button onClick={() => window.open('https://www.doctoreg.online/dr/138')} style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
               حجز موعد (شبرا)
             </button>
@@ -236,7 +236,7 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
 {/* قسم الاستشارات المجانية */}
 <div style={{ padding: '30px', background: '#e3f2fd', borderRadius: '20px', marginTop: '40px', textAlign: 'center', margin: '20px' }}>
   <h3 style={{ color: '#1565c0' }}>استشارة طبية مجانية أونلاين</h3>
-  <p>أرسل سؤالك الطبي وسأقوم بالرد عليه في أقرب وقت لإفادة الجميع.</p>
+  <p>أرسل سؤالك الطبي وسنقوم بالرد عليه في أقرب وقت  .</p>
   
   <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginTop: '20px', flexWrap: 'wrap' }}>
     
@@ -264,7 +264,7 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
       style={{ textDecoration: 'none' }}
     >
       <button 
-        style={{ padding: '15px 40px', background: '#30b837', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '20px', cursor: 'pointer', fontWeight: 'bold' }}
+        style={{ padding: '15px 40px', background: '#30b837', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '24px', cursor: 'pointer', fontWeight: 'bold' }}
       >
         حمل تطبيق دكتور الآن 📱
       </button>
