@@ -177,33 +177,41 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
 
       <div style={{ maxWidth: '1000px', margin: '20px auto 0', padding: '0 20px' }}>
         
-        {/* قسم الفروع - مصمم ليكون عمودياً على الموبايل وبجانب بعض على الكمبيوتر */}
-        <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-            gap: '20px' 
-        }}>
-          
-          {/* فرع أكتوبر */}
-          <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #1a73e8' }}>
-            <FaMapMarkerAlt style={{ fontSize: '30px', color: '#1a73e8' }} />
-            <h3>فرع أكتوبر</h3>
-            <p style={{ fontSize: '20px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع</p>
-            <button onClick={() => window.open('https://www.doctoreg.online/dr/40')} style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
-              حجز موعد (أكتوبر)
-            </button>
-          </div>
+{/* قسم الفروع - بعد التعديل */}
+<div style={{ 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+    gap: '20px' 
+}}>
+  
+  {/* فرع أكتوبر */}
+  <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #1a73e8' }}>
+    <FaMapMarkerAlt style={{ fontSize: '30px', color: '#1a73e8' }} />
+    <h3>فرع أكتوبر</h3>
+    <p style={{ fontSize: '20px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع</p>
+    <button onClick={() => window.open('https://www.doctoreg.online/dr/40')} style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
+      حجز موعد (أكتوبر)
+    </button>
+    {/* زر تقييم أكتوبر */}
+    <button onClick={() => window.open('https://g.page/r/CdLCrFOSM76vEBM/review')} style={{ width: '100%', marginTop: '10px', fontSize: '18px', padding: '10px', background: '#e3f2fd', color: '#1a73e8', border: '1px solid #1a73e8', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
+      تقييم عيادة أكتوبر ⭐
+    </button>
+  </div>
 
-          {/* فرع شبرا */}
-          <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #2e7d32' }}>
-            <FaMapMarkerAlt style={{ fontSize: '30px', color: '#2e7d32' }} />
-            <h3>فرع شبرا</h3>
-            <p style={{ fontSize: '20px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث /الخلفاوي</p>
-            <button onClick={() => window.open('https://www.doctoreg.online/dr/138')} style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
-              حجز موعد (شبرا)
-            </button>
-          </div>
-        </div>
+  {/* فرع شبرا */}
+  <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #2e7d32' }}>
+    <FaMapMarkerAlt style={{ fontSize: '30px', color: '#2e7d32' }} />
+    <h3>فرع شبرا</h3>
+    <p style={{ fontSize: '20px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث /الخلفاوي</p>
+    <button onClick={() => window.open('https://www.doctoreg.online/dr/138')} style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
+      حجز موعد (شبرا)
+    </button>
+    {/* زر تقييم شبرا */}
+    <button onClick={() => window.open('https://g.page/r/CULxWxXqThoJEBM/review')} style={{ width: '100%', marginTop: '10px', fontSize: '18px', padding: '10px', background: '#e8f5e9', color: '#2e7d32', border: '1px solid #2e7d32', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
+      تقييم عيادة شبرا ⭐
+    </button>
+  </div>
+</div>
         {/* قسم الخدمات */}
        {/* قسم الخدمات - مستبدل بالكود الديناميكي */}
 <div style={{ background: '#fff', borderRadius: '20px', padding: '30px', marginTop: '30px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}>
