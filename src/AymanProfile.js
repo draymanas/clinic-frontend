@@ -176,8 +176,7 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
       </div>
 
       <div style={{ maxWidth: '1000px', margin: '20px auto 0', padding: '0 20px' }}>
-        
-{/* قسم الفروع - بعد التعديل */}
+     {/* قسم الفروع - بعد التعديل الشامل */}
 <div style={{ 
     display: 'grid', 
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
@@ -187,12 +186,20 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
   {/* فرع أكتوبر */}
   <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #1a73e8' }}>
     <FaMapMarkerAlt style={{ fontSize: '30px', color: '#1a73e8' }} />
-    <h3>فرع أكتوبر</h3>
+    
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+      <h3>فرع أكتوبر</h3>
+      <button onClick={() => window.open('https://maps.app.goo.gl/wse4VG3tAziZTQVs7')} style={{ background: '#e3f2fd', border: '1px solid #1a73e8', borderRadius: '5px', padding: '5px 10px', cursor: 'pointer', color: '#1a73e8', fontWeight: 'bold' }}>
+        اللوكيشن
+      </button>
+    </div>
+    
     <p style={{ fontSize: '20px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع</p>
+    
     <button onClick={() => window.open('https://www.doctoreg.online/dr/40')} style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
       حجز موعد (أكتوبر)
     </button>
-    {/* زر تقييم أكتوبر */}
+    
     <button onClick={() => window.open('https://g.page/r/CdLCrFOSM76vEBM/review')} style={{ width: '100%', marginTop: '10px', fontSize: '18px', padding: '10px', background: '#e3f2fd', color: '#1a73e8', border: '1px solid #1a73e8', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
       تقييم عيادة أكتوبر ⭐
     </button>
@@ -201,12 +208,20 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
   {/* فرع شبرا */}
   <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #2e7d32' }}>
     <FaMapMarkerAlt style={{ fontSize: '30px', color: '#2e7d32' }} />
-    <h3>فرع شبرا</h3>
+    
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+      <h3>فرع شبرا</h3>
+      <button onClick={() => window.open('https://maps.app.goo.gl/M5ZMNchAfXD3omYT9')} style={{ background: '#e8f5e9', border: '1px solid #2e7d32', borderRadius: '5px', padding: '5px 10px', cursor: 'pointer', color: '#2e7d32', fontWeight: 'bold' }}>
+        اللوكيشن
+      </button>
+    </div>
+    
     <p style={{ fontSize: '20px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث /الخلفاوي</p>
+    
     <button onClick={() => window.open('https://www.doctoreg.online/dr/138')} style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
       حجز موعد (شبرا)
     </button>
-    {/* زر تقييم شبرا */}
+    
     <button onClick={() => window.open('https://g.page/r/CULxWxXqThoJEBM/review')} style={{ width: '100%', marginTop: '10px', fontSize: '18px', padding: '10px', background: '#e8f5e9', color: '#2e7d32', border: '1px solid #2e7d32', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
       تقييم عيادة شبرا ⭐
     </button>
