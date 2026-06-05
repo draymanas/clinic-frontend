@@ -39,17 +39,27 @@ const DirectBooking = () => {
   }, [id]);
 
     // 3. الدوال المساعدة
-    const getNextDateForDay = (dayName) => {
-        const days = { 'الأحد': 0, 'الاثنين': 1, 'الثلاثاء': 2, 'الأربعاء': 3, 'الخميس': 4, 'الجمعة': 5, 'السبت': 6 };
-        const cleanDayName = dayName.replace('،', '').trim();
-        const targetDay = days[cleanDayName];
-        const now = new Date();
-        const resultDate = new Date();
-        let diff = (targetDay + 7 - now.getDay()) % 7;
-        if (diff === 0) diff = 7;
-        resultDate.setDate(now.getDate() + diff);
-        return resultDate.toISOString().split('T')[0];
-    };
+const getNextDateForDay = (dayName) => {
+    const days = { 'الأحد': 0, 'الاثنين': 1, 'الثلاثاء': 2, 'الأربعاء': 3, 'الخميس': 4, 'الجمعة': 5, 'السبت': 6 };
+    const cleanDayName = dayName.replace('،', '').trim();
+    const targetDay = days[cleanDayName];
+    const now = new Date();
+    const currentDayOfWeek = now.getDay();
+
+    // حساب الفرق بين اليوم الحالي واليوم المستهدف
+    let diff = targetDay - currentDayOfWeek;
+
+    // إذا كان الفرق بالسالب (أي أن اليوم قد مر في الأسبوع الحالي)، نضيف 7 أيام
+    // إذا كان الفرق 0 (اليوم هو نفس اليوم)، نستخدم اليوم الحالي (diff = 0)
+    if (diff < 0) {
+        diff += 7;
+    }
+
+    const resultDate = new Date(now);
+    resultDate.setDate(now.getDate() + diff);
+    
+    return resultDate.toISOString().split('T')[0];
+};
 
     const handleConfirmBooking = async () => {
         if (!selectedSlot) return alert("من فضلك اختر اليوم أولاً");
