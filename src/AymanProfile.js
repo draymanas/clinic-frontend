@@ -176,7 +176,7 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
       </div>
 
       <div style={{ maxWidth: '1000px', margin: '20px auto 0', padding: '0 20px' }}>
-     {/* قسم الفروع - بعد التعديل الشامل */}
+     {/* قسم الفروع - بعد تكبير أزرار اللوكيشن والخط */}
 <div style={{ 
     display: 'grid', 
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
@@ -187,9 +187,9 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
   <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #1a73e8' }}>
     <FaMapMarkerAlt style={{ fontSize: '30px', color: '#1a73e8' }} />
     
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
-      <h3>فرع أكتوبر</h3>
-      <button onClick={() => window.open('https://maps.app.goo.gl/wse4VG3tAziZTQVs7')} style={{ background: '#e3f2fd', border: '1px solid #1a73e8', borderRadius: '5px', padding: '5px 10px', cursor: 'pointer', color: '#1a73e8', fontWeight: 'bold' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
+      <h3 style={{ margin: '0' }}>فرع أكتوبر</h3>
+      <button onClick={() => window.open('https://maps.app.goo.gl/wse4VG3tAziZTQVs7')} style={{ background: '#e3f2fd', border: '1px solid #1a73e8', borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', color: '#1a73e8', fontWeight: 'bold', fontSize: '18px' }}>
         اللوكيشن
       </button>
     </div>
@@ -209,9 +209,9 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
   <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #2e7d32' }}>
     <FaMapMarkerAlt style={{ fontSize: '30px', color: '#2e7d32' }} />
     
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
-      <h3>فرع شبرا</h3>
-      <button onClick={() => window.open('https://maps.app.goo.gl/M5ZMNchAfXD3omYT9')} style={{ background: '#e8f5e9', border: '1px solid #2e7d32', borderRadius: '5px', padding: '5px 10px', cursor: 'pointer', color: '#2e7d32', fontWeight: 'bold' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
+      <h3 style={{ margin: '0' }}>فرع شبرا</h3>
+      <button onClick={() => window.open('https://maps.app.goo.gl/M5ZMNchAfXD3omYT9')} style={{ background: '#e8f5e9', border: '1px solid #2e7d32', borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', color: '#2e7d32', fontWeight: 'bold', fontSize: '18px' }}>
         اللوكيشن
       </button>
     </div>
