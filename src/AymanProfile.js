@@ -167,13 +167,36 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
       </div>
 
       {/* الهيدر */}
-      <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '40px 20px', textAlign: 'center' }}>
-        <h1>دكتور أيمن عجيب</h1>
-        <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب و العمود الفقري</p>
-        <button onClick={() => setShowBookingModal(true)} style={{ marginTop: '20px', fontSize: '24px', padding: '16px 36px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer' }}>
-          حجز موعد اونلاين الان عبر الفيديو
-        </button>
-      </div>
+<div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '40px 20px', textAlign: 'center' }}>
+  <h1>دكتور أيمن عجيب</h1>
+  <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب و العمود الفقري</p>
+  
+  {/* حاوية الأزرار */}
+  <div style={{ 
+    display: 'flex', 
+    justifyContent: 'center', 
+    gap: '15px', 
+    marginTop: '20px', 
+    flexWrap: 'wrap' // هذه الخاصية تجعل الأزرار تنزل تحت بعضها في شاشات الموبايل
+  }}>
+    
+    {/* زر حجز موعد */}
+    <button 
+      onClick={() => setShowBookingModal(true)} 
+      style={{ fontSize: '20px', padding: '16px 30px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer', color: '#000' }}
+    >
+      حجز موعد أونلاين
+    </button>
+
+    {/* زر دفع باي بال */}
+    <button 
+      onClick={() => window.open('https://www.paypal.com/ncp/payment/4XLSYX7VNZHZS', '_blank')} 
+      style={{ fontSize: '20px', padding: '16px 30px', background: '#ffc107', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer', color: '#000' }}
+    >
+      دفع عبر PayPal 💳
+    </button>
+  </div>
+</div>
 
       <div style={{ maxWidth: '1000px', margin: '20px auto 0', padding: '0 20px' }}>
      {/* قسم الفروع - بعد تكبير أزرار اللوكيشن والخط */}
