@@ -10,6 +10,7 @@ import HomePage from './HomePage'; // الصفحة الرئيسية الجديد
 import SearchPage from './SearchPage'; // صفحة البحث الجديدة
 import DirectBooking from './DirectBooking';
 import QandA from './QandA'; // تأكد من المسار
+import { Navigate } from 'react-router-dom'; // تأكد من استيراد 
 
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
@@ -557,10 +558,7 @@ useEffect(() => {
         setSelectedDoctorId(idFromUrl); 
         navigate(`/dr/${idFromUrl}`); 
         
-        setTimeout(() => {
-            window.history.replaceState({}, '', '/');
-            console.log("تم تنظيف الرابط بنجاح بعد 5 ثوانٍ");
-        }, 5000); 
+        
     }
 }, []);
   const navBtnStyle = {
@@ -853,13 +851,17 @@ onClick={() => {
                 } 
             />
 
-            {/* صفحتك الشخصية - باسمك */}
-            <Route path="/dr_ayman_aguib" element={
-                <AymanProfile 
-                    setActivePage={setActivePage} 
-                    navigate={navigate} 
-                />
-            } />
+            {/* 2. الروت القديم: لا نحذفه، بل يوجه المتصفح تلقائياً للرابط الجديد */}
+<Route 
+  path="/dr_ayman_aguib" 
+  element={<Navigate to="/dr/دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري" replace />} 
+/>
+
+            {/* الرابط الجديد الاحترافي لصفحة د. أيمن عجيب */}
+<Route path="/dr/دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري" element={<AymanProfile />} />
+
+{/* الرابط القديم لضمان استمرار عمله */}
+<Route path="/dr_ayman_aguib" element={<AymanProfile />} />
 
               {/* هذا هو السطر الذي ينقصك */}
               <Route path="/service/:serviceId" element={<ServiceDetails />} />

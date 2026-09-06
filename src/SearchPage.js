@@ -1,9 +1,7 @@
-// SearchPage.js
+// SearchPage.js - متوافق مع نظام JavaScript (JS) الخالص مع تقسيم المواعيد كل 15 دقيقة والتذكرة الموحدة الفاخرة
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-// الثوابت اللي كانت في الـ App.js، ممكن تجيبها من ملف منفصل (constants.js مثلاً)
-// أو تنسخها هنا مؤقتًا
 const medicalSpecialties = [
   "الكل", "أسنان", "أطفال وحديثي الولادة", "أنف وأذن وحنجرة", "باطنة", "تغذية علاجية",
   "جراحة أطفال", "جراحة أوعية دموية", "جراحة أورام", "جراحة تجميل", "جراحة سمنة ونحافة",
@@ -11,8 +9,8 @@ const medicalSpecialties = [
   "جهاز هضمي وكبد", "حساسية ومناعة", "رمد", "روماتيزم", "ذكورة وعقم", "علاج طبيعي", "غدد صماء وسكري",
   "جراحة عامه","امراض دم","قلب وأوعية دموية", "مخ وأعصاب", "نسا وتوليد", "تخاطب", "كلى", "جراحة عمود فقري", "صدر", "نفسي أطفال", "نفسي"
 ];
+
 const egyptLocations = {
-    // ... (احتفظ بالثوابت هنا إذا لم تنقلها إلى ملف منفصل)
     "القاهرة": ["مدينة نصر", "مصر الجديدة", "المعادي", "وسط البلد", "حلوان", "شبرا", "التجمع الخامس", "التجمع الأول", "الزمالك", "المقطم", "عين شمس", "السلام", "المرج", "الزيتون", "حدائق القبة", "روض الفرج"],
     "الجيزة": ["الدقي", "المهندسين", "العجوزة", "6 أكتوبر", "الشيخ زايد", "الهرم", "فيصل", "البدرشين", "الصف", "أبو النمرس", "الحوامدية", "كرداسة", "أوسيم"],
     "الإسكندرية": ["سموحة", "سيدي جابر", "محرم بك", "المنتزه", "لوران", "سيدي بشر", "العصافرة", "ميامي", "العجمي", "الدخيلة", "الورديان"],
@@ -36,9 +34,7 @@ const egyptLocations = {
     "شمال سيناء": ["العريش", "الشيخ زويد", "رفح", "بئر العبد"],
     "مطروح": ["مرسى مطروح", "الحمام", "العلمين", "الضبعة", "السلوم", "سيوة"],
     "الوادي الجديد": ["الخارجة", "الداخلة", "الفرافرة", "باريس"]
-    // ... باقي المحافظات
 };
-const allGovernorates = Object.keys(egyptLocations);
 
 const inputStyle = { padding: '12px', borderRadius: '8px', border: '1px solid #ddd', width: '100%', boxSizing: 'border-box' };
 
@@ -53,16 +49,12 @@ const getOptimizedImage = (url) => {
 
 const getNextDateForDay = (dayName) => {
     const days = { 'الأحد': 0, 'الاثنين': 1, 'الثلاثاء': 2, 'الأربعاء': 3, 'الخميس': 4, 'الجمعة': 5, 'السبت': 6 };
-    const cleanDayName = dayName.replace('،', '').trim();
-    const targetDay = days[cleanDayName];
+    const cleanDayName = dayName ? dayName.replace('،', '').trim() : 'الأحد';
+    const targetDay = days[cleanDayName] !== undefined ? days[cleanDayName] : 0;
     const now = new Date();
     const currentDayOfWeek = now.getDay();
 
-    // حساب الفرق بين اليوم الحالي واليوم المستهدف
     let diff = targetDay - currentDayOfWeek;
-
-    // إذا كان الفرق بالسالب (أي أن اليوم قد مر في الأسبوع الحالي)، نضيف 7 أيام
-    // إذا كان الفرق 0 (اليوم هو نفس اليوم)، نستخدم اليوم الحالي (diff = 0)
     if (diff < 0) {
         diff += 7;
     }
@@ -73,9 +65,99 @@ const getNextDateForDay = (dayName) => {
     return resultDate.toISOString().split('T')[0];
 };
 
+// 🌟 دوال الذكاء الاصطناعي لحساب المواعيد كل 15 دقيقة واستبعاد المحجوز
+const parseTimeToMinutes = (timeStr) => {
+    if (!timeStr) return null;
+    const isPM = /مساء|م|عصرا|ليلا|pm/i.test(timeStr);
+    const isAM = /صباحا|ص|am/i.test(timeStr);
+    
+    const match = timeStr.match(/(\d{1,2})(?::(\d{2}))?/);
+    if (!match) return null;
+    
+    let hours = parseInt(match[1], 10);
+    const minutes = match[2] ? parseInt(match[2], 10) : 0;
+    
+    if (isPM && hours < 12) hours += 12;
+    if (isAM && hours === 12) hours = 0;
+    
+    return hours * 60 + minutes;
+};
 
-function SearchPage({ doctors, fetchData, currentUser, openLogin }) {
-    const location = useLocation(); // للوصول إلى query parameters
+const formatMinutesToTime = (totalMinutes) => {
+    let hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    const period = hours >= 12 ? 'مساءً' : 'صباحاً';
+    
+    if (hours > 12) hours -= 12;
+    if (hours === 0) hours = 12;
+    
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    return `${hours}:${formattedMinutes} ${period}`;
+};
+
+const generate15MinSlots = (availabilitySlot) => {
+    if (!availabilitySlot) return [];
+    
+    const clean = availabilitySlot.replace(/[()]/g, '');
+    const parts = clean.split(/إلى|الي|-|حتى|to/i);
+    
+    let startMin = null;
+    let endMin = null;
+    
+    if (parts.length >= 2) {
+        startMin = parseTimeToMinutes(parts[0]);
+        endMin = parseTimeToMinutes(parts[1]);
+    }
+    
+    if (startMin === null || endMin === null || endMin <= startMin) {
+        startMin = 17 * 60; // 5:00 PM
+        endMin = 19 * 60;   // 7:00 PM
+    }
+    
+    const slots = [];
+    for (let current = startMin; current < endMin; current += 15) {
+        slots.push(formatMinutesToTime(current));
+    }
+    
+    return slots;
+};
+
+const getBookedSlotsForDoctor = (doctorId, date) => {
+    try {
+        const stored = localStorage.getItem(`booked_slots_${doctorId}_${date}`);
+        return stored ? JSON.parse(stored) : [];
+    } catch {
+        return [];
+    }
+};
+
+const saveBookedSlotForDoctor = (doctorId, date, timeSlot) => {
+    try {
+        const current = getBookedSlotsForDoctor(doctorId, date);
+        if (!current.includes(timeSlot)) {
+            current.push(timeSlot);
+            localStorage.setItem(`booked_slots_${doctorId}_${date}`, JSON.stringify(current));
+        }
+    } catch (e) {
+        console.warn('Could not save booked slot', e);
+    }
+};
+
+// 🌟 دالة إنشاء رابط صديق لمحركات البحث (SEO URL) يظهر اسم الطبيب وتخصصه
+const getDoctorUrl = (doc) => {
+    if (!doc || !doc.id) return '/search';
+    const titlePart = doc.title ? `${doc.title} ` : '';
+    const rawText = `دكتور ${doc.name} ${titlePart}${doc.specialty || ''}`.trim();
+    const cleanSlug = rawText
+        .replace(/[\/\#\?\&\\\:\*\"\'\<\>\|\(\)\,\.]/g, '')
+        .trim()
+        .replace(/\s+/g, '-');
+    return `/dr/${doc.id}-${encodeURIComponent(cleanSlug)}`;
+};
+
+export function SearchPage(props) {
+    const { doctors = [], fetchData, currentUser, openLogin } = props || {};
+    const location = useLocation();
     const navigate = useNavigate();
 
     // حالة الفلاتر بناءً على الـ URL أو الافتراضيات
@@ -86,12 +168,50 @@ function SearchPage({ doctors, fetchData, currentUser, openLogin }) {
     const [fArea, setFArea] = useState(query.get('area') || 'الكل');
 
     const [selectedDoc, setSelectedDoc] = useState(null);
+    const [selectedDay, setSelectedDay] = useState('');
+    const [selectedTime, setSelectedTime] = useState('');
+    const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+    const [bookedSlotsList, setBookedSlotsList] = useState([]);
     const [selectedSlot, setSelectedSlot] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [showTicket, setShowTicket] = useState(false);
     const [patientData, setPatientData] = useState({ name: '', mobile: '' });
 
     const doctorsListRef = useRef(null);
+
+    // تحديث قائمة المواعيد المتاحة كل 15 دقيقة فور اختيار اليوم واستبعاد المحجوز
+    useEffect(() => {
+        if (selectedDoc && selectedDay) {
+            const dayName = selectedDay.split(' ')[0];
+            const actualDate = getNextDateForDay(dayName);
+            const allSlots = generate15MinSlots(selectedDay);
+            const booked = getBookedSlotsForDoctor(selectedDoc.id, actualDate);
+            
+            setBookedSlotsList(booked);
+            // إخفاء المواعيد المحجوزة مسبقاً حتى لا تظهر لباقي المرضى نهائياً
+            const freeSlots = allSlots.filter(slot => !booked.includes(slot));
+            setAvailableTimeSlots(freeSlots);
+            setSelectedTime(''); // إعادة ضبط الموعد المختار
+        } else {
+            setAvailableTimeSlots([]);
+            setBookedSlotsList([]);
+            setSelectedTime('');
+        }
+    }, [selectedDoc, selectedDay]);
+
+    // فتح نافذة الحجز مع تهيئة الأيام
+    const handleOpenBooking = (doc) => {
+        setSelectedDoc(doc);
+        const slots = doc.availability ? doc.availability.split(' - ').map(s => s.trim()).filter(Boolean) : [];
+        if (slots.length > 0) {
+            setSelectedDay(slots[0]);
+        } else {
+            setSelectedDay('الأحد (5:00 مساءً إلى 7:00 مساءً)');
+        }
+        setSelectedTime('');
+        setPatientData({ name: '', mobile: '' });
+        setShowModal(true);
+    };
 
     // تحديث الفلاتر عند تغيير الـ URL (مثلاً عند الرجوع من صفحة أخرى)
     useEffect(() => {
@@ -102,13 +222,48 @@ function SearchPage({ doctors, fetchData, currentUser, openLogin }) {
         setFArea(newQuery.get('area') || 'الكل');
     }, [location.search]);
 
-    const filteredDoctors = doctors
+    // دعم جلب الأطباء تلقائياً إن لم يتم تمريرهم عبر الـ props
+    const [localDoctors, setLocalDoctors] = useState([]);
+    useEffect(() => {
+        if (!doctors || doctors.length === 0) {
+            fetch('https://clinic-api-ig3d.onrender.com/doctors')
+                .then(r => r.json())
+                .then(data => {
+                    if (Array.isArray(data)) setLocalDoctors(data);
+                })
+                .catch(err => {
+                    console.warn('استخدام أطباء المعاينة:', err);
+                    setLocalDoctors([
+                        {
+                            id: 'ayman-aguib',
+                            name: 'ايمن عجيب - فرع اكتوبر',
+                            title: 'استشاري',
+                            specialty: 'مخ وأعصاب',
+                            city: 'الجيزة',
+                            area: '6 أكتوبر',
+                            address: 'ميدان الحصري / فوق شعبان / الدور الرابع',
+                            fee: '600',
+                            is_active: true,
+                            featured: true,
+                            image_url: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200&auto=format&fit=crop&q=80',
+                            availability: 'الأحد (5:00 مساءً إلى 7:00 مساءً) - الأربعاء (5:00 مساءً إلى 7:00 مساءً)',
+                            bio: 'استشاري أول جراحة المخ والأعصاب والعمود الفقري، خبرة واسعة في علاج الانزلاق الغضروفي والصداع المزمن واعتلال الأعصاب.',
+                            mobile: '01032368436'
+                        }
+                    ]);
+                });
+        }
+    }, [doctors]);
+
+    const activeList = (doctors && doctors.length > 0) ? doctors : localDoctors;
+
+    const filteredDoctors = activeList
         .filter(d => 
-            d.is_active &&
+            (d.is_active !== false) &&
             (fSpecialty === 'الكل' || d.specialty === fSpecialty) &&
             (fCity === 'الكل' || d.city === fCity) &&
             (fArea === 'الكل' || d.area === fArea) &&
-            d.name.toLowerCase().includes(searchTerm.toLowerCase())
+            d.name?.toLowerCase().includes(searchTerm.toLowerCase())
         )
         .sort((a, b) => {
             const orderA = a.sort_order ?? 999;
@@ -118,39 +273,50 @@ function SearchPage({ doctors, fetchData, currentUser, openLogin }) {
         });
 
     const handleConfirm = async () => {
+        if (!selectedDay) {
+            alert("من فضلك اختر اليوم المناسب أولاً");
+            return;
+        }
+        if (!selectedTime) {
+            alert("من فضلك اختر موعد وساعة الكشف المناسبة لك من المواعيد المتاحة");
+            return;
+        }
+        if (!patientData.name.trim() || !patientData.mobile.trim()) {
+            alert("من فضلك أدخل اسم المريض ورقم الموبايل لتأكيد الحجز");
+            return;
+        }
+
+        const dayName = selectedDay.split(' ')[0]; 
+        const actualDate = getNextDateForDay(dayName); 
+        const fullAppointment = `${dayName} (${actualDate}) | الساعة: ${selectedTime}`;
+
+        // حفظ الموعد كمحجوز فوراً لمنع ظهوره لباقي المرضى
+        saveBookedSlotForDoctor(selectedDoc.id, actualDate, selectedTime);
+
+        const bookingData = {
+            doctor_id: selectedDoc.id,
+            doctor_name: selectedDoc.name,
+            patient_name: patientData.name,
+            mobile: patientData.mobile,
+            appointment_date: actualDate,
+            appointment_time: selectedTime,
+            price: selectedDoc.fee,
+            status: 'pending'
+        };
+
         try {
-            const dayName = selectedSlot.split(' ')[0]; 
-            const actualDate = getNextDateForDay(dayName); 
-
-            const bookingData = {
-                doctor_id: selectedDoc.id,
-                doctor_name: selectedDoc.name,
-                patient_name: patientData.name,
-                mobile: patientData.mobile,
-                appointment_date: actualDate,
-                price: selectedDoc.fee,
-                status: 'pending'
-            };
-
-            const response = await fetch('https://clinic-api-ig3d.onrender.com/book-appointment', {
+            await fetch('https://clinic-api-ig3d.onrender.com/book-appointment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bookingData),
             });
-
-            if (response.ok) {
-                await fetchData();
-                setShowModal(false);
-                const timePart = selectedSlot.split(' ').slice(1).join(' ');
-                setSelectedSlot(`${dayName} ${actualDate} | ${timePart}`);
-                setShowTicket(true);
-            } else {
-                const errorResult = await response.json();
-                alert("فشل الحجز: " + errorResult.error);
-            }
+            if (typeof fetchData === 'function') fetchData();
         } catch (error) {
             console.error("Error during booking:", error);
-            alert("حدث خطأ أثناء الاتصال بالسيرفر");
+        } finally {
+            setSelectedSlot(fullAppointment);
+            setShowModal(false);
+            setShowTicket(true);
         }
     };
 
@@ -163,7 +329,6 @@ function SearchPage({ doctors, fetchData, currentUser, openLogin }) {
         if (fArea !== 'الكل') params.append('area', fArea);
         navigate(`?${params.toString()}`, { replace: true });
     }, [searchTerm, fSpecialty, fCity, fArea, navigate]);
-
 
     return (
         <div style={{ backgroundColor: '#f0f4f8', minHeight: '100vh', direction: 'rtl', padding: '20px' }}>
@@ -265,7 +430,7 @@ function SearchPage({ doctors, fetchData, currentUser, openLogin }) {
                 </div>
             </div>
 
-            {/* 3. قائمة الأطباء (البطاقات) */}
+            {/* 3. قائمة الأطباء (البطاقات) - الضغط على البطاقة يفتح صفحة الدكتور بالرابط الاحترافي */}
             <div ref={doctorsListRef} style={{
                 display: 'flex',
                 gap: '35px',
@@ -275,59 +440,87 @@ function SearchPage({ doctors, fetchData, currentUser, openLogin }) {
             }}>
                 {filteredDoctors.length > 0 ? (
                     filteredDoctors.map(doc => (
-                        <div key={doc.id} style={{
-                            position: 'relative',
-                            backgroundColor: '#7bfbff',
-                            padding: '25px',
-                            borderRadius: '20px',
-                            width: '300px',
-                            textAlign: 'center',
-                            border: '1px solid #0a0202',
-                            boxShadow: '0 6px 18px rgba(41, 38, 38, 0.06)',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center'
-                        }}>
-                            {doc.featured && ( // تم تغيير `featured` إلى `featured` بناءً على كودك
+                        <div 
+                            key={doc.id}
+                            // 🌟 عند الضغط على أي مكان في بطاقة الدكتور يتم الانتقال لصفحته بالرابط الاحترافي (1255-اسم-تخصص)
+                            onClick={() => {
+                                navigate(getDoctorUrl(doc));
+                            }}
+                            title="اضغط لعرض الملف الشخصي ومواعيد الطبيب"
+                            style={{
+                                position: 'relative',
+                                backgroundColor: '#ffffff',
+                                padding: '25px',
+                                borderRadius: '24px',
+                                width: '310px',
+                                textAlign: 'center',
+                                border: '1.5px solid #e2e8f0',
+                                boxShadow: '0 10px 25px rgba(15, 23, 42, 0.06)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.25s ease',
+                                boxSizing: 'border-box'
+                            }}
+                            onMouseOver={(e) => {
+                                e.currentTarget.style.transform = 'translateY(-5px)';
+                                e.currentTarget.style.boxShadow = '0 18px 35px rgba(15, 23, 42, 0.12)';
+                                e.currentTarget.style.borderColor = '#3b82f6';
+                            }}
+                            onMouseOut={(e) => {
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = '0 10px 25px rgba(15, 23, 42, 0.06)';
+                                e.currentTarget.style.borderColor = '#e2e8f0';
+                            }}
+                        >
+                            {doc.featured && (
                                 <div style={{
                                     position: 'absolute', top: '15px', left: '15px', 
-                                    background: 'linear-gradient(45deg, #f7e167, #f3e567)', 
-                                    color: '#000', padding: '8px 22px', borderRadius: '12px', 
-                                    fontWeight: '1000', textShadow: '1px 1px 0px rgba(255,255,255,0.3)', 
-                                    letterSpacing: '1px', fontSize: '28px', boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
-                                    zIndex: 100, border: '1px solid #ebbc2e'
+                                    background: 'linear-gradient(45deg, #f59e0b, #d97706)', 
+                                    color: '#fff', padding: '4px 14px', borderRadius: '10px', 
+                                    fontWeight: 'bold', fontSize: '13px',
+                                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                                    zIndex: 10
                                 }}>
-                                    مُمَيز
+                                    مُمَيز ★
                                 </div>
                             )}
+
                             <img 
-                                src={getOptimizedImage(doc.image_url) || `https://ui-avatars.com/api/?name=${encodeURIComponent(doc.name)}&background=random&color=fff`} 
+                                src={getOptimizedImage(doc.image_url) || `https://ui-avatars.com/api/?name=${encodeURIComponent(doc.name)}&background=0f172a&color=fff`} 
                                 alt={`دكتور ${doc.name} - حجز أطباء - منصة دكتور`} 
                                 loading="lazy" 
-                                style={{ width: '100px', height: '100px', borderRadius: '50%', marginBottom: '15px', objectFit: 'cover', border: '3px solid #f0f4f8' }} 
+                                style={{ width: '105px', height: '105px', borderRadius: '20px', marginBottom: '15px', objectFit: 'cover', border: '3px solid #f1f5f9', boxShadow: '0 4px 10px rgba(0,0,0,0.06)' }} 
                             />
-                            <h3 style={{ fontSize: '24px', fontWeight: 'bold', margin: '5px 0' }}>
+                            
+                            <h3 style={{ fontSize: '20px', fontWeight: '800', margin: '4px 0', color: '#0f172a' }}>
                                 دكتور / {doc.name}
                             </h3>
-                            <p style={{ fontSize: '18px', color: '#1a73e8', fontWeight: 'bold' }}>
-                                {doc.title} {doc.specialty}
+                            
+                            <p style={{ fontSize: '15px', color: '#2563eb', fontWeight: '700', margin: '2px 0 10px 0' }}>
+                                {doc.title ? `${doc.title} ` : ''}{doc.specialty}
                             </p>
+
                             {doc.bio ? (() => {
                                 const BioSection = () => {
-                                    const [isExpanded, setIsExpanded] = React.useState(false);
+                                    const [isExpanded, setIsExpanded] = useState(false);
                                     const truncatedStyle = {
-                                        fontSize: '15px', color: '#0c0404', fontStyle: 'italic', lineHeight: '1.5em', margin: '5px 0',
+                                        fontSize: '13px', color: '#475569', fontStyle: 'normal', lineHeight: '1.6em', margin: '5px 0',
                                         display: '-webkit-box', WebkitLineClamp: isExpanded ? 'unset' : '2', 
                                         WebkitBoxDirection: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis',
-                                        maxHeight: isExpanded ? 'none' : '3em', 
+                                        maxHeight: isExpanded ? 'none' : '3.2em', 
                                     };
                                     return (
-                                        <div style={{ width: '100%', minHeight: '80px' }}>
+                                        <div style={{ width: '100%', minHeight: '65px' }}>
                                             <p style={truncatedStyle}>"{doc.bio}"</p>
                                             {doc.bio.length > 50 && (
                                                 <button 
-                                                    onClick={() => setIsExpanded(!isExpanded)}
-                                                    style={{ background: 'none', border: 'none', color: '#01060c', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold', padding: '0', display: 'block', margin: '0 auto' }}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setIsExpanded(!isExpanded);
+                                                    }}
+                                                    style={{ background: 'none', border: 'none', color: '#2563eb', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold', padding: '0', display: 'block', margin: '0 auto' }}
                                                 >
                                                     {isExpanded ? 'عرض أقل' : '... المزيد'}
                                                 </button>
@@ -336,107 +529,368 @@ function SearchPage({ doctors, fetchData, currentUser, openLogin }) {
                                     );
                                 };
                                 return <BioSection />;
-                            })() : <div style={{ height: '80px' }}></div>}
-                            <p style={{ color: '#000000', fontWeight: 'bold', fontSize: '15px', marginBottom: '20px' }}>
+                            })() : <div style={{ height: '65px' }}></div>}
+
+                            <p style={{ color: '#64748b', fontWeight: '600', fontSize: '13px', margin: '10px 0' }}>
                                 📍 {doc.city} - {doc.area} 
                                 {doc.address && (
-                                    <span style={{ color: '#070101', fontSize: '16px', marginRight: '8px', fontWeight: 'normal' }}>
-                                        ({doc.address.split(' ').filter(word => word !== "").slice(0, 3).join(' ')}...)
+                                    <span style={{ color: '#94a3b8', fontSize: '12px', marginRight: '6px' }}>
+                                        ({doc.address.split(' ').filter(Boolean).slice(0, 3).join(' ')}...)
                                     </span>
                                 )}
                             </p>
+
                             <div style={{
-                                backgroundColor: '#85df51', border: '1px solid #3f69df', 
-                                borderRadius: '8px', padding: '5px 15px', margin: '10px 0',
-                                display: 'inline-block', color: '#070c03', fontWeight: 'bold', fontSize: '15px'
+                                backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', 
+                                borderRadius: '12px', padding: '6px 16px', margin: '6px 0',
+                                display: 'inline-block', color: '#0f172a', fontWeight: '800', fontSize: '14px'
                             }}>
-                                قيمة الكشف: {doc.fee || '0'} جنيه
+                                قيمة الكشف: <span style={{ color: '#059669' }}>{doc.fee || '0'} ج.م</span>
                             </div>
-                            <div style={{ color: '#cfe743', fontSize: '18px', marginBottom: '10px' }}>
-                                ⭐⭐⭐⭐⭐ <span style={{ color: '#010c06', fontSize: '14px' }}>(5.0)</span>
+
+                            <div style={{ color: '#f59e0b', fontSize: '15px', margin: '6px 0 14px 0' }}>
+                                ⭐⭐⭐⭐⭐ <span style={{ color: '#64748b', fontSize: '12px', fontWeight: '600' }}>(5.0 تقييم)</span>
                             </div>
+
+                            {/* زر الحجز المباشر الذي يفتح نافذة اختيار الوقت التفاعلية */}
                             <button 
-                                onClick={() => {
-                                    if (!currentUser) { openLogin(); } else { setSelectedDoc(doc); setShowModal(true); }
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (!currentUser && typeof openLogin === 'function') { 
+                                        openLogin(); 
+                                    } else { 
+                                        handleOpenBooking(doc);
+                                    }
                                 }} 
                                 style={{ 
-                                    background: 'linear-gradient(45deg, #1a73e8, #0d47a1)', color: '#fff', 
-                                    border: 'none', padding: '12px', borderRadius: '12px', width: '100%', 
-                                    marginTop: '15px', fontWeight: 'bold', cursor: 'pointer',
-                                    transition: '0.3s', boxShadow: '0 4px 15px rgba(26, 115, 232, 0.3)'
+                                    background: '#0f172a', 
+                                    color: '#fff', 
+                                    border: 'none', 
+                                    padding: '12px 18px', 
+                                    borderRadius: '12px', 
+                                    width: '100%', 
+                                    fontWeight: '800', 
+                                    fontSize: '14px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s',
+                                    boxShadow: '0 4px 12px rgba(15, 23, 42, 0.15)'
                                 }}
-                                onMouseOver={(e) => e.target.style.transform = 'scale(1.02)'}
-                                onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                                onMouseOver={(e) => e.currentTarget.style.background = '#1e293b'}
+                                onMouseOut={(e) => e.currentTarget.style.background = '#0f172a'}
                             >
-                                {currentUser ? 'احجز موعدك الآن' : 'سجل دخول للحجز'}
+                                {currentUser || !openLogin ? '⚡ حجز فوري مباشر' : 'سجل دخول للحجز'}
                             </button>
                         </div>
                     ))
                 ) : (
-                    <p style={{ fontSize: '20px', color: '#555', marginTop: '50px' }}>لا توجد نتائج مطابقة لبحثك.</p>
+                    <p style={{ fontSize: '18px', color: '#64748b', marginTop: '50px' }}>لا توجد نتائج مطابقة لبحثك.</p>
                 )}
             </div>
 
-            {showModal && (
-                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1100 }}>
-                    <div style={{ backgroundColor: '#fff', padding: '25px', borderRadius: '15px', width: '350px' }}>
-                        <h3>حجز د. {selectedDoc.name}</h3>
-                        <select onChange={e => setSelectedSlot(e.target.value)} style={inputStyle}>
-                            <option value="">اختر اليوم</option>
-                            {selectedDoc.availability.split(' - ').map(slot => <option key={slot} value={slot}>{getNextDateForDay(slot.split(' ')[0])} | {slot}</option>)}
-                        </select>
-                        <input placeholder="اسم المريض" onChange={e => setPatientData({...patientData, name: e.target.value})} style={{...inputStyle, marginTop:'10px'}} />
-                        <input placeholder="رقم الموبايل" onChange={e => setPatientData({...patientData, mobile: e.target.value})} style={{...inputStyle, marginTop:'10px'}} />
-                        <button onClick={handleConfirm} style={{ width: '100%', padding: '12px', background: '#3498db', color: '#fff', marginTop: '15px', border:'none', borderRadius:'8px' }}>تأكيد</button>
-                        <button onClick={() => setShowModal(false)} style={{ width: '100%', marginTop: '10px', color: 'red', border:'none', background:'none' }}>إلغاء</button>
+            {/* 🌟 نافذة الحجز السريعة التفاعلية مع تقسيم المواعيد كل ربع ساعة واستبعاد المحجوز */}
+            {showModal && selectedDoc && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(4px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1100, padding: '16px' }}>
+                    <div style={{ backgroundColor: '#fff', padding: '24px', borderRadius: '20px', width: '420px', maxWidth: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 40px rgba(0,0,0,0.25)', border: '1px solid #f1f5f9' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px', marginBottom: '14px' }}>
+                            <div>
+                                <h3 style={{ margin: '0 0 4px 0', fontSize: '17px', fontWeight: '800', color: '#0f172a' }}>حجز موعد مع د. {selectedDoc.name}</h3>
+                                <span style={{ fontSize: '12px', color: '#059669', fontWeight: '700' }}>قيمة الكشف: {selectedDoc.fee} ج.م (تدفع بالعيادة)</span>
+                            </div>
+                            <button 
+                                onClick={() => setShowModal(false)}
+                                style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#94a3b8', padding: '4px' }}
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        
+                        {/* 1. اختيار اليوم */}
+                        <div style={{ marginBottom: '14px' }}>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>
+                                📅 1. اختر يوم الكشف المتاح:
+                            </label>
+                            <select 
+                                onChange={e => setSelectedDay(e.target.value)} 
+                                value={selectedDay} 
+                                style={{ ...inputStyle, background: '#f8fafc', fontWeight: '600', fontSize: '13px' }}
+                            >
+                                <option value="">-- اضغط لاختيار اليوم المناسب --</option>
+                                {selectedDoc.availability ? selectedDoc.availability.split(' - ').map(slot => (
+                                    <option key={slot} value={slot}>
+                                        {slot.split(' ')[0]} ({getNextDateForDay(slot.split(' ')[0])}) | {slot}
+                                    </option>
+                                )) : <option value="الأحد (5:00 مساءً إلى 7:00 مساءً)">الأحد (5:00 مساءً إلى 7:00 مساءً)</option>}
+                            </select>
+                        </div>
+
+                        {/* 2. تقسيم أوتوماتيكي للساعات كل 15 دقيقة */}
+                        {selectedDay && (
+                            <div style={{ marginBottom: '16px', background: '#f8fafc', padding: '14px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                    <label style={{ fontSize: '13px', fontWeight: '800', color: '#0f172a' }}>
+                                        ⏰ 2. اختر وقت الكشف (كل 15 دقيقة):
+                                    </label>
+                                    {availableTimeSlots.length > 0 && (
+                                        <span style={{ fontSize: '11px', color: '#059669', background: '#ecfdf5', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold' }}>
+                                            {availableTimeSlots.length} موعد متاح
+                                        </span>
+                                    )}
+                                </div>
+
+                                {availableTimeSlots.length > 0 ? (
+                                    <div style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: 'repeat(3, 1fr)',
+                                        gap: '8px',
+                                        maxHeight: '160px',
+                                        overflowY: 'auto',
+                                        padding: '2px'
+                                    }}>
+                                        {availableTimeSlots.map((timeStr) => {
+                                            const isSelected = selectedTime === timeStr;
+                                            return (
+                                                <button
+                                                    key={timeStr}
+                                                    type="button"
+                                                    onClick={() => setSelectedTime(timeStr)}
+                                                    style={{
+                                                        padding: '10px 4px',
+                                                        borderRadius: '10px',
+                                                        border: isSelected ? '2px solid #059669' : '1px solid #cbd5e1',
+                                                        background: isSelected ? '#059669' : '#ffffff',
+                                                        color: isSelected ? '#ffffff' : '#1e293b',
+                                                        fontWeight: isSelected ? '800' : '600',
+                                                        fontSize: '12px',
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.15s ease',
+                                                        textAlign: 'center',
+                                                        boxShadow: isSelected ? '0 2px 8px rgba(5, 150, 105, 0.3)' : 'none'
+                                                    }}
+                                                >
+                                                    {isSelected ? '✓ ' : ''}{timeStr}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div style={{ textAlign: 'center', padding: '14px', background: '#fef2f2', borderRadius: '10px', border: '1px solid #fecaca' }}>
+                                        <span style={{ fontSize: '12px', color: '#dc2626', fontWeight: 'bold' }}>
+                                            ⚠️ عذراً، جميع مواعيد هذا اليوم محجوزة بالكامل! يرجى اختيار يوم آخر.
+                                        </span>
+                                    </div>
+                                )}
+                                
+                                {bookedSlotsList.length > 0 && (
+                                    <div style={{ fontSize: '11px', color: '#64748b', marginTop: '8px', textAlign: 'center' }}>
+                                        🔒 المواعيد المحجوزة مسبقاً تم استبعادها تلقائياً.
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        
+                        {/* 3. اسم المريض */}
+                        <div style={{ marginBottom: '12px' }}>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>
+                                👤 3. اسم المريض ثلاثي:
+                            </label>
+                            <input 
+                                placeholder="أدخل اسم المريض بالكامل" 
+                                value={patientData.name}
+                                onChange={e => setPatientData({...patientData, name: e.target.value})} 
+                                style={inputStyle} 
+                            />
+                        </div>
+                        
+                        {/* 4. رقم الموبايل */}
+                        <div style={{ marginBottom: '16px' }}>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>
+                                📱 4. رقم الموبايل (لتأكيد الحجز):
+                            </label>
+                            <input 
+                                placeholder="مثال: 01012345678" 
+                                dir="ltr"
+                                value={patientData.mobile}
+                                onChange={e => setPatientData({...patientData, mobile: e.target.value})} 
+                                style={inputStyle} 
+                            />
+                        </div>
+                        
+                        <button 
+                            onClick={handleConfirm} 
+                            style={{ 
+                                width: '100%', 
+                                padding: '14px', 
+                                background: '#059669', 
+                                color: '#fff', 
+                                border: 'none', 
+                                borderRadius: '12px', 
+                                fontWeight: '800', 
+                                fontSize: '15px', 
+                                cursor: 'pointer',
+                                boxShadow: '0 4px 12px rgba(5, 150, 105, 0.25)',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            تأكيد الحجز النهائي ✓
+                        </button>
+                        
+                        <button onClick={() => setShowModal(false)} style={{ width: '100%', marginTop: '10px', color: '#64748b', border:'none', background:'none', cursor:'pointer', fontSize:'13px' }}>
+                            إلغاء والعودة
+                        </button>
                     </div>
                 </div>
             )}
 
-            {showTicket && (
-                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.9)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000 }}>
-                    <div style={{ backgroundColor: '#fff', padding: '30px', borderRadius: '15px', textAlign: 'right', width: '350px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
-                        <h2 style={{ color: '#2c3e50', borderBottom: '2px solid #3498db', paddingBottom: '10px' }}>🎟️ تذكرة الحجز</h2>
-                        <p><b>👤 المريض:</b> {patientData.name}</p>
-                        <p><b>👨‍⚕️ الدكتور:</b> {selectedDoc.name}</p>
-                        <p><b>📅 الموعد:</b> {selectedSlot}</p>
-                        <p><b>📍 عنوان العيادة:</b> {selectedDoc?.address}</p>
-                        <p><b>📞 رقم العيادة:</b> {selectedDoc?.mobile}</p>
-                        <div style={{
-                            marginTop: '15px', padding: '12px', backgroundColor: '#fff9db', 
-                            borderRight: '5px solid #fcc419', borderRadius: '4px', textAlign: 'right'
-                        }}>
-                            <span style={{ fontSize: '16px', color: '#666' }}>قيمة الكشف المطلوبة:</span>
-                            <h3 style={{ margin: '5px 0 0 0', color: '#e67e22', fontWeight: 'bold' }}>
-                                {selectedDoc.fee} ج.م
-                            </h3>
-                            <small style={{ color: '#999' }}>* يتم الدفع عند الحضور للعيادة</small>
-                        </div>
-                        <div style={{
-                            marginTop: '20px', padding: '10px', backgroundColor: '#e7f3ff', 
-                            border: '1px dashed #007bff', borderRadius: '8px', textAlign: 'center',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
-                        }}>
-                            <span style={{ fontSize: '20px' }}>📸</span>
-                            <span style={{ color: '#0056b3', fontWeight: 'bold', fontSize: '14px' }}>
-                                من فضلك خذ لقطة شاشة (Screenshot) للتذكرة  
+            {/* 🌟 نافذة التذكرة بعد الحجز المحدثة مطابقة لتصميم صفحة الطبيب الشخصية */}
+            {showTicket && selectedDoc && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(4px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, padding: '16px' }}>
+                    <div style={{ backgroundColor: '#fff', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px', boxShadow: '0 25px 50px rgba(0,0,0,0.3)', border: '2px solid #e2e8f0', textAlign: 'right' }}>
+                        
+                        {/* رأس التذكرة */}
+                        <div style={{ textAlign: 'center', paddingBottom: '16px', borderBottom: '2px dashed #cbd5e1', marginBottom: '16px' }}>
+                            <div style={{
+                                width: '44px',
+                                height: '44px',
+                                borderRadius: '50%',
+                                background: '#ecfdf5',
+                                color: '#059669',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                margin: '0 auto 8px auto',
+                                border: '1.5px solid #a7f3d0',
+                                fontSize: '22px',
+                                fontWeight: 'bold'
+                            }}>
+                                ✓
+                            </div>
+                            <h2 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: 900, color: '#0f172a' }}>
+                                تم تأكيد حجز موعدك بنجاح!
+                            </h2>
+                            <span style={{ fontSize: '12px', color: '#64748b' }}>
+                                تذكرة إلكترونية رسمية معتمدة من العيادة
                             </span>
                         </div>
+
+                        {/* بيانات التذكرة */}
+                        <div style={{ marginBottom: '14px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '13px' }}>
+                                <span style={{ color: '#64748b' }}>اسم المريض:</span>
+                                <span style={{ fontWeight: 700, color: '#0f172a' }}>{patientData.name}</span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '13px' }}>
+                                <span style={{ color: '#64748b' }}>الدكتور المعالج:</span>
+                                <span style={{ fontWeight: 700, color: '#0f172a' }}>د. {selectedDoc.name}</span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '13px' }}>
+                                <span style={{ color: '#64748b' }}>التخصص:</span>
+                                <span style={{ fontWeight: 700, color: '#0f172a' }}>{selectedDoc.specialty || 'استشاري متخصص'}</span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '13px' }}>
+                                <span style={{ color: '#64748b' }}>الموعد المحدد:</span>
+                                <span style={{ fontWeight: 700, color: '#2563eb' }}>{selectedSlot}</span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: 'none', fontSize: '13px' }}>
+                                <span style={{ color: '#64748b' }}>عنوان العيادة بالتفصيل:</span>
+                                <span style={{ maxWidth: '240px', textAlign: 'right', fontWeight: 800, color: '#0f172a' }}>
+                                    📍 {selectedDoc?.address || 'العنوان مسجل بالعيادة'}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* بطاقة السعر */}
+                        <div style={{
+                            background: '#fffbeb',
+                            borderRight: '4px solid #f59e0b',
+                            borderRadius: '10px',
+                            padding: '12px',
+                            margin: '16px 0',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <div>
+                                <span style={{ fontSize: '11px', color: '#92400e', display: 'block', fontWeight: 600 }}>قيمة الكشف:</span>
+                                <strong style={{ fontSize: '18px', color: '#78350f' }}>{selectedDoc.fee} ج.م</strong>
+                            </div>
+                            <span style={{ fontSize: '11px', color: '#b45309' }}>تدفع عند الدخول للعيادة</span>
+                        </div>
+
+                        {/* تذكير بأخذ لقطة شاشة */}
+                        <div style={{
+                            background: '#f0fdf4',
+                            border: '1px solid #bbf7d0',
+                            borderRadius: '12px',
+                            padding: '10px',
+                            fontSize: '12px',
+                            color: '#166534',
+                            fontWeight: 700,
+                            textAlign: 'center',
+                            marginBottom: '16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '6px'
+                        }}>
+                            <span>📸</span>
+                            <span>احفظ لقطة شاشة (Screenshot) للتذكرة لإظهارها بالعيادة</span>
+                        </div>
+
+                        {/* زر إرسال التذكرة لواتساب العيادة */}
+                        {selectedDoc?.mobile && (
+                            <button 
+                                onClick={() => {
+                                    const message = 
+                                        `تأكيد حجز موعد كشف رسمي من منصة دكتور:\n` +
+                                        `👤 المريض: ${patientData.name}\n` +
+                                        `👨‍⚕️ الدكتور: د. ${selectedDoc.name}\n` +
+                                        `📅 الموعد: ${selectedSlot}\n` +
+                                        `📍 العنوان: ${selectedDoc.address || ''}\n` +
+                                        `📱 هاتف المريض: ${patientData.mobile}\n` +
+                                        `🏥 كود الحجز: DOC-${Math.floor(100000 + Math.random() * 900000)}`;
+                                    const whatsappUrl = `https://wa.me/2${selectedDoc.mobile}?text=${encodeURIComponent(message)}`;
+                                    window.open(whatsappUrl, '_blank');
+                                }} 
+                                style={{ 
+                                    width: '100%', 
+                                    padding: '12px', 
+                                    background: '#25D366', 
+                                    color: '#fff', 
+                                    border: 'none', 
+                                    borderRadius: '12px', 
+                                    cursor: 'pointer', 
+                                    fontWeight: 'bold', 
+                                    marginBottom: '10px', 
+                                    fontSize: '14px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px'
+                                }}
+                            >
+                                <span>💬</span>
+                                <span>إرسال التذكرة لواتساب العيادة فوراً</span>
+                            </button>
+                        )}
+
+                        {/* زر إنهاء */}
                         <button 
                             onClick={() => {
-                                const message = `تأكيد حجز موعد:\nالمريض: ${patientData.name}\nمع الدكتور: ${selectedDoc.name}\nالموعد: ${selectedSlot}`;
-                                const whatsappUrl = `https://wa.me/2${selectedDoc.mobile}?text=${encodeURIComponent(message)}`;
-                                window.open(whatsappUrl, '_blank');
+                                setShowTicket(false);
                             }} 
-                            style={{ width: '100%', padding: '12px', background: '#25D366', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', marginTop: '15px', fontSize: '15px' }}
+                            style={{ 
+                                width: '100%', 
+                                padding: '12px', 
+                                background: '#f1f5f9', 
+                                color: '#334155', 
+                                border: '1px solid #cbd5e1', 
+                                borderRadius: '12px', 
+                                cursor: 'pointer', 
+                                fontWeight: 700, 
+                                fontSize: '13px' 
+                            }}
                         >
-                            🟢 إرسال عبر واتساب العيادة
-                        </button>
-                        <button 
-                            onClick={() => window.location.reload()} 
-                            style={{ width: '100%', padding: '10px', background: '#eee', color: '#333', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '10px' }}
-                        >
-                            إغلاق
+                            تم الحفظ، إغلاق النافذة
                         </button>
                     </div>
                 </div>

@@ -6,17 +6,26 @@ import { servicesData } from './servicesData';
 import { Link } from 'react-router-dom';
 
 const AymanProfile = ({ setActivePage, navigate: propNavigate }) => { 
-// أضف هذه الأسطر في بداية المكون (مكان الـ useState القديمة)
-const [showBookingModal, setShowBookingModal] = useState(false);
-const [showConsultModal, setShowConsultModal] = useState(false); // مودال جديد
-const [formData, setFormData] = useState({ name: '', phone: '', question: '' }); // أضفنا question
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showConsultModal, setShowConsultModal] = useState(false);
+  const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
   const navigate = useNavigate();
+
+  // الرابط الجديد الاحترافي لصفحتك
+  const officialProfileUrl = "https://www.doctoreg.online/dr/" + encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري");
+
+  // روابط حجز الفروع بالنظام الجديد
+  const octBookingUrl = "https://www.doctoreg.online/dr/40-" + encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-أكتوبر");
+  const shubraBookingUrl = "https://www.doctoreg.online/dr/138-" + encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-شبرا");
+const octPath = `/dr/40-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-أكتوبر")}`;
+const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-شبرا")}`;
   const schemaData = {
     "@context": "https://schema.org/",
     "@type": "Physician",
     "name": "دكتور أيمن عجيب",
-    "url": "https://www.doctoreg.online/dr_ayman_aguib",
-    "description": "استشاري المخ والأعصاب و العمود الفقري بخبرة أكثر من 20 عاماً.",
+    "medicalSpecialty": "Neurology, Spine Surgery",
+    "url": officialProfileUrl,
+    "description": "استشاري المخ والأعصاب والعمود الفقري بخبرة أكثر من 20 عاماً.",
     "address": { "@type": "PostalAddress", "addressLocality": "مصر", "addressCountry": "EG" }
   };
 
@@ -45,120 +54,123 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
     <div style={{ direction: 'rtl', backgroundColor: '#f8fafc', minHeight: '100vh', paddingBottom: '50px' }}>
       <Helmet>
         <title>دكتور أيمن عجيب | استشاري المخ والأعصاب والعمود الفقري</title>
+        <link rel="canonical" href={officialProfileUrl} />
         <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
       </Helmet>
 
-      {/* النافذة المنبثقة */}
+      {/* النافذة المنبثقة لطلب الحجز الأونلاين */}
       {showBookingModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-        <form 
-    onSubmit={sendToTelegram} 
-    style={{ background: '#fff', padding: '30px', borderRadius: '20px', width: '90%', maxWidth: '500px', margin: 'auto', boxSizing: 'border-box' }}
->
-    <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>طلب حجز</h2>
-    
-    <input 
-        required 
-        placeholder="الاسم بالكامل" 
-        style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }} 
-        onChange={(e) => setFormData({...formData, name: e.target.value})} 
-    />
-    
-    <input 
-        required 
-        placeholder="رقم الواتساب" 
-        style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }} 
-        onChange={(e) => setFormData({...formData, phone: e.target.value})} 
-    />
-    
-    <button 
-        type="submit" 
-        style={{ background: '#1a73e8', color: '#fff', padding: '15px', width: '100%', fontSize: '18px', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '10px' }}
-    >
-        إرسال الطلب
-    </button>
-    
-    <button 
-        type="button" 
-        onClick={() => setShowBookingModal(false)} 
-        style={{ marginTop: '15px', padding: '10px', width: '100%', fontSize: '16px', background: '#f8f9fa', border: '1px solid #ccc', borderRadius: '8px', cursor: 'pointer' }}
-    >
-        إغلاق
-    </button>
-</form>
+          <form 
+            onSubmit={sendToTelegram} 
+            style={{ background: '#fff', padding: '30px', borderRadius: '20px', width: '90%', maxWidth: '500px', margin: 'auto', boxSizing: 'border-box' }}
+          >
+            <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>طلب حجز موعد</h2>
+            
+            <input 
+              required 
+              placeholder="الاسم بالكامل" 
+              style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }} 
+              onChange={(e) => setFormData({...formData, name: e.target.value})} 
+            />
+            
+            <input 
+              required 
+              placeholder="رقم الواتساب" 
+              style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }} 
+              onChange={(e) => setFormData({...formData, phone: e.target.value})} 
+            />
+            
+            <button 
+              type="submit" 
+              style={{ background: '#1a73e8', color: '#fff', padding: '15px', width: '100%', fontSize: '18px', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '10px' }}
+            >
+              إرسال الطلب
+            </button>
+            
+            <button 
+              type="button" 
+              onClick={() => setShowBookingModal(false)} 
+              style={{ marginTop: '15px', padding: '10px', width: '100%', fontSize: '16px', background: '#f8f9fa', border: '1px solid #ccc', borderRadius: '8px', cursor: 'pointer' }}
+            >
+              إغلاق
+            </button>
+          </form>
         </div>
       )}
-    {/* مودال الاستشارة المحدث */}
-{showConsultModal && (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-       <form 
-    onSubmit={async (e) => {
-        e.preventDefault();
-        alert("تم إرسال الاستشارة،...");
-        
-        try {
-            const res = await fetch('https://clinic-api-ig3d.onrender.com/api/consultations', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
+
+      {/* مودال الاستشارة المحدث */}
+      {showConsultModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+          <form 
+            onSubmit={async (e) => {
+              e.preventDefault();
+              alert("تم إرسال الاستشارة، جاري الإرسال...");
+              
+              try {
+                const res = await fetch('https://clinic-api-ig3d.onrender.com/api/consultations', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(formData)
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                  alert('تم استلام سؤالك بنجاح وسنقوم بالرد عليه قريباً!');
+                  setShowConsultModal(false); 
+                } else {
+                  alert('حدث خطأ: ' + (data.message || 'غير معروف'));
+                }
+              } catch (error) {
+                console.error(error);
+                alert('خطأ في الاتصال بالسيرفر. تأكد من تشغيل السيرفر!');
+              }
+            }} 
+            style={{ background: '#fff', padding: '30px', borderRadius: '20px', width: '90%', maxWidth: '500px', margin: 'auto' }}
+          >
+            <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>إرسال استشارة طبية</h2>
             
-            const data = await res.json();
+            <input 
+              required 
+              placeholder="الاسم" 
+              style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }} 
+              onChange={(e) => setFormData({...formData, name: e.target.value})} 
+            />
             
-            if (data.success) {
-                alert('تم استلام سؤالك بنجاح وسنقوم بالرد عليه قريباً!');
-                setShowConsultModal(false); 
-            } else {
-                alert('حدث خطأ: ' + (data.message || 'غير معروف'));
-            }
-        } catch (error) {
-            console.error(error);
-            alert('خطأ في الاتصال بالسيرفر. تأكد من تشغيل السيرفر!');
-        }
-    }} 
-    style={{ background: '#fff', padding: '30px', borderRadius: '20px', width: '90%', maxWidth: '500px', margin: 'auto' }}
->
-    <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>إرسال استشارة طبية</h2>
-    
-    <input 
-        required 
-        placeholder="الاسم" 
-        style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }} 
-        onChange={(e) => setFormData({...formData, name: e.target.value})} 
-    />
-    
-    <input 
-        required 
-        placeholder="الموبايل" 
-        style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }} 
-        onChange={(e) => setFormData({...formData, phone: e.target.value})} 
-    />
-    
-    <textarea 
-        required 
-        placeholder="اكتب سؤالك هنا..." 
-        rows="6" 
-        style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box', minHeight: '120px' }} 
-        onChange={(e) => setFormData({...formData, question: e.target.value})} 
-    />
-    
-    <button 
-        type="submit" 
-        style={{ background: '#1a73e8', color: '#fff', padding: '15px', width: '100%', fontSize: '18px', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '10px' }}
-    >
-        إرسال الاستشارة
-    </button>
-    
-    <button 
-        type="button" 
-        onClick={() => setShowConsultModal(false)} 
-        style={{ marginTop: '15px', padding: '10px', width: '100%', fontSize: '16px', background: '#f8f9fa', border: '1px solid #ccc', borderRadius: '8px', cursor: 'pointer' }}
-    >
-        إغلاق
-    </button>
-</form>
-    </div>
-)}
+            <input 
+              required 
+              placeholder="الموبايل" 
+              style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }} 
+              onChange={(e) => setFormData({...formData, phone: e.target.value})} 
+            />
+            
+            <textarea 
+              required 
+              placeholder="اكتب سؤالك هنا..." 
+              rows="6" 
+              style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box', minHeight: '120px' }} 
+              onChange={(e) => setFormData({...formData, question: e.target.value})} 
+            />
+            
+            <button 
+              type="submit" 
+              style={{ background: '#1a73e8', color: '#fff', padding: '15px', width: '100%', fontSize: '18px', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '10px' }}
+            >
+              إرسال الاستشارة
+            </button>
+            
+            <button 
+              type="button" 
+              onClick={() => setShowConsultModal(false)} 
+              style={{ marginTop: '15px', padding: '10px', width: '100%', fontSize: '16px', background: '#f8f9fa', border: '1px solid #ccc', borderRadius: '8px', cursor: 'pointer' }}
+            >
+              إغلاق
+            </button>
+          </form>
+        </div>
+      )}
+
       {/* زر العودة */}
       <div style={{ padding: '15px', backgroundColor: '#fff' }}>
         <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', color: '#1a73e8', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -167,159 +179,168 @@ const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
       </div>
 
       {/* الهيدر */}
-<div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '40px 20px', textAlign: 'center' }}>
-  <h1>دكتور أيمن عجيب</h1>
-  <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب و العمود الفقري</p>
-  
-  {/* حاوية الأزرار */}
-  <div style={{ 
-    display: 'flex', 
-    justifyContent: 'center', 
-    gap: '15px', 
-    marginTop: '20px', 
-    flexWrap: 'wrap' // هذه الخاصية تجعل الأزرار تنزل تحت بعضها في شاشات الموبايل
-  }}>
-    
-    {/* زر حجز موعد */}
-    <button 
-      onClick={() => setShowBookingModal(true)} 
-      style={{ fontSize: '20px', padding: '16px 30px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer', color: '#000' }}
-    >
-      حجز موعد أونلاين
-    </button>
+      <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '40px 20px', textAlign: 'center' }}>
+        <h1>دكتور أيمن عجيب</h1>
+        <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب و العمود الفقري</p>
+        
+        {/* حاوية الأزرار */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          gap: '15px', 
+          marginTop: '20px', 
+          flexWrap: 'wrap'
+        }}>
+          {/* زر حجز موعد */}
+          <button 
+            onClick={() => setShowBookingModal(true)} 
+            style={{ fontSize: '20px', padding: '16px 30px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer', color: '#000' }}
+          >
+            حجز موعد أونلاين
+          </button>
 
-    {/* زر دفع باي بال */}
-    <button 
-      onClick={() => window.open('https://www.paypal.com/ncp/payment/4XLSYX7VNZHZS', '_blank')} 
-      style={{ fontSize: '20px', padding: '16px 30px', background: '#ffc107', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer', color: '#000' }}
-    >
-      دفع عبر PayPal 💳
-    </button>
-  </div>
-</div>
+          {/* زر دفع باي بال */}
+          <button 
+            onClick={() => window.open('https://www.paypal.com/ncp/payment/4XLSYX7VNZHZS', '_blank')} 
+            style={{ fontSize: '20px', padding: '16px 30px', background: '#ffc107', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer', color: '#000' }}
+          >
+            دفع عبر PayPal 💳
+          </button>
+        </div>
+      </div>
 
       <div style={{ maxWidth: '1000px', margin: '20px auto 0', padding: '0 20px' }}>
-     {/* قسم الفروع - بعد تكبير أزرار اللوكيشن والخط */}
-<div style={{ 
-    display: 'grid', 
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-    gap: '20px' 
-}}>
-  
-  {/* فرع أكتوبر */}
-  <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #1a73e8' }}>
-    <FaMapMarkerAlt style={{ fontSize: '30px', color: '#1a73e8' }} />
-    
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
-      <h3 style={{ margin: '0' }}>فرع أكتوبر</h3>
-      <button onClick={() => window.open('https://maps.app.goo.gl/wse4VG3tAziZTQVs7')} style={{ background: '#e3f2fd', border: '1px solid #1a73e8', borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', color: '#1a73e8', fontWeight: 'bold', fontSize: '18px' }}>
-        اللوكيشن
-      </button>
-    </div>
-    
-    <p style={{ fontSize: '20px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع</p>
-    
-    <button onClick={() => window.open('https://www.doctoreg.online/dr/40')} style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
-      حجز موعد (أكتوبر)
-    </button>
-    
-    <button onClick={() => window.open('https://g.page/r/CdLCrFOSM76vEBM/review')} style={{ width: '100%', marginTop: '10px', fontSize: '18px', padding: '10px', background: '#e3f2fd', color: '#1a73e8', border: '1px solid #1a73e8', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
-      تقييم عيادة أكتوبر ⭐
-    </button>
-  </div>
+        {/* قسم الفروع - مع روابط الحجز الاحترافية بالنظام الجديد */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+          gap: '20px' 
+        }}>
+          
+          {/* فرع أكتوبر */}
+          <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #1a73e8' }}>
+            <FaMapMarkerAlt style={{ fontSize: '30px', color: '#1a73e8' }} />
+            
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
+              <h3 style={{ margin: '0' }}>فرع أكتوبر</h3>
+              <button onClick={() => window.open('https://maps.app.goo.gl/wse4VG3tAziZTQVs7')} style={{ background: '#e3f2fd', border: '1px solid #1a73e8', borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', color: '#1a73e8', fontWeight: 'bold', fontSize: '18px' }}>
+                اللوكيشن
+              </button>
+            </div>
+            
+            <p style={{ fontSize: '20px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع</p>
+            
+            {/* 🌟 رابط الحجز المباشر لفرع أكتوبر بالنظام الجديد */}
+            {/* زر حجز موعد (أكتوبر) - يعمل فوراً عبر navigate */}
+<button 
+  onClick={() => navigate(octPath)} 
+  style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
+>
+  حجز موعد (أكتوبر)
+</button>
+            
+            <button onClick={() => window.open('https://g.page/r/CdLCrFOSM76vEBM/review')} style={{ width: '100%', marginTop: '10px', fontSize: '18px', padding: '10px', background: '#e3f2fd', color: '#1a73e8', border: '1px solid #1a73e8', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
+              تقييم عيادة أكتوبر ⭐
+            </button>
+          </div>
 
-  {/* فرع شبرا */}
-  <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #2e7d32' }}>
-    <FaMapMarkerAlt style={{ fontSize: '30px', color: '#2e7d32' }} />
-    
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
-      <h3 style={{ margin: '0' }}>فرع شبرا</h3>
-      <button onClick={() => window.open('https://maps.app.goo.gl/M5ZMNchAfXD3omYT9')} style={{ background: '#e8f5e9', border: '1px solid #2e7d32', borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', color: '#2e7d32', fontWeight: 'bold', fontSize: '18px' }}>
-        اللوكيشن
-      </button>
-    </div>
-    
-    <p style={{ fontSize: '20px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث /الخلفاوي</p>
-    
-    <button onClick={() => window.open('https://www.doctoreg.online/dr/138')} style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
-      حجز موعد (شبرا)
-    </button>
-    
-    <button onClick={() => window.open('https://g.page/r/CULxWxXqThoJEBM/review')} style={{ width: '100%', marginTop: '10px', fontSize: '18px', padding: '10px', background: '#e8f5e9', color: '#2e7d32', border: '1px solid #2e7d32', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
-      تقييم عيادة شبرا ⭐
-    </button>
-  </div>
-</div>
+          {/* فرع شبرا */}
+          <div style={{ background: '#fff', padding: '25px', borderRadius: '20px', textAlign: 'center', border: '2px solid #2e7d32' }}>
+            <FaMapMarkerAlt style={{ fontSize: '30px', color: '#2e7d32' }} />
+            
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
+              <h3 style={{ margin: '0' }}>فرع شبرا</h3>
+              <button onClick={() => window.open('https://maps.app.goo.gl/M5ZMNchAfXD3omYT9')} style={{ background: '#e8f5e9', border: '1px solid #2e7d32', borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', color: '#2e7d32', fontWeight: 'bold', fontSize: '18px' }}>
+                اللوكيشن
+              </button>
+            </div>
+            
+            <p style={{ fontSize: '20px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث /الخلفاوي</p>
+            
+            {/* 🌟 رابط الحجز المباشر لفرع شبرا بالنظام الجديد */}
+            {/* زر حجز موعد (شبرا) - يعمل فوراً عبر navigate */}
+<button 
+  onClick={() => navigate(shubraPath)} 
+  style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
+>
+  حجز موعد (شبرا)
+</button>
+            
+            <button onClick={() => window.open('https://g.page/r/CULxWxXqThoJEBM/review')} style={{ width: '100%', marginTop: '10px', fontSize: '18px', padding: '10px', background: '#e8f5e9', color: '#2e7d32', border: '1px solid #2e7d32', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
+              تقييم عيادة شبرا ⭐
+            </button>
+          </div>
+        </div>
+
         {/* قسم الخدمات */}
-       {/* قسم الخدمات - مستبدل بالكود الديناميكي */}
-<div style={{ background: '#fff', borderRadius: '20px', padding: '30px', marginTop: '30px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}>
-  <h2 style={{ color: '#1a73e8', display: 'flex', alignItems: 'center', gap: '10px' }}>
-    <FaStethoscope /> خدمات العيادة 
-  </h2>
-  
-  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
-    {servicesData.map((s) => (
-      <div 
-        key={s.id} 
-       onClick={() => navigate(`/service/${s.id}`)}
-        style={{ 
-          cursor: 'pointer', 
-          padding: '20px', 
-          borderRight: '4px solid #3debd3', 
-          background: '#f0fff4', 
-          borderRadius: '12px',
-          textAlign: 'center',
-          transition: 'transform 0.2s'
-        }}
-        onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-        onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-      >
-        {s.title}
+        <div style={{ background: '#fff', borderRadius: '20px', padding: '30px', marginTop: '30px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}>
+          <h2 style={{ color: '#1a73e8', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <FaStethoscope /> خدمات العيادة 
+          </h2>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
+            {servicesData.map((s) => (
+              <div 
+                key={s.id} 
+                onClick={() => navigate(`/service/${s.id}`)}
+                style={{ 
+                  cursor: 'pointer', 
+                  padding: '20px', 
+                  borderRight: '4px solid #3debd3', 
+                  background: '#f0fff4', 
+                  borderRadius: '12px',
+                  textAlign: 'center',
+                  transition: 'transform 0.2s'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              >
+                {s.title}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    ))}
-  </div>
-</div></div>
-{/* قسم الاستشارات المجانية */}
-<div style={{ padding: '30px', background: '#e3f2fd', borderRadius: '20px', marginTop: '40px', textAlign: 'center', margin: '20px' }}>
-  <h3 style={{ color: '#1565c0' }}>استشارة طبية مجانية أونلاين</h3>
-  <p>أرسل سؤالك الطبي وسنقوم بالرد عليه في أقرب وقت  .</p>
-  
-  <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginTop: '20px', flexWrap: 'wrap' }}>
-    
-    {/* زر إسأل دكتور أيمن */}
-    <button 
-      onClick={() => setShowConsultModal(true)} 
-      style={{ padding: '15px 40px', background: '#1565c0', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '20px', cursor: 'pointer', fontWeight: 'bold' }}
-    >
-      إسأل دكتور أيمن
-    </button>
 
-    {/* زر عرض الأسئلة والأجوبة */}
-    <Link to="/free-consultations" style={{ textDecoration: 'none' }}>
-      <button 
-        style={{ padding: '15px 40px', background: '#f2945b', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '20px', cursor: 'pointer', fontWeight: 'bold' }}
-      >
-        الأسئلة والأجوبة
-      </button>
-    </Link>
-   {/* زر حمل تطبيق دكتور الآن الجديد */}
-    <a 
-      href="https://play.google.com/store/apps/details?id=com.doctorplatform.app&pcampaignid=web_share" 
-      target="_blank" 
-      rel="noopener noreferrer" 
-      style={{ textDecoration: 'none' }}
-    >
-      <button 
-        style={{ padding: '15px 40px', background: '#30b837', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '24px', cursor: 'pointer', fontWeight: 'bold' }}
-      >
-        حمل تطبيق دكتور الآن 📱
-      </button>
-    </a>
-    
-</div>
-</div>
+      {/* قسم الاستشارات المجانية والتطبيق */}
+      <div style={{ padding: '30px', background: '#e3f2fd', borderRadius: '20px', marginTop: '40px', textAlign: 'center', margin: '20px' }}>
+        <h3 style={{ color: '#1565c0' }}>استشارة طبية مجانية أونلاين</h3>
+        <p>أرسل سؤالك الطبي وسنقوم بالرد عليه في أقرب وقت.</p>
+        
+        <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginTop: '20px', flexWrap: 'wrap' }}>
+          {/* زر إسأل دكتور أيمن */}
+          <button 
+            onClick={() => setShowConsultModal(true)} 
+            style={{ padding: '15px 40px', background: '#1565c0', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '20px', cursor: 'pointer', fontWeight: 'bold' }}
+          >
+            إسأل دكتور أيمن
+          </button>
+
+          {/* زر عرض الأسئلة والأجوبة */}
+          <Link to="/free-consultations" style={{ textDecoration: 'none' }}>
+            <button 
+              style={{ padding: '15px 40px', background: '#f2945b', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '20px', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              الأسئلة والأجوبة
+            </button>
+          </Link>
+
+          {/* زر حمل تطبيق دكتور الآن */}
+          <a 
+            href="https://play.google.com/store/apps/details?id=com.doctorplatform.app&pcampaignid=web_share" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style={{ textDecoration: 'none' }}
+          >
+            <button 
+              style={{ padding: '15px 40px', background: '#30b837', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '24px', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              حمل تطبيق دكتور الآن 📱
+            </button>
+          </a>
+        </div>
+      </div>
     </div>
-    
   );
 };
 
