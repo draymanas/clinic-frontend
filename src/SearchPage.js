@@ -1,6 +1,6 @@
-// SearchPage.js - متوافق مع نظام JavaScript (JS) الخالص مع تقسيم المواعيد كل 15 دقيقة والتذكرة الموحدة الفاخرة
+// SearchPage.js - متوافق مع الروابط النظيفة الصديقة لمحركات البحث (SEO Clean URLs)
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, Link } from 'react-router-dom';
 
 const medicalSpecialties = [
   "الكل", "أسنان", "أطفال وحديثي الولادة", "أنف وأذن وحنجرة", "باطنة", "تغذية علاجية",
@@ -65,7 +65,7 @@ const getNextDateForDay = (dayName) => {
     return resultDate.toISOString().split('T')[0];
 };
 
-// 🌟 دوال الذكاء الاصطناعي لحساب المواعيد كل 15 دقيقة واستبعاد المحجوز
+// دوال الذكاء الاصطناعي لحساب المواعيد كل 15 دقيقة
 const parseTimeToMinutes = (timeStr) => {
     if (!timeStr) return null;
     const isPM = /مساء|م|عصرا|ليلا|pm/i.test(timeStr);
@@ -97,28 +97,22 @@ const formatMinutesToTime = (totalMinutes) => {
 
 const generate15MinSlots = (availabilitySlot) => {
     if (!availabilitySlot) return [];
-    
     const clean = availabilitySlot.replace(/[()]/g, '');
     const parts = clean.split(/إلى|الي|-|حتى|to/i);
-    
     let startMin = null;
     let endMin = null;
-    
     if (parts.length >= 2) {
         startMin = parseTimeToMinutes(parts[0]);
         endMin = parseTimeToMinutes(parts[1]);
     }
-    
     if (startMin === null || endMin === null || endMin <= startMin) {
-        startMin = 17 * 60; // 5:00 PM
-        endMin = 19 * 60;   // 7:00 PM
+        startMin = 17 * 60; 
+        endMin = 19 * 60;   
     }
-    
     const slots = [];
     for (let current = startMin; current < endMin; current += 15) {
         slots.push(formatMinutesToTime(current));
     }
-    
     return slots;
 };
 
@@ -143,7 +137,7 @@ const saveBookedSlotForDoctor = (doctorId, date, timeSlot) => {
     }
 };
 
-// 🌟 دالة إنشاء رابط صديق لمحركات البحث (SEO URL) يظهر اسم الطبيب وتخصصه
+// رابط الطبيب SEO
 const getDoctorUrl = (doc) => {
     if (!doc || !doc.id) return '/search';
     const titlePart = doc.title ? `${doc.title} ` : '';
@@ -155,17 +149,47 @@ const getDoctorUrl = (doc) => {
     return `/dr/${doc.id}-${encodeURIComponent(cleanSlug)}`;
 };
 
+// 🌟 دوال تحويل النصوص لروابط عربية نظيفة (Clean SEO Slugs)
+const slugifyArabic = (text) => {
+    if (!text || text === 'الكل') return '';
+    return text
+        .trim()
+        .replace(/[\/\#\?\&\\\:\*\"\'\<\>\|\(\)\,\.]/g, '')
+        .replace(/\s+/g, '-');
+};
+
+const deslugifyArabic = (slug) => {
+    if (!slug || slug === 'الكل') return 'الكل';
+    try {
+        const decoded = decodeURIComponent(slug).trim();
+        return decoded.replace(/-/g, ' ');
+    } catch {
+        return slug.replace(/-/g, ' ');
+    }
+};
+
 export function SearchPage(props) {
     const { doctors = [], fetchData, currentUser, openLogin } = props || {};
     const location = useLocation();
     const navigate = useNavigate();
+    const routeParams = useParams();
 
-    // حالة الفلاتر بناءً على الـ URL أو الافتراضيات
+    // استخراج الفلاتر من مسار الرابط النظيف أولاً، أو من الـ Query Parameters كخطة بديلة
     const query = new URLSearchParams(location.search);
+    const paramSpecialty = deslugifyArabic(routeParams.specialtyParam);
+    const paramCity = deslugifyArabic(routeParams.cityParam);
+    const paramArea = deslugifyArabic(routeParams.areaParam);
+
     const [searchTerm, setSearchTerm] = useState(query.get('name') || '');
-    const [fSpecialty, setFSpecialty] = useState(query.get('specialty') || 'الكل');
-    const [fCity, setFCity] = useState(query.get('city') || 'الكل');
-    const [fArea, setFArea] = useState(query.get('area') || 'الكل');
+    const [fSpecialty, setFSpecialty] = useState(
+        paramSpecialty !== 'الكل' ? paramSpecialty : (query.get('specialty') || 'الكل')
+    );
+    const [fCity, setFCity] = useState(
+        paramCity !== 'الكل' ? paramCity : (query.get('city') || 'الكل')
+    );
+    const [fArea, setFArea] = useState(
+        paramArea !== 'الكل' ? paramArea : (query.get('area') || 'الكل')
+    );
 
     const [selectedDoc, setSelectedDoc] = useState(null);
     const [selectedDay, setSelectedDay] = useState('');
@@ -179,7 +203,7 @@ export function SearchPage(props) {
 
     const doctorsListRef = useRef(null);
 
-    // تحديث قائمة المواعيد المتاحة كل 15 دقيقة فور اختيار اليوم واستبعاد المحجوز
+    // تحديث قائمة المواعيد المتاحة كل 15 دقيقة فور اختيار اليوم
     useEffect(() => {
         if (selectedDoc && selectedDay) {
             const dayName = selectedDay.split(' ')[0];
@@ -188,10 +212,9 @@ export function SearchPage(props) {
             const booked = getBookedSlotsForDoctor(selectedDoc.id, actualDate);
             
             setBookedSlotsList(booked);
-            // إخفاء المواعيد المحجوزة مسبقاً حتى لا تظهر لباقي المرضى نهائياً
             const freeSlots = allSlots.filter(slot => !booked.includes(slot));
             setAvailableTimeSlots(freeSlots);
-            setSelectedTime(''); // إعادة ضبط الموعد المختار
+            setSelectedTime('');
         } else {
             setAvailableTimeSlots([]);
             setBookedSlotsList([]);
@@ -199,7 +222,6 @@ export function SearchPage(props) {
         }
     }, [selectedDoc, selectedDay]);
 
-    // فتح نافذة الحجز مع تهيئة الأيام
     const handleOpenBooking = (doc) => {
         setSelectedDoc(doc);
         const slots = doc.availability ? doc.availability.split(' - ').map(s => s.trim()).filter(Boolean) : [];
@@ -213,16 +235,19 @@ export function SearchPage(props) {
         setShowModal(true);
     };
 
-    // تحديث الفلاتر عند تغيير الـ URL (مثلاً عند الرجوع من صفحة أخرى)
+    // مزامنة الـ States مع الرابط عند التنقل
     useEffect(() => {
         const newQuery = new URLSearchParams(location.search);
-        setSearchTerm(newQuery.get('name') || '');
-        setFSpecialty(newQuery.get('specialty') || 'الكل');
-        setFCity(newQuery.get('city') || 'الكل');
-        setFArea(newQuery.get('area') || 'الكل');
-    }, [location.search]);
+        const sParam = deslugifyArabic(routeParams.specialtyParam);
+        const cParam = deslugifyArabic(routeParams.cityParam);
+        const aParam = deslugifyArabic(routeParams.areaParam);
 
-    // دعم جلب الأطباء تلقائياً إن لم يتم تمريرهم عبر الـ props
+        setSearchTerm(newQuery.get('name') || '');
+        setFSpecialty(sParam !== 'الكل' ? sParam : (newQuery.get('specialty') || 'الكل'));
+        setFCity(cParam !== 'الكل' ? cParam : (newQuery.get('city') || 'الكل'));
+        setFArea(aParam !== 'الكل' ? aParam : (newQuery.get('area') || 'الكل'));
+    }, [location.pathname, location.search, routeParams.specialtyParam, routeParams.cityParam, routeParams.areaParam]);
+
     const [localDoctors, setLocalDoctors] = useState([]);
     useEffect(() => {
         if (!doctors || doctors.length === 0) {
@@ -290,7 +315,6 @@ export function SearchPage(props) {
         const actualDate = getNextDateForDay(dayName); 
         const fullAppointment = `${dayName} (${actualDate}) | الساعة: ${selectedTime}`;
 
-        // حفظ الموعد كمحجوز فوراً لمنع ظهوره لباقي المرضى
         saveBookedSlotForDoctor(selectedDoc.id, actualDate, selectedTime);
 
         const bookingData = {
@@ -320,19 +344,121 @@ export function SearchPage(props) {
         }
     };
 
-    // تحديث الـ URL عند تغيير الفلاتر (لضمان عمل زر الرجوع والمشاركة)
+    // 🌟 تحديث الـ URL النظيف باللغة العربية المستهدفة لمحركات البحث (Clean Arabic SEO URL)
     useEffect(() => {
-        const params = new URLSearchParams();
-        if (searchTerm) params.append('name', searchTerm);
-        if (fSpecialty !== 'الكل') params.append('specialty', fSpecialty);
-        if (fCity !== 'الكل') params.append('city', fCity);
-        if (fArea !== 'الكل') params.append('area', fArea);
-        navigate(`?${params.toString()}`, { replace: true });
-    }, [searchTerm, fSpecialty, fCity, fArea, navigate]);
+        let targetPath = '/search';
+        const queryParams = new URLSearchParams();
+
+        if (searchTerm) {
+            queryParams.append('name', searchTerm);
+        }
+
+        if (fSpecialty !== 'الكل') {
+            const specSlug = slugifyArabic(fSpecialty);
+            targetPath = `/doctors/${encodeURIComponent(specSlug)}`;
+
+            if (fCity !== 'الكل') {
+                const citySlug = slugifyArabic(fCity);
+                targetPath += `/${encodeURIComponent(citySlug)}`;
+
+                if (fArea !== 'الكل') {
+                    const areaSlug = slugifyArabic(fArea);
+                    targetPath += `/${encodeURIComponent(areaSlug)}`;
+                }
+            }
+        } else if (fCity !== 'الكل') {
+            targetPath = '/search';
+            queryParams.append('city', fCity);
+            if (fArea !== 'الكل') {
+                queryParams.append('area', fArea);
+            }
+        }
+
+        const queryString = queryParams.toString();
+        const fullTargetUrl = queryString ? `${targetPath}?${queryString}` : targetPath;
+
+        const currentPathWithQuery = location.pathname + (location.search || '');
+        if (decodeURIComponent(currentPathWithQuery) !== decodeURIComponent(fullTargetUrl)) {
+            navigate(fullTargetUrl, { replace: true });
+        }
+    }, [searchTerm, fSpecialty, fCity, fArea, navigate, location.pathname, location.search]);
+
+    // 🌟 تحديث عنوان الصفحة ووسوم الـ SEO ديناميكياً لجوجل
+    useEffect(() => {
+        let pageTitle = 'ابحث عن دكتورك | منصة دكتور لحجز العيادات في مصر';
+        let pageDesc = 'احجز موعد كشف مع أفضل الأطباء والاستشاريين في مصر، مواعيد العيادات وسعر الكشف وحجز فوري بدون رسوم إضافية.';
+
+        if (fSpecialty !== 'الكل' && fCity !== 'الكل' && fArea !== 'الكل') {
+            pageTitle = `دكتور ${fSpecialty} في ${fArea}، ${fCity} | حجز فوري مع أفضل الأطباء`;
+            pageDesc = `قائمة بأفضل أطباء واستشاريي ${fSpecialty} في ${fArea} بمحافظة ${fCity}. تعرف على أسعار الكشف ومواعيد العيادات واحجز فوراً.`;
+        } else if (fSpecialty !== 'الكل' && fCity !== 'الكل') {
+            pageTitle = `أفضل دكتور ${fSpecialty} في ${fCity} | دليل العيادات وحجز مباشر`;
+            pageDesc = `ابحث واحجز مع نخبة من أطباء ${fSpecialty} في محافظة ${fCity}. مواعيد مؤكدة وسعر الكشف الرسمي.`;
+        } else if (fSpecialty !== 'الكل') {
+            pageTitle = `أفضل أطباء ${fSpecialty} في مصر | دليل الاستشاريين وحجز العيادات`;
+            pageDesc = `دليل شامل لأطباء ${fSpecialty} في مصر. تقييمات المرضى ومواعيد الكشف وحجز مباشر بالعيادة.`;
+        } else if (fCity !== 'الكل') {
+            pageTitle = `دليل أطباء وعيادات ${fCity} | احجز كشفك الآن`;
+            pageDesc = `دليل أطباء محافظة ${fCity} في كافة التخصصات الطبية، حجز موعد مباشر في العيادة.`;
+        }
+
+        document.title = pageTitle;
+
+        let metaDesc = document.querySelector('meta[name="description"]');
+        if (!metaDesc) {
+            metaDesc = document.createElement('meta');
+            metaDesc.setAttribute('name', 'description');
+            document.head.appendChild(metaDesc);
+        }
+        metaDesc.setAttribute('content', pageDesc);
+    }, [fSpecialty, fCity, fArea]);
 
     return (
         <div style={{ backgroundColor: '#f0f4f8', minHeight: '100vh', direction: 'rtl', padding: '20px' }}>
-            <h2 style={{ fontSize: '32px', fontWeight: 'bold', textAlign: 'center', margin: '20px 0', color: '#2c3e50' }}>ابحث عن دكتورك</h2>
+            
+            {/* مسار التصفح (Breadcrumb) والترويسة الصديقة لمحركات البحث (H1 SEO) */}
+            <div style={{ maxWidth: '1200px', margin: '0 auto 20px', padding: '0 8px' }}>
+                <nav style={{ fontSize: '13px', color: '#64748b', marginBottom: '8px', display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <Link to="/" style={{ color: '#2563eb', textDecoration: 'none' }}>الرئيسية</Link>
+                    <span>/</span>
+                    <Link to="/search" style={{ color: '#2563eb', textDecoration: 'none' }}>دليل الأطباء</Link>
+                    {fSpecialty !== 'الكل' && (
+                        <>
+                            <span>/</span>
+                            <Link to={`/doctors/${encodeURIComponent(slugifyArabic(fSpecialty))}`} style={{ color: fCity === 'الكل' ? '#0f172a' : '#2563eb', textDecoration: 'none', fontWeight: fCity === 'الكل' ? 'bold' : 'normal' }}>
+                                {fSpecialty}
+                            </Link>
+                        </>
+                    )}
+                    {fCity !== 'الكل' && (
+                        <>
+                            <span>/</span>
+                            <span style={{ color: fArea === 'الكل' ? '#0f172a' : '#2563eb', fontWeight: fArea === 'الكل' ? 'bold' : 'normal' }}>
+                                {fCity}
+                            </span>
+                        </>
+                    )}
+                    {fArea !== 'الكل' && (
+                        <>
+                            <span>/</span>
+                            <span style={{ color: '#0f172a', fontWeight: 'bold' }}>
+                                {fArea}
+                            </span>
+                        </>
+                    )}
+                </nav>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+                    <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', margin: 0 }}>
+                        {fSpecialty !== 'الكل' 
+                            ? `أطباء ${fSpecialty} ${fArea !== 'الكل' ? `في ${fArea}، ` : ''}${fCity !== 'الكل' ? `في ${fCity}` : 'في مصر'}`
+                            : fCity !== 'الكل' ? `أطباء وعيادات ${fCity}` : 'دليل أطباء وعيادات مصر'}
+                    </h1>
+                    <span style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '4px 12px', borderRadius: '12px', fontSize: '13px', fontWeight: '700' }}>
+                        {filteredDoctors.length} {filteredDoctors.length === 1 ? 'طبيب متاح' : 'أطباء متاحين للحجز الفوري'}
+                    </span>
+                </div>
+            </div>
 
             {/* شريط البحث المطور - تصميم (البار العريض) */}
             <div style={{ 
@@ -430,19 +556,18 @@ export function SearchPage(props) {
                 </div>
             </div>
 
-            {/* 3. قائمة الأطباء (البطاقات) - الضغط على البطاقة يفتح صفحة الدكتور بالرابط الاحترافي */}
+            {/* قائمة الأطباء (البطاقات) */}
             <div ref={doctorsListRef} style={{
                 display: 'flex',
                 gap: '35px',
                 flexWrap: 'wrap', 
                 justifyContent: 'center', 
-                padding: '40px 10px'
+                padding: '10px'
             }}>
                 {filteredDoctors.length > 0 ? (
                     filteredDoctors.map(doc => (
                         <div 
                             key={doc.id}
-                            // 🌟 عند الضغط على أي مكان في بطاقة الدكتور يتم الانتقال لصفحته بالرابط الاحترافي (1255-اسم-تخصص)
                             onClick={() => {
                                 navigate(getDoctorUrl(doc));
                             }}
@@ -552,7 +677,6 @@ export function SearchPage(props) {
                                 ⭐⭐⭐⭐⭐ <span style={{ color: '#64748b', fontSize: '12px', fontWeight: '600' }}>(5.0 تقييم)</span>
                             </div>
 
-                            {/* زر الحجز المباشر الذي يفتح نافذة اختيار الوقت التفاعلية */}
                             <button 
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -587,7 +711,7 @@ export function SearchPage(props) {
                 )}
             </div>
 
-            {/* 🌟 نافذة الحجز السريعة التفاعلية مع تقسيم المواعيد كل ربع ساعة واستبعاد المحجوز */}
+            {/* نافذة الحجز السريعة التفاعلية */}
             {showModal && selectedDoc && (
                 <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(4px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1100, padding: '16px' }}>
                     <div style={{ backgroundColor: '#fff', padding: '24px', borderRadius: '20px', width: '420px', maxWidth: '100%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 40px rgba(0,0,0,0.25)', border: '1px solid #f1f5f9' }}>
@@ -741,12 +865,11 @@ export function SearchPage(props) {
                 </div>
             )}
 
-            {/* 🌟 نافذة التذكرة بعد الحجز المحدثة مطابقة لتصميم صفحة الطبيب الشخصية */}
+            {/* تذكرة الحجز الرسمية */}
             {showTicket && selectedDoc && (
                 <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(4px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, padding: '16px' }}>
                     <div style={{ backgroundColor: '#fff', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px', boxShadow: '0 25px 50px rgba(0,0,0,0.3)', border: '2px solid #e2e8f0', textAlign: 'right' }}>
                         
-                        {/* رأس التذكرة */}
                         <div style={{ textAlign: 'center', paddingBottom: '16px', borderBottom: '2px dashed #cbd5e1', marginBottom: '16px' }}>
                             <div style={{
                                 width: '44px',
@@ -772,7 +895,6 @@ export function SearchPage(props) {
                             </span>
                         </div>
 
-                        {/* بيانات التذكرة */}
                         <div style={{ marginBottom: '14px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '13px' }}>
                                 <span style={{ color: '#64748b' }}>اسم المريض:</span>
@@ -798,7 +920,6 @@ export function SearchPage(props) {
                             </div>
                         </div>
 
-                        {/* بطاقة السعر */}
                         <div style={{
                             background: '#fffbeb',
                             borderRight: '4px solid #f59e0b',
@@ -816,7 +937,6 @@ export function SearchPage(props) {
                             <span style={{ fontSize: '11px', color: '#b45309' }}>تدفع عند الدخول للعيادة</span>
                         </div>
 
-                        {/* تذكير بأخذ لقطة شاشة */}
                         <div style={{
                             background: '#f0fdf4',
                             border: '1px solid #bbf7d0',
@@ -836,7 +956,6 @@ export function SearchPage(props) {
                             <span>احفظ لقطة شاشة (Screenshot) للتذكرة لإظهارها بالعيادة</span>
                         </div>
 
-                        {/* زر إرسال التذكرة لواتساب العيادة */}
                         {selectedDoc?.mobile && (
                             <button 
                                 onClick={() => {
@@ -873,7 +992,6 @@ export function SearchPage(props) {
                             </button>
                         )}
 
-                        {/* زر إنهاء */}
                         <button 
                             onClick={() => {
                                 setShowTicket(false);
