@@ -909,6 +909,43 @@ export const DirectBooking = () => {
                     <span>{specialty}</span>
                   </div>
 
+                  {/* 🌟 مربع النبذة التعريفية والخبرات المهنية (Bio) لإبراز إمكانيات الطبيب */}
+                  {doctor.bio && (
+                    <div style={{
+                      backgroundColor: '#f8fafc',
+                      border: '1px solid #e2e8f0',
+                      borderRight: '4px solid #2563eb',
+                      borderRadius: '14px',
+                      padding: '12px 16px',
+                      margin: '12px 0 14px 0',
+                      textAlign: 'right',
+                      boxShadow: '0 2px 5px rgba(0, 0, 0, 0.02)'
+                    }}>
+                      <div style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '6px', 
+                        marginBottom: '6px', 
+                        color: '#0f172a', 
+                        fontWeight: 800, 
+                        fontSize: '13px' 
+                      }}>
+                        <Award size={16} color="#2563eb" />
+                        <span>نبذة عن الطبيب والمؤهلات والخبرات:</span>
+                      </div>
+                      <p style={{ 
+                        margin: 0, 
+                        fontSize: '13.5px', 
+                        color: '#475569', 
+                        lineHeight: '1.7', 
+                        whiteSpace: 'pre-line',
+                        fontWeight: '500'
+                      }}>
+                        "{doctor.bio}"
+                      </p>
+                    </div>
+                  )}
+
                   {locationText && (
                     <div className="doc-meta-row" style={{ justifyContent: 'inherit' }}>
                       <div className="doc-meta-item">
@@ -1390,6 +1427,7 @@ function getFallbackDoctor(id) {
     fee: '600',
     image_url: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=600&auto=format&fit=crop&q=80',
     availability: 'الأحد (5:00 مساءً إلى 7:00 مساءً) - الأربعاء (5:00 مساءً إلى 7:00 مساءً)',
+    bio: 'استشاري أول جراحة المخ والأعصاب والعمود الفقري، خبرة أكثر من 20 عاماً في علاج الانزلاق الغضروفي، الصداع المزمن، واعتلال الأعصاب الطرفية.',
     mobile: '01032368436'
   };
 }
