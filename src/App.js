@@ -883,6 +883,16 @@ onClick={() => {
                     fetchData={fetchData} 
                 />
             } />
+            {/* مسارات البحث والصفحات النظيفة المتوافقة مع Google SEO */}
+<Route path="/search" element={<SearchPage />} />
+<Route path="/search/:specialtyParam/:cityParam/:areaParam" element={<SearchPage />} />
+<Route path="/search/:specialtyParam/:cityParam" element={<SearchPage />} />
+<Route path="/search/:specialtyParam" element={<SearchPage />} />
+
+<Route path="/doctors/:specialtyParam/:cityParam/:areaParam" element={<SearchPage />} />
+<Route path="/doctors/:specialtyParam/:cityParam" element={<SearchPage />} />
+<Route path="/doctors/:specialtyParam" element={<SearchPage />} />
+<Route path="/doctors" element={<SearchPage />} />
 
 // في ملف App.js أضف هذا السطر في مكان الـ Routes
 <Route path="/free-consultations" element={<QandA />} />
