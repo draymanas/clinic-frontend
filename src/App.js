@@ -851,6 +851,13 @@ onClick={() => {
                 } 
             />
 
+             {/* 🌟 رابط المشاركة فائق الاختصار للتعليقات والسوشيال ميديا */}
+<Route path="/d/:slugOrId" element={<DirectBooking />} />
+
+{/* روت صفحة الدكتور الأساسية برابط الـ SEO */}
+<Route path="/dr/:slugOrId/:seoSlug?" element={<DirectBooking />} />
+<Route path="/dr/:slugOrId" element={<DirectBooking />} />
+
             {/* 2. الروت القديم: لا نحذفه، بل يوجه المتصفح تلقائياً للرابط الجديد */}
 <Route 
   path="/dr_ayman_aguib" 
