@@ -858,6 +858,9 @@ onClick={() => {
 <Route path="/dr/:slugOrId/:seoSlug?" element={<DirectBooking />} />
 <Route path="/dr/:slugOrId" element={<DirectBooking />} />
 
+           <Route path="/d/ayman" element={<AymanProfile />} />
+<Route path="/ayman" element={<AymanProfile />} />
+<Route path="/dr/دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري" element={<AymanProfile />} />
             {/* 2. الروت القديم: لا نحذفه، بل يوجه المتصفح تلقائياً للرابط الجديد */}
 <Route 
   path="/dr_ayman_aguib" 

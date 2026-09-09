@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { FaMapMarkerAlt, FaStethoscope, FaArrowRight } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaStethoscope, FaArrowRight, FaShareAlt, FaCheck } from 'react-icons/fa';
 import { servicesData } from './servicesData';
 import { Link } from 'react-router-dom';
 
@@ -9,24 +9,54 @@ const AymanProfile = ({ setActivePage, navigate: propNavigate }) => {
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showConsultModal, setShowConsultModal] = useState(false);
   const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
+  const [copied, setCopied] = useState(false);
+
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // الرابط الجديد الاحترافي لصفحتك
+  // 🌟 1. رابط الـ SEO العربي الكامل لصفحتك (المعتمد في شريط المتصفح ولجوجل)
   const officialProfileUrl = "https://www.doctoreg.online/dr/" + encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري");
+  const officialPath = "/dr/" + encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري");
 
-  // روابط حجز الفروع بالنظام الجديد
-  const octBookingUrl = "https://www.doctoreg.online/dr/40-" + encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-أكتوبر");
-  const shubraBookingUrl = "https://www.doctoreg.online/dr/138-" + encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-شبرا");
-const octPath = `/dr/40-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-أكتوبر")}`;
-const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-شبرا")}`;
+  // 🌟 2. رابط المشاركة فائق الاختصار والجاذبية للسوشيال ميديا وفيسبوك
+  const shortShareUrl = "https://www.doctoreg.online/d/ayman";
+
+  // رابط صورتك الرسمية للمعاينة في السوشيال ميديا
+  const doctorPhoto = "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=1200&h=630&auto=format&fit=crop&q=80";
+
+  // تحويل المتصفح تلقائياً إلى رابط الـ SEO الكامل إذا دخل المستخدم عبر /ayman أو /d/ayman
+  useEffect(() => {
+    if (location.pathname === '/ayman' || location.pathname === '/d/ayman') {
+      navigate(officialPath, { replace: true });
+    }
+  }, [location.pathname, navigate, officialPath]);
+
+  // نسخ رابط المشاركة الشيك
+  const handleCopyShortLink = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shortShareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
+  };
+
+  // روابط حجز الفروع
+  const octPath = `/dr/40-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-أكتوبر")}`;
+  const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-شبرا")}`;
+
   const schemaData = {
     "@context": "https://schema.org/",
     "@type": "Physician",
     "name": "دكتور أيمن عجيب",
     "medicalSpecialty": "Neurology, Spine Surgery",
+    "image": doctorPhoto,
     "url": officialProfileUrl,
-    "description": "استشاري المخ والأعصاب والعمود الفقري بخبرة أكثر من 20 عاماً.",
-    "address": { "@type": "PostalAddress", "addressLocality": "مصر", "addressCountry": "EG" }
+    "description": "استشاري المخ والأعصاب والعمود الفقري - عيادات 6 أكتوبر وشبرا.",
+    "address": { 
+      "@type": "PostalAddress", 
+      "addressLocality": "الجيزة والقاهرة", 
+      "addressCountry": "EG" 
+    }
   };
 
   const sendToTelegram = async (e) => {
@@ -51,10 +81,27 @@ const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-�
   };
 
   return (
-    <div style={{ direction: 'rtl', backgroundColor: '#f8fafc', minHeight: '100vh', paddingBottom: '50px' }}>
+    <div style={{ direction: 'rtl', backgroundColor: '#f8fafc', minHeight: '100vh', paddingBottom: '50px', fontFamily: 'Cairo, sans-serif' }}>
       <Helmet>
         <title>دكتور أيمن عجيب | استشاري المخ والأعصاب والعمود الفقري</title>
+        <meta name="description" content="عيادات د. أيمن عجيب استشاري جراحة المخ والأعصاب والعمود الفقري (فرع أكتوبر وفرع شبرا). احجز موعدك أو أرسل استشارتك الطبية مباشرة." />
         <link rel="canonical" href={officialProfileUrl} />
+
+        {/* كروت السوشيال ميديا المباشرة */}
+        <meta property="og:title" content="دكتور أيمن عجيب | استشاري المخ والأعصاب والعمود الفقري" />
+        <meta property="og:description" content="عيادات د. أيمن عجيب لجراحة المخ والأعصاب والعمود الفقري (أكتوبر - شبرا). احجز موعدك أو أرسل استشارتك الطبية أونلاين." />
+        <meta property="og:image" content={doctorPhoto} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content={officialProfileUrl} />
+        <meta property="og:type" content="profile" />
+        <meta property="og:site_name" content="عيادات دكتور أيمن عجيب" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="دكتور أيمن عجيب | استشاري المخ والأعصاب والعمود الفقري" />
+        <meta name="twitter:description" content="عيادات د. أيمن عجيب لجراحة المخ والأعصاب والعمود الفقري (أكتوبر - شبرا). احجز موعدك أو أرسل استشارتك الطبية أونلاين." />
+        <meta name="twitter:image" content={doctorPhoto} />
+
         <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
       </Helmet>
 
@@ -171,30 +218,51 @@ const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-�
         </div>
       )}
 
-      {/* زر العودة */}
-      <div style={{ padding: '15px', backgroundColor: '#fff' }}>
-        <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', color: '#1a73e8', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+      {/* شريط علوي أنيق للعودة + زر نسخ الرابط المختصر */}
+      <div style={{ padding: '12px 20px', backgroundColor: '#fff', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <button onClick={() => navigate('/')} style={{ background: 'none', border: 'none', color: '#1a73e8', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '15px' }}>
           <FaArrowRight /> العودة للرئيسية
+        </button>
+
+        {/* زر نسخ رابط صفحتك المختصر والمميز */}
+        <button 
+          onClick={handleCopyShortLink}
+          style={{ 
+            background: copied ? '#059669' : '#0f172a', 
+            color: '#fff', 
+            border: 'none', 
+            padding: '8px 16px', 
+            borderRadius: '12px', 
+            fontSize: '13.5px', 
+            fontWeight: 'bold', 
+            cursor: 'pointer', 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '8px' 
+          }}
+        >
+          {copied ? <FaCheck /> : <FaShareAlt />}
+          <span>{copied ? 'تم نسخ رابط البروفايل!' : 'نسخ رابط الصفحة للمشاركة'}</span>
         </button>
       </div>
 
       {/* الهيدر */}
       <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '40px 20px', textAlign: 'center' }}>
-        <h1>دكتور أيمن عجيب</h1>
-        <p style={{ fontSize: '24px', opacity: '0.9' }}>استشاري المخ والأعصاب و العمود الفقري</p>
+        <h1 style={{ margin: '0 0 10px 0', fontSize: '32px' }}>دكتور أيمن عجيب</h1>
+        <p style={{ fontSize: '22px', opacity: '0.9', margin: '0' }}>استشاري المخ والأعصاب والعمود الفقري</p>
         
         {/* حاوية الأزرار */}
         <div style={{ 
           display: 'flex', 
           justifyContent: 'center', 
           gap: '15px', 
-          marginTop: '20px', 
+          marginTop: '25px', 
           flexWrap: 'wrap'
         }}>
           {/* زر حجز موعد */}
           <button 
             onClick={() => setShowBookingModal(true)} 
-            style={{ fontSize: '20px', padding: '16px 30px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer', color: '#000' }}
+            style={{ fontSize: '18px', padding: '14px 28px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer', color: '#000' }}
           >
             حجز موعد أونلاين
           </button>
@@ -202,7 +270,7 @@ const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-�
           {/* زر دفع باي بال */}
           <button 
             onClick={() => window.open('https://www.paypal.com/ncp/payment/4XLSYX7VNZHZS', '_blank')} 
-            style={{ fontSize: '20px', padding: '16px 30px', background: '#ffc107', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer', color: '#000' }}
+            style={{ fontSize: '18px', padding: '14px 28px', background: '#ffc107', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer', color: '#000' }}
           >
             دفع عبر PayPal 💳
           </button>
@@ -210,7 +278,7 @@ const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-�
       </div>
 
       <div style={{ maxWidth: '1000px', margin: '20px auto 0', padding: '0 20px' }}>
-        {/* قسم الفروع - مع روابط الحجز الاحترافية بالنظام الجديد */}
+        {/* قسم الفروع */}
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
@@ -223,23 +291,21 @@ const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-�
             
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
               <h3 style={{ margin: '0' }}>فرع أكتوبر</h3>
-              <button onClick={() => window.open('https://maps.app.goo.gl/wse4VG3tAziZTQVs7')} style={{ background: '#e3f2fd', border: '1px solid #1a73e8', borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', color: '#1a73e8', fontWeight: 'bold', fontSize: '18px' }}>
+              <button onClick={() => window.open('https://maps.app.goo.gl/wse4VG3tAziZTQVs7')} style={{ background: '#e3f2fd', border: '1px solid #1a73e8', borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', color: '#1a73e8', fontWeight: 'bold', fontSize: '16px' }}>
                 اللوكيشن
               </button>
             </div>
             
-            <p style={{ fontSize: '20px' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع</p>
+            <p style={{ fontSize: '18px', color: '#475569' }}>ميدان الحصري / فوق سنتر شعبان / الدور الرابع</p>
             
-            {/* 🌟 رابط الحجز المباشر لفرع أكتوبر بالنظام الجديد */}
-            {/* زر حجز موعد (أكتوبر) - يعمل فوراً عبر navigate */}
-<button 
-  onClick={() => navigate(octPath)} 
-  style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
->
-  حجز موعد (أكتوبر)
-</button>
+            <button 
+              onClick={() => navigate(octPath)} 
+              style={{ width: '100%', marginTop: '15px', fontSize: '20px', padding: '14px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+            >
+              حجز موعد (أكتوبر)
+            </button>
             
-            <button onClick={() => window.open('https://g.page/r/CdLCrFOSM76vEBM/review')} style={{ width: '100%', marginTop: '10px', fontSize: '18px', padding: '10px', background: '#e3f2fd', color: '#1a73e8', border: '1px solid #1a73e8', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
+            <button onClick={() => window.open('https://g.page/r/CdLCrFOSM76vEBM/review')} style={{ width: '100%', marginTop: '10px', fontSize: '16px', padding: '10px', background: '#e3f2fd', color: '#1a73e8', border: '1px solid #1a73e8', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
               تقييم عيادة أكتوبر ⭐
             </button>
           </div>
@@ -250,31 +316,29 @@ const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-�
             
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
               <h3 style={{ margin: '0' }}>فرع شبرا</h3>
-              <button onClick={() => window.open('https://maps.app.goo.gl/M5ZMNchAfXD3omYT9')} style={{ background: '#e8f5e9', border: '1px solid #2e7d32', borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', color: '#2e7d32', fontWeight: 'bold', fontSize: '18px' }}>
+              <button onClick={() => window.open('https://maps.app.goo.gl/M5ZMNchAfXD3omYT9')} style={{ background: '#e8f5e9', border: '1px solid #2e7d32', borderRadius: '8px', padding: '8px 20px', cursor: 'pointer', color: '#2e7d32', fontWeight: 'bold', fontSize: '16px' }}>
                 اللوكيشن
               </button>
             </div>
             
-            <p style={{ fontSize: '20px' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث /الخلفاوي</p>
+            <p style={{ fontSize: '18px', color: '#475569' }}>16 شارع دولتيان فوق كنتاكي الدور الثالث /الخلفاوي</p>
             
-            {/* 🌟 رابط الحجز المباشر لفرع شبرا بالنظام الجديد */}
-            {/* زر حجز موعد (شبرا) - يعمل فوراً عبر navigate */}
-<button 
-  onClick={() => navigate(shubraPath)} 
-  style={{ width: '100%', marginTop: '15px', fontSize: '24px', padding: '15px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
->
-  حجز موعد (شبرا)
-</button>
+            <button 
+              onClick={() => navigate(shubraPath)} 
+              style={{ width: '100%', marginTop: '15px', fontSize: '20px', padding: '14px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+            >
+              حجز موعد (شبرا)
+            </button>
             
-            <button onClick={() => window.open('https://g.page/r/CULxWxXqThoJEBM/review')} style={{ width: '100%', marginTop: '10px', fontSize: '18px', padding: '10px', background: '#e8f5e9', color: '#2e7d32', border: '1px solid #2e7d32', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
+            <button onClick={() => window.open('https://g.page/r/CULxWxXqThoJEBM/review')} style={{ width: '100%', marginTop: '10px', fontSize: '16px', padding: '10px', background: '#e8f5e9', color: '#2e7d32', border: '1px solid #2e7d32', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
               تقييم عيادة شبرا ⭐
             </button>
           </div>
         </div>
 
         {/* قسم الخدمات */}
-        <div style={{ background: '#fff', borderRadius: '20px', padding: '30px', marginTop: '30px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}>
-          <h2 style={{ color: '#1a73e8', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ background: '#fff', borderRadius: '20px', padding: '30px', marginTop: '30px', boxShadow: '0 10px 25px rgba(0,0,0,0.06)' }}>
+          <h2 style={{ color: '#1a73e8', display: 'flex', alignItems: 'center', gap: '10px', margin: 0 }}>
             <FaStethoscope /> خدمات العيادة 
           </h2>
           
@@ -290,6 +354,8 @@ const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-�
                   background: '#f0fff4', 
                   borderRadius: '12px',
                   textAlign: 'center',
+                  fontWeight: 'bold',
+                  color: '#1e293b',
                   transition: 'transform 0.2s'
                 }}
                 onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
@@ -304,28 +370,25 @@ const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-�
 
       {/* قسم الاستشارات المجانية والتطبيق */}
       <div style={{ padding: '30px', background: '#e3f2fd', borderRadius: '20px', marginTop: '40px', textAlign: 'center', margin: '20px' }}>
-        <h3 style={{ color: '#1565c0' }}>استشارة طبية مجانية أونلاين</h3>
-        <p>أرسل سؤالك الطبي وسنقوم بالرد عليه في أقرب وقت.</p>
+        <h3 style={{ color: '#1565c0', margin: '0 0 10px 0' }}>استشارة طبية مجانية أونلاين</h3>
+        <p style={{ margin: '0 0 20px 0', color: '#334155' }}>أرسل سؤالك الطبي وسنقوم بالرد عليه في أقرب وقت.</p>
         
         <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', marginTop: '20px', flexWrap: 'wrap' }}>
-          {/* زر إسأل دكتور أيمن */}
           <button 
             onClick={() => setShowConsultModal(true)} 
-            style={{ padding: '15px 40px', background: '#1565c0', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '20px', cursor: 'pointer', fontWeight: 'bold' }}
+            style={{ padding: '14px 35px', background: '#1565c0', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '18px', cursor: 'pointer', fontWeight: 'bold' }}
           >
             إسأل دكتور أيمن
           </button>
 
-          {/* زر عرض الأسئلة والأجوبة */}
           <Link to="/free-consultations" style={{ textDecoration: 'none' }}>
             <button 
-              style={{ padding: '15px 40px', background: '#f2945b', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '20px', cursor: 'pointer', fontWeight: 'bold' }}
+              style={{ padding: '14px 35px', background: '#f2945b', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '18px', cursor: 'pointer', fontWeight: 'bold' }}
             >
               الأسئلة والأجوبة
             </button>
           </Link>
 
-          {/* زر حمل تطبيق دكتور الآن */}
           <a 
             href="https://play.google.com/store/apps/details?id=com.doctorplatform.app&pcampaignid=web_share" 
             target="_blank" 
@@ -333,7 +396,7 @@ const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-�
             style={{ textDecoration: 'none' }}
           >
             <button 
-              style={{ padding: '15px 40px', background: '#30b837', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '24px', cursor: 'pointer', fontWeight: 'bold' }}
+              style={{ padding: '14px 35px', background: '#30b837', color: '#fff', border: 'none', borderRadius: '50px', fontSize: '18px', cursor: 'pointer', fontWeight: 'bold' }}
             >
               حمل تطبيق دكتور الآن 📱
             </button>
