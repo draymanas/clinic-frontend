@@ -13,6 +13,10 @@
       "destination": "https://clinic-api-ig3d.onrender.com/s/:serviceId*"
     },
     {
+      "source": "/service/:serviceId*",
+      "destination": "https://clinic-api-ig3d.onrender.com/service/:serviceId*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
