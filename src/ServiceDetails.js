@@ -26,7 +26,10 @@ const ServiceDetails = () => {
     );
   }
 
-  const pageUrl = `https://www.doctoreg.online/service/${service.id}`;
+  // رابط المشاركة للسوشيال ميديا (ليولد الكارت العربي المخصص)
+const shareUrl = `https://www.doctoreg.online/s/${service.id}`;
+// الرابط الأصلي للصفحة للأرشفة والسيو
+const pageUrl = `https://www.doctoreg.online/service/${service.id}`;
   const pageTitle = service.seoTitle || `${service.title} | دكتور أيمن عجيب استشاري مخ وأعصاب`;
   const pageDescription = service.seoDescription || service.shortDescription || service.introduction;
   const pageImage = service.image ? (service.image.startsWith('http') ? service.image : `https://www.doctoreg.online${service.image}`) : 'https://www.doctoreg.online/spine-surgery.png';
@@ -63,7 +66,7 @@ const ServiceDetails = () => {
 
   const handleShare = () => {
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(pageUrl);
+      navigator.clipboard.writeText(shareUrl); // 🌟 ينسخ رابط /s/ المولد للكارت فوراً
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     }
