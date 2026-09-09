@@ -280,8 +280,7 @@ export const DirectBooking = () => {
     : `احجز موعدك الآن مع د. ${doctorName}، ${specialty}. مواعيد العيادة وسعر الكشف وحجز فوري عبر منصة دكتور بدون رسوم إضافية.`;
 
   // 🌟 1. رابط المشاركة فائق الاختصار للتعليقات وفيسبوك: /d/40
-// نجعل رابط المشاركة يمر بسيرفر الـ API على رندر الذي يحقن وسوم فيسبوك
-const shortShareUrl = `https://clinic-api-ig3d.onrender.com/d/${doctor?.id || id}`;
+  const shortShareUrl = `https://www.doctoreg.online/d/${doctor?.id || id}`;
 
   // 🌟 2. رابط الـ SEO الكامل المعتمد للـ Canonical ومحرك بحث Google:
   const seoRawText = `${doctorName}-${doctor?.title ? `${doctor.title} ` : ''}${specialty}${city ? `-${city}` : ''}${area ? `-${area}` : ''}`.trim();
