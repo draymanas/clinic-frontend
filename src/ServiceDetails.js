@@ -26,15 +26,16 @@ const ServiceDetails = () => {
     );
   }
 
-  // رابط المشاركة للسوشيال ميديا (ليولد الكارت العربي المخصص)
-const shareUrl = `https://www.doctoreg.online/s/${service.id}`;
-// الرابط الأصلي للصفحة للأرشفة والسيو
-const pageUrl = `https://www.doctoreg.online/service/${service.id}`;
+  // 🌟 الرابط الصحيح للمشاركة الذي يولد كروت السوشيال ميديا (يحتوي على /s/)
+  const shareUrl = `https://www.doctoreg.online/s/${service.id}`;
+  
+  // الرابط الكنسي للأرشفة في جوجل
+  const pageUrl = `https://www.doctoreg.online/service/${service.id}`;
   const pageTitle = service.seoTitle || `${service.title} | دكتور أيمن عجيب استشاري مخ وأعصاب`;
   const pageDescription = service.seoDescription || service.shortDescription || service.introduction;
   const pageImage = service.image ? (service.image.startsWith('http') ? service.image : `https://www.doctoreg.online${service.image}`) : 'https://www.doctoreg.online/spine-surgery.png';
 
-  // سكيما طبية ذكية ومتقدمة لجوجل تثبت خبرة الدكتور في هذا الموضوع (E-E-A-T)
+  // سكيما طبية ذكية لجوجل (E-E-A-T)
   const medicalSchema = {
     "@context": "https://schema.org",
     "@type": "MedicalWebPage",
@@ -64,9 +65,23 @@ const pageUrl = `https://www.doctoreg.online/service/${service.id}`;
     }
   };
 
-  const handleShare = () => {
+  // 🌟 دالة المشاركة المصححة 100% التي تستخدم رابط /s/
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: pageTitle,
+          text: pageDescription,
+          url: shareUrl // الرابط الصحيح الذي يحتوي على /s/
+        });
+        return;
+      } catch (err) {
+        // إذا ألغى المستخدم المشاركة، نستمر للنسخ في الحافظة
+      }
+    }
+
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(shareUrl); // 🌟 ينسخ رابط /s/ المولد للكارت فوراً
+      navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     }
@@ -114,7 +129,7 @@ const pageUrl = `https://www.doctoreg.online/service/${service.id}`;
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="og:image" content={pageImage} />
-        <meta property="og:url" content={pageUrl} />
+        <meta property="og:url" content={shareUrl} />
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="عيادات دكتور أيمن عجيب" />
 
@@ -168,12 +183,26 @@ const pageUrl = `https://www.doctoreg.online/service/${service.id}`;
             <FaArrowRight /> العودة لصفحة الدكتور
           </button>
 
+          {/* 🌟 زر المشاركة المصحح */}
           <button 
             onClick={handleShare}
-            style={{ background: copied ? '#059669' : '#f1f5f9', color: copied ? '#fff' : '#0f172a', border: '1px solid #cbd5e1', padding: '8px 16px', borderRadius: '10px', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+            style={{ 
+              background: copied ? '#059669' : '#1a73e8', 
+              color: '#fff', 
+              border: 'none', 
+              padding: '10px 20px', 
+              borderRadius: '12px', 
+              fontSize: '14px', 
+              fontWeight: 'bold', 
+              cursor: 'pointer', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              transition: 'background 0.3s ease'
+            }}
           >
             <FaShareAlt />
-            <span>{copied ? 'تم نسخ رابط المقال!' : 'مشاركة المقال'}</span>
+            <span>{copied ? 'تم نسخ الرابط المختصر!' : 'مشاركة الرابط'}</span>
           </button>
         </div>
       </header>
