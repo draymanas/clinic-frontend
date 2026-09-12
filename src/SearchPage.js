@@ -478,24 +478,62 @@ return (
                     margin: '0 auto 40px'
                 }}
             >
-                {/* 1. قائمة التخصص */}
-                <div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
-                    <label htmlFor="specialty-select" style={{ fontSize: '18px', color: '#0a0101', marginRight: '10px' }}>التخصص</label>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <span aria-hidden="true" style={{ fontSize: '24px', marginLeft: '5px' }}>🩺</span>
-                        <select 
-                            id="specialty-select"
-                            name="specialty"
-                            aria-label="اختر التخصص الطبي"
-                            onChange={e => setFSpecialty(e.target.value)} 
-                            value={fSpecialty} 
-                            style={{ border: 'none', width: '100%', fontSize: '16px', fontWeight: 'bold', outline: 'none', cursor: 'pointer', background: 'transparent' }}
-                        >
-                            <option value="الكل">كل التخصصات</option>
-                            {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
-                        </select>
-                    </div>
-                </div>
+              <div
+    style={{
+        flex: '1 1 250px',
+        minWidth: '200px',
+        padding: '10px 15px',
+        display: 'flex',
+        flexDirection: 'column',
+        borderLeft: '1px solid #eee'
+    }}
+>
+    <label
+        id="specialty-label"
+        htmlFor="specialty-select"
+        style={{
+            fontSize: '18px',
+            color: '#0a0101',
+            marginRight: '10px'
+        }}
+    >
+        التخصص
+    </label>
+
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+        <span
+            aria-hidden="true"
+            style={{ fontSize: '24px', marginLeft: '5px' }}
+        >
+            🩺
+        </span>
+
+        <select
+            id="specialty-select"
+            name="specialty"
+            aria-labelledby="specialty-label"
+            value={fSpecialty}
+            onChange={e => setFSpecialty(e.target.value)}
+            style={{
+                border: 'none',
+                width: '100%',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                outline: 'none',
+                cursor: 'pointer',
+                background: 'transparent'
+            }}
+        >
+            <option value="الكل">كل التخصصات</option>
+
+            {medicalSpecialties.map(s => (
+                <option key={s} value={s}>
+                    {s}
+                </option>
+            ))}
+        </select>
+    </div>
+</div>
 
                 {/* 2. قائمة المحافظة */}
                 <div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
