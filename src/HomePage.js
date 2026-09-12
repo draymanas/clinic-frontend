@@ -194,18 +194,12 @@ function HomePage() {
                         alignItems: 'center', padding: '20px', flex: '1'
                     }}>
                         <img 
-                            src="/10.png" 
-                            alt="دكتور أيمن عجيب" 
-                            onClick={() => {
-                                navigate('/dr_ayman_aguib'); 
-                                window.scrollTo(0, 0); 
-                            }}
-                            style={{ 
-                                width: (typeof window !== 'undefined' && window.innerWidth < 768) ? '90%' : '400px',
-                                maxWidth: '400px', height: 'auto', borderRadius: '10px',
-                                boxShadow: '0 4px 15px rgba(0,0,0,0.1)', marginBottom: '10px', cursor: 'pointer' 
-                            }} 
-                        />
+    src="/10.webp" 
+    alt="دكتور أيمن عجيب" 
+    fetchPriority="high"
+    loading="eager"
+    style={{ width: '90%', maxWidth: '400px', height: 'auto', borderRadius: '10px' }}
+/>
                         <button 
                             onClick={() => navigate('/dr_ayman_aguib')}
                             style={{
