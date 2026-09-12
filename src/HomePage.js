@@ -248,74 +248,90 @@ function HomePage() {
                         flexWrap: 'wrap', alignItems: 'stretch', border: '1px solid #ddd',
                         overflow: 'hidden', direction: 'rtl'
                     }}>
-                        <div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
-                            <label style={{ fontSize: '18px', color: '#0a0101', marginRight: '10px' }}>أنا أبحث عن دكتور</label>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <span style={{ fontSize: '24px', marginLeft: '5px' }}>🩺</span>
-                                <select onChange={e => setFSpecialty(e.target.value)} value={fSpecialty} style={{ border: 'none', width: '100%', fontSize: '16px', fontWeight: 'bold', outline: 'none', cursor: 'pointer', background: 'transparent' }}>
-                                    <option value="الكل">اختيار التخصص</option>
-                                    {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
-                                </select>
-                            </div>
-                        </div>
+                      {/* 1. حقل التخصص */}
+<div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
+    <label htmlFor="home-specialty-select" style={{ fontSize: '18px', color: '#0a0101', marginRight: '10px' }}>أنا أبحث عن دكتور</label>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+        <span style={{ fontSize: '24px', marginLeft: '5px' }}>🩺</span>
+        <select 
+            id="home-specialty-select"
+            aria-label="أنا أبحث عن دكتور - التخصص"
+            onChange={e => setFSpecialty(e.target.value)} 
+            value={fSpecialty} 
+            style={{ border: 'none', width: '100%', fontSize: '16px', fontWeight: 'bold', outline: 'none', cursor: 'pointer', background: 'transparent' }}
+        >
+            <option value="الكل">اختيار التخصص</option>
+            {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+    </div>
+</div>
 
-                        <div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
-                            <label style={{ fontSize: '20px', color: '#030101', marginRight: '10px' }}>في محافظة</label>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <span style={{ fontSize: '24px', marginLeft: '5px' }}>📍</span>
-                                <select 
-                                    value={fCity}
-                                    onChange={e => { setFCity(e.target.value); setFArea("الكل"); }} 
-                                    style={{ border: 'none', width: '100%', fontSize: '16px', fontWeight: 'bold', outline: 'none', cursor: 'pointer', background: 'transparent' }}
-                                >
-                                    <option value="الكل">كل المحافظات</option>
-                                    {Object.keys(egyptLocations).map(g => <option key={g} value={g}>{g}</option>)}
-                                </select>
-                            </div>
-                        </div>
+{/* 2. حقل المحافظة */}
+<div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
+    <label htmlFor="home-city-select" style={{ fontSize: '20px', color: '#030101', marginRight: '10px' }}>في محافظة</label>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+        <span style={{ fontSize: '24px', marginLeft: '5px' }}>📍</span>
+        <select 
+            id="home-city-select"
+            aria-label="في محافظة"
+            value={fCity}
+            onChange={e => { setFCity(e.target.value); setFArea("الكل"); }} 
+            style={{ border: 'none', width: '100%', fontSize: '16px', fontWeight: 'bold', outline: 'none', cursor: 'pointer', background: 'transparent' }}
+        >
+            <option value="الكل">كل المحافظات</option>
+            {Object.keys(egyptLocations).map(g => <option key={g} value={g}>{g}</option>)}
+        </select>
+    </div>
+</div>
 
-                        <div style={{ 
-                            flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', 
-                            display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee',
-                            opacity: fCity === 'الكل' ? 0.6 : 1, transition: '0.3s'
-                        }}>
-                            <label style={{ fontSize: '20px', color: '#0a0202', marginRight: '10px' }}>في منطقة</label>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <span style={{ fontSize: '24px', marginLeft: '5px' }}>🏘️</span>
-                                <select 
-                                    disabled={fCity === 'الكل'} 
-                                    value={fArea} 
-                                    onChange={(e) => setFArea(e.target.value)} 
-                                    style={{ 
-                                        border: 'none', width: '100%', fontSize: '20px', 
-                                        fontWeight: 'bold', outline: 'none', 
-                                        cursor: fCity === 'الكل' ? 'not-allowed' : 'pointer', 
-                                        background: 'transparent' 
-                                    }}
-                                >
-                                    <option value="الكل">اختيار المنطقة</option>
-                                    {fCity !== 'الكل' && egyptLocations[fCity]?.map(area => (
-                                        <option key={area} value={area}>{area}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
+{/* 3. حقل المنطقة */}
+<div style={{ 
+    flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', 
+    display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee',
+    opacity: fCity === 'الكل' ? 0.6 : 1, transition: '0.3s'
+}}>
+    <label htmlFor="home-area-select" style={{ fontSize: '20px', color: '#0a0202', marginRight: '10px' }}>في منطقة</label>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+        <span style={{ fontSize: '24px', marginLeft: '5px' }}>🏘️</span>
+        <select 
+            id="home-area-select"
+            aria-label="في منطقة"
+            disabled={fCity === 'الكل'} 
+            value={fArea} 
+            onChange={(e) => setFArea(e.target.value)} 
+            style={{ 
+                border: 'none', width: '100%', fontSize: '20px', 
+                fontWeight: 'bold', outline: 'none', 
+                cursor: fCity === 'الكل' ? 'not-allowed' : 'pointer', 
+                background: 'transparent' 
+            }}
+        >
+            <option value="الكل">اختيار المنطقة</option>
+            {fCity !== 'الكل' && egyptLocations[fCity]?.map(area => (
+                <option key={area} value={area}>{area}</option>
+            ))}
+        </select>
+    </div>
+</div>
 
-                        <div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column' }}>
-                            <label style={{ fontSize: '20px', color: '#070101', marginRight: '10px' }}>أو اكتب اسم الدكتور</label>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <span style={{ fontSize: '24px', marginLeft: '5px' }}>🔍</span>
-                                <input 
-                                    placeholder="الدكتور " 
-                                    value={searchTerm}
-                                    onChange={e => setSearchTerm(e.target.value)}
-                                    style={{ 
-                                        border: 'none', width: '100%', outline: 'none', 
-                                        fontSize: '20px', fontWeight: 'bold' 
-                                    }} 
-                                />
-                            </div>
-                        </div>
+{/* 4. حقل اسم الدكتور */}
+<div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column' }}>
+    <label htmlFor="home-doctor-input" style={{ fontSize: '20px', color: '#070101', marginRight: '10px' }}>أو اكتب اسم الدكتور</label>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+        <span style={{ fontSize: '24px', marginLeft: '5px' }}>🔍</span>
+        <input 
+            id="home-doctor-input"
+            aria-label="أو اكتب اسم الدكتور"
+            placeholder="الدكتور " 
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            style={{ 
+                border: 'none', width: '100%', outline: 'none', 
+                fontSize: '20px', fontWeight: 'bold' 
+            }} 
+        />
+    </div>
+</div>
 
                         <button 
                             onClick={() => handleSearchRedirect(fSpecialty, fCity, fArea, searchTerm)}
