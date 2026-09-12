@@ -753,24 +753,25 @@ return (
                             </button>
                         </div>
                         
-                        {/* 1. اختيار اليوم */}
-                        <div style={{ marginBottom: '14px' }}>
-                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>
-                                📅 1. اختر يوم الكشف المتاح:
-                            </label>
-                            <select 
-                                onChange={e => setSelectedDay(e.target.value)} 
-                                value={selectedDay} 
-                                style={{ ...inputStyle, background: '#f8fafc', fontWeight: '600', fontSize: '13px' }}
-                            >
-                                <option value="">-- اضغط لاختيار اليوم المناسب --</option>
-                                {selectedDoc.availability ? selectedDoc.availability.split(' - ').map(slot => (
-                                    <option key={slot} value={slot}>
-                                        {slot.split(' ')[0]} ({getNextDateForDay(slot.split(' ')[0])}) | {slot}
-                                    </option>
-                                )) : <option value="الأحد (5:00 مساءً إلى 7:00 مساءً)">الأحد (5:00 مساءً إلى 7:00 مساءً)</option>}
-                            </select>
-                        </div>
+                       {/* 1. اختيار اليوم */}
+<div style={{ marginBottom: '14px' }}>
+    <label htmlFor="day-select" style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#334155', marginBottom: '6px' }}>
+        📅 1. اختر يوم الكشف المتاح:
+    </label>
+    <select 
+        id="day-select"
+        onChange={e => setSelectedDay(e.target.value)} 
+        value={selectedDay} 
+        style={{ ...inputStyle, background: '#f8fafc', fontWeight: '600', fontSize: '13px' }}
+    >
+        <option value="">-- اضغط لاختيار اليوم المناسب --</option>
+        {selectedDoc.availability ? selectedDoc.availability.split(' - ').map(slot => (
+            <option key={slot} value={slot}>
+                {slot.split(' ')[0]} ({getNextDateForDay(slot.split(' ')[0])}) | {slot}
+            </option>
+        )) : <option value="الأحد (5:00 مساءً إلى 7:00 مساءً)">الأحد (5:00 مساءً إلى 7:00 مساءً)</option>}
+    </select>
+</div>
 
                         {/* 2. تقسيم أوتوماتيكي للساعات كل 15 دقيقة */}
                         {selectedDay && (
