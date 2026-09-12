@@ -605,7 +605,7 @@ useEffect(() => {
   }}
 >
   <img 
-    src="/logo512.png" 
+    src="/logo512.webp" 
     alt="منصة دكتور" 
     style={{ 
       height: '60px', 
@@ -614,7 +614,7 @@ useEffect(() => {
       objectFit: 'contain',
       paddingRight: '10px' 
     }} 
-    onError={(e) => { e.target.src = "/logo.png" }} 
+    onError={(e) => { e.target.src = "/logo.webp" }} 
   />
 </div>
 
