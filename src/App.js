@@ -884,6 +884,32 @@ useEffect(() => {
     fetchData(); 
 }, []);
 
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { FaBell, FaCheck } from 'react-icons/fa';
+
+// داخل دالة المكون الرئيسي App:
+const [activeNotification, setActiveNotification] = useState(null);
+const location = useLocation();
+ 
+
+useEffect(() => {
+  // فحص ما إذا كان المستخدم دخل من خلال الضغط على إشعار
+  const params = new URLSearchParams(location.search);
+  const notifTitle = params.get('notif_title');
+  const notifBody = params.get('notif_body');
+
+  if (notifTitle || notifBody) {
+    setActiveNotification({
+      title: notifTitle || 'إشعار جديد',
+      body: notifBody || ''
+    });
+
+    // تنظيف الرابط في المتصفح ليبقى الرابط نظيفاً
+    const cleanUrl = window.location.pathname;
+    window.history.replaceState({}, document.title, cleanUrl);
+  }
+}, [location]);
 
 useEffect(() => {
     const path = window.location.pathname;
@@ -1165,6 +1191,96 @@ onClick={() => {
 >
   إلغاء وإغلاق
 </button></div>
+        </div>
+      )}
+
+      {/* 🌟 نافذة عرض تفاصيل الإشعار بالكامل عند الضغط عليه */}
+      {activeNotification && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.75)',
+          backdropFilter: 'blur(5px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 99999,
+          direction: 'rtl',
+          fontFamily: 'Cairo, sans-serif',
+          padding: '20px'
+        }}>
+          <div style={{
+            background: '#fff',
+            borderRadius: '24px',
+            padding: '30px',
+            maxWidth: '500px',
+            width: '100%',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            textAlign: 'center',
+            animation: 'fadeIn 0.3s ease'
+          }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              background: '#e0f2fe',
+              color: '#0284c7',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 16px auto',
+              fontSize: '28px'
+            }}>
+              🔔
+            </div>
+
+            <h3 style={{
+              fontSize: '20px',
+              color: '#0f172a',
+              margin: '0 0 14px 0',
+              fontWeight: '800'
+            }}>
+              {activeNotification.title}
+            </h3>
+
+            <div style={{
+              background: '#f8fafc',
+              padding: '16px',
+              borderRadius: '14px',
+              color: '#334155',
+              fontSize: '15.5px',
+              lineHeight: '1.8',
+              whiteSpace: 'pre-wrap',
+              textAlign: 'right',
+              marginBottom: '24px',
+              border: '1px solid #e2e8f0',
+              maxHeight: '300px',
+              overflowY: 'auto'
+            }}>
+              {activeNotification.body}
+            </div>
+
+            <button
+              onClick={() => setActiveNotification(null)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: '#0284c7',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(2, 132, 199, 0.3)'
+              }}
+            >
+              تمت القراءة وإغلاق
+            </button>
+          </div>
         </div>
       )}
 
