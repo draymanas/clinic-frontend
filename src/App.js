@@ -175,271 +175,589 @@ function DoctorRegister() {
 }
 
 // مكون صفحة الإدارة (AdminPage)
+
+// ==========================================
+// 🌟 المكون الرئيسي للوحة تحكم الإدارة المطورة (Admin Dashboard)
+// ==========================================
 function AdminPage({ doctors, appointments, fetchData }) {
-    const handleDelete = async (id) => { if(window.confirm("حذف؟")){ await fetch(`https://clinic-api-ig3d.onrender.com/delete-doctor/${id}`, {method:'DELETE'}); fetchData(); } };
-    const handleToggle = async (id, s) => { await fetch(`https://clinic-api-ig3d.onrender.com/toggle-doctor/${id}`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:s})}); fetchData(); };
+  // التبويب النشط حالياً: 'doctors' | 'accounting' | 'appointments' | 'notifications' | 'consultations'
+  const [activeTab, setActiveTab] = useState('doctors');
 
+  // --- حالات إدارة الأطباء ---
+  const [adminSearch, setAdminSearch] = useState('');
+  const [adminSpecialty, setAdminSpecialty] = useState('الكل');
 
-const [adminSearch, setAdminSearch] = React.useState(''); // للبحث بالاسم
-const [adminSpecialty, setAdminSpecialty] = React.useState('الكل'); // للفلترة بالتخصص
-const [consultations, setConsultations] = React.useState([]);
+  // --- حالات الاستشارات الطبية ---
+  const [consultations, setConsultations] = useState([]);
+  const ADMIN_API_URL = "https://clinic-api-ig3d.onrender.com/api/admin/consultations";
 
-// الرابط الأساسي لـ API الأدمن
-const ADMIN_API_URL = "https://clinic-api-ig3d.onrender.com/api/admin/consultations";
+  // --- حالات الإشعارات ---
+  const [notifTarget, setNotifTarget] = useState('all_patients');
+  const [selectedDoctorForNotif, setSelectedDoctorForNotif] = useState('');
+  const [notifTitle, setNotifTitle] = useState('');
+  const [notifBody, setNotifBody] = useState('');
+  const [isSendingNotif, setIsSendingNotif] = useState(false);
 
-const fetchConsultations = async () => {
+  // جلب الاستشارات
+  const fetchConsultations = async () => {
     try {
-        const response = await fetch(ADMIN_API_URL);
-        if (!response.ok) throw new Error("فشل في جلب البيانات");
-        const data = await response.json();
-        setConsultations(data);
+      const response = await fetch(ADMIN_API_URL);
+      if (!response.ok) throw new Error("فشل في جلب البيانات");
+      const data = await response.json();
+      setConsultations(data);
     } catch (error) {
-        console.error("Error fetching consultations:", error);
-        alert("حدث خطأ أثناء جلب الاستشارات من السيرفر");
+      console.error("Error fetching consultations:", error);
     }
-};
+  };
 
-React.useEffect(() => { 
-    fetchConsultations(); 
-}, []);
+  useEffect(() => {
+    fetchConsultations();
+  }, []);
 
-// استدعاء الدالة عند تحميل الصفحة
-React.useEffect(() => { 
-    fetchConsultations(); 
-}, []);
+  // دوال إدارة الأطباء
+  const handleDelete = async (id) => {
+    if (window.confirm("هل أنت متأكد من رغبتك في حذف هذا الطبيب نهائياً؟")) {
+      await fetch(`https://clinic-api-ig3d.onrender.com/delete-doctor/${id}`, { method: 'DELETE' });
+      fetchData();
+    }
+  };
 
-const handleAnswerSubmit = async (id, answerText, currentStatus) => {
+  const handleToggle = async (id, s) => {
+    await fetch(`https://clinic-api-ig3d.onrender.com/toggle-doctor/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: s })
+    });
+    fetchData();
+  };
+
+  const handleFeaturedToggle = async (id, currentStatus) => {
     try {
-        const response = await fetch(`${ADMIN_API_URL}/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                answer: answerText,
-                status: currentStatus
-            })
-        });
-
-        if (response.ok) {
-            alert("تم الرد وتحديث الحالة بنجاح!");
-            fetchConsultations(); // إعادة تحديث القائمة لرؤية التغييرات فوراً
-        } else {
-            throw new Error("فشل التحديث في السيرفر");
-        }
-    } catch (error) {
-        console.error("Error updating consultation:", error);
-        alert("حدث خطأ أثناء إرسال الرد");
+      await fetch(`https://clinic-api-ig3d.onrender.com/update-doctor-featured/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ featured: !currentStatus })
+      });
+      fetchData();
+    } catch (err) {
+      console.error("Error:", err);
     }
-};
+  };
 
-const filteredAdminDoctors = doctors.filter(d => {
-    const matchName = d.name.toLowerCase().includes(adminSearch.toLowerCase());
+  const handleOrderChange = async (id, newOrder) => {
+    try {
+      await fetch(`https://clinic-api-ig3d.onrender.com/update-doctor-order/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sort_order: newOrder || 999 })
+      });
+      fetchData();
+    } catch (err) {
+      console.error("Error updating order:", err);
+    }
+  };
+
+  // الرد على الاستشارة
+  const handleAnswerSubmit = async (id, answerText, currentStatus) => {
+    try {
+      const response = await fetch(`${ADMIN_API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answer: answerText, status: currentStatus })
+      });
+      if (response.ok) {
+        alert("✅ تم حفظ الرد وتحديث حالة الاستشارة بنجاح!");
+        fetchConsultations();
+      } else {
+        throw new Error("فشل التحديث");
+      }
+    } catch (error) {
+      alert("❌ حدث خطأ أثناء حفظ الرد");
+    }
+  };
+
+  // إرسال الإشعارات من السيرفر
+  const handleSendNotification = async (e) => {
+    e.preventDefault();
+    if (!notifTitle.trim() || !notifBody.trim()) {
+      alert("يرجى إدخال عنوان الإشعار ونصه");
+      return;
+    }
+
+    setIsSendingNotif(true);
+    try {
+      const payload = {
+        targetType: notifTarget,
+        targetId: notifTarget === 'specific_doctor' ? selectedDoctorForNotif : undefined,
+        title: notifTitle,
+        body: notifBody
+      };
+
+      const res = await fetch("https://clinic-api-ig3d.onrender.com/api/send-bulk-notification", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const resData = await res.json();
+      if (res.ok) {
+        alert(`✅ ${resData.message || 'تم إرسال الإشعار بنجاح!'}`);
+        setNotifTitle('');
+        setNotifBody('');
+      } else {
+        alert(`⚠️ ${resData.error || 'فشل إرسال الإشعار'}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("❌ حدث خطأ أثناء الاتصال بخادم الإشعارات");
+    } finally {
+      setIsSendingNotif(false);
+    }
+  };
+
+  // فلترة الأطباء
+  const medicalSpecialties = [
+    'مخ وأعصاب', 'جراحة مخ وأعصاب', 'عظام', 'باطنة', 'أطفال', 'نساء وتوليد',
+    'قلب وأوعية دموية', 'جلدية', 'عيون', 'أنف وأذن وحنجرة', 'مسالك بولية', 'علاج طبيعي'
+  ];
+
+  const filteredAdminDoctors = (doctors || []).filter(d => {
+    const matchName = (d.name || '').toLowerCase().includes(adminSearch.toLowerCase());
     const matchSpecialty = adminSpecialty === 'الكل' || d.specialty === adminSpecialty;
     return matchName && matchSpecialty;
-});
+  });
 
+  // قائمة أزرار القائمة الجانبية بالترتيب المطلوب
+  const menuItems = [
+    { id: 'doctors', title: 'إدارة الأطباء', icon: '👨‍⚕️' },
+    { id: 'accounting', title: 'إدارة الحسابات', icon: '💰' },
+    { id: 'appointments', title: 'إدارة الحجوزات', icon: '📅' },
+    { id: 'notifications', title: 'الإشعارات', icon: '🔔' },
+    { id: 'consultations', title: 'الاستشارات الطبية', icon: '💬' },
+  ];
 
-const handleFeaturedToggle = async (id, currentStatus) => {
-    try {
-        await fetch(`https://clinic-api-ig3d.onrender.com/update-doctor-featured/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ featured: !currentStatus })
-        });
-        fetchData(); 
-    } catch (err) {
-        console.error("Error:", err);
-    }
-};
-
-const handleOrderChange = async (id, newOrder) => {
-        try {
-            await fetch(`https://clinic-api-ig3d.onrender.com/update-doctor-order/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sort_order: newOrder || 999 })
-            });
-            fetchData(); // تحديث عشان الترتيب يظهر فوراً
-        } catch (err) {
-            console.error("Error updating order:", err);
-        }
-    };
-
-    return (
-        <div style={{ padding: '20px', direction: 'rtl' }}>
-            <h2 style={{textAlign:'center'}}>📊 إدارة الأطباء</h2>
-            <div style={{ 
-    display: 'flex', 
-    gap: '15px', 
-    marginBottom: '20px', 
-    backgroundColor: '#f8f9fa', 
-    padding: '15px', 
-    borderRadius: '10px' 
-}}>
-    <input 
-        type="text" 
-        placeholder="🔍 ابحث باسم الدكتور..." 
-        style={{ flex: 2, padding: '10px', borderRadius: '5px', border: '1px solid #ddd' }}
-        onChange={(e) => setAdminSearch(e.target.value)}
-    />
-    
-    <select 
-        style={{ flex: 1, padding: '10px', borderRadius: '5px', border: '1px solid #ddd' }}
-        onChange={(e) => setAdminSpecialty(e.target.value)}
-    >
-        <option value="الكل">كل التخصصات</option>
-        {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
-    </select>
-</div>
-            <table style={{width:'100%', background:'#fff', borderCollapse:'collapse', marginBottom:'40px'}}>
-                <thead style={{background:'#eee'}}><tr align="right"><th>الدكتور</th><th>المكان</th><th>مميز</th><th>الحالة</th><th style={{ textAlign: 'center' }}>الترتيب</th><th>الإجراء</th></tr></thead>
-                <tbody>
-                    {filteredAdminDoctors.map(d => (
-                        <tr key={d.id} style={{borderBottom:'1px solid #eee'}}>
-                            <td style={{padding:'10px'}}>{d.name}</td>
-                            <td>{d.city}</td>
-                            <td style={{ textAlign: 'center' }}>
-    <input 
-        type="checkbox" 
-        checked={d.featured} // تم تغيير `featured` إلى `featured`
-        onChange={() => handleFeaturedToggle(d.id, d.featured)}
-        style={{ cursor: 'pointer', transform: 'scale(1.2)' }}
-    />
-</td>
-                            <td>{d.is_active ? '✅ مفعل' : '❌ متوقف'}</td>
-                            <td style={{ textAlign: 'center' }}>
-                                <input 
-                                    type="number" 
-                                    defaultValue={d.sort_order === 999 ? '' : d.sort_order}
-                                    placeholder="999"
-                                    style={{ 
-                                        width: '50px', 
-                                        textAlign: 'center', 
-                                        border: '1px solid #ddd', 
-                                        borderRadius: '4px' 
-                                    }}
-                                    onBlur={(e) => handleOrderChange(d.id, e.target.value)}
-                                />
-                            </td>
-                            <td>
-                                <button onClick={() => handleToggle(d.id, !d.is_active)} style={{background: d.is_active ? '#f39c12' : '#27ae60', color:'#fff', border:'none', padding:'5px', borderRadius:'5px'}}>{d.is_active ? 'إيقاف' : 'تفعيل'}</button>
-                                <button onClick={() => handleDelete(d.id)} style={{color:'red', marginLeft:'10px', background:'none', border:'none'}}>حذف</button>
-                                </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-
-            <h2 style={{textAlign:'center'}}>📅 الحجوزات الأخيرة</h2>
-            <table style={{width:'100%', background:'#fff', borderCollapse:'collapse'}}>
-                <thead style={{background:'#34495e', color:'#fff'}}><tr align="right"><th>المريض</th><th>الموبايل</th><th>الدكتور</th><th>التاريخ</th></tr></thead>
-                <tbody>
-                    {appointments.map(app => (
-                        <tr key={app.id} style={{borderBottom:'1px solid #eee'}}>
-                            <td style={{padding:'10px'}}>{app.patient_name}</td>
-                            <td>{app.mobile}</td>
-                            <td>{app.doctor_name}</td>
-                            <td style={{ color: 'green', fontWeight: 'bold' }}>
-    {app.booking_date || app.appointment_date 
-        ? new Date(app.booking_date || app.appointment_date).toLocaleDateString('en-GB') 
-        : "غير محدد"}
-</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-           <div>
-   <div>
-    <h2 style={{textAlign:'center', marginTop:'50px'}}>💬 استشارات المرضى (لوحة التحكم)</h2>
-    <table style={{width:'100%', background:'#fff', borderCollapse:'collapse', marginBottom:'50px'}}>
-        <thead style={{background:'#1a73e8', color:'#fff'}}>
-            <tr>
-                <th style={{padding:'12px'}}>الاسم</th>
-                <th style={{padding:'12px'}}>السؤال</th>
-                <th style={{padding:'12px'}}>الحالة</th>
-                <th style={{padding:'12px'}}>الإجابة</th>
-                <th style={{padding:'12px'}}>إجراء</th>
-            </tr>
-        </thead>
-        <tbody>
-            {consultations.map(c => {
-                // متغيرات مؤقتة لحفظ التعديلات التي يقوم بها الأدمن في السطر الحالي قبل الضغط على حفظ
-                let localAnswer = c.answer || ""; 
-                let localStatus = c.status || "pending";
-
-                return (
-                    <tr key={c.id} style={{borderBottom:'1px solid #eee', textAlign: 'center'}}>
-                        <td style={{padding:'10px'}}>{c.name}</td>
-                        <td style={{padding:'10px', maxWidth:'300px', whiteSpace:'pre-wrap'}}>{c.question}</td>
-                        <td style={{padding:'10px'}}>
-                            <select 
-                                defaultValue={c.status}
-                                onChange={(e) => { localStatus = e.target.value; }}
-                                style={{padding:'5px', borderRadius:'4px', border:'1px solid #ccc'}}
-                            >
-                                <option value="pending">⏳ معلق</option>
-                                <option value="answered">✅ تم الرد</option>
-                            </select>
-                        </td>
-                        <td style={{padding:'10px'}}>
-                            <textarea 
-                                placeholder="اكتب الرد هنا..." 
-                                defaultValue={c.answer}
-                                style={{width:'90%', padding:'5px', minHeight:'50px', borderRadius:'4px'}}
-                                onChange={(e) => { localAnswer = e.target.value; }}
-                            />
-                        </td>
-                        <td style={{padding:'10px'}}>
-                            <button 
-                                onClick={() => handleAnswerSubmit(c.id, localAnswer, localStatus)}
-                                style={{
-                                    background: '#1a73e8', 
-                                    color: '#fff', 
-                                    border: 'none', 
-                                    padding: '6px 12px', 
-                                    borderRadius: '4px', 
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                حفظ والتحديث
-                            </button>
-                        </td>
-                    </tr>
-                );
-            })}
-        </tbody>
-    </table>
-</div>
-</div>
+  return (
+    <div style={{ display: 'flex', minHeight: '100vh', direction: 'rtl', fontFamily: 'Cairo, sans-serif', background: '#f1f5f9' }}>
+      
+      {/* 🌟 1. العمود الجانبي (Sidebar) على اليمين */}
+      <aside style={{
+        width: '260px',
+        backgroundColor: '#1e293b',
+        color: '#fff',
+        padding: '24px 14px',
+        boxShadow: '-4px 0 15px rgba(0,0,0,0.05)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+        flexShrink: 0
+      }}>
+        <div style={{ textAlign: 'center', paddingBottom: '20px', borderBottom: '1px solid #334155', marginBottom: '12px' }}>
+          <h3 style={{ margin: '0 0 6px 0', fontSize: '20px', color: '#38bdf8', fontWeight: '800' }}>لوحة الإدارة</h3>
+          <span style={{ fontSize: '12px', color: '#94a3b8' }}>منصة دكتور | DoctorEG</span>
         </div>
-    );
+
+        {/* أزرار التبويبات بالترتيب المطلوب */}
+        {menuItems.map(item => {
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                width: '100%',
+                padding: '13px 16px',
+                borderRadius: '12px',
+                border: 'none',
+                backgroundColor: isActive ? '#0284c7' : 'transparent',
+                color: isActive ? '#fff' : '#cbd5e1',
+                fontSize: '15.5px',
+                fontWeight: isActive ? '700' : '500',
+                cursor: 'pointer',
+                textAlign: 'right',
+                transition: 'all 0.2s ease',
+                boxShadow: isActive ? '0 4px 12px rgba(2,132,199,0.3)' : 'none'
+              }}
+            >
+              <span style={{ fontSize: '20px' }}>{item.icon}</span>
+              <span>{item.title}</span>
+            </button>
+          );
+        })}
+      </aside>
+
+      {/* 🌟 2. منطقة العرض الرئيسية (Main Content) */}
+      <main style={{ flex: 1, padding: '30px 35px', overflowY: 'auto' }}>
+
+        {/* -------------------- 1. إدارة الأطباء -------------------- */}
+        {activeTab === 'doctors' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', flexWrap: 'wrap', gap: '15px' }}>
+              <h2 style={{ margin: 0, color: '#0f172a', fontSize: '24px', fontWeight: '800' }}>👨‍⚕️ إدارة الأطباء</h2>
+              <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '6px 16px', borderRadius: '20px', fontWeight: 'bold', fontSize: '14px' }}>
+                إجمالي الأطباء: {doctors ? doctors.length : 0}
+              </span>
+            </div>
+
+            {/* أدوات البحث والفلترة */}
+            <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', backgroundColor: '#fff', padding: '16px', borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', flexWrap: 'wrap' }}>
+              <input
+                type="text"
+                placeholder="🔍 ابحث باسم الدكتور..."
+                style={{ flex: 2, minWidth: '220px', padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '15px', outline: 'none' }}
+                onChange={(e) => setAdminSearch(e.target.value)}
+              />
+              <select
+                style={{ flex: 1, minWidth: '180px', padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '15px', outline: 'none', background: '#fff' }}
+                onChange={(e) => setAdminSpecialty(e.target.value)}
+              >
+                <option value="الكل">كل التخصصات</option>
+                {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+
+            {/* جدول الأطباء */}
+            <div style={{ background: '#fff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.04)' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
+                <thead style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                  <tr>
+                    <th style={{ padding: '14px 18px', color: '#475569' }}>الدكتور</th>
+                    <th style={{ padding: '14px 18px', color: '#475569' }}>المحافظة والمنطقة</th>
+                    <th style={{ padding: '14px 18px', color: '#475569', textAlign: 'center' }}>مميز ⭐</th>
+                    <th style={{ padding: '14px 18px', color: '#475569' }}>الحالة</th>
+                    <th style={{ padding: '14px 18px', color: '#475569', textAlign: 'center' }}>الترتيب</th>
+                    <th style={{ padding: '14px 18px', color: '#475569', textAlign: 'center' }}>الإجراء</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredAdminDoctors.map(d => (
+                    <tr key={d.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '14px 18px', fontWeight: 'bold', color: '#1e293b' }}>
+                        {d.name}
+                        <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'normal' }}>{d.specialty}</div>
+                      </td>
+                      <td style={{ padding: '14px 18px', color: '#475569' }}>{d.city} - {d.area || 'عام'}</td>
+                      <td style={{ textAlign: 'center', padding: '14px' }}>
+                        <input
+                          type="checkbox"
+                          checked={d.featured || false}
+                          onChange={() => handleFeaturedToggle(d.id, d.featured)}
+                          style={{ cursor: 'pointer', transform: 'scale(1.3)' }}
+                        />
+                      </td>
+                      <td style={{ padding: '14px 18px' }}>
+                        <span style={{
+                          display: 'inline-block',
+                          padding: '4px 10px',
+                          borderRadius: '8px',
+                          fontSize: '12.5px',
+                          fontWeight: 'bold',
+                          background: d.is_active ? '#dcfce7' : '#fee2e2',
+                          color: d.is_active ? '#166534' : '#991b1b'
+                        }}>
+                          {d.is_active ? '✅ مفعل' : '❌ متوقف'}
+                        </span>
+                      </td>
+                      <td style={{ textAlign: 'center', padding: '14px' }}>
+                        <input
+                          type="number"
+                          defaultValue={d.sort_order === 999 ? '' : d.sort_order}
+                          placeholder="999"
+                          style={{ width: '60px', textAlign: 'center', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '8px', fontWeight: 'bold' }}
+                          onBlur={(e) => handleOrderChange(d.id, e.target.value)}
+                        />
+                      </td>
+                      <td style={{ textAlign: 'center', padding: '14px 18px' }}>
+                        <button
+                          onClick={() => handleToggle(d.id, !d.is_active)}
+                          style={{
+                            background: d.is_active ? '#f59e0b' : '#10b981',
+                            color: '#fff',
+                            border: 'none',
+                            padding: '6px 14px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                            fontSize: '13px',
+                            marginLeft: '8px'
+                          }}
+                        >
+                          {d.is_active ? 'إيقاف' : 'تفعيل'}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(d.id)}
+                          style={{
+                            background: '#fee2e2',
+                            color: '#ef4444',
+                            border: 'none',
+                            padding: '6px 12px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                            fontSize: '13px'
+                          }}
+                        >
+                          حذف
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* -------------------- 2. إدارة الحسابات -------------------- */}
+        {activeTab === 'accounting' && (
+          <AccountingPage doctors={doctors} appointments={appointments} />
+        )}
+
+        {/* -------------------- 3. إدارة الحجوزات -------------------- */}
+        {activeTab === 'appointments' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
+              <h2 style={{ margin: 0, color: '#0f172a', fontSize: '24px', fontWeight: '800' }}>📅 سجل الحجوزات</h2>
+              <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '6px 16px', borderRadius: '20px', fontWeight: 'bold', fontSize: '14px' }}>
+                إجمالي الحجوزات: {appointments ? appointments.length : 0}
+              </span>
+            </div>
+
+            <div style={{ background: '#fff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.04)' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
+                <thead style={{ background: '#0f172a', color: '#fff' }}>
+                  <tr>
+                    <th style={{ padding: '14px 18px' }}>المريض</th>
+                    <th style={{ padding: '14px 18px' }}>الموبايل</th>
+                    <th style={{ padding: '14px 18px' }}>الدكتور والعيادة</th>
+                    <th style={{ padding: '14px 18px' }}>تاريخ الحجز</th>
+                    <th style={{ padding: '14px 18px' }}>الحالة</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(appointments || []).map(app => (
+                    <tr key={app.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '14px 18px', fontWeight: 'bold', color: '#1e293b' }}>{app.patient_name}</td>
+                      <td style={{ padding: '14px 18px', color: '#475569', direction: 'ltr', textAlign: 'right' }}>{app.mobile}</td>
+                      <td style={{ padding: '14px 18px', color: '#0369a1', fontWeight: '600' }}>{app.doctor_name}</td>
+                      <td style={{ padding: '14px 18px', color: '#16a34a', fontWeight: 'bold' }}>
+                        {app.booking_date || app.appointment_date
+                          ? new Date(app.booking_date || app.appointment_date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' })
+                          : "غير محدد"}
+                      </td>
+                      <td style={{ padding: '14px 18px' }}>
+                        <span style={{
+                          padding: '4px 10px',
+                          borderRadius: '8px',
+                          fontSize: '12px',
+                          fontWeight: 'bold',
+                          background: app.status === 'completed' ? '#dcfce7' : '#fef3c7',
+                          color: app.status === 'completed' ? '#166534' : '#92400e'
+                        }}>
+                          {app.status === 'completed' ? 'مكتمل' : 'قيد الانتظار'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* -------------------- 4. إدارة الإشعارات -------------------- */}
+        {activeTab === 'notifications' && (
+          <div>
+            <h2 style={{ margin: '0 0 25px 0', color: '#0f172a', fontSize: '24px', fontWeight: '800' }}>🔔 إرسال الإشعارات</h2>
+            
+            <div style={{ background: '#fff', padding: '30px', borderRadius: '20px', boxShadow: '0 4px 15px rgba(0,0,0,0.04)', maxWidth: '650px' }}>
+              <form onSubmit={handleSendNotification}>
+                <div style={{ marginBottom: '18px' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#334155' }}>الفئة المستهدفة:</label>
+                  <select
+                    value={notifTarget}
+                    onChange={(e) => setNotifTarget(e.target.value)}
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '15px', background: '#fff' }}
+                  >
+                    <option value="all_patients">📢 جميع المرضى المسجلين</option>
+                    <option value="all_doctors">👨‍⚕️ جميع الأطباء المشتركين</option>
+                    <option value="specific_doctor">🎯 طبيب محدد بالاسم</option>
+                  </select>
+                </div>
+
+                {notifTarget === 'specific_doctor' && (
+                  <div style={{ marginBottom: '18px' }}>
+                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#334155' }}>اختر الطبيب:</label>
+                    <select
+                      value={selectedDoctorForNotif}
+                      onChange={(e) => setSelectedDoctorForNotif(e.target.value)}
+                      required
+                      style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '15px', background: '#fff' }}
+                    >
+                      <option value="">-- اضغط لاختيار الطبيب --</option>
+                      {(doctors || []).map(d => (
+                        <option key={d.id} value={d.id}>{d.name} ({d.specialty})</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div style={{ marginBottom: '18px' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#334155' }}>عنوان الإشعار:</label>
+                  <input
+                    type="text"
+                    placeholder="مثال: تنبيه هام بخصوص مواعيد العيادة"
+                    value={notifTitle}
+                    onChange={(e) => setNotifTitle(e.target.value)}
+                    required
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '15px', boxSizing: 'border-box' }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '24px' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#334155' }}>نص الرسالة / الإشعار:</label>
+                  <textarea
+                    rows={4}
+                    placeholder="اكتب تفاصيل الإشعار هنا..."
+                    value={notifBody}
+                    onChange={(e) => setNotifBody(e.target.value)}
+                    required
+                    style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '15px', boxSizing: 'border-box', resize: 'vertical' }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSendingNotif}
+                  style={{
+                    width: '100%',
+                    padding: '14px',
+                    background: isSendingNotif ? '#94a3b8' : '#0284c7',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '12px',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    cursor: isSendingNotif ? 'not-allowed' : 'pointer',
+                    boxShadow: '0 4px 12px rgba(2,132,199,0.3)'
+                  }}
+                >
+                  {isSendingNotif ? 'جاري إرسال الإشعار...' : '🚀 إرسال الإشعار الآن'}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* -------------------- 5. الاستشارات الطبية -------------------- */}
+        {activeTab === 'consultations' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
+              <h2 style={{ margin: 0, color: '#0f172a', fontSize: '24px', fontWeight: '800' }}>💬 استشارات المرضى</h2>
+              <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '6px 16px', borderRadius: '20px', fontWeight: 'bold', fontSize: '14px' }}>
+                إجمالي الاستشارات: {consultations.length}
+              </span>
+            </div>
+
+            <div style={{ background: '#fff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.04)' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
+                <thead style={{ background: '#1e293b', color: '#fff' }}>
+                  <tr>
+                    <th style={{ padding: '14px 16px' }}>الاسم والموبايل</th>
+                    <th style={{ padding: '14px 16px', width: '35%' }}>السؤال</th>
+                    <th style={{ padding: '14px 16px' }}>الحالة</th>
+                    <th style={{ padding: '14px 16px', width: '30%' }}>الإجابة والرد</th>
+                    <th style={{ padding: '14px 16px', textAlign: 'center' }}>إجراء</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {consultations.map(c => {
+                    let localAnswer = c.answer || "";
+                    let localStatus = c.status || "pending";
+
+                    return (
+                      <tr key={c.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                        <td style={{ padding: '14px 16px' }}>
+                          <div style={{ fontWeight: 'bold', color: '#1e293b' }}>{c.name}</div>
+                          <div style={{ fontSize: '13px', color: '#64748b', direction: 'ltr', textAlign: 'right' }}>{c.phone}</div>
+                        </td>
+                        <td style={{ padding: '14px 16px', color: '#334155', lineHeight: '1.6', fontSize: '14.5px' }}>
+                          {c.question}
+                        </td>
+                        <td style={{ padding: '14px 16px' }}>
+                          <select
+                            defaultValue={c.status}
+                            onChange={(e) => { localStatus = e.target.value; }}
+                            style={{ padding: '8px 10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', background: '#fff' }}
+                          >
+                            <option value="pending">⏳ معلق</option>
+                            <option value="answered">✅ تم الرد</option>
+                          </select>
+                        </td>
+                        <td style={{ padding: '14px 16px' }}>
+                          <textarea
+                            placeholder="اكتب إجابة الاستشارة هنا..."
+                            defaultValue={c.answer}
+                            rows={3}
+                            style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13.5px', boxSizing: 'border-box' }}
+                            onChange={(e) => { localAnswer = e.target.value; }}
+                          />
+                        </td>
+                        <td style={{ padding: '14px 16px', textAlign: 'center' }}>
+                          <button
+                            onClick={() => handleAnswerSubmit(c.id, localAnswer, localStatus)}
+                            style={{
+                              background: '#0284c7',
+                              color: '#fff',
+                              border: 'none',
+                              padding: '8px 16px',
+                              borderRadius: '8px',
+                              cursor: 'pointer',
+                              fontWeight: 'bold',
+                              fontSize: '13px',
+                              boxShadow: '0 2px 6px rgba(2,132,199,0.3)'
+                            }}
+                          >
+                            حفظ
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+      </main>
+    </div>
+  );
 }
 
+// ==========================================
+// 🌟 صفحة الحسابات المدمجة
+// ==========================================
 function AccountingPage({ doctors, appointments }) {
   const [selectedDocId, setSelectedDocId] = useState('');
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
 
-  // فلترة الحجوزات بناءً على الدكتور والشهر
-const doctorAppointments = appointments.filter(app => {
-    // 1. الربط بالـ ID (أمان أعلى ضد تشابه الأسماء)
-    const currentDoc = doctors.find(d => d.id === parseInt(selectedDocId));
+  // فلترة الحجوزات المكتملة
+  const doctorAppointments = (appointments || []).filter(app => {
+    const currentDoc = (doctors || []).find(d => d.id === parseInt(selectedDocId));
     const isSameDoctor = Number(app.doctor_id) === Number(currentDoc?.id);
-
-    // 2. استخدام حقل booking_date الفعلي من الجدول
-    const appDate = new Date(app.booking_date);
+    const appDate = new Date(app.booking_date || app.appointment_date);
     const isSameMonth = (appDate.getMonth() + 1) === parseInt(selectedMonth);
-
-    // 3. التأكد من أن الحالة مكتملة
     const isCompleted = app.status === 'completed';
-
     return isSameDoctor && isSameMonth && isCompleted;
   });
 
-  // جلب بيانات الدكتور المختار (عشان نعرف سعر كشفه)
- const currentDoc = doctors.find(d => Number(d.id) === Number(selectedDocId));
+  const currentDoc = (doctors || []).find(d => Number(d.id) === Number(selectedDocId));
   const totalAmount = doctorAppointments.length * (currentDoc?.fee || 0);
   const platformFee = totalAmount * 0.20; // نسبة الـ 20%
+
   const finalMessage = `
 🧾 فاتورة مستحقات المنصة - شهر ${selectedMonth}
 👨‍⚕️ دكتور: ${currentDoc?.name || 'غير محدد'}
@@ -454,24 +772,28 @@ const doctorAppointments = appointments.filter(app => {
   `;
 
   return (
-    <div style={{ padding: '30px', direction: 'rtl', backgroundColor: '#f4f7f6', minHeight: '100vh' }}>
-      <h2 style={{ textAlign: 'center', color: '#2c3e50' }}>💰 نظام الحسابات والتحصيل</h2>
-      
-     <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '20px' }}>
-  <select 
-    onChange={e => setSelectedDocId(e.target.value)} 
-    value={selectedDocId}
-    style={{ padding: '10px', borderRadius: '8px' }}
-  >
-    <option value="">-- اختر الدكتور والفرع --</option>
-    {doctors.map(d => (
-      <option key={d.id} value={d.id}>
-        {d.name} - ({d.area || 'فرع عام'})
-      </option>
-    ))}
-  </select>
+    <div>
+      <h2 style={{ margin: '0 0 25px 0', color: '#0f172a', fontSize: '24px', fontWeight: '800' }}>💰 نظام الحسابات والتحصيل</h2>
 
-        <select onChange={e => setSelectedMonth(e.target.value)} value={selectedMonth} style={{ padding: '10px', borderRadius: '8px' }}>
+      <div style={{ display: 'flex', gap: '15px', marginBottom: '25px', flexWrap: 'wrap' }}>
+        <select
+          onChange={e => setSelectedDocId(e.target.value)}
+          value={selectedDocId}
+          style={{ padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '15px', background: '#fff', minWidth: '240px' }}
+        >
+          <option value="">-- اختر الدكتور والفرع --</option>
+          {(doctors || []).map(d => (
+            <option key={d.id} value={d.id}>
+              {d.name} - ({d.area || 'فرع عام'})
+            </option>
+          ))}
+        </select>
+
+        <select
+          onChange={e => setSelectedMonth(e.target.value)}
+          value={selectedMonth}
+          style={{ padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '15px', background: '#fff' }}
+        >
           {Array.from({ length: 12 }, (_, i) => (
             <option key={i + 1} value={i + 1}>شهر {i + 1}</option>
           ))}
@@ -479,27 +801,41 @@ const doctorAppointments = appointments.filter(app => {
       </div>
 
       {selectedDocId && (
-        <div style={{ background: '#fff', padding: '20px', borderRadius: '15px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', maxWidth: '600px', margin: '0 auto' }}>
-          <h3 style={{ borderBottom: '2px solid #eee', paddingBottom: '10px' }}>تفاصيل الفاتورة</h3>
-          <p>عدد الحجوزات المكتملة: <b>{doctorAppointments.length}</b></p>
-          <p>إجمالي مبلغ الكشوفات: <b>{totalAmount} ج.م</b></p>
-          <p style={{ color: '#e74c3c', fontSize: '18px' }}>مستحقات المنصة (20%): <b>{platformFee} ج.م</b></p>
-          
-          <div style={{ background: '#f9f9f9', padding: '15px', borderRadius: '10px', marginTop: '20px' }}>
-            <p style={{ whiteSpace: 'pre-line', fontSize: '14px' }}>{finalMessage}</p>
+        <div style={{ background: '#fff', padding: '25px', borderRadius: '16px', boxShadow: '0 4px 15px rgba(0,0,0,0.04)', maxWidth: '600px' }}>
+          <h3 style={{ borderBottom: '2px solid #f1f5f9', paddingBottom: '12px', margin: '0 0 16px 0', color: '#1e293b' }}>تفاصيل الفاتورة</h3>
+          <p style={{ fontSize: '15px', margin: '8px 0' }}>عدد الحجوزات المكتملة: <b>{doctorAppointments.length}</b></p>
+          <p style={{ fontSize: '15px', margin: '8px 0' }}>إجمالي مبلغ الكشوفات: <b>{totalAmount} ج.م</b></p>
+          <p style={{ color: '#ef4444', fontSize: '18px', fontWeight: 'bold', margin: '12px 0' }}>مستحقات المنصة (20%): <b>{platformFee} ج.م</b></p>
+
+          <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', marginTop: '20px', border: '1px solid #e2e8f0' }}>
+            <pre style={{ whiteSpace: 'pre-line', fontSize: '13.5px', fontFamily: 'inherit', margin: 0, color: '#334155' }}>{finalMessage}</pre>
           </div>
 
-          <button 
+          <button
             onClick={() => window.open(`https://wa.me/2${currentDoc?.personal_mobile || currentDoc?.mobile}?text=${encodeURIComponent(finalMessage)}`, '_blank')}
-            style={{ width: '100%', padding: '12px', background: '#25D366', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', marginTop: '15px' }}
+            style={{
+              width: '100%',
+              padding: '14px',
+              background: '#16a34a',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              marginTop: '18px',
+              boxShadow: '0 4px 12px rgba(22,163,74,0.3)'
+            }}
           >
-            إرسال الفاتورة للدكتور (واتساب)
+            💬 إرسال الفاتورة للدكتور (واتساب)
           </button>
         </div>
       )}
     </div>
   );
 }
+
+
 
 // -// --- 5. المكون الرئيسي (App) ---
 function App() {
