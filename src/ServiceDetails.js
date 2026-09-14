@@ -142,7 +142,7 @@ const ServiceDetails = () => {
         <script type="application/ld+json">{JSON.stringify(medicalSchema)}</script>
       </Helmet>
 
-      {/* نافذة الحجز السريع المباشرة */}
+{/* نافذة الحجز السريع المباشرة */}
       {showModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15,23,42,0.75)', backdropFilter: 'blur(4px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '16px' }}>
           <form onSubmit={sendToTelegram} style={{ background: '#fff', padding: '30px', borderRadius: '24px', width: '100%', maxWidth: '440px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
@@ -156,12 +156,17 @@ const ServiceDetails = () => {
               style={{ width: '100%', marginBottom: '14px', padding: '14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '15px', boxSizing: 'border-box' }} 
             />
 
-            <input 
-              name="phone" 
-              required 
-              placeholder="رقم الموبايل أو الواتساب" 
-              style={{ width: '100%', marginBottom: '20px', padding: '14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '15px', boxSizing: 'border-box' }} 
-            /> 
+            <div style={{ marginBottom: '20px' }}>
+              <input 
+                name="phone" 
+                required 
+                placeholder="رقم الواتساب (مثال: +2010xxxxxxxx)" 
+                style={{ width: '100%', marginBottom: '6px', padding: '14px', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '15px', boxSizing: 'border-box' }} 
+              /> 
+              <span style={{ fontSize: '11px', color: '#d97706', display: 'block', textAlign: 'right', paddingRight: '4px', fontWeight: '500' }}>
+                ⚠️ يرجى إدخال رقم موبايل (واتساب) صحيح متضمن كود الدولة، ولا يُقبل الرقم الأرضي.
+              </span>
+            </div>
             
             <button type="submit" style={{ width: '100%', padding: '14px', background: '#1a73e8', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
               تأكيد إرسال الطلب
