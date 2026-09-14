@@ -719,9 +719,9 @@ return (
                                 return <BioSection />;
                             })() : <div style={{ height: '65px' }}></div>}
 
-                            <p style={{ color: '#475569', fontWeight: '600', fontSize: '14px', margin: '10px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                            <p style={{ color: '#0e131a', fontWeight: '800', fontSize: '14px', margin: '10px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
     {/* أيقونة موقع عصرية واضحة وبحجم مخصص */}
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f10707" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
         <circle cx="12" cy="10" r="3"></circle>
     </svg>
