@@ -635,14 +635,14 @@ return (
                                 navigate(getDoctorUrl(doc));
                             }}
                             title="اضغط لعرض الملف الشخصي ومواعيد الطبيب"
-                            style={{
+                           style={{
                                 position: 'relative',
-                                backgroundColor: '#ffffff',
+                                backgroundColor: '#f0f9ff', // أزرق سماوي فاتح جداً ونظيف
                                 padding: '25px',
                                 borderRadius: '24px',
                                 width: '310px',
                                 textAlign: 'center',
-                                border: '1.5px solid #e2e8f0',
+                                border: '1.5px solid #bae6fd', // حدود سماوية فاتحة متناسقة
                                 boxShadow: '0 10px 25px rgba(15, 23, 42, 0.06)',
                                 display: 'flex',
                                 flexDirection: 'column',
