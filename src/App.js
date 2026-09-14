@@ -889,27 +889,27 @@ useEffect(() => {
 
 
 // داخل دالة المكون الرئيسي App:
+// داخل دالة المكون الرئيسي App:
 const [activeNotification, setActiveNotification] = useState(null);
 const location = useLocation();
- 
 
 useEffect(() => {
-  // فحص ما إذا كان المستخدم دخل من خلال الضغط على إشعار
-  const params = new URLSearchParams(location.search);
+  // فحص واستخراج عنوان ونص الإشعار بدقة وفك تشفير النصوص العربية
+  const params = new URLSearchParams(window.location.search);
   const notifTitle = params.get('notif_title');
   const notifBody = params.get('notif_body');
 
   if (notifTitle || notifBody) {
     setActiveNotification({
-      title: notifTitle || 'إشعار جديد',
-      body: notifBody || ''
+      title: decodeURIComponent(notifTitle || 'إشعار جديد'),
+      body: decodeURIComponent(notifBody || '')
     });
 
-    // تنظيف الرابط في المتصفح ليبقى الرابط نظيفاً
+    // تنظيف الرابط في شريط المتصفح
     const cleanUrl = window.location.pathname;
     window.history.replaceState({}, document.title, cleanUrl);
   }
-}, [location]);
+}, [location.search]);
 
 useEffect(() => {
     const path = window.location.pathname;
@@ -1357,6 +1357,7 @@ onClick={() => {
 <Route path="/doctors" element={<SearchPage />} />
 
 // في ملف App.js أضف هذا السطر في مكان الـ Routes
+{/* رابط الاستشارات الطبية */}
 <Route path="/free-consultations" element={<QandA />} />
 
             {/* صفحة الحسابات (AccountingPage) */}
