@@ -719,8 +719,14 @@ return (
                                 return <BioSection />;
                             })() : <div style={{ height: '65px' }}></div>}
 
-                            <p style={{ color: '#0e0218', fontWeight: '600', fontSize: '13px', margin: '10px 0' }}>
-                                📍 {doc.city} - {doc.area} 
+                            <p style={{ color: '#475569', fontWeight: '600', fontSize: '14px', margin: '10px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+    {/* أيقونة موقع عصرية واضحة وبحجم مخصص */}
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
+    </svg>
+    
+    <span>{doc.city} - {doc.area}</span>
                                 {doc.address && (
                                     <span style={{ color: '#0f0f0f', fontSize: '12px', marginRight: '6px' }}>
                                         ({doc.address.split(' ').filter(Boolean).slice(0, 3).join(' ')}...)
