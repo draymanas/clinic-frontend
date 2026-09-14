@@ -12,6 +12,9 @@ import DirectBooking from './DirectBooking';
 import QandA from './QandA'; // تأكد من المسار
 import { Navigate } from 'react-router-dom'; // تأكد من استيراد 
 
+import { useLocation, useNavigate } from 'react-router-dom';
+import { FaBell, FaCheck } from 'react-icons/fa';
+
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
     // ... (احتفظ بالثوابت هنا إذا لم تنقلها إلى ملف منفصل)
@@ -884,9 +887,7 @@ useEffect(() => {
     fetchData(); 
 }, []);
 
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { FaBell, FaCheck } from 'react-icons/fa';
+
 
 // داخل دالة المكون الرئيسي App:
 const [activeNotification, setActiveNotification] = useState(null);
