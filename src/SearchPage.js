@@ -719,7 +719,7 @@ return (
                                 return <BioSection />;
                             })() : <div style={{ height: '65px' }}></div>}
 
-                            <p style={{ color: '#64748b', fontWeight: '600', fontSize: '13px', margin: '10px 0' }}>
+                            <p style={{ color: '#0e0218', fontWeight: '600', fontSize: '13px', margin: '10px 0' }}>
                                 📍 {doc.city} - {doc.area} 
                                 {doc.address && (
                                     <span style={{ color: '#0f0f0f', fontSize: '12px', marginRight: '6px' }}>
@@ -737,7 +737,7 @@ return (
                             </div>
 
                             <div style={{ color: '#f59e0b', fontSize: '15px', margin: '6px 0 14px 0' }}>
-                                ⭐⭐⭐⭐⭐ <span style={{ color: '#a1b9d1', fontSize: '12px', fontWeight: '600' }}>(5.0 تقييم)</span>
+                                ⭐⭐⭐⭐⭐ <span style={{ color: '#101214', fontSize: '12px', fontWeight: '600' }}>(5.0 تقييم)</span>
                             </div>
 
                             <button 
