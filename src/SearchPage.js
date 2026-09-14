@@ -686,7 +686,7 @@ return (
                                 دكتور / {doc.name}
                             </h3>
                             
-                            <p style={{ fontSize: '15px', color: '#2563eb', fontWeight: '700', margin: '2px 0 10px 0' }}>
+                            <p style={{ fontSize: '15px', color: '#151516', fontWeight: '700', margin: '2px 0 10px 0' }}>
                                 {doc.title ? `${doc.title} ` : ''}{doc.specialty}
                             </p>
 
@@ -694,7 +694,7 @@ return (
                                 const BioSection = () => {
                                     const [isExpanded, setIsExpanded] = useState(false);
                                     const truncatedStyle = {
-                                        fontSize: '13px', color: '#475569', fontStyle: 'normal', lineHeight: '1.6em', margin: '5px 0',
+                                        fontSize: '13px', color: '#0b0b0c', fontStyle: 'normal', lineHeight: '1.6em', margin: '5px 0',
                                         display: '-webkit-box', WebkitLineClamp: isExpanded ? 'unset' : '2', 
                                         WebkitBoxDirection: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis',
                                         maxHeight: isExpanded ? 'none' : '3.2em', 
@@ -722,7 +722,7 @@ return (
                             <p style={{ color: '#64748b', fontWeight: '600', fontSize: '13px', margin: '10px 0' }}>
                                 📍 {doc.city} - {doc.area} 
                                 {doc.address && (
-                                    <span style={{ color: '#94a3b8', fontSize: '12px', marginRight: '6px' }}>
+                                    <span style={{ color: '#0f0f0f', fontSize: '12px', marginRight: '6px' }}>
                                         ({doc.address.split(' ').filter(Boolean).slice(0, 3).join(' ')}...)
                                     </span>
                                 )}
@@ -731,13 +731,13 @@ return (
                             <div style={{
                                 backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', 
                                 borderRadius: '12px', padding: '6px 16px', margin: '6px 0',
-                                display: 'inline-block', color: '#0f172a', fontWeight: '800', fontSize: '14px'
+                                display: 'inline-block', color: '#080c16', fontWeight: '800', fontSize: '14px'
                             }}>
                                 قيمة الكشف: <span style={{ color: '#059669' }}>{doc.fee || '0'} ج.م</span>
                             </div>
 
                             <div style={{ color: '#f59e0b', fontSize: '15px', margin: '6px 0 14px 0' }}>
-                                ⭐⭐⭐⭐⭐ <span style={{ color: '#64748b', fontSize: '12px', fontWeight: '600' }}>(5.0 تقييم)</span>
+                                ⭐⭐⭐⭐⭐ <span style={{ color: '#a1b9d1', fontSize: '12px', fontWeight: '600' }}>(5.0 تقييم)</span>
                             </div>
 
                             <button 
