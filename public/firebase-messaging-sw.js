@@ -1,8 +1,11 @@
 // public/firebase-messaging-sw.js
+
 importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js');
 
-// تهيئة فايربيز باستخدام بيانات مشروعك الدقيقة من google-services.json
+// ==========================================
+// 🔥 تهيئة Firebase
+// ==========================================
 firebase.initializeApp({
   apiKey: "AIzaSyDDrfz6CEAwTqc4Z-oaFI6jLfpKeBAaxUw",
   authDomain: "neuroclinic-app.firebaseapp.com",
@@ -14,19 +17,51 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// 1. استقبال الإشعار في الخلفية
+
+// ==========================================
+// 🔔 1. استقبال إشعار Firebase في الخلفية
+// ==========================================
 messaging.onBackgroundMessage((payload) => {
-  console.log('[firebase-messaging-sw.js] تم استلام إشعار بالخلفية:', payload);
 
-  const title = payload.notification?.title || payload.data?.title || 'إشعار من منصة دكتور';
-  const body = payload.notification?.body || payload.data?.body || '';
+  console.log(
+    '[firebase-messaging-sw.js] تم استلام إشعار بالخلفية:',
+    payload
+  );
 
-  // رابط الفتح الذي يحمل تفاصيل الإشعار بالكامل
- const openUrl = `https://www.doctoreg.online/notification?notif_title=${encodeURIComponent(title)}&notif_body=${encodeURIComponent(body)}`;
+  // ------------------------------------------
+  // استخراج العنوان والمحتوى
+  // نعطي الأولوية لبيانات data الجديدة
+  // ------------------------------------------
+  const title =
+    payload.data?.notif_title ||
+    payload.notification?.title ||
+    'إشعار من منصة دكتور';
+
+  const body =
+    payload.data?.notif_body ||
+    payload.notification?.body ||
+    '';
+
+  // ------------------------------------------
+  // 🔗 الرابط الذي سيتم فتحه عند الضغط
+  // ------------------------------------------
+  const openUrl =
+    'https://www.doctoreg.online/notification' +
+    '?notif_title=' + encodeURIComponent(title) +
+    '&notif_body=' + encodeURIComponent(body);
+
+
+  // ==========================================
+  // إعداد شكل الإشعار
+  // ==========================================
   const notificationOptions = {
+
     body: body,
+
     icon: '/logo512.png',
+
     badge: '/logo512.png',
+
     data: {
       url: openUrl,
       title: title,
@@ -34,29 +69,86 @@ messaging.onBackgroundMessage((payload) => {
     }
   };
 
-  self.registration.showNotification(title, notificationOptions);
+
+  // ==========================================
+  // 📢 إظهار الإشعار في شريط التنبيهات
+  // ==========================================
+  return self.registration.showNotification(
+    title,
+    notificationOptions
+  );
 });
 
-// 🌟 2. السحر كله هنا: عند النقر على الإشعار من شريط التنبيهات
+
+// ==========================================
+// 🖱️ 2. عند الضغط على الإشعار
+// ==========================================
 self.addEventListener('notificationclick', function(event) {
-  event.notification.close(); // إغلاق الإشعار فوراً من شريط التنبيهات
 
-  const targetUrl = event.notification.data?.url || 'https://www.doctoreg.online/';
+  console.log(
+    '[firebase-messaging-sw.js] تم الضغط على الإشعار'
+  );
 
+  // إغلاق الإشعار من شريط التنبيهات
+  event.notification.close();
+
+
+  // ------------------------------------------
+  // الحصول على الرابط المخزن داخل الإشعار
+  // ------------------------------------------
+  const targetUrl =
+    event.notification.data?.url ||
+    'https://www.doctoreg.online/';
+
+
+  console.log(
+    '[firebase-messaging-sw.js] سيتم فتح:',
+    targetUrl
+  );
+
+
+  // ==========================================
+  // محاولة استخدام نافذة الموقع المفتوحة بالفعل
+  // ==========================================
   event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
-      // إذا كان الموقع مفتوحاً بالفعل، قم بتوجيهه وتنشيط النافذة
+
+    clients.matchAll({
+      type: 'window',
+      includeUncontrolled: true
+    })
+
+    .then(function(clientList) {
+
+      // ----------------------------------------
+      // إذا كان الموقع مفتوحًا بالفعل
+      // ----------------------------------------
       for (let i = 0; i < clientList.length; i++) {
-        let client = clientList[i];
-        if (client.url.includes('doctoreg.online') && 'focus' in client) {
-          client.navigate(targetUrl);
-          return client.focus();
+
+        const client = clientList[i];
+
+        if (
+          client.url.includes('doctoreg.online') &&
+          'focus' in client
+        ) {
+
+          return client.navigate(targetUrl)
+            .then(function() {
+              return client.focus();
+            });
+
         }
       }
-      // إذا كان الموقع مغلقاً، افتح نافذة جديدة مباشرة بالرابط
+
+
+      // ----------------------------------------
+      // إذا لم يكن الموقع مفتوحًا
+      // افتح صفحة الإشعار مباشرة
+      // ----------------------------------------
       if (clients.openWindow) {
         return clients.openWindow(targetUrl);
       }
+
     })
+
   );
 });
