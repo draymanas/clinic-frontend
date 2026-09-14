@@ -11,7 +11,7 @@ import SearchPage from './SearchPage'; // صفحة البحث الجديدة
 import DirectBooking from './DirectBooking';
 import QandA from './QandA'; // تأكد من المسار
 import { Navigate } from 'react-router-dom'; // تأكد من استيراد 
-
+import { useLocation } from 'react-router-dom';
 import { FaBell, FaCheck } from 'react-icons/fa';
 
 // --- 1. الثوابت العامة ---
