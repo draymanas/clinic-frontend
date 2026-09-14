@@ -637,7 +637,7 @@ return (
                             title="اضغط لعرض الملف الشخصي ومواعيد الطبيب"
                            style={{
                                 position: 'relative',
-                                backgroundColor: '#f0f9ff', // أزرق سماوي فاتح جداً ونظيف
+                                backgroundColor: '#39aef1', // أزرق سماوي فاتح جداً ونظيف
                                 padding: '25px',
                                 borderRadius: '24px',
                                 width: '310px',
