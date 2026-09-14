@@ -13,6 +13,7 @@ import QandA from './QandA'; // تأكد من المسار
 import { Navigate } from 'react-router-dom'; // تأكد من استيراد 
 import { useLocation } from 'react-router-dom';
 import { FaBell, FaCheck } from 'react-icons/fa';
+import NotificationPage from './NotificationPage';
 
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
@@ -1327,6 +1328,8 @@ onClick={() => {
 
               {/* هذا هو السطر الذي ينقصك */}
               <Route path="/service/:serviceId" element={<ServiceDetails />} />
+              {/* 🔔 صفحة تفاصيل الإشعار */}
+             <Route path="/notification" element={<NotificationPage />} />
 
             {/* صفحة انضمام طبيب */}
             <Route path="/join" element={<DoctorRegister />} />
@@ -1355,7 +1358,7 @@ onClick={() => {
 <Route path="/doctors/:specialtyParam/:cityParam" element={<SearchPage />} />
 <Route path="/doctors/:specialtyParam" element={<SearchPage />} />
 <Route path="/doctors" element={<SearchPage />} />
-
+ 
 // في ملف App.js أضف هذا السطر في مكان الـ Routes
 {/* رابط الاستشارات الطبية */}
 <Route path="/free-consultations" element={<QandA />} />

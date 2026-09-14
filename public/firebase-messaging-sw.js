@@ -22,8 +22,7 @@ messaging.onBackgroundMessage((payload) => {
   const body = payload.notification?.body || payload.data?.body || '';
 
   // رابط الفتح الذي يحمل تفاصيل الإشعار بالكامل
-  const openUrl = `https://www.doctoreg.online/?notif_title=${encodeURIComponent(title)}&notif_body=${encodeURIComponent(body)}`;
-
+ const openUrl = `https://www.doctoreg.online/notification?notif_title=${encodeURIComponent(title)}&notif_body=${encodeURIComponent(body)}`;
   const notificationOptions = {
     body: body,
     icon: '/logo512.png',
