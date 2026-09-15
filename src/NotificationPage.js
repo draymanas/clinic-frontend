@@ -1,15 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
 function NotificationPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const title =
-    searchParams.get('notif_title') || 'إشعار من منصة دكتور';
+  // استخدام useState للتحكم في عرض العنوان والنص
+  const [notificationData, setNotificationData] = useState({
+    title: 'إشعار من منصة دكتور',
+    body: 'لا توجد تفاصيل لهذا الإشعار.'
+  });
 
-  const body =
-    searchParams.get('notif_body') || 'لا توجد تفاصيل لهذا الإشعار.';
+  useEffect(() => {
+    const urlTitle = searchParams.get('notif_title');
+    const urlBody = searchParams.get('notif_body');
+
+    if (urlTitle || urlBody) {
+      // لو البيانات موجودة في الرابط، احفظها في الـ sessionStorage وحدث الـ State
+      const data = {
+        title: urlTitle || 'إشعار من منصة دكتور',
+        body: urlBody || 'لا توجد تفاصيل لهذا الإشعار.'
+      };
+      sessionStorage.setItem('last_notification', JSON.stringify(data));
+      setNotificationData(data);
+    } else {
+      // لو الـ URL فاضي (تم عمل Refresh)، ابحث في الـ sessionStorage
+      const savedData = sessionStorage.getItem('last_notification');
+      if (savedData) {
+        setNotificationData(JSON.parse(savedData));
+      }
+    }
+  }, [searchParams]);
 
   return (
     <div
@@ -21,14 +42,12 @@ function NotificationPage() {
         boxSizing: 'border-box'
       }}
     >
-
       <div
         style={{
           maxWidth: '700px',
           margin: '0 auto'
         }}
       >
-
         {/* زر العودة */}
         <button
           onClick={() => navigate('/')}
@@ -46,7 +65,6 @@ function NotificationPage() {
           ← العودة إلى منصة دكتور
         </button>
 
-
         {/* كارت الإشعار */}
         <div
           style={{
@@ -57,7 +75,6 @@ function NotificationPage() {
             border: '1px solid #e2e8f0'
           }}
         >
-
           {/* الأيقونة */}
           <div
             style={{
@@ -75,7 +92,6 @@ function NotificationPage() {
             🔔
           </div>
 
-
           {/* عنوان الإشعار */}
           <h1
             style={{
@@ -86,9 +102,8 @@ function NotificationPage() {
               fontWeight: '800'
             }}
           >
-            {title}
+            {notificationData.title}
           </h1>
-
 
           {/* نص الإشعار */}
           <div
@@ -100,9 +115,8 @@ function NotificationPage() {
               wordBreak: 'break-word'
             }}
           >
-            {body}
+            {notificationData.body}
           </div>
-
 
           {/* خط فاصل */}
           <div
@@ -112,7 +126,6 @@ function NotificationPage() {
               margin: '30px 0 20px'
             }}
           />
-
 
           {/* اسم المنصة */}
           <div
@@ -124,11 +137,8 @@ function NotificationPage() {
           >
             🔵 منصة دكتور
           </div>
-
         </div>
-
       </div>
-
     </div>
   );
 }
