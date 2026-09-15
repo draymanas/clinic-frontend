@@ -73,10 +73,23 @@ messaging.onBackgroundMessage((payload) => {
   // ==========================================
   // 📢 إظهار الإشعار في شريط التنبيهات
   // ==========================================
-  return self.registration.showNotification(
-    title,
-    notificationOptions
-  );
+console.log(
+  '[firebase-messaging-sw.js] محاولة عرض الإشعار الآن...'
+);
+
+return self.registration
+  .showNotification(title, notificationOptions)
+  .then(() => {
+    console.log(
+      '[firebase-messaging-sw.js] ✅ تم تنفيذ showNotification بنجاح'
+    );
+  })
+  .catch((error) => {
+    console.error(
+      '[firebase-messaging-sw.js] ❌ showNotification فشل:',
+      error
+    );
+  });
 });
 
 
