@@ -14,6 +14,7 @@ import { Navigate } from 'react-router-dom'; // تأكد من استيراد
 import { useLocation } from 'react-router-dom';
 import { FaBell, FaCheck } from 'react-icons/fa';
 import NotificationPage from './NotificationPage';
+import { requestForToken } from './firebase';
 
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
@@ -895,6 +896,41 @@ const [activeNotification, setActiveNotification] = useState(null);
 const location = useLocation();
 
 useEffect(() => {
+  const initializeWebNotifications = async () => {
+    const token = await requestForToken();
+
+    if (!token) {
+      console.log("⚠️ لم يتم الحصول على Web FCM Token.");
+      return;
+    }
+
+    const savedUser = localStorage.getItem('saved_user');
+
+    if (!savedUser) {
+      console.log("ℹ️ لا يوجد مستخدم مسجل دخول حاليًا.");
+      return;
+    }
+
+    try {
+      const user = JSON.parse(savedUser);
+
+      if (user?.role === 'doctor' && user?.id) {
+        console.log("🔔 تم العثور على طبيب مسجل دخول، سيتم حفظ التوكن في السيرفر.");
+
+        await saveWebFCMToken(user, token);
+      }
+    } catch (error) {
+      console.error(
+        "❌ خطأ في قراءة بيانات المستخدم المحفوظة:",
+        error
+      );
+    }
+  };
+
+  initializeWebNotifications();
+}, []);
+
+useEffect(() => {
   // فحص واستخراج عنوان ونص الإشعار بدقة وفك تشفير النصوص العربية
   const params = new URLSearchParams(window.location.search);
   const notifTitle = params.get('notif_title');
@@ -929,6 +965,50 @@ useEffect(() => {
     fontWeight: 'bold', fontSize: '16px', padding: '10px 15px', borderRadius: '8px',
     transition: '0.3s'
   };
+const saveWebFCMToken = async (user, token) => {
+  if (!user || user.role !== 'doctor' || !user.id || !token) {
+    console.log(
+      "⚠️ لا يمكن حفظ Web FCM Token: بيانات الطبيب أو التوكن ناقصة"
+    );
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      'https://clinic-api-ig3d.onrender.com/api/save-token',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          doctorId: user.id,
+          fcmToken: token
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log(
+        "✅ تم حفظ Web FCM Token للطبيب بنجاح:",
+        data
+      );
+    } else {
+      console.error(
+        "❌ فشل حفظ Web FCM Token:",
+        data
+      );
+    }
+
+  } catch (error) {
+    console.error(
+      "❌ خطأ أثناء إرسال Web FCM Token للسيرفر:",
+      error
+    );
+  }
+};
 
   const handleLogout = () => {
     setIsAdmin(false);
@@ -1153,16 +1233,25 @@ onClick={() => {
     );
 
     if (doc) {
-        const doctorData = { ...doc, role: 'doctor' };
+    const doctorData = { ...doc, role: 'doctor' };
 
-        localStorage.setItem('saved_doctor_id', doc.id); 
-        localStorage.setItem('saved_user', JSON.stringify(doctorData)); 
+    localStorage.setItem('saved_doctor_id', doc.id); 
+    localStorage.setItem('saved_user', JSON.stringify(doctorData)); 
 
-        setCurrentUser(doctorData);
+    setCurrentUser(doctorData);
 
-        navigate('/dashboard');
-        setShowLoginModal(false);
+    // 🔔 حفظ Web FCM Token للطبيب
+    const savedWebFcmToken = localStorage.getItem('web_fcm_token');
+
+    if (savedWebFcmToken) {
+        saveWebFCMToken(doctorData, savedWebFcmToken);
     } else {
+        console.log("⚠️ لا يوجد Web FCM Token محفوظ حاليًا.");
+    }
+
+    navigate('/dashboard');
+    setShowLoginModal(false);
+} else {
         alert("عذراً، تأكد من (الكود) أو (رقم الموبايل) أو (كلمة المرور)، أو أن الحساب لم يفعل بعد.");
     }
 }}
