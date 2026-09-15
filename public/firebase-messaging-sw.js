@@ -97,71 +97,22 @@ return self.registration
 // 🖱️ 2. عند الضغط على الإشعار
 // ==========================================
 self.addEventListener('notificationclick', function(event) {
-
   console.log(
     '[firebase-messaging-sw.js] تم الضغط على الإشعار'
   );
 
-  // إغلاق الإشعار من شريط التنبيهات
   event.notification.close();
 
-
-  // ------------------------------------------
-  // الحصول على الرابط المخزن داخل الإشعار
-  // ------------------------------------------
   const targetUrl =
     event.notification.data?.url ||
     'https://www.doctoreg.online/';
-
 
   console.log(
     '[firebase-messaging-sw.js] سيتم فتح:',
     targetUrl
   );
 
-
-  // ==========================================
-  // محاولة استخدام نافذة الموقع المفتوحة بالفعل
-  // ==========================================
   event.waitUntil(
-
-    clients.matchAll({
-      type: 'window',
-      includeUncontrolled: true
-    })
-
-    .then(function(clientList) {
-
-      // ----------------------------------------
-      // إذا كان الموقع مفتوحًا بالفعل
-      // ----------------------------------------
-      for (let i = 0; i < clientList.length; i++) {
-
-        const client = clientList[i];
-
-        if (
-          client.url.includes('doctoreg.online') &&
-          'focus' in client
-        ) {
-
-          return client.navigate(targetUrl)
-            .then(function() {
-              return client.focus();
-            });
-
-        }
-      }
-
-
-      // ----------------------------------------
-      // إذا لم يكن الموقع مفتوحًا
-      // افتح صفحة الإشعار مباشرة
-      // ----------------------------------------
-      if (clients.openWindow) {
-        return clients.openWindow(targetUrl);
-      }
-
-    })
-
+    clients.openWindow(targetUrl)
   );
 });
