@@ -871,11 +871,16 @@ useEffect(() => {
         setCurrentUser(user);
 
         if (user.role === 'doctor') {
-            navigate('/dashboard');
-        } else if (user.role === 'admin') {
-            setIsAdmin(true);
-            navigate('/admin');
-        }
+    if (window.location.pathname !== '/notification') {
+        navigate('/dashboard');
+    }
+} else if (user.role === 'admin') {
+    setIsAdmin(true);
+
+    if (window.location.pathname !== '/notification') {
+        navigate('/admin');
+    }
+}
         
     } else if (savedId) {
         setCurrentUser({ 
