@@ -7,12 +7,13 @@ import { getMessaging, getToken } from "firebase/messaging";
 // 🔥 إعدادات Firebase الخاصة بالويب
 // ==========================================
 const firebaseConfig = {
-  apiKey: "AIzaSyDDrfz6CEAwTqc4Z-oaFI6jLfpKeBAaxUw",
+  apiKey: "AIzaSyBhFN8sB0JOWwckfSswVx7Wpd7IwyAVfpQ",
   authDomain: "neuroclinic-app.firebaseapp.com",
+  databaseURL: "https://neuroclinic-app-default-rtdb.firebaseio.com",
   projectId: "neuroclinic-app",
   storageBucket: "neuroclinic-app.firebasestorage.app",
   messagingSenderId: "106196475769",
-  appId: "1:106196475769:android:70a8b4c2485b12035719a8"
+  appId: "1:106196475769:web:61a06ec0ea7941a55719a8"
 };
 
 // ==========================================
