@@ -26,11 +26,11 @@
       "sizes": "128x128",
       "purpose": "any maskable"
     },
-    {
-      "src": "../icons/icon-192.webp",
-      "type": "image/png",
+   {
+      "src": "/icon-192.webp",
       "sizes": "192x192",
-      "purpose": "any maskable"
+      "type": "image/webp"
+    
     },
     {
       "src": "../icons/icon-256.webp",
