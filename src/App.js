@@ -893,7 +893,27 @@ useEffect(() => {
     fetchData(); 
 }, []);
 
+const savePatientFCMToken = async (mobileNumber, token) => {
+  try {
+    const response = await fetch('https://clinic-api-ig3d.onrender.com/api/update-patient-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        mobile: mobileNumber,
+        fcm_token: token
+      })
+    });
 
+    const data = await response.json();
+    if (response.ok) {
+      console.log("✅ تم حفظ توكن إشعارات المريض بنجاح:", data);
+    } else {
+      console.error("❌ فشل حفظ توكن المريض:", data);
+    }
+  } catch (error) {
+    console.error("❌ خطأ أثناء إرسال توكن المريض للسيرفر:", error);
+  }
+};
 
 // داخل دالة المكون الرئيسي App:
 // داخل دالة المكون الرئيسي App:
@@ -999,27 +1019,7 @@ const saveWebFCMToken = async (user, token) => {
       }
     );
 
-const savePatientFCMToken = async (mobileNumber, token) => {
-  try {
-    const response = await fetch('https://clinic-api-ig3d.onrender.com/api/update-patient-token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        mobile: mobileNumber,
-        fcm_token: token
-      })
-    });
 
-    const data = await response.json();
-    if (response.ok) {
-      console.log("✅ تم حفظ توكن إشعارات المريض بنجاح:", data);
-    } else {
-      console.error("❌ فشل حفظ توكن المريض:", data);
-    }
-  } catch (error) {
-    console.error("❌ خطأ أثناء إرسال توكن المريض للسيرفر:", error);
-  }
-};
 
     const data = await response.json();
 
