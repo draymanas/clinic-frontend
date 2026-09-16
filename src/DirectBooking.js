@@ -241,9 +241,8 @@ const bookingData = {
   appointment_time: selectedTime,
   price: doctor.fee,
   status: 'pending',
-
-  // مهم جدًا: إرسال توكن المريض مع الحجز
-  fcm_token: patientFcmToken || null
+  // 💡 أرسل التوكن المتاح في الرموز أو الـ LocalStorage مباشرة مع الحجز
+  fcm_token: patientFcmToken || localStorage.getItem('web_fcm_token') || null
 };
 
 console.log('📦 بيانات الحجز المرسلة إلى السيرفر:', {
