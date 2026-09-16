@@ -225,7 +225,7 @@ export const DirectBooking = () => {
     saveBookedSlotForDoctor(doctor.id || id, actualDate, selectedTime);
     const patientFcmToken = localStorage.getItem('web_fcm_token');
 // جلب توكن إشعارات المريض المحفوظ في المتصفح
-const patientFcmToken = localStorage.getItem('web_fcm_token');
+ 
 
 console.log(
   '📱 FCM Token المرسل مع الحجز:',
