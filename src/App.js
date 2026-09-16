@@ -901,7 +901,7 @@ const [activeNotification, setActiveNotification] = useState(null);
 const location = useLocation();
 
 useEffect(() => {
-  const initializeWebNotifications = async () => {
+const initializeWebNotifications = async () => {
     const token = await requestForToken();
 
     if (!token) {
@@ -919,16 +919,22 @@ useEffect(() => {
     try {
       const user = JSON.parse(savedUser);
 
+      // 1. إذا كان المستخدم طبيباً (الكود القديم الخاص بك)
       if (user?.role === 'doctor' && user?.id) {
         console.log("🔔 تم العثور على طبيب مسجل دخول، سيتم حفظ التوكن في السيرفر.");
-
         await saveWebFCMToken(user, token);
       }
+
+      // ==========================================
+      // 🩺 2. [إضافة جديدة]: إذا كان المستخدم مريضاً وله رقم موبايل مخزن
+      // ==========================================
+      if (user?.role === 'patient' && user?.mobile) {
+        console.log("🔔 تم العثور على مريض مسجل دخول، سيتم حفظ توكن الإشعارات له.");
+        await savePatientFCMToken(user.mobile, token);
+      }
+
     } catch (error) {
-      console.error(
-        "❌ خطأ في قراءة بيانات المستخدم المحفوظة:",
-        error
-      );
+      console.error("❌ خطأ في قراءة بيانات المستخدم المحفوظة:", error);
     }
   };
 
@@ -992,6 +998,28 @@ const saveWebFCMToken = async (user, token) => {
         })
       }
     );
+
+const savePatientFCMToken = async (mobileNumber, token) => {
+  try {
+    const response = await fetch('https://clinic-api-ig3d.onrender.com/api/update-patient-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        mobile: mobileNumber,
+        fcm_token: token
+      })
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      console.log("✅ تم حفظ توكن إشعارات المريض بنجاح:", data);
+    } else {
+      console.error("❌ فشل حفظ توكن المريض:", data);
+    }
+  } catch (error) {
+    console.error("❌ خطأ أثناء إرسال توكن المريض للسيرفر:", error);
+  }
+};
 
     const data = await response.json();
 
