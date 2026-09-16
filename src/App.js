@@ -893,6 +893,29 @@ useEffect(() => {
     fetchData(); 
 }, []);
 
+// عندما يضغط المريض على زر تفعيل الإشعارات أو زر تسجيل الدخول:
+const handleEnableNotifications = async () => {
+    try {
+        const token = await requestForToken(); // دالة طلب التوكن من فايربيز
+        
+        if (token) {
+            const savedUser = localStorage.getItem('saved_user');
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                if (user?.role === 'patient' && user?.mobile) {
+                    // إرسال التوكن للسيرفر وحفظه في جدول patients
+                    await savePatientFCMToken(user.mobile, token);
+                    alert("✅ تم تفعيل الإشعارات بنجاح!");
+                }
+            }
+        } else {
+            alert("⚠️ يرجى السماح بالإشعارات من إعدادات المتصفح.");
+        }
+    } catch (error) {
+        console.error("خطأ في تفعيل الإشعارات:", error);
+    }
+};
+
 const savePatientFCMToken = async (mobileNumber, token) => {
   try {
     const response = await fetch('https://clinic-api-ig3d.onrender.com/api/update-patient-token', {
