@@ -223,17 +223,33 @@ export const DirectBooking = () => {
 
     // حفظ الموعد كمحجوز فوراً لمنع ظهوره لباقي المرضى في الصفحتين
     saveBookedSlotForDoctor(doctor.id || id, actualDate, selectedTime);
+    const patientFcmToken = localStorage.getItem('web_fcm_token');
+// جلب توكن إشعارات المريض المحفوظ في المتصفح
+const patientFcmToken = localStorage.getItem('web_fcm_token');
 
-    const bookingData = {
-      doctor_id: doctor.id || id,
-      doctor_name: doctor.name,
-      patient_name: patientData.name,
-      mobile: patientData.mobile,
-      appointment_date: actualDate,
-      appointment_time: selectedTime,
-      price: doctor.fee,
-      status: 'pending'
-    };
+console.log(
+  '📱 FCM Token المرسل مع الحجز:',
+  patientFcmToken ? 'موجود ✅' : 'غير موجود ❌'
+);
+
+const bookingData = {
+  doctor_id: doctor.id || id,
+  doctor_name: doctor.name,
+  patient_name: patientData.name,
+  mobile: patientData.mobile,
+  appointment_date: actualDate,
+  appointment_time: selectedTime,
+  price: doctor.fee,
+  status: 'pending',
+
+  // مهم جدًا: إرسال توكن المريض مع الحجز
+  fcm_token: patientFcmToken || null
+};
+
+console.log('📦 بيانات الحجز المرسلة إلى السيرفر:', {
+  ...bookingData,
+  fcm_token: bookingData.fcm_token
+});
 
     setSubmitting(true);
     try {
