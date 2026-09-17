@@ -858,20 +858,38 @@ function App() {
   const [loadingHistory, setLoadingHistory] = useState(false);
 
   // دالة جلب حجوزات المريض برقم هاتفه من السيرفر
+ // دالة جلب حجوزات المريض المحدثة (تفتح فوراً وتبحث عن الرقم بذكاء)
   const fetchPatientHistory = async () => {
-    if (!currentUser?.mobile) {
-      alert("يرجى تسجيل الدخول أولاً برقم الهاتف لعرض حجوزاتك");
+    // 🌟 1. فتح المودال فوراً بدون أي تأخير ليشاهد المريض النافذة
+    setShowPatientHistoryModal(true);
+    setLoadingHistory(true);
+
+    // 🌟 2. استخراج رقم الموبايل إما من currentUser أو من localStorage مباشرة
+    let patientMobile = currentUser?.mobile;
+    if (!patientMobile) {
+      try {
+        const savedUserStr = localStorage.getItem('saved_user');
+        if (savedUserStr) {
+          const parsed = JSON.parse(savedUserStr);
+          patientMobile = parsed?.mobile;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // إذا لم نجد الرقم، نطلب منه إدخاله في النافذة بدلاً من تجاهل الضغطة
+    if (!patientMobile) {
+      setLoadingHistory(false);
       return;
     }
-    setLoadingHistory(true);
-    setShowPatientHistoryModal(true);
+
     try {
-      const res = await fetch(`https://clinic-api-ig3d.onrender.com/api/patient-appointments/${currentUser.mobile}`);
+      const res = await fetch(`https://clinic-api-ig3d.onrender.com/api/patient-appointments/${encodeURIComponent(patientMobile.trim())}`);
       const data = await res.json();
       setPatientAppointments(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("خطأ في جلب حجوزات المريض:", err);
-      alert("حدث خطأ أثناء تحميل سجل الحجوزات");
     } finally {
       setLoadingHistory(false);
     }
