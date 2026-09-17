@@ -1507,7 +1507,38 @@ onClick={() => {
             }}>
               {activeNotification.body}
             </div>
-             {/* 🌟 نافذة سجل حجوزات المريض السابقة */}
+           
+           <button
+  onClick={() => {
+    const title = activeNotification?.title || 'إشعار جديد';
+    const body = activeNotification?.body || '';
+
+    navigate(
+      `/notification?notif_title=${encodeURIComponent(title)}&notif_body=${encodeURIComponent(body)}`
+    );
+
+    setActiveNotification(null);
+  }}
+  style={{
+    width: '100%',
+    padding: '12px',
+    background: '#0284c7',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '12px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    boxShadow: '0 4px 12px rgba(2, 132, 199, 0.3)'
+  }}
+>
+  فتح الإشعار وقراءة التفاصيل
+</button>
+          </div>
+        </div>
+      )}
+
+      {/* ✅✅ هنا مكانه الصحيح تماماً (مستقل بذاته وخارج الإشعار) ✅✅ */}
       {showPatientHistoryModal && (
         <div style={{
           position: 'fixed',
@@ -1520,7 +1551,7 @@ onClick={() => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 99999,
+          zIndex: 999999,
           direction: 'rtl',
           fontFamily: 'Cairo, sans-serif',
           padding: '15px'
@@ -1578,7 +1609,6 @@ onClick={() => {
                   </thead>
                   <tbody>
                     {patientAppointments.map(app => {
-                      // تحديد الحالة: حضور أو قيد الانتظار أو غياب
                       let statusText = '⏳ قيد الانتظار';
                       let statusBg = '#fef3c7';
                       let statusColor = '#92400e';
@@ -1647,36 +1677,7 @@ onClick={() => {
           </div>
         </div>
       )}
-           <button
-  onClick={() => {
-    const title = activeNotification?.title || 'إشعار جديد';
-    const body = activeNotification?.body || '';
-
-    navigate(
-      `/notification?notif_title=${encodeURIComponent(title)}&notif_body=${encodeURIComponent(body)}`
-    );
-
-    setActiveNotification(null);
-  }}
-  style={{
-    width: '100%',
-    padding: '12px',
-    background: '#0284c7',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '12px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-    boxShadow: '0 4px 12px rgba(2, 132, 199, 0.3)'
-  }}
->
-  فتح الإشعار وقراءة التفاصيل
-</button>
-          </div>
-        </div>
-      )}
-
+ 
       {/* 3. منطقة عرض المحتوى */}
      <main>
         <Routes>
