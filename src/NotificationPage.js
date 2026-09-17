@@ -1,3 +1,4 @@
+// src/NotificationPage.js
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
@@ -5,26 +6,27 @@ function NotificationPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // استخدام useState للتحكم في عرض العنوان والنص
   const [notificationData, setNotificationData] = useState({
     title: 'إشعار من منصة دكتور',
-    body: 'لا توجد تفاصيل لهذا الإشعار.'
+    body: 'لا توجد تفاصيل لهذا الإشعار.',
+    address: ''
   });
 
   useEffect(() => {
     const urlTitle = searchParams.get('notif_title');
     const urlBody = searchParams.get('notif_body');
+    const urlAddress = searchParams.get('address');
 
     if (urlTitle || urlBody) {
-      // لو البيانات موجودة في الرابط، احفظها في الـ sessionStorage وحدث الـ State
       const data = {
         title: urlTitle || 'إشعار من منصة دكتور',
-        body: urlBody || 'لا توجد تفاصيل لهذا الإشعار.'
+        body: urlBody || 'لا توجد تفاصيل لهذا الإشعار.',
+        address: urlAddress || ''
       };
       sessionStorage.setItem('last_notification', JSON.stringify(data));
       setNotificationData(data);
     } else {
-      // لو الـ URL فاضي (تم عمل Refresh)، ابحث في الـ sessionStorage
+      // في حالة إعادة تحميل الصفحة (Refresh)
       const savedData = sessionStorage.getItem('last_notification');
       if (savedData) {
         setNotificationData(JSON.parse(savedData));
@@ -39,7 +41,8 @@ function NotificationPage() {
         minHeight: '100vh',
         background: '#f1f5f9',
         padding: '30px 15px',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        fontFamily: 'Cairo, sans-serif'
       }}
     >
       <div
@@ -75,7 +78,7 @@ function NotificationPage() {
             border: '1px solid #e2e8f0'
           }}
         >
-          {/* الأيقونة */}
+          {/* أيقونة الجرس */}
           <div
             style={{
               width: '70px',
@@ -95,9 +98,9 @@ function NotificationPage() {
           {/* عنوان الإشعار */}
           <h1
             style={{
-              margin: '0 0 20px 0',
+              margin: '0 0 16px 0',
               color: '#0f172a',
-              fontSize: '26px',
+              fontSize: '24px',
               lineHeight: '1.5',
               fontWeight: '800'
             }}
@@ -109,14 +112,56 @@ function NotificationPage() {
           <div
             style={{
               color: '#334155',
-              fontSize: '18px',
-              lineHeight: '2',
+              fontSize: '17px',
+              lineHeight: '1.9',
               whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word'
+              wordBreak: 'break-word',
+              marginBottom: '20px'
             }}
           >
             {notificationData.body}
           </div>
+
+          {/* 📍 صندوق عنوان العيادة بالتفصيل (يظهر إذا توفر العنوان) */}
+          {notificationData.address && (
+            <div
+              style={{
+                background: '#f8fafc',
+                border: '1.5px solid #e2e8f0',
+                borderRight: '5px solid #0284c7',
+                borderRadius: '14px',
+                padding: '16px 20px',
+                marginTop: '20px',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  color: '#0f172a',
+                  fontWeight: '800',
+                  fontSize: '16px',
+                  marginBottom: '8px'
+                }}
+              >
+                <span style={{ fontSize: '20px' }}>📍</span>
+                <span>عنوان ومقر العيادة بالتفصيل:</span>
+              </div>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: '15.5px',
+                  color: '#334155',
+                  lineHeight: '1.7',
+                  fontWeight: '600'
+                }}
+              >
+                {notificationData.address}
+              </p>
+            </div>
+          )}
 
           {/* خط فاصل */}
           <div
@@ -132,10 +177,11 @@ function NotificationPage() {
             style={{
               color: '#64748b',
               fontSize: '14px',
-              textAlign: 'center'
+              textAlign: 'center',
+              fontWeight: '600'
             }}
           >
-            🔵 منصة دكتور
+            🔵 منصة دكتور | DoctorEG
           </div>
         </div>
       </div>

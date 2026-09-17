@@ -1542,9 +1542,12 @@ onClick={() => {
   onClick={() => {
     const title = activeNotification?.title || 'إشعار جديد';
     const body = activeNotification?.body || '';
+    
+    // 🌟 جلب عنوان العيادة من التذكرة النشطة إذا كان الحجز جديداً
+    const clinicAddress = activeTicket?.address || '';
 
     navigate(
-      `/notification?notif_title=${encodeURIComponent(title)}&notif_body=${encodeURIComponent(body)}`
+      `/notification?notif_title=${encodeURIComponent(title)}&notif_body=${encodeURIComponent(body)}${clinicAddress ? `&address=${encodeURIComponent(clinicAddress)}` : ''}`
     );
 
     setActiveNotification(null);
