@@ -992,22 +992,45 @@ const initializeWebNotifications = async () => {
 }, []);
 
 useEffect(() => {
-  // فحص واستخراج عنوان ونص الإشعار بدقة وفك تشفير النصوص العربية
   const params = new URLSearchParams(window.location.search);
+
   const notifTitle = params.get('notif_title');
   const notifBody = params.get('notif_body');
 
-  if (notifTitle || notifBody) {
-    setActiveNotification({
-      title: decodeURIComponent(notifTitle || 'إشعار جديد'),
-      body: decodeURIComponent(notifBody || '')
-    });
-
-    // تنظيف الرابط في شريط المتصفح
-    const cleanUrl = window.location.pathname;
-    window.history.replaceState({}, document.title, cleanUrl);
+  if (!notifTitle && !notifBody) {
+    return;
   }
-}, [location.search]);
+
+  // لو الصفحة الحالية هي صفحة الإشعار نفسها، لا نفتح الـ Popup
+  if (window.location.pathname === '/notification') {
+    return;
+  }
+
+  // معرفة هل فتحنا الصفحة بسبب Refresh
+  const navigationEntry = performance.getEntriesByType('navigation')[0];
+  const isReload = navigationEntry?.type === 'reload';
+
+  if (isReload) {
+    // عند عمل Refresh → نذهب مباشرة إلى صفحة الإشعار
+    navigate(
+      `/notification?notif_title=${encodeURIComponent(
+        notifTitle || 'إشعار جديد'
+      )}&notif_body=${encodeURIComponent(notifBody || '')}`
+    );
+
+    return;
+  }
+
+  // أول وصول للإشعار → نظهر الـ Popup
+  setActiveNotification({
+    title: notifTitle || 'إشعار جديد',
+    body: notifBody || ''
+  });
+
+  // مهم جداً:
+  // لا نحذف الـ query من الرابط
+  // لأنه مطلوب عند عمل Refresh
+}, [location.search, navigate]);
 
 useEffect(() => {
     const path = window.location.pathname;
