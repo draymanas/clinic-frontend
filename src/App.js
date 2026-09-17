@@ -1446,23 +1446,32 @@ onClick={() => {
               {activeNotification.body}
             </div>
 
-            <button
-              onClick={() => setActiveNotification(null)}
-              style={{
-                width: '100%',
-                padding: '12px',
-                background: '#0284c7',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '12px',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(2, 132, 199, 0.3)'
-              }}
-            >
-              تمت القراءة وإغلاق
-            </button>
+           <button
+  onClick={() => {
+    const title = activeNotification?.title || 'إشعار جديد';
+    const body = activeNotification?.body || '';
+
+    navigate(
+      `/notification?notif_title=${encodeURIComponent(title)}&notif_body=${encodeURIComponent(body)}`
+    );
+
+    setActiveNotification(null);
+  }}
+  style={{
+    width: '100%',
+    padding: '12px',
+    background: '#0284c7',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '12px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    boxShadow: '0 4px 12px rgba(2, 132, 199, 0.3)'
+  }}
+>
+  فتح الإشعار وقراءة التفاصيل
+</button>
           </div>
         </div>
       )}
