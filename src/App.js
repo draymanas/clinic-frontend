@@ -1001,35 +1001,42 @@ useEffect(() => {
     return;
   }
 
-  // لو الصفحة الحالية هي صفحة الإشعار نفسها، لا نفتح الـ Popup
+  // إذا كنا بالفعل داخل صفحة الإشعار فلا نعرض الـ Popup
   if (window.location.pathname === '/notification') {
     return;
   }
 
-  // معرفة هل فتحنا الصفحة بسبب Refresh
+  const title = notifTitle || 'إشعار جديد';
+  const body = notifBody || '';
+
+  // حفظ آخر إشعار محلياً كنسخة احتياطية
+  localStorage.setItem(
+    'last_notification',
+    JSON.stringify({
+      title,
+      body,
+      created_at: new Date().toISOString()
+    })
+  );
+
+  // إذا كانت الصفحة تم فتحها بسبب Refresh
+  // ننقل المستخدم مباشرة إلى صفحة الإشعار
   const navigationEntry = performance.getEntriesByType('navigation')[0];
   const isReload = navigationEntry?.type === 'reload';
 
   if (isReload) {
-    // عند عمل Refresh → نذهب مباشرة إلى صفحة الإشعار
     navigate(
-      `/notification?notif_title=${encodeURIComponent(
-        notifTitle || 'إشعار جديد'
-      )}&notif_body=${encodeURIComponent(notifBody || '')}`
+      `/notification?notif_title=${encodeURIComponent(title)}&notif_body=${encodeURIComponent(body)}`
     );
 
     return;
   }
 
-  // أول وصول للإشعار → نظهر الـ Popup
+  // أول وصول للإشعار → Popup
   setActiveNotification({
-    title: notifTitle || 'إشعار جديد',
-    body: notifBody || ''
+    title,
+    body
   });
-
-  // مهم جداً:
-  // لا نحذف الـ query من الرابط
-  // لأنه مطلوب عند عمل Refresh
 }, [location.search, navigate]);
 
 useEffect(() => {
