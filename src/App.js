@@ -852,6 +852,31 @@ function App() {
   const [loginId, setLoginId] = useState(''); 
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
 
+// 📋 حالات سجل حجوزات المريض
+  const [showPatientHistoryModal, setShowPatientHistoryModal] = useState(false);
+  const [patientAppointments, setPatientAppointments] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  // دالة جلب حجوزات المريض برقم هاتفه من السيرفر
+  const fetchPatientHistory = async () => {
+    if (!currentUser?.mobile) {
+      alert("يرجى تسجيل الدخول أولاً برقم الهاتف لعرض حجوزاتك");
+      return;
+    }
+    setLoadingHistory(true);
+    setShowPatientHistoryModal(true);
+    try {
+      const res = await fetch(`https://clinic-api-ig3d.onrender.com/api/patient-appointments/${currentUser.mobile}`);
+      const data = await res.json();
+      setPatientAppointments(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("خطأ في جلب حجوزات المريض:", err);
+      alert("حدث خطأ أثناء تحميل سجل الحجوزات");
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
   const fetchData = async () => {
     try {
       const resDocs = await fetch('https://clinic-api-ig3d.onrender.com/doctors');
@@ -1159,6 +1184,25 @@ const saveWebFCMToken = async (user, token) => {
         {currentUser?.role !== 'doctor' && (
   <button onClick={() => navigate('/')} style={{...navBtnStyle, backgroundColor: window.location.pathname === '/' ? '#3498db' : 'transparent'}}>🏠 الرئيسية</button>
 )}
+
+{/* 📋 زر سجل الحجوزات يظهر للمريض المسجل فقط */}
+{currentUser?.role === 'patient' && currentUser?.mobile && (
+  <button 
+    onClick={fetchPatientHistory} 
+    style={{
+      ...navBtnStyle, 
+      backgroundColor: '#10b981', 
+      display: 'flex', 
+      alignItems: 'center', 
+      gap: '6px',
+      boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)'
+    }}
+  >
+    <span>📋</span>
+    <span>سجل الحجوزات</span>
+  </button>
+)}
+
  {(currentUser?.role !== 'admin' && currentUser?.role !== 'patient') && (
   <button 
     onClick={() => navigate('/join')} 
@@ -1445,7 +1489,146 @@ onClick={() => {
             }}>
               {activeNotification.body}
             </div>
+             {/* 🌟 نافذة سجل حجوزات المريض السابقة */}
+      {showPatientHistoryModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.75)',
+          backdropFilter: 'blur(5px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 99999,
+          direction: 'rtl',
+          fontFamily: 'Cairo, sans-serif',
+          padding: '15px'
+        }}>
+          <div style={{
+            background: '#fff',
+            borderRadius: '24px',
+            padding: '25px',
+            maxWidth: '750px',
+            width: '100%',
+            maxHeight: '90vh',
+            display: 'flex',
+            flexDirection: 'column',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+          }}>
+            {/* رأس النافذة */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #f1f5f9', paddingBottom: '15px', marginBottom: '15px' }}>
+              <div>
+                <h3 style={{ margin: '0 0 5px 0', fontSize: '20px', color: '#0f172a', fontWeight: '800' }}>
+                  📋 سجل حجوزاتك السابقة
+                </h3>
+                <span style={{ fontSize: '13px', color: '#64748b' }}>
+                  المريض: {currentUser?.name} ({currentUser?.mobile})
+                </span>
+              </div>
+              <button 
+                onClick={() => setShowPatientHistoryModal(false)}
+                style={{ background: '#fee2e2', color: '#ef4444', border: 'none', borderRadius: '50%', width: '36px', height: '36px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
 
+            {/* محتوى الجدول */}
+            <div style={{ flex: 1, overflowY: 'auto' }}>
+              {loadingHistory ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
+                  <div style={{ fontSize: '30px', marginBottom: '10px' }}>⏳</div>
+                  جاري تحميل سجل حجوزاتك...
+                </div>
+              ) : patientAppointments.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>
+                  <div style={{ fontSize: '40px', marginBottom: '10px' }}>🩺</div>
+                  لا توجد حجوزات مسجلة بهذا الرقم حتى الآن.
+                </div>
+              ) : (
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
+                  <thead style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
+                    <tr>
+                      <th style={{ padding: '12px 14px', color: '#475569', fontSize: '14px' }}>الطبيب</th>
+                      <th style={{ padding: '12px 14px', color: '#475569', fontSize: '14px' }}>تاريخ الموعد</th>
+                      <th style={{ padding: '12px 14px', color: '#475569', fontSize: '14px' }}>سعر الكشف</th>
+                      <th style={{ padding: '12px 14px', color: '#475569', fontSize: '14px', textAlign: 'center' }}>حالة الحضور</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {patientAppointments.map(app => {
+                      // تحديد الحالة: حضور أو قيد الانتظار أو غياب
+                      let statusText = '⏳ قيد الانتظار';
+                      let statusBg = '#fef3c7';
+                      let statusColor = '#92400e';
+
+                      if (app.status === 'completed' || app.status === 'attended') {
+                        statusText = '✅ تم الحضور';
+                        statusBg = '#dcfce7';
+                        statusColor = '#166534';
+                      } else if (app.status === 'cancelled' || app.status === 'absent') {
+                        statusText = '❌ غياب / ملغي';
+                        statusBg = '#fee2e2';
+                        statusColor = '#991b1b';
+                      }
+
+                      return (
+                        <tr key={app.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                          <td style={{ padding: '12px 14px', fontWeight: 'bold', color: '#0f172a' }}>
+                            د. {app.doctor_name || 'غير محدد'}
+                          </td>
+                          <td style={{ padding: '12px 14px', color: '#334155' }}>
+                            {app.booking_date || app.appointment_date 
+                              ? new Date(app.booking_date || app.appointment_date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' })
+                              : 'غير محدد'}
+                          </td>
+                          <td style={{ padding: '12px 14px', color: '#0369a1', fontWeight: 'bold' }}>
+                            {app.price ? `${app.price} ج.م` : 'غير محدد'}
+                          </td>
+                          <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                            <span style={{
+                              display: 'inline-block',
+                              padding: '5px 12px',
+                              borderRadius: '20px',
+                              fontSize: '12.5px',
+                              fontWeight: 'bold',
+                              backgroundColor: statusBg,
+                              color: statusColor
+                            }}>
+                              {statusText}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+            </div>
+
+            {/* زر الإغلاق السفلي */}
+            <button
+              onClick={() => setShowPatientHistoryModal(false)}
+              style={{
+                marginTop: '15px',
+                padding: '12px',
+                background: '#0284c7',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '15px',
+                fontWeight: 'bold',
+                cursor: 'pointer'
+              }}
+            >
+              إغلاق
+            </button>
+          </div>
+        </div>
+      )}
            <button
   onClick={() => {
     const title = activeNotification?.title || 'إشعار جديد';
