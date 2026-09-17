@@ -259,28 +259,29 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
       );
     } catch (error) {
       console.warn('استجابة الحجز (تم الاعتماد وعرض التذكرة للمريض):', error);
-   } finally {
+    } finally {
       setSelectedSlot(fullSlotString);
       setSubmitting(false);
       setShowModal(false);
 
       // 🌟 حفظ التذكرة بالمتغيرات الصحيحة الخاصة بـ DirectBooking
       const ticketObj = {
-          patientName: patientData.name,
-          patientMobile: patientData.mobile,
-          doctorName: doctor?.name || doctorName,
-          specialty: doctor?.specialty || specialty,
-          slot: fullSlotString,
-          address: doctor?.address || '',
-          fee: doctor?.fee || '',
-          doctorMobile: doctor?.mobile || ''
+        patientName: patientData.name,
+        patientMobile: patientData.mobile,
+        doctorName: doctor?.name || doctorName,
+        specialty: doctor?.specialty || specialty,
+        slot: fullSlotString,
+        address: doctor?.address || '',
+        fee: doctor?.fee || '',
+        doctorMobile: doctor?.mobile || ''
       };
       sessionStorage.setItem('active_ticket', JSON.stringify(ticketObj));
       window.dispatchEvent(new Event('storage_ticket'));
     }
+  };
 
   // مشاركة رابط الطبيب
- // مشاركة رابط الطبيب فائق الاختصار للتعليقات
+  // مشاركة رابط الطبيب فائق الاختصار للتعليقات
   const handleShare = () => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(shortShareUrl);
