@@ -297,7 +297,7 @@ export function SearchPage(props) {
             return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
         });
 
-    const handleConfirm = async () => {
+   const handleConfirm = async () => {
         if (!selectedDay) {
             alert("من فضلك اختر اليوم المناسب أولاً");
             return;
@@ -317,6 +317,11 @@ export function SearchPage(props) {
 
         saveBookedSlotForDoctor(selectedDoc.id, actualDate, selectedTime);
 
+        // 🌟 1. جلب توكن إشعارات المريض من المتصفح
+        const patientFcmToken = localStorage.getItem('web_fcm_token');
+        console.log('📱 FCM Token المرسل من صفحة البحث:', patientFcmToken ? 'موجود ✅' : 'غير موجود ❌');
+
+        // 🌟 2. تجهيز بيانات الحجز وتضمين الـ fcm_token
         const bookingData = {
             doctor_id: selectedDoc.id,
             doctor_name: selectedDoc.name,
@@ -325,8 +330,23 @@ export function SearchPage(props) {
             appointment_date: actualDate,
             appointment_time: selectedTime,
             price: selectedDoc.fee,
-            status: 'pending'
+            status: 'pending',
+            fcm_token: patientFcmToken || null // 👈 هذا السطر هو الذي يشغل الإشعار فوراً للمريض
         };
+
+        // 🌟 3. حفظ المريض في المتصفح لربط حجزه بـ "سجل الحجوزات السابقة"
+        try {
+            const currentSavedUser = localStorage.getItem('saved_user');
+            if (!currentSavedUser) {
+                localStorage.setItem('saved_user', JSON.stringify({
+                    name: patientData.name,
+                    mobile: patientData.mobile,
+                    role: 'patient'
+                }));
+            }
+        } catch (e) {
+            console.warn(e);
+        }
 
         try {
             await fetch('https://clinic-api-ig3d.onrender.com/book-appointment', {
