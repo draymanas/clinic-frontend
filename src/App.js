@@ -15,7 +15,7 @@ import { useLocation } from 'react-router-dom';
 import { FaBell, FaCheck } from 'react-icons/fa';
 import NotificationPage from './NotificationPage';
 import { requestForToken } from './firebase';
-
+import { requestForToken, onMessageListener } from './firebase';
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
     // ... (احتفظ بالثوابت هنا إذا لم تنقلها إلى ملف منفصل)
