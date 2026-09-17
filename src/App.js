@@ -908,15 +908,30 @@ function App() {
   const [activeTicket, setActiveTicket] = useState(null);
 
   useEffect(() => {
-    // فحص ما إذا كانت هناك تذكرة نشطة لم يغلقها المستخدم بعد
-    const savedTicket = sessionStorage.getItem('active_ticket');
-    if (savedTicket) {
-      try {
-        setActiveTicket(JSON.parse(savedTicket));
-      } catch (e) {
-        console.error(e);
+    const updateTicketFromStorage = () => {
+      const savedTicket = sessionStorage.getItem('active_ticket');
+      if (savedTicket) {
+        try {
+          setActiveTicket(JSON.parse(savedTicket));
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        setActiveTicket(null);
       }
-    }
+    };
+
+    // قراءة أولية عند فتح الصفحة
+    updateTicketFromStorage();
+
+    // 🌟 الاستماع الفوري عند ضغط زر الحجز في SearchPage أو DirectBooking
+    window.addEventListener('storage_ticket', updateTicketFromStorage);
+    window.addEventListener('storage', updateTicketFromStorage);
+
+    return () => {
+      window.removeEventListener('storage_ticket', updateTicketFromStorage);
+      window.removeEventListener('storage', updateTicketFromStorage);
+    };
   }, []);
 
   useEffect(() => {
