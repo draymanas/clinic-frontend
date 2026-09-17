@@ -45,10 +45,13 @@ messaging.onBackgroundMessage((payload) => {
   // ------------------------------------------
   // 🔗 الرابط الذي سيتم فتحه عند الضغط
   // ------------------------------------------
-  const openUrl =
-    'https://www.doctoreg.online/notification' +
-    '?notif_title=' + encodeURIComponent(title) +
-    '&notif_body=' + encodeURIComponent(body);
+ const address = payload.data?.address || '';
+
+const openUrl =
+  'https://www.doctoreg.online/notification' +
+  '?notif_title=' + encodeURIComponent(title) +
+  '&notif_body=' + encodeURIComponent(body) +
+  '&address=' + encodeURIComponent(address);
 
 
   // ==========================================
@@ -62,11 +65,12 @@ messaging.onBackgroundMessage((payload) => {
 
     badge: '/logo512.png',
 
-    data: {
-      url: openUrl,
-      title: title,
-      body: body
-    }
+   data: {
+  url: openUrl,
+  title: title,
+  body: body,
+  address: address
+}
   };
 
 

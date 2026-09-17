@@ -934,13 +934,33 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
+useEffect(() => {
+
   onMessageListener().then((payload) => {
-    const title = payload.notification?.title || payload.data?.notif_title || 'إشعار جديد';
-    const body = payload.notification?.body || payload.data?.notif_body || '';
-    setActiveNotification({ title, body });
+
+    const title =
+      payload.notification?.title ||
+      payload.data?.notif_title ||
+      'إشعار جديد';
+
+    const body =
+      payload.notification?.body ||
+      payload.data?.notif_body ||
+      '';
+
+    const address =
+      payload.data?.address ||
+      '';
+
+    setActiveNotification({
+      title,
+      body,
+      address
+    });
+
   }).catch((err) => console.log('failed: ', err));
-});
+
+}, []);
 
 useEffect(() => {
     const savedUser = localStorage.getItem('saved_user');
@@ -1544,7 +1564,7 @@ onClick={() => {
     const body = activeNotification?.body || '';
     
     // 🌟 جلب عنوان العيادة من التذكرة النشطة إذا كان الحجز جديداً
-    const clinicAddress = activeTicket?.address || '';
+ const clinicAddress = activeNotification?.address || '';
 
     navigate(
       `/notification?notif_title=${encodeURIComponent(title)}&notif_body=${encodeURIComponent(body)}${clinicAddress ? `&address=${encodeURIComponent(clinicAddress)}` : ''}`
