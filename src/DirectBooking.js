@@ -260,11 +260,24 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
     } catch (error) {
       console.warn('استجابة الحجز (تم الاعتماد وعرض التذكرة للمريض):', error);
     } finally {
-      setSelectedSlot(fullSlotString);
-      setSubmitting(false);
-      setShowModal(false);
-      setShowTicket(true);
-    }
+            setSelectedSlot(fullAppointment);
+            setShowModal(false);
+
+            // 🌟 حفظ التذكرة العامة وإطلاق حدث ظهورها فوق كل الصفحات
+            const ticketObj = {
+                patientName: patientData.name,
+                patientMobile: patientData.mobile,
+                doctorName: selectedDoc.name,
+                specialty: selectedDoc.specialty || 'استشاري متخصص',
+                slot: fullAppointment,
+                address: selectedDoc.address || '',
+                fee: selectedDoc.fee,
+                doctorMobile: selectedDoc.mobile || ''
+            };
+            sessionStorage.setItem('active_ticket', JSON.stringify(ticketObj));
+            window.dispatchEvent(new Event('storage_ticket'));
+        }
+    
   };
 
   // مشاركة رابط الطبيب

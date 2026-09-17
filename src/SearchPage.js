@@ -357,10 +357,23 @@ export function SearchPage(props) {
             if (typeof fetchData === 'function') fetchData();
         } catch (error) {
             console.error("Error during booking:", error);
-        } finally {
+       } finally {
             setSelectedSlot(fullAppointment);
             setShowModal(false);
-            setShowTicket(true);
+
+            // 🌟 حفظ التذكرة العامة وإطلاق حدث ظهورها فوق كل الصفحات
+            const ticketObj = {
+                patientName: patientData.name,
+                patientMobile: patientData.mobile,
+                doctorName: selectedDoc.name,
+                specialty: selectedDoc.specialty || 'استشاري متخصص',
+                slot: fullAppointment,
+                address: selectedDoc.address || '',
+                fee: selectedDoc.fee,
+                doctorMobile: selectedDoc.mobile || ''
+            };
+            sessionStorage.setItem('active_ticket', JSON.stringify(ticketObj));
+            window.dispatchEvent(new Event('storage_ticket'));
         }
     };
 

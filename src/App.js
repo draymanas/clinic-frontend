@@ -903,6 +903,21 @@ function App() {
       setAppointments(await resApps.json());
     } catch (e) { console.error("Error fetching data"); }
   };
+       
+// 🎫 حالة تذكرة الحجز العامة
+  const [activeTicket, setActiveTicket] = useState(null);
+
+  useEffect(() => {
+    // فحص ما إذا كانت هناك تذكرة نشطة لم يغلقها المستخدم بعد
+    const savedTicket = sessionStorage.getItem('active_ticket');
+    if (savedTicket) {
+      try {
+        setActiveTicket(JSON.parse(savedTicket));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, []);
 
   useEffect(() => {
   onMessageListener().then((payload) => {
@@ -1677,7 +1692,173 @@ onClick={() => {
           </div>
         </div>
       )}
- 
+ {/* 🌟 تذكرة الحجز الرسمية العامة - تظل عائمة فوق أي صفحة حتى يغلقها المستخدم */}
+      {activeTicket && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.8)',
+          backdropFilter: 'blur(5px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999999, // أعلى من أي صفحة وأعلى من النافبار
+          padding: '16px',
+          direction: 'rtl',
+          fontFamily: 'Cairo, sans-serif'
+        }}>
+          <div style={{
+            backgroundColor: '#fff',
+            borderRadius: '24px',
+            maxWidth: '440px',
+            width: '100%',
+            padding: '28px',
+            boxShadow: '0 25px 50px rgba(0,0,0,0.3)',
+            border: '2px solid #e2e8f0',
+            textAlign: 'right'
+          }}>
+            <div style={{ textAlign: 'center', paddingBottom: '16px', borderBottom: '2px dashed #cbd5e1', marginBottom: '16px' }}>
+              <div style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '50%',
+                background: '#ecfdf5',
+                color: '#059669',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 8px auto',
+                border: '1.5px solid #a7f3d0',
+                fontSize: '22px',
+                fontWeight: 'bold'
+              }}>
+                ✓
+              </div>
+              <h2 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: 900, color: '#0f172a' }}>
+                تم تأكيد حجز موعدك بنجاح!
+              </h2>
+              <span style={{ fontSize: '12px', color: '#64748b' }}>
+                تذكرة إلكترونية رسمية معتمدة من العيادة
+              </span>
+            </div>
+
+            <div style={{ marginBottom: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '13px' }}>
+                <span style={{ color: '#64748b' }}>اسم المريض:</span>
+                <span style={{ fontWeight: 700, color: '#0f172a' }}>{activeTicket.patientName}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '13px' }}>
+                <span style={{ color: '#64748b' }}>الدكتور المعالج:</span>
+                <span style={{ fontWeight: 700, color: '#0f172a' }}>د. {activeTicket.doctorName}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '13px' }}>
+                <span style={{ color: '#64748b' }}>التخصص:</span>
+                <span style={{ fontWeight: 700, color: '#0f172a' }}>{activeTicket.specialty || 'استشاري متخصص'}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #f1f5f9', fontSize: '13px' }}>
+                <span style={{ color: '#64748b' }}>الموعد المحدد:</span>
+                <span style={{ fontWeight: 700, color: '#2563eb' }}>{activeTicket.slot}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: 'none', fontSize: '13px' }}>
+                <span style={{ color: '#64748b' }}>عنوان العيادة بالتفصيل:</span>
+                <span style={{ maxWidth: '240px', textAlign: 'right', fontWeight: 800, color: '#0f172a' }}>
+                  📍 {activeTicket.address || 'العنوان مسجل بالعيادة'}
+                </span>
+              </div>
+            </div>
+
+            <div style={{
+              background: '#fffbeb',
+              borderRight: '4px solid #f59e0b',
+              borderRadius: '10px',
+              padding: '12px',
+              margin: '16px 0',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div>
+                <span style={{ fontSize: '11px', color: '#92400e', display: 'block', fontWeight: 600 }}>قيمة الكشف:</span>
+                <strong style={{ fontSize: '18px', color: '#78350f' }}>{activeTicket.fee} ج.م</strong>
+              </div>
+              <span style={{ fontSize: '11px', color: '#b45309' }}>تدفع عند الدخول للعيادة</span>
+            </div>
+
+            <div style={{
+              background: '#f0fdf4',
+              border: '1px solid #bbf7d0',
+              borderRadius: '12px',
+              padding: '10px',
+              fontSize: '12px',
+              color: '#166534',
+              fontWeight: 700,
+              textAlign: 'center',
+              marginBottom: '16px'
+            }}>
+              📸 احفظ لقطة شاشة (Screenshot) للتذكرة لإظهارها بالعيادة
+            </div>
+
+            {activeTicket.doctorMobile && (
+              <button 
+                onClick={() => {
+                  const message = 
+                    `تأكيد حجز موعد كشف رسمي من منصة دكتور:\n` +
+                    `👤 المريض: ${activeTicket.patientName}\n` +
+                    `👨‍⚕️ الدكتور: د. ${activeTicket.doctorName}\n` +
+                    `📅 الموعد: ${activeTicket.slot}\n` +
+                    `📍 العنوان: ${activeTicket.address || ''}\n` +
+                    `📱 هاتف المريض: ${activeTicket.patientMobile}\n` +
+                    `🏥 كود الحجز: DOC-${Math.floor(100000 + Math.random() * 900000)}`;
+                  const whatsappUrl = `https://wa.me/2${activeTicket.doctorMobile}?text=${encodeURIComponent(message)}`;
+                  window.open(whatsappUrl, '_blank');
+                }} 
+                style={{ 
+                  width: '100%', 
+                  padding: '12px', 
+                  background: '#25D366', 
+                  color: '#fff', 
+                  border: 'none', 
+                  borderRadius: '12px', 
+                  cursor: 'pointer', 
+                  fontWeight: 'bold', 
+                  marginBottom: '10px', 
+                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
+                }}
+              >
+                <span>💬 إرسال التذكرة لواتساب العيادة فوراً</span>
+              </button>
+            )}
+
+            {/* زر الإغلاق النهائي: يغلق التذكرة ليكتشف المستخدم الصفحة التي خلفها */}
+            <button 
+              onClick={() => {
+                sessionStorage.removeItem('active_ticket');
+                setActiveTicket(null);
+              }} 
+              style={{ 
+                width: '100%', 
+                padding: '12px', 
+                background: '#f1f5f9', 
+                color: '#334155', 
+                border: '1px solid #cbd5e1', 
+                borderRadius: '12px', 
+                cursor: 'pointer', 
+                fontWeight: 700, 
+                fontSize: '13px' 
+              }}
+            >
+              تم الحفظ، إغلاق النافذة
+            </button>
+          </div>
+        </div>
+      )}
       {/* 3. منطقة عرض المحتوى */}
      <main>
         <Routes>
