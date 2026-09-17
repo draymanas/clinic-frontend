@@ -1,8 +1,7 @@
 // src/firebase.js
 
 import { initializeApp } from "firebase/app";
-import { getMessaging, getToken } from "firebase/messaging";
-
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 // ==========================================
 // 🔥 إعدادات Firebase الخاصة بالويب
 // ==========================================
@@ -148,7 +147,15 @@ export async function requestForToken() {
     return null;
   }
 }
-
+// 🔔 استقبال الإشعار والموقع مفتوح في الواجهة (Foreground)
+export function onMessageListener() {
+  return new Promise((resolve) => {
+    onMessage(messaging, (payload) => {
+      console.log("📩 تم استلام إشعار والموقع مفتوح:", payload);
+      resolve(payload);
+    });
+  });
+}
 
 // ==========================================
 // 📦 التصدير

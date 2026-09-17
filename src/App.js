@@ -862,6 +862,14 @@ function App() {
     } catch (e) { console.error("Error fetching data"); }
   };
 
+  useEffect(() => {
+  onMessageListener().then((payload) => {
+    const title = payload.notification?.title || payload.data?.notif_title || 'إشعار جديد';
+    const body = payload.notification?.body || payload.data?.notif_body || '';
+    setActiveNotification({ title, body });
+  }).catch((err) => console.log('failed: ', err));
+});
+
 useEffect(() => {
     const savedUser = localStorage.getItem('saved_user');
     const savedId = localStorage.getItem('saved_doctor_id');
