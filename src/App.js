@@ -2177,138 +2177,223 @@ const saveWebFCMToken = async (user, token) => {
   };
 
   return (
+    
     <div style={{ direction: 'rtl', fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f7f6', minHeight: '100vh' }}>
       
       {/* 1. شريط التنقل العلوي (النافبار) */}
-      <nav style={{ 
-        padding: '10px 15px', 
-        background: '#2c3e50', 
-        display: 'flex', 
-        flexDirection: 'column', // جعل الهيدر عمودي لترتيب العناصر بشكل ممتاز على الموبايل
-        position: 'sticky', 
-        top: 0, 
-        zIndex: 1000, 
-        boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-        gap: '10px'
-      }}>
+      <nav
+  style={{
+    padding: '6px 15px',
+    background: '#2c3e50',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position: 'sticky',
+    top: 0,
+    zIndex: 1000,
+    boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+    flexWrap: 'wrap',
+    gap: '6px'
+  }}
+>
 
-        {/* --- الصف الأول: اللوجو + (اسم المستخدم وأزرار الدخول/الخروج) --- */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          
-          {/* اللوجو */}
-          <div 
-            onClick={() => navigate('/')}
-            style={{ 
-              cursor: 'pointer', 
-              display: 'flex', 
-              alignItems: 'center'
+        {/* --- مكان اللوجو الجديد --- */}
+{/* ==========================================
+    الصف الأول: اللوجو + حساب المستخدم
+========================================== */}
+
+<div
+  style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    flexShrink: 0
+  }}
+>
+
+  {/* --- اللوجو --- */}
+
+  <div
+    onClick={() => navigate('/')}
+    style={{
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      height: '100%'
+    }}
+  >
+    <img
+      src="/logo512.webp"
+      alt="منصة دكتور"
+      style={{
+        height: '60px',
+        maxHeight: '100%',
+        width: 'auto',
+        objectFit: 'contain',
+        paddingRight: '5px'
+      }}
+      onError={(e) => {
+        e.target.src = "/logo.webp";
+      }}
+    />
+  </div>
+
+
+  {/* ==========================================
+      حساب المستخدم
+      يظهر بجوار اللوجو وليس مع أزرار الهيدر
+  ========================================== */}
+
+  <div
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '7px',
+      flexShrink: 0
+    }}
+  >
+
+    {!currentUser ? (
+
+      /* 🔐 لم يتم تسجيل الدخول */
+
+      <button
+        onClick={() => setShowLoginModal(true)}
+        style={{
+          ...navBtnStyle,
+          background: '#27ae60',
+          fontSize: '13px',
+          padding: '7px 11px',
+          whiteSpace: 'nowrap'
+        }}
+      >
+        🔐 دخول
+      </button>
+
+    ) : (
+
+      /* 👤 مستخدم مسجل الدخول */
+
+      <>
+
+        {/* اسم المستخدم */}
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            color: '#fff',
+            whiteSpace: 'nowrap'
+          }}
+        >
+
+          <span
+            style={{
+              fontSize: '17px'
             }}
           >
-            <img 
-              src="/logo512.webp" 
-              alt="منصة دكتور" 
-              style={{ 
-                height: '50px', 
-                width: 'auto', 
-                objectFit: 'contain'
-              }} 
-              onError={(e) => { e.target.src = "/logo.webp" }} 
-            />
-          </div>
+            👤
+          </span>
 
-          {/* حاوية اسم المستخدم وزر الدخول/الخروج (في الصف الأول دائماً) */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {currentUser ? (
-              <>
-                <span style={{ color: '#fff', fontSize: '13px', fontWeight: 'bold' }}>
-                  {currentUser.name || 'مرحباً'}
-                </span>
-                <button 
-                  onClick={handleLogout} // أو دالة تسجيل الخروج الخاصة بك
-                  style={{
-                    backgroundColor: '#e74c3c',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '6px 12px',
-                    borderRadius: '8px',
-                    fontSize: '13px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  خروج
-                </button>
-              </>
-            ) : (
-              <button 
-                onClick={() => navigate('/login')} // أو دالة تسجيل الدخول
-                style={{
-                  backgroundColor: '#27ae60',
-                  color: '#fff',
-                  border: 'none',
-                  padding: '6px 12px',
-                  borderRadius: '8px',
-                  fontSize: '13px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold'
-                }}
-              >
-                دخول
-              </button>
-            )}
-          </div>
+          <span
+            style={{
+              fontSize: '12px',
+              fontWeight: 'bold',
+              maxWidth: '95px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {isAdmin
+              ? 'الأدمن'
+              : currentUser?.name || 'المستخدم'}
+          </span>
 
         </div>
 
-        {/* --- الصف الثاني: أزرار التنقل الرئيسية والاستشارات والحجوزات --- */}
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', overflowX: 'auto', paddingBottom: '4px', width: '100%' }}>
-          
-          {currentUser?.role !== 'doctor' && (
-            <button 
-              onClick={() => navigate('/')} 
-              style={{...navBtnStyle, backgroundColor: window.location.pathname === '/' ? '#3498db' : 'transparent', whiteSpace: 'nowrap'}}
-            >
-              🏠 الرئيسية
-            </button>
-          )}
 
-          {/* 🩺 زر الاستشارات الطبية */}
-          <button 
-            onClick={() => navigate('/symptoms')} 
-            style={{
-              ...navBtnStyle, 
-              backgroundColor: window.location.pathname === '/symptoms' ? '#0284c7' : '#e41eb9', 
-              color: '#ffffff', 
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              whiteSpace: 'nowrap'
-            }}
-            title="اطرح استفسارك الطبي وسنوجهك للتخصص المناسب"
-          >
-            <span>🩺</span>
-            <span>استشارات طبية</span>
-          </button>
+        {/* خروج */}
 
-          {/* 📋 زر سجل الحجوزات يظهر للمريض المسجل فقط */}
-          {currentUser?.role === 'patient' && currentUser?.mobile && (
-            <button 
-              onClick={fetchPatientHistory} 
-              style={{
-                ...navBtnStyle, 
-                backgroundColor: '#10b981', 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '6px',
-                boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              <span>📋</span>
-              <span>سجل الحجوزات</span>
-            </button>
-          )}
+        <button
+          onClick={handleLogout}
+          style={{
+            ...navBtnStyle,
+            backgroundColor: '#e74c3c',
+            fontSize: '12px',
+            padding: '7px 10px',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          خروج
+        </button>
+
+      </>
+
+    )}
+
+  </div>
+
+</div>
+
+        {/* --- حاوية الزراير --- */}
+      {/* ==========================================
+    حاوية أزرار التنقل
+    منفصلة عن حساب المستخدم
+========================================== */}
+
+<div
+  style={{
+    display: 'flex',
+    gap: '8px',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
+    flex: 1,
+    minWidth: 0
+  }}
+>
+        {currentUser?.role !== 'doctor' && (
+  <button onClick={() => navigate('/')} style={{...navBtnStyle, backgroundColor: window.location.pathname === '/' ? '#3498db' : 'transparent'}}>🏠 الرئيسية</button>
+)}
+
+  {/* 🩺 زر الاستشارات الطبية (احكي لنا عن أعراضك) */}
+      {/* 🩺 زر الاستشارات الطبية (احكي لنا عن أعراضك) */}
+        <button 
+          onClick={() => navigate('/symptoms')} 
+          style={{
+            ...navBtnStyle, 
+            backgroundColor: window.location.pathname === '/symptoms' ? '#0284c7' : '#e41eb9', // 👈 أخضر فاتح وواضح في الحالة العادية
+            color: '#ffffff', // 👈 ثبات لون الخط أبيض تماماً في الحالتين
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+          title="اطرح استفسارك الطبي وسنوجهك للتخصص المناسب"
+        >
+          <span>🩺</span>
+          <span>استشارات طبية</span>
+        </button>
+
+{/* 📋 زر سجل الحجوزات يظهر للمريض المسجل فقط */}
+{currentUser?.role === 'patient' && currentUser?.mobile && (
+  <button 
+    onClick={fetchPatientHistory} 
+    style={{
+      ...navBtnStyle, 
+      backgroundColor: '#10b981', 
+      display: 'flex', 
+      alignItems: 'center', 
+      gap: '6px',
+      boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)'
+    }}
+  >
+    <span>📋</span>
+    <span>سجل الحجوزات</span>
+  </button>
+)}
 
  {(currentUser?.role !== 'admin' && currentUser?.role !== 'patient') && (
   <button 
@@ -2332,35 +2417,7 @@ const saveWebFCMToken = async (user, token) => {
     📊 لوحة التحكم
   </button>
 )}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
-          {!currentUser ? (
-            <button onClick={() => setShowLoginModal(true)} style={{...navBtnStyle, background: '#27ae60', fontSize: '14px'}}>🔐 دخول</button>
-          ) : (
-            <>
-      <button 
-        onClick={handleLogout} 
-        style={{
-          ...navBtnStyle, 
-          backgroundColor: '#e74c3c', 
-          fontSize: '14px',        
-          padding: '8px 15px',     
-          width: '100%',           
-          marginBottom: '5px',      
-          marginTop: '2px'         
-        }}
-      >
-        خروج
-      </button>
-
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: '1' }}>
-        <span style={{ fontSize: '18px' }}>👤</span>
-        <span style={{ fontSize: '10px', color: '#fff', textAlign: 'center' }}>
-          {isAdmin ? 'الأدمن' : currentUser.name}
-        </span>
-      </div>
-            </>
-          )}
-        </div>
+       
 </div>
       </nav>
 
