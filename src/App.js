@@ -2176,7 +2176,8 @@ const saveWebFCMToken = async (user, token) => {
     navigate('/')
   };
 
- <div style={{ direction: 'rtl', fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f7f6', minHeight: '100vh' }}>
+  return (
+    <div style={{ direction: 'rtl', fontFamily: 'Arial, sans-serif', backgroundColor: '#f4f7f6', minHeight: '100vh' }}>
       
       {/* 1. شريط التنقل العلوي (النافبار) */}
       <nav style={{ 
@@ -2308,10 +2309,6 @@ const saveWebFCMToken = async (user, token) => {
               <span>سجل الحجوزات</span>
             </button>
           )}
-
-        </div>
-
-      </nav>
 
  {(currentUser?.role !== 'admin' && currentUser?.role !== 'patient') && (
   <button 
