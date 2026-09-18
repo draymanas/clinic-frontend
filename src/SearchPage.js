@@ -698,7 +698,7 @@ return (
                                 e.currentTarget.style.boxShadow = '0 10px 25px rgba(15, 23, 42, 0.06)';
                                 e.currentTarget.style.borderColor = '#bae6fd';
                             }}
-                        >
+                        > 
                             {doc.featured && (
                                 <div style={{
                                     position: 'absolute', top: '15px', left: '15px', 
