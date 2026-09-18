@@ -653,12 +653,15 @@ return (
             {/* لا تنس إغلاق الوسم في نهاية الملف باستبدال </div> الأخير بـ </main> */}
 
             {/* قائمة الأطباء (البطاقات) */}
+         {/* قائمة الأطباء (البطاقات المتجاوبة مع الموبايل والكمبيوتر) */}
             <div ref={doctorsListRef} style={{
-                display: 'flex',
-                gap: '35px',
-                flexWrap: 'wrap', 
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
+                gap: '20px',
                 justifyContent: 'center', 
-                padding: '10px'
+                padding: '10px 4px',
+                maxWidth: '1200px',
+                margin: '0 auto'
             }}>
                 {filteredDoctors.length > 0 ? (
                     filteredDoctors.map(doc => (
@@ -670,12 +673,13 @@ return (
                             title="اضغط لعرض الملف الشخصي ومواعيد الطبيب"
                            style={{
                                 position: 'relative',
-                                backgroundColor: '#9ed0fc', // أزرق سماوي فاتح جداً ونظيف
-                                padding: '25px',
+                                backgroundColor: '#9ed0fc',
+                                padding: '22px 18px',
                                 borderRadius: '24px',
-                                width: '310px',
+                                width: '100%', // 🌟 يملأ عرض الشاشة بالكامل على الموبايل
+                                maxWidth: '100%',
                                 textAlign: 'center',
-                                border: '1.5px solid #bae6fd', // حدود سماوية فاتحة متناسقة
+                                border: '1.5px solid #bae6fd',
                                 boxShadow: '0 10px 25px rgba(15, 23, 42, 0.06)',
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -692,7 +696,7 @@ return (
                             onMouseOut={(e) => {
                                 e.currentTarget.style.transform = 'translateY(0)';
                                 e.currentTarget.style.boxShadow = '0 10px 25px rgba(15, 23, 42, 0.06)';
-                                e.currentTarget.style.borderColor = '#e2e8f0';
+                                e.currentTarget.style.borderColor = '#bae6fd';
                             }}
                         >
                             {doc.featured && (

@@ -340,7 +340,96 @@ function HomePage() {
                         </button>
                     </div>
                 </div>
+             {/* ==================================================
+    🩺 مساعد اختيار التخصص
+================================================== */}
 
+<section
+  style={{
+    maxWidth: '1100px',
+    margin: '30px auto',
+    padding: '0 15px'
+  }}
+>
+  <div
+    style={{
+      background:
+        'linear-gradient(135deg, #ecfeff, #e0f2fe)',
+      border:
+        '1px solid #bae6fd',
+      borderRadius: '22px',
+      padding: '28px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '20px',
+      flexWrap: 'wrap',
+      direction: 'rtl',
+      boxShadow:
+        '0 6px 20px rgba(14,116,144,0.08)'
+    }}
+  >
+
+    <div style={{ flex: 1, minWidth: '260px' }}>
+
+      <div
+        style={{
+          fontSize: '15px',
+          color: '#0369a1',
+          fontWeight: '800',
+          marginBottom: '7px'
+        }}
+      >
+        🔍 مش عارف تروح لأي دكتور؟
+      </div>
+
+      <h2
+        style={{
+          margin: '0 0 8px',
+          color: '#0f172a',
+          fontSize: '24px',
+          fontWeight: '800'
+        }}
+      >
+        احكي لنا عن أعراضك
+      </h2>
+
+      <p
+        style={{
+          margin: 0,
+          color: '#475569',
+          lineHeight: '1.8',
+          fontSize: '15px'
+        }}
+      >
+        اكتب الأعراض التي تشعر بها، وساعدك
+        في الوصول إلى التخصص المناسب والطبيب المناسب.
+      </p>
+
+    </div>
+
+
+    <button
+      onClick={() => navigate('/symptoms')}
+      style={{
+        border: 'none',
+        background: '#0284c7',
+        color: '#fff',
+        padding: '14px 25px',
+        borderRadius: '13px',
+        fontSize: '16px',
+        fontWeight: '800',
+        cursor: 'pointer',
+        boxShadow:
+          '0 5px 15px rgba(2,132,199,0.25)',
+        whiteSpace: 'nowrap'
+      }}
+    >
+      🩺 ابدأ الآن
+    </button>
+
+  </div>
+</section>
                 {/* بداية جدول التخصصات الجديد */}
                 <div style={{ direction: 'rtl', padding: '20px' }}>
                     <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '20px' }}>اختار التخصص اللي محتاجه:</h2>

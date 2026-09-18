@@ -15,6 +15,8 @@ import { useLocation } from 'react-router-dom';
 import { FaBell, FaCheck } from 'react-icons/fa';
 import NotificationPage from './NotificationPage';
 import { requestForToken, onMessageListener } from './firebase';
+import SymptomsPage from './SymptomsPage';
+
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
     // ... (احتفظ بالثوابت هنا إذا لم تنقلها إلى ملف منفصل)
@@ -193,7 +195,15 @@ function AdminPage({ doctors, appointments, fetchData }) {
   // --- حالات الاستشارات الطبية ---
   const [consultations, setConsultations] = useState([]);
   const ADMIN_API_URL = "https://clinic-api-ig3d.onrender.com/api/admin/consultations";
+  // ==========================================
+// 🩺 حالات تحرير الاستشارة الجديدة
+// ==========================================
 
+const [consultationDrafts, setConsultationDrafts] = useState({});
+
+const [savingConsultationId, setSavingConsultationId] = useState(null);
+
+const [consultationFilter, setConsultationFilter] = useState('all');
   // --- حالات الإشعارات ---
   const [notifTarget, setNotifTarget] = useState('all_patients');
   const [selectedDoctorForNotif, setSelectedDoctorForNotif] = useState('');
@@ -216,6 +226,8 @@ function AdminPage({ doctors, appointments, fetchData }) {
   useEffect(() => {
     fetchConsultations();
   }, []);
+
+
 
   // دوال إدارة الأطباء
   const handleDelete = async (id) => {
@@ -261,23 +273,183 @@ function AdminPage({ doctors, appointments, fetchData }) {
   };
 
   // الرد على الاستشارة
-  const handleAnswerSubmit = async (id, answerText, currentStatus) => {
-    try {
-      const response = await fetch(`${ADMIN_API_URL}/${id}`, {
+ // ==========================================
+// 🩺 حفظ / نشر استشارة
+// ==========================================
+
+const handleAnswerSubmit = async (id, draft) => {
+
+  if (!draft) {
+    alert("❌ لم يتم العثور على بيانات الاستشارة.");
+    return;
+  }
+
+  const answerText = (draft.answer || '').trim();
+
+  if (!answerText) {
+    alert("⚠️ من فضلك اكتب الرد الطبي أولاً.");
+    return;
+  }
+
+  if (draft.status === 'answered' && !draft.specialty) {
+    alert("⚠️ من فضلك اختر التخصص المقترح.");
+    return;
+  }
+
+  if (draft.is_published && !draft.specialty) {
+    alert("⚠️ لا يمكن نشر الاستشارة بدون تحديد التخصص.");
+    return;
+  }
+
+  try {
+
+    setSavingConsultationId(id);
+
+    const response = await fetch(
+      `${ADMIN_API_URL}/${id}`,
+      {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answer: answerText, status: currentStatus })
-      });
-      if (response.ok) {
-        alert("✅ تم حفظ الرد وتحديث حالة الاستشارة بنجاح!");
-        fetchConsultations();
-      } else {
-        throw new Error("فشل التحديث");
+
+        headers: {
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+
+          answer: answerText,
+
+          status: draft.status || 'pending',
+
+          specialty:
+            draft.specialty || null,
+
+          doctor_id:
+            draft.doctor_id
+              ? Number(draft.doctor_id)
+              : null,
+
+          service_id:
+            draft.service_id || null,
+
+          is_published:
+            Boolean(draft.is_published)
+
+        })
       }
-    } catch (error) {
-      alert("❌ حدث خطأ أثناء حفظ الرد");
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+
+      throw new Error(
+        data?.error ||
+        "فشل تحديث الاستشارة"
+      );
+
     }
+
+    alert(
+      draft.is_published
+        ? "✅ تم حفظ الرد ونشر الاستشارة للعامة بنجاح."
+        : "✅ تم حفظ الاستشارة بنجاح."
+    );
+
+    await fetchConsultations();
+
+  } catch (error) {
+
+    console.error(
+      "❌ خطأ أثناء حفظ الاستشارة:",
+      error
+    );
+
+    alert(
+      `❌ ${error.message || 'حدث خطأ أثناء الحفظ'}`
+    );
+
+  } finally {
+
+    setSavingConsultationId(null);
+
+  }
+};
+
+// ==========================================
+// ✏️ تحديث بيانات استشارة أثناء التحرير
+// ==========================================
+
+const updateConsultationDraft = (id, field, value) => {
+
+  setConsultationDrafts(prev => ({
+
+    ...prev,
+
+    [id]: {
+
+      ...(prev[id] || {}),
+
+      [field]: value
+
+    }
+
+  }));
+
+};
+
+// ==========================================
+// 📋 الحصول على بيانات التحرير الحالية
+// ==========================================
+
+const getConsultationDraft = (consultation) => {
+
+  return {
+
+    answer:
+      consultationDrafts[consultation.id]?.answer
+      ??
+      consultation.answer
+      ??
+      '',
+
+    status:
+      consultationDrafts[consultation.id]?.status
+      ??
+      consultation.status
+      ??
+      'pending',
+
+    specialty:
+      consultationDrafts[consultation.id]?.specialty
+      ??
+      consultation.specialty
+      ??
+      '',
+
+    doctor_id:
+      consultationDrafts[consultation.id]?.doctor_id
+      ??
+      consultation.doctor_id
+      ??
+      '',
+
+    service_id:
+      consultationDrafts[consultation.id]?.service_id
+      ??
+      consultation.service_id
+      ??
+      '',
+
+    is_published:
+      consultationDrafts[consultation.id]?.is_published
+      ??
+      consultation.is_published
+      ??
+      false
+
   };
+
+};
 
   // إرسال الإشعارات من السيرفر
   const handleSendNotification = async (e) => {
@@ -655,85 +827,885 @@ function AdminPage({ doctors, appointments, fetchData }) {
         )}
 
         {/* -------------------- 5. الاستشارات الطبية -------------------- */}
-        {activeTab === 'consultations' && (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
-              <h2 style={{ margin: 0, color: '#0f172a', fontSize: '24px', fontWeight: '800' }}>💬 استشارات المرضى</h2>
-              <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '6px 16px', borderRadius: '20px', fontWeight: 'bold', fontSize: '14px' }}>
-                إجمالي الاستشارات: {consultations.length}
-              </span>
-            </div>
+{/* =====================================================
+    🩺 نظام "احكي لنا عن أعراضك"
+    لوحة إدارة الاستفسارات
+===================================================== */}
 
-            <div style={{ background: '#fff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.04)' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'right' }}>
-                <thead style={{ background: '#1e293b', color: '#fff' }}>
-                  <tr>
-                    <th style={{ padding: '14px 16px' }}>الاسم والموبايل</th>
-                    <th style={{ padding: '14px 16px', width: '35%' }}>السؤال</th>
-                    <th style={{ padding: '14px 16px' }}>الحالة</th>
-                    <th style={{ padding: '14px 16px', width: '30%' }}>الإجابة والرد</th>
-                    <th style={{ padding: '14px 16px', textAlign: 'center' }}>إجراء</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {consultations.map(c => {
-                    let localAnswer = c.answer || "";
-                    let localStatus = c.status || "pending";
+{activeTab === 'consultations' && (
 
-                    return (
-                      <tr key={c.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                        <td style={{ padding: '14px 16px' }}>
-                          <div style={{ fontWeight: 'bold', color: '#1e293b' }}>{c.name}</div>
-                          <div style={{ fontSize: '13px', color: '#64748b', direction: 'ltr', textAlign: 'right' }}>{c.phone}</div>
-                        </td>
-                        <td style={{ padding: '14px 16px', color: '#334155', lineHeight: '1.6', fontSize: '14.5px' }}>
-                          {c.question}
-                        </td>
-                        <td style={{ padding: '14px 16px' }}>
-                          <select
-                            defaultValue={c.status}
-                            onChange={(e) => { localStatus = e.target.value; }}
-                            style={{ padding: '8px 10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', background: '#fff' }}
-                          >
-                            <option value="pending">⏳ معلق</option>
-                            <option value="answered">✅ تم الرد</option>
-                          </select>
-                        </td>
-                        <td style={{ padding: '14px 16px' }}>
-                          <textarea
-                            placeholder="اكتب إجابة الاستشارة هنا..."
-                            defaultValue={c.answer}
-                            rows={3}
-                            style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13.5px', boxSizing: 'border-box' }}
-                            onChange={(e) => { localAnswer = e.target.value; }}
-                          />
-                        </td>
-                        <td style={{ padding: '14px 16px', textAlign: 'center' }}>
-                          <button
-                            onClick={() => handleAnswerSubmit(c.id, localAnswer, localStatus)}
-                            style={{
-                              background: '#0284c7',
-                              color: '#fff',
-                              border: 'none',
-                              padding: '8px 16px',
-                              borderRadius: '8px',
-                              cursor: 'pointer',
-                              fontWeight: 'bold',
-                              fontSize: '13px',
-                              boxShadow: '0 2px 6px rgba(2,132,199,0.3)'
-                            }}
-                          >
-                            حفظ
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
+  <div
+    style={{
+      direction: 'rtl'
+    }}
+  >
+
+    {/* ==========================================
+        Header
+    ========================================== */}
+
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: '15px',
+        flexWrap: 'wrap',
+        marginBottom: '25px'
+      }}
+    >
+
+      <div>
+
+        <h2
+          style={{
+            margin: 0,
+            color: '#0f172a',
+            fontSize: '25px',
+            fontWeight: '800'
+          }}
+        >
+          🩺 استفسارات المرضى
+        </h2>
+
+        <p
+          style={{
+            margin: '7px 0 0',
+            color: '#64748b',
+            fontSize: '14px'
+          }}
+        >
+          مراجعة الأعراض وتوجيه المريض إلى التخصص والطبيب المناسب
+        </p>
+
+      </div>
+
+
+      {/* عدد الاستفسارات */}
+
+      <div
+        style={{
+          background: '#e0f2fe',
+          color: '#0369a1',
+          padding: '9px 17px',
+          borderRadius: '20px',
+          fontWeight: '800'
+        }}
+      >
+        📋 {consultations.length} استفسار
+      </div>
+
+    </div>
+
+
+    {/* ==========================================
+        Filter
+    ========================================== */}
+
+    <div
+      style={{
+        background: '#fff',
+        borderRadius: '16px',
+        padding: '15px',
+        marginBottom: '20px',
+        border: '1px solid #e2e8f0',
+        display: 'flex',
+        gap: '10px',
+        flexWrap: 'wrap',
+        alignItems: 'center'
+      }}
+    >
+
+      <span
+        style={{
+          fontWeight: '800',
+          color: '#334155'
+        }}
+      >
+        عرض:
+      </span>
+
+
+      <button
+        type="button"
+        onClick={() =>
+          setConsultationFilter('all')
+        }
+        style={{
+          border: 'none',
+          borderRadius: '10px',
+          padding: '8px 15px',
+          cursor: 'pointer',
+          fontWeight: '700',
+          background:
+            consultationFilter === 'all'
+              ? '#0284c7'
+              : '#f1f5f9',
+          color:
+            consultationFilter === 'all'
+              ? '#fff'
+              : '#475569'
+        }}
+      >
+        الكل
+      </button>
+
+
+      <button
+        type="button"
+        onClick={() =>
+          setConsultationFilter('pending')
+        }
+        style={{
+          border: 'none',
+          borderRadius: '10px',
+          padding: '8px 15px',
+          cursor: 'pointer',
+          fontWeight: '700',
+          background:
+            consultationFilter === 'pending'
+              ? '#f59e0b'
+              : '#f1f5f9',
+          color:
+            consultationFilter === 'pending'
+              ? '#fff'
+              : '#475569'
+        }}
+      >
+        ⏳ معلقة
+      </button>
+
+
+      <button
+        type="button"
+        onClick={() =>
+          setConsultationFilter('answered')
+        }
+        style={{
+          border: 'none',
+          borderRadius: '10px',
+          padding: '8px 15px',
+          cursor: 'pointer',
+          fontWeight: '700',
+          background:
+            consultationFilter === 'answered'
+              ? '#10b981'
+              : '#f1f5f9',
+          color:
+            consultationFilter === 'answered'
+              ? '#fff'
+              : '#475569'
+        }}
+      >
+        ✅ تم الرد
+      </button>
+
+
+      <button
+        type="button"
+        onClick={() =>
+          fetchConsultations()
+        }
+        style={{
+          marginRight: 'auto',
+          border: '1px solid #cbd5e1',
+          background: '#fff',
+          color: '#334155',
+          borderRadius: '10px',
+          padding: '8px 15px',
+          cursor: 'pointer',
+          fontWeight: '700'
+        }}
+      >
+        🔄 تحديث
+      </button>
+
+    </div>
+
+
+    {/* ==========================================
+        القائمة
+    ========================================== */}
+
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px'
+      }}
+    >
+
+      {consultations
+
+        .filter(item => {
+
+          if (
+            consultationFilter === 'all'
+          ) {
+            return true;
+          }
+
+          return (
+            item.status ===
+            consultationFilter
+          );
+
+        })
+
+        .map(c => {
+
+          const draft =
+            getConsultationDraft(c);
+
+          const isSaving =
+            savingConsultationId === c.id;
+
+
+          // الأطباء المطابقون للتخصص
+
+          const matchingDoctors =
+            draft.specialty
+              ? (doctors || []).filter(
+                  doctor =>
+                    doctor.specialty ===
+                    draft.specialty
+                )
+              : [];
+
+
+          return (
+
+            <article
+              key={c.id}
+              style={{
+                background: '#fff',
+                borderRadius: '22px',
+                padding: '24px',
+                border:
+                  c.status === 'pending'
+                    ? '2px solid #fde68a'
+                    : '1px solid #e2e8f0',
+                boxShadow:
+                  '0 6px 25px rgba(15,23,42,0.06)'
+              }}
+            >
+
+              {/* ==================================
+                  رأس الاستفسار
+              ================================== */}
+
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  gap: '15px',
+                  flexWrap: 'wrap',
+                  marginBottom: '20px'
+                }}
+              >
+
+                <div>
+
+                  <div
+                    style={{
+                      fontSize: '12px',
+                      color: '#94a3b8',
+                      marginBottom: '5px'
+                    }}
+                  >
+                    رقم الاستفسار: #{c.id}
+                  </div>
+
+                  <h3
+                    style={{
+                      margin: 0,
+                      color: '#0f172a',
+                      fontSize: '18px',
+                      fontWeight: '800'
+                    }}
+                  >
+                    👤 {c.name || 'مستخدم بدون اسم'}
+                  </h3>
+
+                  {c.phone && (
+
+                    <div
+                      style={{
+                        marginTop: '5px',
+                        color: '#64748b',
+                        direction: 'ltr',
+                        textAlign: 'right'
+                      }}
+                    >
+                      📞 {c.phone}
+                    </div>
+
+                  )}
+
+                </div>
+
+
+                {/* الحالة */}
+
+                <div
+                  style={{
+                    padding: '8px 14px',
+                    borderRadius: '20px',
+                    fontWeight: '800',
+                    fontSize: '13px',
+
+                    background:
+                      c.status === 'answered'
+                        ? '#dcfce7'
+                        : '#fef3c7',
+
+                    color:
+                      c.status === 'answered'
+                        ? '#166534'
+                        : '#92400e'
+                  }}
+                >
+
+                  {c.status === 'answered'
+                    ? '✅ تم الرد'
+                    : '⏳ في انتظار الرد'}
+
+                </div>
+
+              </div>
+
+
+              {/* ==================================
+                  السؤال
+              ================================== */}
+
+              <div
+                style={{
+                  background: '#f8fafc',
+                  border:
+                    '1px solid #e2e8f0',
+                  borderRadius: '16px',
+                  padding: '18px',
+                  marginBottom: '20px'
+                }}
+              >
+
+                <div
+                  style={{
+                    color: '#0284c7',
+                    fontWeight: '800',
+                    marginBottom: '8px'
+                  }}
+                >
+                  ❓ أعراض المريض / الاستفسار
+                </div>
+
+                <div
+                  style={{
+                    color: '#334155',
+                    lineHeight: '1.9',
+                    fontSize: '15px',
+                    whiteSpace: 'pre-wrap'
+                  }}
+                >
+                  {c.question}
+                </div>
+
+              </div>
+
+
+              {/* ==================================
+                  الرد
+              ================================== */}
+
+              <div
+                style={{
+                  marginBottom: '20px'
+                }}
+              >
+
+                <label
+                  style={{
+                    display: 'block',
+                    fontWeight: '800',
+                    color: '#334155',
+                    marginBottom: '8px'
+                  }}
+                >
+                  🩺 الرد الطبي / التوجيه
+                </label>
+
+                <textarea
+                  value={draft.answer}
+                  onChange={e =>
+                    updateConsultationDraft(
+                      c.id,
+                      'answer',
+                      e.target.value
+                    )
+                  }
+                  rows={6}
+                  placeholder="اكتب الرد والتوجيه المناسب للمريض هنا..."
+                  style={{
+                    width: '100%',
+                    boxSizing: 'border-box',
+                    padding: '14px',
+                    borderRadius: '14px',
+                    border:
+                      '1px solid #cbd5e1',
+                    fontSize: '15px',
+                    lineHeight: '1.9',
+                    resize: 'vertical',
+                    fontFamily: 'inherit',
+                    outline: 'none'
+                  }}
+                />
+
+              </div>
+
+
+              {/* ==================================
+                  التخصص والطبيب
+              ================================== */}
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns:
+                    'repeat(auto-fit, minmax(240px, 1fr))',
+                  gap: '15px',
+                  marginBottom: '20px'
+                }}
+              >
+
+                {/* التخصص */}
+
+                <div>
+
+                  <label
+                    style={{
+                      display: 'block',
+                      fontWeight: '800',
+                      color: '#334155',
+                      marginBottom: '8px'
+                    }}
+                  >
+                    🩺 التخصص المقترح
+                  </label>
+
+                 <select
+  value={draft.specialty}
+  onChange={e => {
+
+    setConsultationDrafts(prev => ({
+
+      ...prev,
+
+      [c.id]: {
+
+        ...(prev[c.id] || {}),
+
+        specialty: e.target.value,
+
+        doctor_id: ''
+
+      }
+
+    }));
+
+  }}
+  style={{
+    width: '100%',
+    boxSizing: 'border-box',
+    padding: '12px',
+    borderRadius: '12px',
+    border: '1px solid #cbd5e1',
+    background: '#fff',
+    fontSize: '15px',
+    fontFamily: 'inherit'
+  }}
+>
+
+                    <option value="">
+                      اختر التخصص
+                    </option>
+
+                    {[
+                      ...new Set(
+                        (doctors || [])
+                          .map(d =>
+                            d.specialty
+                          )
+                          .filter(Boolean)
+                      )
+                    ]
+                      .sort((a, b) =>
+                        a.localeCompare(
+                          b,
+                          'ar'
+                        )
+                      )
+                      .map(specialty => (
+
+                        <option
+                          key={specialty}
+                          value={specialty}
+                        >
+                          {specialty}
+                        </option>
+
+                      ))}
+
+                  </select>
+
+                </div>
+
+
+                {/* الطبيب */}
+
+                <div>
+
+                  <label
+                    style={{
+                      display: 'block',
+                      fontWeight: '800',
+                      color: '#334155',
+                      marginBottom: '8px'
+                    }}
+                  >
+                    👨‍⚕️ الطبيب المقترح
+                  </label>
+
+                  <select
+                    value={draft.doctor_id}
+                    disabled={
+                      !draft.specialty ||
+                      matchingDoctors.length === 0
+                    }
+                    onChange={e =>
+                      setConsultationDrafts(prev => ({
+                        ...prev,
+                        [c.id]: {
+                          ...(prev[c.id] || {}),
+                          doctor_id: e.target.value
+                        }
+                      }))
+                    }
+                    style={{
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      padding: '12px',
+                      borderRadius: '12px',
+                      border:
+                        '1px solid #cbd5e1',
+                      background:
+                        !draft.specialty
+                          ? '#f1f5f9'
+                          : '#fff',
+                      fontSize: '15px',
+                      fontFamily: 'inherit'
+                    }}
+                  >
+
+                    <option value="">
+                      {!draft.specialty
+                        ? 'اختر التخصص أولاً'
+                        : matchingDoctors.length === 0
+                        ? 'لا يوجد أطباء بهذا التخصص'
+                        : 'اختر الطبيب المقترح'}
+                    </option>
+
+                    {matchingDoctors.map(
+                      doctor => (
+
+                        <option
+                          key={doctor.id}
+                          value={doctor.id}
+                        >
+                          {doctor.name}
+                          {doctor.title
+                            ? ` - ${doctor.title}`
+                            : ''}
+                        </option>
+
+                      )
+                    )}
+
+                  </select>
+
+                </div>
+
+              </div>
+
+
+              {/* ==================================
+                  اختيار حالة الاستشارة
+              ================================== */}
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns:
+                    'repeat(auto-fit, minmax(240px, 1fr))',
+                  gap: '15px',
+                  marginBottom: '20px'
+                }}
+              >
+
+                <div>
+
+                  <label
+                    style={{
+                      display: 'block',
+                      fontWeight: '800',
+                      color: '#334155',
+                      marginBottom: '8px'
+                    }}
+                  >
+                    📌 حالة الاستشارة
+                  </label>
+
+                  <select
+                    value={draft.status}
+                    onChange={e =>
+                      updateConsultationDraft(
+                        c.id,
+                        'status',
+                        e.target.value
+                      )
+                    }
+                    style={{
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      padding: '12px',
+                      borderRadius: '12px',
+                      border:
+                        '1px solid #cbd5e1',
+                      background: '#fff',
+                      fontSize: '15px',
+                      fontFamily: 'inherit'
+                    }}
+                  >
+
+                    <option value="pending">
+                      ⏳ معلقة
+                    </option>
+
+                    <option value="answered">
+                      ✅ تم الرد
+                    </option>
+
+                  </select>
+
+                </div>
+
+
+                {/* نشر */}
+
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    paddingTop: '27px'
+                  }}
+                >
+
+                  <label
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      cursor: 'pointer',
+                      background:
+                        draft.is_published
+                          ? '#ecfdf5'
+                          : '#f8fafc',
+                      border:
+                        `1px solid ${
+                          draft.is_published
+                            ? '#a7f3d0'
+                            : '#e2e8f0'
+                        }`,
+                      borderRadius: '12px',
+                      padding: '12px 15px',
+                      width: '100%',
+                      boxSizing: 'border-box'
+                    }}
+                  >
+
+                    <input
+                      type="checkbox"
+                      checked={
+                        Boolean(
+                          draft.is_published
+                        )
+                      }
+                      onChange={e =>
+                        updateConsultationDraft(
+                          c.id,
+                          'is_published',
+                          e.target.checked
+                        )
+                      }
+                      style={{
+                        width: '18px',
+                        height: '18px'
+                      }}
+                    />
+
+                    <span
+                      style={{
+                        fontWeight: '800',
+                        color:
+                          draft.is_published
+                            ? '#047857'
+                            : '#475569'
+                      }}
+                    >
+                      {draft.is_published
+                        ? '🌍 منشور للعامة'
+                        : '🔒 غير منشور للعامة'}
+                    </span>
+
+                  </label>
+
+                </div>
+
+              </div>
+
+
+              {/* ==================================
+                  معلومات النشر
+              ================================== */}
+
+              {draft.is_published && (
+
+                <div
+                  style={{
+                    background: '#ecfdf5',
+                    border:
+                      '1px solid #a7f3d0',
+                    color: '#065f46',
+                    borderRadius: '13px',
+                    padding: '13px 15px',
+                    marginBottom: '18px',
+                    lineHeight: '1.8',
+                    fontSize: '14px'
+                  }}
+                >
+                  🌍 عند الحفظ، سيظهر هذا السؤال والإجابة
+                  في الصفحة العامة <b>/symptoms</b>،
+                  وسيظهر للزوار التخصص والطبيب المقترح إذا تم اختيارهما.
+                </div>
+
+              )}
+
+
+              {/* ==================================
+                  أزرار الحفظ
+              ================================== */}
+
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '10px',
+                  justifyContent: 'flex-start',
+                  flexWrap: 'wrap'
+                }}
+              >
+
+                <button
+                  type="button"
+                  disabled={isSaving}
+                  onClick={() =>
+                    handleAnswerSubmit(
+                      c.id,
+                      draft
+                    )
+                  }
+                  style={{
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '13px 22px',
+                    background:
+                      isSaving
+                        ? '#94a3b8'
+                        : '#0284c7',
+                    color: '#fff',
+                    fontWeight: '800',
+                    fontSize: '15px',
+                    cursor:
+                      isSaving
+                        ? 'not-allowed'
+                        : 'pointer',
+                    boxShadow:
+                      '0 4px 12px rgba(2,132,199,0.25)'
+                  }}
+                >
+
+                  {isSaving
+                    ? '⏳ جاري الحفظ...'
+                    : draft.is_published
+                    ? '🌍 حفظ ونشر'
+                    : '💾 حفظ الرد'}
+
+                </button>
+
+              </div>
+
+            </article>
+
+          );
+
+        })}
+
+    </div>
+
+
+    {/* ==========================================
+        لا توجد نتائج
+    ========================================== */}
+
+    {consultations.filter(item => {
+
+      if (consultationFilter === 'all') {
+        return true;
+      }
+
+      return item.status === consultationFilter;
+
+    }).length === 0 && (
+
+      <div
+        style={{
+          background: '#fff',
+          borderRadius: '18px',
+          padding: '45px 20px',
+          textAlign: 'center',
+          color: '#64748b',
+          border:
+            '1px solid #e2e8f0'
+        }}
+      >
+        <div
+          style={{
+            fontSize: '42px',
+            marginBottom: '10px'
+          }}
+        >
+          📭
+        </div>
+
+        لا توجد استفسارات في هذا القسم حاليًا.
+
+      </div>
+
+    )}
+
+  </div>
+
+)}
 
       </main>
     </div>
@@ -1252,6 +2224,25 @@ const saveWebFCMToken = async (user, token) => {
         {currentUser?.role !== 'doctor' && (
   <button onClick={() => navigate('/')} style={{...navBtnStyle, backgroundColor: window.location.pathname === '/' ? '#3498db' : 'transparent'}}>🏠 الرئيسية</button>
 )}
+
+  {/* 🩺 زر الاستشارات الطبية (احكي لنا عن أعراضك) */}
+      {/* 🩺 زر الاستشارات الطبية (احكي لنا عن أعراضك) */}
+        <button 
+          onClick={() => navigate('/symptoms')} 
+          style={{
+            ...navBtnStyle, 
+            backgroundColor: window.location.pathname === '/symptoms' ? '#0284c7' : '#e41eb9', // 👈 أخضر فاتح وواضح في الحالة العادية
+            color: '#ffffff', // 👈 ثبات لون الخط أبيض تماماً في الحالتين
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+          title="اطرح استفسارك الطبي وسنوجهك للتخصص المناسب"
+        >
+          <span>🩺</span>
+          <span>استشارات طبية</span>
+        </button>
 
 {/* 📋 زر سجل الحجوزات يظهر للمريض المسجل فقط */}
 {currentUser?.role === 'patient' && currentUser?.mobile && (
@@ -1970,7 +2961,10 @@ onClick={() => {
 <Route path="/doctors/:specialtyParam/:cityParam" element={<SearchPage />} />
 <Route path="/doctors/:specialtyParam" element={<SearchPage />} />
 <Route path="/doctors" element={<SearchPage />} />
- 
+ <Route
+  path="/symptoms"
+  element={<SymptomsPage />}
+/>
 // في ملف App.js أضف هذا السطر في مكان الـ Routes
 {/* رابط الاستشارات الطبية */}
 <Route path="/free-consultations" element={<QandA />} />
