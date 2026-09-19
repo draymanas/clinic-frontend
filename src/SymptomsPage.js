@@ -2,13 +2,74 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { Helmet } from 'react-helmet';
 const API_URL = 'https://clinic-api-ig3d.onrender.com';
 
 function SymptomsPage() {
 
   const navigate = useNavigate();
 
+    // ==========================================
+  // 🔎 SEO للصفحة
+  // ==========================================
+
+  const seoTitle =
+    'استشارات طبية مجانية  وتوجيه للتخصص المناسب | منصة دكتور';
+
+  const seoDescription =
+    'احكي عن الأعراض التي تشعر بها واستفسر من منصة دكتور مجانا تمامًا، وتعرف على التخصص الطبي المناسب لك وأطباء التخصص المتاحين للحجز في مصر واقرب دكتور لك و احجز معاه مباشرة بشكل مجاني.';
+
+  const canonicalUrl =
+    'https://www.doctoreg.online/symptoms';
+
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${canonicalUrl}#webpage`,
+        url: canonicalUrl,
+        name: seoTitle,
+        description: seoDescription,
+        inLanguage: 'ar-EG',
+        isPartOf: {
+          '@type': 'WebSite',
+          '@id': 'https://www.doctoreg.online/#website',
+          url: 'https://www.doctoreg.online/',
+          name: 'منصة دكتور'
+        }
+      },
+
+      {
+        '@type': 'CollectionPage',
+        '@id': `${canonicalUrl}#collection`,
+        url: canonicalUrl,
+        name: 'الاستشارات الطبية وأسئلة المرضى',
+        description:
+          'أسئلة واستفسارات طبية و استشارات طبية مجانيه منشورة مع توجيه إلى التخصص الطبي والطبيب المناسب.',
+        inLanguage: 'ar-EG'
+      },
+
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${canonicalUrl}#breadcrumb`,
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'الرئيسية',
+            item: 'https://www.doctoreg.online/'
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'استشارات طبية',
+            item: canonicalUrl
+          }
+        ]
+      }
+    ]
+  };
   // ==========================================
   // بيانات نموذج الاستفسار
   // ==========================================
@@ -177,10 +238,100 @@ function SymptomsPage() {
   // واجهة الصفحة
   // ==========================================
 
-  return (
+return (
 
-    <div
-      dir="rtl"
+    <>
+      <Helmet>
+
+        <title>
+          استشارات طبية وتوجيه للتخصص المناسب | منصة دكتور
+        </title>
+
+        <meta
+          name="description"
+          content="احكي عن الأعراض التي تشعر بها واستفسر من منصة دكتور، وتعرف على التخصص الطبي المناسب لك وأطباء التخصص المتاحين للحجز في مصر."
+        />
+
+        <meta
+          name="robots"
+          content="index,follow,max-image-preview:large"
+        />
+
+        <link
+          rel="canonical"
+          href="https://www.doctoreg.online/symptoms"
+        />
+
+        {/* Open Graph */}
+
+        <meta
+          property="og:type"
+          content="website"
+        />
+
+        <meta
+          property="og:title"
+          content="استشارات طبية وتوجيه للتخصص المناسب | منصة دكتور"
+        />
+
+        <meta
+          property="og:description"
+          content="احكي عن أعراضك وتعرف على التخصص الطبي المناسب وأطباء التخصص المتاحين للحجز."
+        />
+
+        <meta
+          property="og:url"
+          content="https://www.doctoreg.online/symptoms"
+        />
+
+        <meta
+          property="og:site_name"
+          content="منصة دكتور"
+        />
+
+        <meta
+          property="og:locale"
+          content="ar_EG"
+        />
+
+        <meta
+          property="og:image"
+          content="https://www.doctoreg.online/logo512.webp"
+        />
+
+        {/* Twitter */}
+
+        <meta
+          name="twitter:card"
+          content="summary_large_image"
+        />
+
+        <meta
+          name="twitter:title"
+          content="استشارات طبية وتوجيه للتخصص المناسب | منصة دكتور"
+        />
+
+        <meta
+          name="twitter:description"
+          content="احكي عن أعراضك وتعرف على التخصص الطبي المناسب وأطباء التخصص المتاحين للحجز."
+        />
+
+        <meta
+          name="twitter:image"
+          content="https://www.doctoreg.online/logo512.webp"
+        />
+
+        {/* Structured Data */}
+
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+
+      </Helmet>
+
+
+      <div
+        dir="rtl"
       style={{
         minHeight: '100vh',
         background: '#f1f5f9',
@@ -219,7 +370,7 @@ function SymptomsPage() {
             fontWeight: '800'
           }}
         >
-          احكي لنا عن أعراضك
+           استشارات طبية: احكي لنا عن أعراضك واعرف التخصص المناسب
         </h1>
 
         <p
@@ -478,6 +629,61 @@ function SymptomsPage() {
 
         </section>
 
+{/* ====================================
+    فقرة تعريفية لمحركات البحث
+==================================== */}
+
+<section
+  style={{
+    background: '#ffffff',
+    borderRadius: '20px',
+    padding: '25px',
+    marginBottom: '35px',
+    border: '1px solid #e2e8f0',
+    boxShadow: '0 5px 20px rgba(15,23,42,0.04)'
+  }}
+>
+
+  <h2
+    style={{
+      margin: '0 0 12px',
+      color: '#0f172a',
+      fontSize: '22px',
+      fontWeight: '800'
+    }}
+  >
+    كيف تساعدك الاستشارات الطبية في منصة دكتور؟
+  </h2>
+
+  <p
+    style={{
+      margin: 0,
+      color: '#475569',
+      lineHeight: '2',
+      fontSize: '15px'
+    }}
+  >
+    إذا كنت تعاني من أعراض معينة ولا تعرف التخصص الطبي المناسب،
+    يمكنك كتابة الأعراض التي تشعر بها من خلال منصة دكتور.
+    تتم مراجعة الاستفسارات وإضافة التوجيه المناسب إلى التخصص الطبي،
+    ويمكنك بعد ذلك استكشاف الأطباء المتاحين في هذا التخصص والوصول
+    إلى صفحة الطبيب لإتمام الحجز.
+  </p>
+
+  <p
+    style={{
+      margin: '12px 0 0',
+      color: '#475569',
+      lineHeight: '2',
+      fontSize: '15px'
+    }}
+  >
+    كما يمكنك الاطلاع على أسئلة المرضى السابقة والإجابات المنشورة
+    للاستفادة من المعلومات والتوجيهات العامة المتعلقة بمختلف
+    الأعراض والتخصصات الطبية.
+  </p>
+
+</section>
 
         {/* ====================================
             الأسئلة والإجابات السابقة
@@ -774,8 +980,10 @@ function SymptomsPage() {
         </section>
 
       </main>
+      
 
     </div>
+    </>
 
   );
 }
