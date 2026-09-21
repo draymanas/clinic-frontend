@@ -36,12 +36,6 @@ const egyptLocations = {
     "الوادي الجديد": ["الخارجة", "الداخلة", "الفرافرة", "باريس"]
 };
 
-// 🌟 حالات نظام التقييم الحقيقي
-    const [ratingDoc, setRatingDoc] = useState(null);
-    const [selectedStars, setSelectedStars] = useState(5);
-    const [reviewComment, setReviewComment] = useState('');
-    const [reviewerName, setReviewerName] = useState('');
-    const [submittingRating, setSubmittingRating] = useState(false);
 
 const inputStyle = { padding: '12px', borderRadius: '8px', border: '1px solid #ddd', width: '100%', boxSizing: 'border-box' };
 
@@ -156,36 +150,7 @@ const saveBookedSlotForDoctor = (doctorId, date, timeSlot) => {
     }
 };
 
-const handleSendRating = async () => {
-        if (!ratingDoc) return;
-        setSubmittingRating(true);
-        try {
-            const res = await fetch('https://clinic-api-ig3d.onrender.com/api/rate-doctor', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    doctor_id: ratingDoc.id,
-                    rating: selectedStars,
-                    comment: reviewComment,
-                    patient_name: reviewerName || currentUser?.name || 'مريض منصة دكتور'
-                })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                alert(`✅ تم تسجيل تقييمك بنجاح! التقييم الجديد: ${data.rating} ⭐`);
-                // تحديث القائمة المحلية
-                if (typeof fetchData === 'function') fetchData();
-                setRatingDoc(null);
-                setReviewComment('');
-            } else {
-                alert(`⚠️ ${data.error || 'حدث خطأ أثناء التقييم'}`);
-            }
-        } catch (e) {
-            alert('❌ فشل الاتصال بالسيرفر، حاول مرة أخرى');
-        } finally {
-            setSubmittingRating(false);
-        }
-    };
+
 
 // رابط الطبيب SEO
 const getDoctorUrl = (doc) => {
@@ -223,7 +188,13 @@ export function SearchPage(props) {
     const location = useLocation();
     const navigate = useNavigate();
     const routeParams = useParams();
-
+     
+// 🌟 حالات نظام التقييم الحقيقي
+    const [ratingDoc, setRatingDoc] = useState(null);
+    const [selectedStars, setSelectedStars] = useState(5);
+    const [reviewComment, setReviewComment] = useState('');
+    const [reviewerName, setReviewerName] = useState('');
+    const [submittingRating, setSubmittingRating] = useState(false);
     // استخراج الفلاتر من مسار الرابط النظيف أولاً، أو من الـ Query Parameters كخطة بديلة
     const query = new URLSearchParams(location.search);
     const paramSpecialty = deslugifyArabic(routeParams.specialtyParam);
@@ -240,6 +211,38 @@ export function SearchPage(props) {
     const [fArea, setFArea] = useState(
         paramArea !== 'الكل' ? paramArea : (query.get('area') || 'الكل')
     );
+
+    const handleSendRating = async () => {
+        if (!ratingDoc) return;
+        setSubmittingRating(true);
+        try {
+            const res = await fetch('https://clinic-api-ig3d.onrender.com/api/rate-doctor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    doctor_id: ratingDoc.id,
+                    rating: selectedStars,
+                    comment: reviewComment,
+                    patient_name: reviewerName || currentUser?.name || 'مريض منصة دكتور'
+                })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert(`✅ تم تسجيل تقييمك بنجاح! التقييم الجديد: ${data.rating} ⭐`);
+                // تحديث القائمة المحلية
+                if (typeof fetchData === 'function') fetchData();
+                setRatingDoc(null);
+                setReviewComment('');
+            } else {
+                alert(`⚠️ ${data.error || 'حدث خطأ أثناء التقييم'}`);
+            }
+        } catch (e) {
+            alert('❌ فشل الاتصال بالسيرفر، حاول مرة أخرى');
+        } finally {
+            setSubmittingRating(false);
+        }
+    };
+
 
     const [selectedDoc, setSelectedDoc] = useState(null);
     const [selectedDay, setSelectedDay] = useState('');
@@ -1077,52 +1080,250 @@ return (
                     </div>
                 </div>
             )}
-            
-            {/* 🌟 الجديد: تقييم حقيقي مربوط بالسيرفر مع زر التقييم */}
-<div style={{ 
-    display: 'flex', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    gap: '8px', 
-    margin: '6px 0 14px 0', 
-    flexWrap: 'wrap' 
-}}>
-    <span style={{ color: '#f59e0b', fontSize: '15px', fontWeight: 'bold' }}>
-        {'★'.repeat(Math.round(doc.rating || 5))}
-        {'☆'.repeat(5 - Math.round(doc.rating || 5))}
-    </span>
-
-    <span style={{ color: '#0f172a', fontSize: '13px', fontWeight: '800' }}>
-        ({doc.rating ? parseFloat(doc.rating).toFixed(1) : '5.0'})
-    </span>
-
-    <span style={{ color: '#64748b', fontSize: '12px' }}>
-        [{doc.rating_count || 0} تقييم]
-    </span>
-
-    <button
-        onClick={(e) => {
-            e.stopPropagation();
-            setRatingDoc(doc);
-            setSelectedStars(5);
-            setReviewComment('');
-            setReviewerName(currentUser?.name || '');
-        }}
+            {/* 🌟 مودال تقييم الطبيب */}
+{ratingDoc && (
+    <div
+        onClick={() => setRatingDoc(null)}
         style={{
-            background: '#e0f2fe',
-            color: '#0369a1',
-            border: 'none',
-            borderRadius: '8px',
-            padding: '4px 9px',
-            fontSize: '11.5px',
-            fontWeight: 'bold',
-            cursor: 'pointer'
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(15, 23, 42, 0.7)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1200,
+            padding: '16px',
+            boxSizing: 'border-box'
         }}
-        title="اضغط لتقييم الطبيب وكتابة رأيك"
     >
-        ✍️ قيّم
-    </button>
-</div>
+        <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+                backgroundColor: '#fff',
+                width: '420px',
+                maxWidth: '100%',
+                borderRadius: '20px',
+                padding: '24px',
+                boxShadow: '0 20px 50px rgba(0,0,0,0.25)',
+                direction: 'rtl'
+            }}
+        >
+
+            {/* عنوان المودال */}
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    borderBottom: '1px solid #e2e8f0',
+                    paddingBottom: '12px',
+                    marginBottom: '18px'
+                }}
+            >
+                <div>
+                    <h3
+                        style={{
+                            margin: 0,
+                            fontSize: '19px',
+                            fontWeight: '800',
+                            color: '#0f172a'
+                        }}
+                    >
+                        ⭐ تقييم الطبيب
+                    </h3>
+
+                    <p
+                        style={{
+                            margin: '5px 0 0',
+                            fontSize: '13px',
+                            color: '#64748b'
+                        }}
+                    >
+                        د. {ratingDoc.name}
+                    </p>
+                </div>
+
+                <button
+                    onClick={() => setRatingDoc(null)}
+                    style={{
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '22px',
+                        cursor: 'pointer',
+                        color: '#94a3b8'
+                    }}
+                >
+                    ✕
+                </button>
+            </div>
+
+            {/* اختيار النجوم */}
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+
+                <p
+                    style={{
+                        marginBottom: '10px',
+                        fontSize: '14px',
+                        fontWeight: '700',
+                        color: '#334155'
+                    }}
+                >
+                    كيف تقيّم تجربتك مع الطبيب؟
+                </p>
+
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        direction: 'ltr',
+                        gap: '5px'
+                    }}
+                >
+                    {[1, 2, 3, 4, 5].map(star => (
+                        <button
+                            key={star}
+                            type="button"
+                            onClick={() => setSelectedStars(star)}
+                            style={{
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontSize: '36px',
+                                padding: '2px',
+                                color: star <= selectedStars
+                                    ? '#f59e0b'
+                                    : '#cbd5e1',
+                                transition: 'transform 0.15s'
+                            }}
+                            title={`${star} نجوم`}
+                        >
+                            ★
+                        </button>
+                    ))}
+                </div>
+
+                <div
+                    style={{
+                        marginTop: '4px',
+                        fontSize: '13px',
+                        fontWeight: '700',
+                        color: '#f59e0b'
+                    }}
+                >
+                    {selectedStars} من 5 نجوم
+                </div>
+            </div>
+
+            {/* اسم المريض */}
+            <div style={{ marginBottom: '14px' }}>
+                <label
+                    style={{
+                        display: 'block',
+                        marginBottom: '6px',
+                        fontSize: '13px',
+                        fontWeight: '700',
+                        color: '#334155'
+                    }}
+                >
+                    👤 اسمك
+                </label>
+
+                <input
+                    type="text"
+                    placeholder="اكتب اسمك"
+                    value={reviewerName}
+                    onChange={(e) => setReviewerName(e.target.value)}
+                    style={{
+                        width: '100%',
+                        padding: '11px',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '10px',
+                        boxSizing: 'border-box',
+                        fontSize: '14px',
+                        outline: 'none'
+                    }}
+                />
+            </div>
+
+            {/* التعليق */}
+            <div style={{ marginBottom: '18px' }}>
+                <label
+                    style={{
+                        display: 'block',
+                        marginBottom: '6px',
+                        fontSize: '13px',
+                        fontWeight: '700',
+                        color: '#334155'
+                    }}
+                >
+                    💬 اكتب رأيك
+                </label>
+
+                <textarea
+                    placeholder="اكتب تجربتك مع الطبيب..."
+                    value={reviewComment}
+                    onChange={(e) => setReviewComment(e.target.value)}
+                    rows={4}
+                    style={{
+                        width: '100%',
+                        padding: '11px',
+                        border: '1px solid #cbd5e1',
+                        borderRadius: '10px',
+                        boxSizing: 'border-box',
+                        fontSize: '14px',
+                        resize: 'vertical',
+                        outline: 'none',
+                        fontFamily: 'inherit'
+                    }}
+                />
+            </div>
+
+            {/* إرسال التقييم */}
+            <button
+                type="button"
+                onClick={handleSendRating}
+                disabled={submittingRating}
+                style={{
+                    width: '100%',
+                    padding: '13px',
+                    background: submittingRating ? '#94a3b8' : '#2563eb',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '12px',
+                    fontWeight: '800',
+                    fontSize: '15px',
+                    cursor: submittingRating ? 'not-allowed' : 'pointer',
+                    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
+                }}
+            >
+                {submittingRating ? '⏳ جارٍ إرسال التقييم...' : '⭐ إرسال التقييم'}
+            </button>
+
+            {/* إلغاء */}
+            <button
+                type="button"
+                onClick={() => setRatingDoc(null)}
+                style={{
+                    width: '100%',
+                    marginTop: '10px',
+                    padding: '10px',
+                    color: '#64748b',
+                    border: 'none',
+                    background: 'none',
+                    cursor: 'pointer',
+                    fontSize: '13px'
+                }}
+            >
+                إلغاء
+            </button>
+
+        </div>
+    </div>
+)}
          
         </main>
     );

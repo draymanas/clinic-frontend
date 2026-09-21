@@ -7,53 +7,6 @@ import {
   Award, HeartHandshake, Check, AlertCircle, MessageCircle
 } from 'lucide-react';
 
-const [reviews, setReviews] = useState([]);
-  const [showRatingModal, setShowRatingModal] = useState(false);
-  const [ratingStars, setRatingStars] = useState(5);
-  const [reviewText, setReviewText] = useState('');
-  const [reviewerName, setReviewerName] = useState('');
-  const [submittingReview, setSubmittingReview] = useState(false);
-
-  // جلب مراجعات وتعليقات هذا الطبيب
-  useEffect(() => {
-    if (doctor?.id || id) {
-      fetch(`https://clinic-api-ig3d.onrender.com/api/doctor-reviews/${doctor?.id || id}`)
-        .then(r => r.json())
-        .then(data => setReviews(Array.isArray(data) ? data : []))
-        .catch(err => console.warn('Could not load reviews:', err));
-    }
-  }, [doctor, id]);
-
-  const handleDoctorRating = async () => {
-    setSubmittingReview(true);
-    try {
-      const res = await axios.post('https://clinic-api-ig3d.onrender.com/api/rate-doctor', {
-        doctor_id: doctor?.id || id,
-        rating: ratingStars,
-        comment: reviewText,
-        patient_name: reviewerName || 'مريض منصة دكتور'
-      });
-      if (res.status === 200) {
-        alert("✅ تم إرسال تقييمك ورأيك بنجاح!");
-        setShowRatingModal(false);
-        setReviewText('');
-        // إضافة التعليق فوراً للأعلى
-        setReviews(prev => [{
-          id: Date.now(),
-          doctor_id: doctor?.id || id,
-          patient_name: reviewerName || 'مريض منصة دكتور',
-          rating: ratingStars,
-          comment: reviewText,
-          created_at: new Date().toISOString()
-        }, ...prev]);
-      }
-    } catch (e) {
-      alert("❌ حدث خطأ أثناء إرسال التقييم");
-    } finally {
-      setSubmittingReview(false);
-    }
-  };
-
 // =========================================================
 // دوال التقسيم الأوتوماتيكي للمواعيد كل 15 دقيقة وإدارة الحجوزات
 // =========================================================
@@ -248,6 +201,53 @@ export const DirectBooking = () => {
       setSelectedTime('');
     }
   }, [doctor, selectedDay, id]);
+
+     const [reviews, setReviews] = useState([]);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [ratingStars, setRatingStars] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [reviewerName, setReviewerName] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+    // جلب مراجعات وتعليقات هذا الطبيب
+  useEffect(() => {
+    if (doctor?.id || id) {
+      fetch(`https://clinic-api-ig3d.onrender.com/api/doctor-reviews/${doctor?.id || id}`)
+        .then(r => r.json())
+        .then(data => setReviews(Array.isArray(data) ? data : []))
+        .catch(err => console.warn('Could not load reviews:', err));
+    }
+  }, [doctor, id]);
+
+  const handleDoctorRating = async () => {
+    setSubmittingReview(true);
+    try {
+      const res = await axios.post('https://clinic-api-ig3d.onrender.com/api/rate-doctor', {
+        doctor_id: doctor?.id || id,
+        rating: ratingStars,
+        comment: reviewText,
+        patient_name: reviewerName || 'مريض منصة دكتور'
+      });
+      if (res.status === 200) {
+        alert("✅ تم إرسال تقييمك ورأيك بنجاح!");
+        setShowRatingModal(false);
+        setReviewText('');
+        // إضافة التعليق فوراً للأعلى
+        setReviews(prev => [{
+          id: Date.now(),
+          doctor_id: doctor?.id || id,
+          patient_name: reviewerName || 'مريض منصة دكتور',
+          rating: ratingStars,
+          comment: reviewText,
+          created_at: new Date().toISOString()
+        }, ...prev]);
+      }
+    } catch (e) {
+      alert("❌ حدث خطأ أثناء إرسال التقييم");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   // 5. تأكيد الحجز وإرسال البيانات للـ API
   const handleConfirmBooking = async () => {
