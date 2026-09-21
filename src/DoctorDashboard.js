@@ -129,56 +129,175 @@ const handleTimeChange = (day, field, value) => {
   };
 const handleUpdateProfile = async (e) => {
     e.preventDefault();
+
     const formData = new FormData();
 
-    // تجميع المواعيد في سطر واحد (عشان نصلح الشاشة الحمراء)
-    const availabilityString = weekDays.map(day => {
-      const d = availability[day];
-      if (d?.startH && d?.endH) {
-        return `${day} (${d.startH}:${d.startM || '00'} ${d.startP || 'مساءً'} إلى ${d.endH}:${d.endM || '00'} ${d.endP || 'مساءً'})`;
-      }
-      return null;
-    }).filter(Boolean).join(' - ');
+    // =========================================================
+    // 1. تجميع المواعيد في سطر واحد
+    // =========================================================
+    const availabilityString = weekDays
+        .map(day => {
+            const d = availability[day];
 
-    // تعبئة البيانات
- // ... داخل دالة handleUpdateProfile ...
+            if (d?.startH && d?.endH) {
+                return `${day} (${d.startH}:${d.startM || '00'} ${d.startP || 'مساءً'} إلى ${d.endH}:${d.endM || '00'} ${d.endP || 'مساءً'})`;
+            }
 
-// تأكد إنك بتبعت الباسورد والنبذة بنفس الأسماء اللي السيرفر عارفها
-formData.append('name', doctorData.name);
-formData.append('mobile', doctorData.mobile);// الموبايل الأساسي
-formData.append('specialty', doctorData.specialty);
-formData.append('fee', doctorData.fee);
-formData.append('availability', availabilityString);
-formData.append('address', doctorData.detailedAddress);
-formData.append('personal_mobile', doctorData.personal_mobile);
-formData.append('title', doctorData.title);
-formData.append('city', doctorData.governorate);
-formData.append('area', doctorData.city);
-formData.append('bio', doctorData.bio || ""); // النبذة
-formData.append('password', doctorData.newPassword || doctorData.password); // الباسورد الحالي أو الجديد
+            return null;
+        })
+        .filter(Boolean)
+        .join(' - ');
 
-    if (selectedFile) formData.append('image', selectedFile);
+
+    // =========================================================
+    // 2. دالة لإضافة الحقل فقط إذا كانت له قيمة حقيقية
+    //
+    // إذا كان الحقل فارغًا أو undefined:
+    // لا نرسله للسيرفر
+    // وبالتالي السيرفر يحتفظ بالقيمة القديمة
+    // =========================================================
+    const appendIfValue = (fieldName, value) => {
+
+        if (
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== ''
+        ) {
+            formData.append(fieldName, String(value));
+        }
+    };
+
+
+    // =========================================================
+    // 3. البيانات الأساسية
+    // =========================================================
+
+    appendIfValue('name', doctorData.name);
+
+    appendIfValue('mobile', doctorData.mobile);
+
+    appendIfValue('specialty', doctorData.specialty);
+
+    // سعر الكشف
+    // يمكن أن يكون 500 أو ٥٠٠
+    // والـBackend سيقوم بتحويله إلى رقم
+    appendIfValue('fee', doctorData.fee);
+
+    appendIfValue('availability', availabilityString);
+
+    appendIfValue('address', doctorData.detailedAddress);
+
+    appendIfValue('personal_mobile', doctorData.personal_mobile);
+
+    appendIfValue('title', doctorData.title);
+
+    appendIfValue('city', doctorData.governorate);
+
+    appendIfValue('area', doctorData.city);
+
+    appendIfValue('bio', doctorData.bio);
+
+
+    // =========================================================
+    // 4. كلمة المرور
+    //
+    // لا نرسل كلمة المرور القديمة مرة أخرى.
+    // نرسل فقط كلمة المرور الجديدة إذا الطبيب كتبها.
+    // =========================================================
+
+    if (
+        doctorData.newPassword &&
+        String(doctorData.newPassword).trim() !== ''
+    ) {
+        formData.append(
+            'password',
+            String(doctorData.newPassword).trim()
+        );
+    }
+
+
+    // =========================================================
+    // 5. الصورة
+    //
+    // إذا الطبيب اختار صورة جديدة فقط يتم إرسالها.
+    // إذا لم يختر صورة -> لا يتم إرسال image
+    // وبالتالي السيرفر يحافظ على الصورة القديمة.
+    // =========================================================
+
+    if (selectedFile) {
+        formData.append('image', selectedFile);
+    }
+
+
+    // =========================================================
+    // 6. إرسال البيانات للسيرفر
+    // =========================================================
 
     try {
-      const response = await fetch(`https://clinic-api-ig3d.onrender.com/api/update-doctor/${doctorId}`, {
-        method: 'PUT',
-        body: formData,
-      });
 
-      if (response.ok) {
-        alert("✅ تم تحديث البيانات بنجاح والحجز اشتغل!");
-        setIsEditingProfile(false);
-        fetchDoctorData();
-      } else {
-        alert("❌ فشل التحديث، تأكد من اتصال السيرفر");
-      }
+        const response = await fetch(
+            `https://clinic-api-ig3d.onrender.com/api/update-doctor/${doctorId}`,
+            {
+                method: 'PUT',
+                body: formData,
+            }
+        );
+
+
+        // =====================================================
+        // 7. التعامل مع نتيجة السيرفر
+        // =====================================================
+
+        if (response.ok) {
+
+            const result = await response.json();
+
+            console.log(
+                "✅ تم تحديث بيانات الطبيب:",
+                result.doctor
+            );
+
+            alert("✅ تم تحديث البيانات بنجاح!");
+
+            // إغلاق وضع التعديل
+            setIsEditingProfile(false);
+
+            // إعادة تحميل بيانات الطبيب من قاعدة البيانات
+            fetchDoctorData();
+
+        } else {
+
+            let errorMessage = "فشل التحديث";
+
+            try {
+                const errorData = await response.json();
+
+                if (errorData?.error) {
+                    errorMessage = errorData.error;
+                }
+
+            } catch (err) {
+                // تجاهل خطأ قراءة رسالة السيرفر
+            }
+
+            alert(`❌ ${errorMessage}`);
+        }
+
+
     } catch (error) {
-      alert("⚠️ خطأ في الاتصال بالسيرفر");
+
+        console.error(
+            "❌ خطأ الاتصال بالسيرفر:",
+            error
+        );
+
+        alert("⚠️ حدث خطأ أثناء الاتصال بالسيرفر");
     }
-  };
+};
 
   if (loading) return <div style={{textAlign:'center', padding:'50px'}}>جاري التحميل...</div>;
-return (
+
+  return (
     <div style={{ padding: '20px', direction: 'rtl', fontFamily: 'Arial, sans-serif' }}>
       
       {/* هيدر الصفحة */}
