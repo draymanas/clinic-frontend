@@ -38,12 +38,24 @@ const egyptLocations = {
 
 const inputStyle = { padding: '12px', borderRadius: '8px', border: '1px solid #ddd', width: '100%', boxSizing: 'border-box' };
 
-const getOptimizedImage = (url) => {
-    if (!url) return null;
-    if (url.includes('supabase.co')) {
-        return url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + 
-               '?width=200&height=200&format=webp&quality=80';
+// 🖼️ الصورة الافتراضية الموحدة للطبيب
+// ضع الملف doctor-avatar.webp داخل: public/images/
+const FALLBACK_DOCTOR_IMAGE = '/doctor-avatar.webp';
+
+const getDoctorImage = (doc) => {
+    const url = doc?.image_url?.trim();
+
+    // لا توجد صورة
+    if (!url) {
+        return FALLBACK_DOCTOR_IMAGE;
     }
+
+    // 🚫 صور Supabase القديمة: لا نحاول تحميلها نهائياً
+    if (/supabase\.co/i.test(url)) {
+        return FALLBACK_DOCTOR_IMAGE;
+    }
+
+    // ✅ Cloudinary أو أي رابط صورة خارجي صالح
     return url;
 };
 
@@ -712,12 +724,26 @@ return (
                                 </div>
                             )}
 
-                            <img 
-                                src={getOptimizedImage(doc.image_url) || `https://ui-avatars.com/api/?name=${encodeURIComponent(doc.name)}&background=0f172a&color=fff`} 
-                                alt={`دكتور ${doc.name} - حجز أطباء - منصة دكتور`} 
-                                loading="lazy" 
-                                style={{ width: '105px', height: '105px', borderRadius: '20px', marginBottom: '15px', objectFit: 'cover', border: '3px solid #f1f5f9', boxShadow: '0 4px 10px rgba(0,0,0,0.06)' }} 
-                            />
+                           <img 
+    src={getDoctorImage(doc)}
+    alt={`دكتور ${doc.name} - حجز أطباء - منصة دكتور`}
+    loading="lazy"
+    onError={(e) => {
+        // إذا كانت صورة Cloudinary أو أي صورة خارجية لا تعمل
+        // ننتقل تلقائياً للصورة الافتراضية المحلية
+        e.currentTarget.onerror = null;
+        e.currentTarget.src = FALLBACK_DOCTOR_IMAGE;
+    }}
+    style={{
+        width: '105px',
+        height: '105px',
+        borderRadius: '20px',
+        marginBottom: '15px',
+        objectFit: 'cover',
+        border: '3px solid #f1f5f9',
+        boxShadow: '0 4px 10px rgba(0,0,0,0.06)'
+    }}
+/>
                             
                             <h3 style={{ fontSize: '20px', fontWeight: '800', margin: '4px 0', color: '#0f172a' }}>
                                 دكتور / {doc.name}
