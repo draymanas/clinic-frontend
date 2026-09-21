@@ -7,6 +7,53 @@ import {
   Award, HeartHandshake, Check, AlertCircle, MessageCircle
 } from 'lucide-react';
 
+const [reviews, setReviews] = useState([]);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [ratingStars, setRatingStars] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [reviewerName, setReviewerName] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  // جلب مراجعات وتعليقات هذا الطبيب
+  useEffect(() => {
+    if (doctor?.id || id) {
+      fetch(`https://clinic-api-ig3d.onrender.com/api/doctor-reviews/${doctor?.id || id}`)
+        .then(r => r.json())
+        .then(data => setReviews(Array.isArray(data) ? data : []))
+        .catch(err => console.warn('Could not load reviews:', err));
+    }
+  }, [doctor, id]);
+
+  const handleDoctorRating = async () => {
+    setSubmittingReview(true);
+    try {
+      const res = await axios.post('https://clinic-api-ig3d.onrender.com/api/rate-doctor', {
+        doctor_id: doctor?.id || id,
+        rating: ratingStars,
+        comment: reviewText,
+        patient_name: reviewerName || 'مريض منصة دكتور'
+      });
+      if (res.status === 200) {
+        alert("✅ تم إرسال تقييمك ورأيك بنجاح!");
+        setShowRatingModal(false);
+        setReviewText('');
+        // إضافة التعليق فوراً للأعلى
+        setReviews(prev => [{
+          id: Date.now(),
+          doctor_id: doctor?.id || id,
+          patient_name: reviewerName || 'مريض منصة دكتور',
+          rating: ratingStars,
+          comment: reviewText,
+          created_at: new Date().toISOString()
+        }, ...prev]);
+      }
+    } catch (e) {
+      alert("❌ حدث خطأ أثناء إرسال التقييم");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
 // =========================================================
 // دوال التقسيم الأوتوماتيكي للمواعيد كل 15 دقيقة وإدارة الحجوزات
 // =========================================================
@@ -949,6 +996,33 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
                     alt={`د. ${doctorName}`}
                     className="doc-avatar-img"
                   />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '8px 0', flexWrap: 'wrap' }}>
+                    <span style={{ color: '#f59e0b', fontSize: '16px', fontWeight: 'bold' }}>
+                      {'★'.repeat(Math.round(doctor.rating || 5))}
+                      {'☆'.repeat(5 - Math.round(doctor.rating || 5))}
+                    </span>
+                    <span style={{ fontWeight: '800', color: '#0f172a', fontSize: '14px' }}>
+                      {doctor.rating ? parseFloat(doctor.rating).toFixed(1) : '5.0'}
+                    </span>
+                    <span style={{ color: '#64748b', fontSize: '12.5px' }}>
+                      ({doctor.rating_count || reviews.length || 0} تقييم)
+                    </span>
+                    <button
+                      onClick={() => setShowRatingModal(true)}
+                      style={{
+                        background: '#fef3c7',
+                        color: '#92400e',
+                        border: '1px solid #fde68a',
+                        borderRadius: '8px',
+                        padding: '4px 10px',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      ✍️ أضف تقييمك
+                    </button>
+                  </div>
                   <div className="doc-verified-badge" title="طبيب معتمد وموثق">
                     <Check size={16} strokeWidth={3} />
                   </div>
@@ -1107,6 +1181,51 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
               ) : (
                 <div style={{ padding: '20px', textAlign: 'center', color: '#64748b', fontSize: '13px' }}>
                   مواعيد العيادة يتم تأكيدها مباشرة عند الضغط على زر الحجز أدناه.
+                </div>
+              )}
+            </div>
+
+             {/* 🌟 كارت تقييمات وتعليقات المرضى مرتبة من الأحدث للأقدم */}
+            <div className="doc-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '14px', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>⭐</span>
+                  <span>آراء وتقييمات المرضى ({reviews.length})</span>
+                </h3>
+                <button
+                  onClick={() => setShowRatingModal(true)}
+                  style={{ background: '#0284c7', color: '#fff', border: 'none', borderRadius: '10px', padding: '6px 14px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+                >
+                  + أضف رأيك وتجربتك
+                </button>
+              </div>
+
+              {reviews.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  {reviews.map((rev) => (
+                    <div key={rev.id} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '14px 16px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                        <div style={{ fontWeight: 'bold', color: '#0f172a', fontSize: '14px' }}>
+                          👤 {rev.patient_name || 'مريض معتمد'}
+                        </div>
+                        <div style={{ color: '#f59e0b', fontSize: '13px' }}>
+                          {'★'.repeat(Math.round(rev.rating || 5))}
+                        </div>
+                      </div>
+                      {rev.comment && (
+                        <p style={{ margin: '4px 0 6px 0', fontSize: '13.5px', color: '#334155', lineHeight: '1.6' }}>
+                          "{rev.comment}"
+                        </p>
+                      )}
+                      <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+                        {rev.created_at ? new Date(rev.created_at).toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' }) : 'مؤخراً'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '20px', color: '#64748b', fontSize: '13px' }}>
+                  لم يتم إضافة تعليقات بعد. كن أول من يكتب رأيه وتجربته مع الطبيب!
                 </div>
               )}
             </div>
@@ -1354,12 +1473,43 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
 
           </div>
         </div>
+        
       )}
 
-      {/* =====================================================
-          5. تذكرة الحجز الرسمية (Medical Boarding Pass)
-          يظهر فيها العنوان بالكامل وبالتفصيل بعد إتمام الحجز
-      ====================================================== */}
+      {/* 🌟 نافذة كتابة التقييم داخل صفحة الطبيب */}
+      {showRatingModal && (
+        <div className="doc-modal-backdrop" onClick={() => setShowRatingModal(false)}>
+          <div className="doc-modal-content" onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px', marginBottom: '16px' }}>
+              <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#0f172a' }}>⭐ تقييم د. {doctorName}</h3>
+              <button onClick={() => setShowRatingModal(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#94a3b8' }}>✕</button>
+            </div>
+
+            <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+              <div style={{ fontSize: '13px', color: '#64748b', marginBottom: '6px' }}>حدد تقييمك العام:</div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', direction: 'ltr' }}>
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <span key={s} onClick={() => setRatingStars(s)} style={{ fontSize: '32px', cursor: 'pointer', color: s <= ratingStars ? '#f59e0b' : '#cbd5e1' }}>★</span>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label className="doc-form-label">الاسم الكريم:</label>
+              <input type="text" className="doc-form-input" placeholder="اسمك (اختياري)" value={reviewerName} onChange={e => setReviewerName(e.target.value)} />
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label className="doc-form-label">رأيك وتجربتك في العيادة:</label>
+              <textarea className="doc-form-input" rows={3} placeholder="اكتب رأيك بالتفصيل..." value={reviewText} onChange={e => setReviewText(e.target.value)} style={{ resize: 'none' }} />
+            </div>
+
+            <button onClick={handleDoctorRating} disabled={submittingReview} className="doc-btn-main" style={{ background: '#0284c7' }}>
+              {submittingReview ? 'جاري الحفظ...' : '✓ إرسال التقييم'}
+            </button>
+          </div>
+        </div>
+      )}
      
 
     </div>

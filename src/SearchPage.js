@@ -36,6 +36,13 @@ const egyptLocations = {
     "الوادي الجديد": ["الخارجة", "الداخلة", "الفرافرة", "باريس"]
 };
 
+// 🌟 حالات نظام التقييم الحقيقي
+    const [ratingDoc, setRatingDoc] = useState(null);
+    const [selectedStars, setSelectedStars] = useState(5);
+    const [reviewComment, setReviewComment] = useState('');
+    const [reviewerName, setReviewerName] = useState('');
+    const [submittingRating, setSubmittingRating] = useState(false);
+
 const inputStyle = { padding: '12px', borderRadius: '8px', border: '1px solid #ddd', width: '100%', boxSizing: 'border-box' };
 
 // 🖼️ الصورة الافتراضية الموحدة للطبيب
@@ -148,6 +155,37 @@ const saveBookedSlotForDoctor = (doctorId, date, timeSlot) => {
         console.warn('Could not save booked slot', e);
     }
 };
+
+const handleSendRating = async () => {
+        if (!ratingDoc) return;
+        setSubmittingRating(true);
+        try {
+            const res = await fetch('https://clinic-api-ig3d.onrender.com/api/rate-doctor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    doctor_id: ratingDoc.id,
+                    rating: selectedStars,
+                    comment: reviewComment,
+                    patient_name: reviewerName || currentUser?.name || 'مريض منصة دكتور'
+                })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert(`✅ تم تسجيل تقييمك بنجاح! التقييم الجديد: ${data.rating} ⭐`);
+                // تحديث القائمة المحلية
+                if (typeof fetchData === 'function') fetchData();
+                setRatingDoc(null);
+                setReviewComment('');
+            } else {
+                alert(`⚠️ ${data.error || 'حدث خطأ أثناء التقييم'}`);
+            }
+        } catch (e) {
+            alert('❌ فشل الاتصال بالسيرفر، حاول مرة أخرى');
+        } finally {
+            setSubmittingRating(false);
+        }
+    };
 
 // رابط الطبيب SEO
 const getDoctorUrl = (doc) => {
@@ -805,9 +843,51 @@ return (
                                 قيمة الكشف: <span style={{ color: '#059669' }}>{doc.fee || '0'} ج.م</span>
                             </div>
 
-                            <div style={{ color: '#f59e0b', fontSize: '15px', margin: '6px 0 14px 0' }}>
-                                ⭐⭐⭐⭐⭐ <span style={{ color: '#101214', fontSize: '12px', fontWeight: '600' }}>(5.0 تقييم)</span>
-                            </div>
+                           {/* 🌟 الجديد: تقييم حقيقي مربوط بالسيرفر مع زر التقييم */}
+<div style={{ 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    gap: '8px', 
+    margin: '6px 0 14px 0', 
+    flexWrap: 'wrap' 
+}}>
+    <span style={{ color: '#f59e0b', fontSize: '15px', fontWeight: 'bold' }}>
+        {'★'.repeat(Math.round(doc.rating || 5))}
+        {'☆'.repeat(5 - Math.round(doc.rating || 5))}
+    </span>
+
+    <span style={{ color: '#0f172a', fontSize: '13px', fontWeight: '800' }}>
+        ({doc.rating ? parseFloat(doc.rating).toFixed(1) : '5.0'})
+    </span>
+
+    <span style={{ color: '#64748b', fontSize: '12px' }}>
+        [{doc.rating_count || 0} تقييم]
+    </span>
+
+    <button
+        onClick={(e) => {
+            e.stopPropagation();
+            setRatingDoc(doc);
+            setSelectedStars(5);
+            setReviewComment('');
+            setReviewerName(currentUser?.name || '');
+        }}
+        style={{
+            background: '#e0f2fe',
+            color: '#0369a1',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '4px 9px',
+            fontSize: '11.5px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+        }}
+        title="اضغط لتقييم الطبيب وكتابة رأيك"
+    >
+        ✍️ قيّم
+    </button>
+</div>
 
                             <button 
                                 onClick={(e) => {
@@ -997,7 +1077,52 @@ return (
                     </div>
                 </div>
             )}
+            
+            {/* 🌟 الجديد: تقييم حقيقي مربوط بالسيرفر مع زر التقييم */}
+<div style={{ 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    gap: '8px', 
+    margin: '6px 0 14px 0', 
+    flexWrap: 'wrap' 
+}}>
+    <span style={{ color: '#f59e0b', fontSize: '15px', fontWeight: 'bold' }}>
+        {'★'.repeat(Math.round(doc.rating || 5))}
+        {'☆'.repeat(5 - Math.round(doc.rating || 5))}
+    </span>
 
+    <span style={{ color: '#0f172a', fontSize: '13px', fontWeight: '800' }}>
+        ({doc.rating ? parseFloat(doc.rating).toFixed(1) : '5.0'})
+    </span>
+
+    <span style={{ color: '#64748b', fontSize: '12px' }}>
+        [{doc.rating_count || 0} تقييم]
+    </span>
+
+    <button
+        onClick={(e) => {
+            e.stopPropagation();
+            setRatingDoc(doc);
+            setSelectedStars(5);
+            setReviewComment('');
+            setReviewerName(currentUser?.name || '');
+        }}
+        style={{
+            background: '#e0f2fe',
+            color: '#0369a1',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '4px 9px',
+            fontSize: '11.5px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+        }}
+        title="اضغط لتقييم الطبيب وكتابة رأيك"
+    >
+        ✍️ قيّم
+    </button>
+</div>
          
         </main>
     );
