@@ -57,9 +57,9 @@ const inputStyle = { padding: '12px', borderRadius: '8px', border: '1px solid #d
 
 const getOptimizedImage = (url) => {
   if (!url) return null;
-  if (url.includes('supabase.co')) {
-    return url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + 
-           '?width=200&height=200&format=webp&quality=80';
+  // تحسين صور كلاودينري أوتوماتيكياً لأقصى سرعة وخفة
+  if (url.includes('cloudinary.com')) {
+    return url.replace('/image/upload/', '/image/upload/w_200,h_200,c_fill,f_auto,q_auto/');
   }
   return url;
 };
