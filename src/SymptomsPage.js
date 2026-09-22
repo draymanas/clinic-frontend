@@ -233,6 +233,18 @@ function SymptomsPage() {
 
     navigate(`/dr/${doctorId}`);
   };
+  const [copiedUrl, setCopiedUrl] = useState(false);
+
+  // الرابط المختصر الفائق الجمال للسوشيال ميديا
+  const shortShareUrl = 'https://www.doctoreg.online/s/symptoms';
+
+  const handleShare = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shortShareUrl);
+      setCopiedUrl(true);
+      setTimeout(() => setCopiedUrl(false), 2500);
+    }
+  };
 
   // ==========================================
   // واجهة الصفحة
@@ -388,8 +400,44 @@ return (
           اكتب الأعراض التي تشعر بها و عرفنا المحافظه والمدينه بتاعتك و احنا هنساعدك  
           في الوصول إلى التخصص المناسب. وهنرشحلك أفضل دكتور 
         </p>
+      
 
-      </div>
+        {/* 🌟 زر مشاركة الصفحة على السوشيال ميديا 🌟 */}
+        <div style={{ marginTop: '22px' }}>
+          <button
+            type="button"
+            onClick={handleShare}
+            style={{
+              background: copiedUrl ? '#10b981' : 'rgba(255, 255, 255, 0.2)',
+              backdropFilter: 'blur(8px)',
+              border: '1.5px solid rgba(255, 255, 255, 0.4)',
+              color: '#ffffff',
+              padding: '10px 22px',
+              borderRadius: '30px',
+              fontSize: '15px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.25s ease',
+              boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)'
+            }}
+            onMouseOver={(e) => {
+              if (!copiedUrl) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+            }}
+            onMouseOut={(e) => {
+              if (!copiedUrl) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+            }}
+          >
+            <span style={{ fontSize: '18px' }}>{copiedUrl ? '✅' : '🔗'}</span>
+            <span>{copiedUrl ? 'تم نسخ رابط المشاركة!' : 'مشاركة الاستشارات الطبية'}</span>
+          </button>
+        </div>
+
+      </div> 
+
+    
 
 
       {/* ======================================
