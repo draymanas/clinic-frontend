@@ -1044,10 +1044,10 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
                     </span>
                   </div>
 
-                  <div className="doc-specialty-tag">
-                    <Stethoscope size={16} />
-                    <span>{specialty}</span>
-                  </div>
+                 <div className="doc-specialty-tag">
+    <Stethoscope size={16} />
+    <span>{doctor.title ? `${doctor.title} ${specialty}` : specialty}</span>
+</div>
 
                   {/* 🌟 مربع النبذة التعريفية والخبرات المهنية (Bio) لإبراز إمكانيات الطبيب */}
                   {doctor.bio && (
