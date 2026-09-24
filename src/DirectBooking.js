@@ -1144,7 +1144,7 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
                   <Calendar size={18} color="#2563eb" />
                   <span>جدول مواعيد وفترات عمل العيادة</span>
                 </h3>
-                <span style={{ fontSize: '16px', color: '#2f5994' }}>اختر موعدك المفضل</span>
+                <span style={{ fontSize: '16px', color: '#0d62da' }}>اختر موعدك المفضل</span>
               </div>
 
               {slotsList.length > 0 ? (
@@ -1166,7 +1166,7 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
                         <div>
                           <span className="doc-slot-text">{slot}</span>
                           <span className="doc-slot-date">
-                            <Clock size={12} color="#94a3b8" />
+                            <Clock size={12} color="#23272c" />
                             <span>الموعد القادم: <strong>{nextDateStr}</strong></span>
                           </span>
                         </div>
