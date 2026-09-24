@@ -1250,19 +1250,19 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
                   {reviews.map((rev) => (
                     <div key={rev.id} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '14px 16px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                        <div style={{ fontWeight: 'bold', color: '#0f172a', fontSize: '14px' }}>
+                        <div style={{ fontWeight: 'bold', color: '#070b13', fontSize: '16px' }}>
                           👤 {rev.patient_name || 'مريض معتمد'}
                         </div>
-                        <div style={{ color: '#f59e0b', fontSize: '13px' }}>
+                        <div style={{ color: '#f59e0b', fontSize: '15px' }}>
                           {'★'.repeat(Math.round(rev.rating || 5))}
                         </div>
                       </div>
                       {rev.comment && (
-                        <p style={{ margin: '4px 0 6px 0', fontSize: '13.5px', color: '#334155', lineHeight: '1.6' }}>
+                        <p style={{ margin: '4px 0 6px 0', fontSize: '16.5px', color: '#102ca8', lineHeight: '1.8' }}>
                           "{rev.comment}"
                         </p>
                       )}
-                      <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+                      <div style={{ fontSize: '12px', color: '#466188' }}>
                         {rev.created_at ? new Date(rev.created_at).toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' }) : 'مؤخراً'}
                       </div>
                     </div>
