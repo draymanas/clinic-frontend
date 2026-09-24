@@ -1185,10 +1185,9 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
               )}
             </div>
 
-
-          {/* العمود الجانبي الثابت */}
-          <div>
-            <div className="doc-booking-sidebar">
+{/* العمود الجانبي المتحرك طبيعياً مع السكرول */}
+          <div style={{ position: 'relative', alignSelf: 'flex-start' }}>
+            <div className="doc-booking-sidebar" style={{ position: 'static', top: 'auto' }}>
               <div className="doc-card" style={{ padding: '28px' }}>
                 
                 {/* السعر والدفع */}
