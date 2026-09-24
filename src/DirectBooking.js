@@ -1089,20 +1089,20 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
                   {locationText && (
                     <div className="doc-meta-row" style={{ justifyContent: 'inherit' }}>
                       <div className="doc-meta-item">
-                        <MapPin size={15} color="#64748b" />
+                        <MapPin size={18} color="#2468c7" />
                         <span>{locationText}</span>
                       </div>
-                      <div className="doc-meta-item">
-                        <Award size={15} color="#059669" />
-                        <span>طبيب استشاري مرخص</span>
-                      </div>
+                    <div className="doc-meta-item">
+                   <Award size={18} color="#059669" />
+                    <span>طبيب {doctor.title || 'استشاري'} مرخص</span>
+                    </div>
                     </div>
                   )}
 
                   {/* 🌟 إخفاء العنوان بالتفصيل وإظهار أول 3 كلمات فقط */}
                   {doctor.address && (
                     <div className="doc-address-box">
-                      <strong style={{ color: '#0f172a' }}>عنوان العيادة: </strong>
+                      <strong style={{ color: '#031236', fontSize: '16px' }}>عنوان العيادة: </strong>
                       <span>{doctor.address.trim().split(/\s+/).filter(Boolean).slice(0, 3).join(' ')}... </span>
                       <span style={{ color: '#d97706', fontWeight: 700, fontSize: '12px' }}>
                         (لمعرفة العنوان بالتفصيل يجب إتمام الحجز)
@@ -1144,7 +1144,7 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
                   <Calendar size={18} color="#2563eb" />
                   <span>جدول مواعيد وفترات عمل العيادة</span>
                 </h3>
-                <span style={{ fontSize: '12px', color: '#64748b' }}>اختر موعدك المفضل</span>
+                <span style={{ fontSize: '16px', color: '#2f5994' }}>اختر موعدك المفضل</span>
               </div>
 
               {slotsList.length > 0 ? (
