@@ -1102,7 +1102,7 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
                   {/* 🌟 إخفاء العنوان بالتفصيل وإظهار أول 3 كلمات فقط */}
                   {doctor.address && (
                     <div className="doc-address-box">
-                      <strong style={{ color: '#0f172a' }}>مقر العيادة: </strong>
+                      <strong style={{ color: '#0f172a' }}>عنوان العيادة: </strong>
                       <span>{doctor.address.trim().split(/\s+/).filter(Boolean).slice(0, 3).join(' ')}... </span>
                       <span style={{ color: '#d97706', fontWeight: 700, fontSize: '12px' }}>
                         (لمعرفة العنوان بالتفصيل يجب إتمام الحجز)
@@ -1183,6 +1183,52 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
                   مواعيد العيادة يتم تأكيدها مباشرة عند الضغط على زر الحجز أدناه.
                 </div>
               )}
+            </div>
+
+
+          {/* العمود الجانبي الثابت */}
+          <div>
+            <div className="doc-booking-sidebar">
+              <div className="doc-card" style={{ padding: '28px' }}>
+                
+                {/* السعر والدفع */}
+                <div className="doc-price-box">
+                  <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
+                    قيمة كشف العيادة
+                  </span>
+                  <div>
+                    <span className="doc-price-number">{doctor.fee}</span>
+                    <span className="doc-price-currency">جنيه مصري</span>
+                  </div>
+                  <div className="doc-guarantee-pill">
+                    الدفع بالكامل عند الحضور للعيادة
+                  </div>
+                </div>
+
+                {/* زر الحجز الرسمي الوحيد */}
+                <button
+                  onClick={() => {
+                    if (!selectedDay && slotsList.length > 0) {
+                      setSelectedDay(slotsList[0]);
+                    }
+                    setShowModal(true);
+                  }}
+                  className="doc-btn-main"
+                >
+                  <Calendar size={18} />
+                  <span>احجز موعد كشف الآن</span>
+                </button>
+
+                {/* التنويه الرسمي لحماية المريض */}
+                <div className="doc-official-notice">
+                  🔒 الحجز يتم مباشرة عبر السجل الطبي للعيادة لضمان أسبقية الحضور وتنظيم المواعيد بدون انتظار.
+                </div>
+
+                <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #f1f5f9', fontSize: '11px', color: '#94a3b8', textAlign: 'center' }}>
+                  كود الطبيب المعتمد: {doctor.id || id}
+                </div>
+
+              </div>
             </div>
 
              {/* 🌟 كارت تقييمات وتعليقات المرضى مرتبة من الأحدث للأقدم */}
@@ -1266,50 +1312,6 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
 
           </div>
 
-          {/* العمود الجانبي الثابت */}
-          <div>
-            <div className="doc-booking-sidebar">
-              <div className="doc-card" style={{ padding: '28px' }}>
-                
-                {/* السعر والدفع */}
-                <div className="doc-price-box">
-                  <span style={{ fontSize: '12px', color: '#64748b', fontWeight: 600, display: 'block', marginBottom: '4px' }}>
-                    قيمة كشف العيادة
-                  </span>
-                  <div>
-                    <span className="doc-price-number">{doctor.fee}</span>
-                    <span className="doc-price-currency">جنيه مصري</span>
-                  </div>
-                  <div className="doc-guarantee-pill">
-                    الدفع بالكامل عند الحضور للعيادة
-                  </div>
-                </div>
-
-                {/* زر الحجز الرسمي الوحيد */}
-                <button
-                  onClick={() => {
-                    if (!selectedDay && slotsList.length > 0) {
-                      setSelectedDay(slotsList[0]);
-                    }
-                    setShowModal(true);
-                  }}
-                  className="doc-btn-main"
-                >
-                  <Calendar size={18} />
-                  <span>احجز موعد كشف الآن</span>
-                </button>
-
-                {/* التنويه الرسمي لحماية المريض */}
-                <div className="doc-official-notice">
-                  🔒 الحجز يتم مباشرة عبر السجل الطبي للعيادة لضمان أسبقية الحضور وتنظيم المواعيد بدون انتظار.
-                </div>
-
-                <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #f1f5f9', fontSize: '11px', color: '#94a3b8', textAlign: 'center' }}>
-                  كود الطبيب المعتمد: {doctor.id || id}
-                </div>
-
-              </div>
-            </div>
           </div>
 
         </div>
