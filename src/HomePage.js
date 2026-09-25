@@ -2,6 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // الثوابت اللي كانت في الـ App.js، ممكن تجيبها من ملف منفصل (constants.js مثلاً)
 // أو تنسخها هنا مؤقتًا
