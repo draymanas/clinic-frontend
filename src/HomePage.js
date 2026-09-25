@@ -804,10 +804,9 @@ return (
         </div>
         <h3 className="doctor-benefit-title">
             احجز مباشرة الآن مع الدكتور أيمن عجيب
+             استشاري المخ والأعصاب والعمود الفقري
         </h3>
-        <h3 className="doctor-benefit-text">
-            استشاري المخ والأعصاب والعمود الفقري
-        </h3>
+        
     </Link>
 </div>
 
