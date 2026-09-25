@@ -254,6 +254,177 @@ const homePageStyles = `
         line-height: 1.7;
     }
 
+    /* ==============================
+       زر الدكتور أيمن عجيب
+    ============================== */
+
+    .doctor-ayman-card {
+        padding: 0;
+        overflow: hidden;
+        border: none;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .doctor-ayman-button {
+        width: 100%;
+        min-height: 116px;
+        padding: 18px 22px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #1a73e8 0%, #1769d1 100%);
+        color: #fff;
+        text-decoration: none;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 13px;
+
+        position: relative;
+        overflow: hidden;
+
+        box-shadow:
+            0 8px 22px rgba(26, 115, 232, 0.22),
+            inset 0 1px 0 rgba(255, 255, 255, 0.18);
+
+        border: 1px solid rgba(255, 255, 255, 0.15);
+
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            background 0.25s ease;
+    }
+
+    .doctor-ayman-button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 60%;
+        height: 100%;
+
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.14),
+            transparent
+        );
+
+        transform: skewX(-20deg);
+        transition: left 0.6s ease;
+    }
+
+    .doctor-ayman-button:hover {
+        transform: translateY(-3px);
+
+        background: linear-gradient(
+            135deg,
+            #1769d1 0%,
+            #155db8 100%
+        );
+
+        box-shadow:
+            0 12px 28px rgba(26, 115, 232, 0.32),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .doctor-ayman-button:hover::before {
+        left: 140%;
+    }
+
+    .doctor-ayman-button:active {
+        transform: translateY(-1px);
+    }
+
+    .doctor-ayman-button-icon {
+        width: 42px;
+        height: 42px;
+
+        flex: 0 0 42px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+
+        font-size: 22px;
+
+        box-shadow:
+            0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .doctor-ayman-button-text {
+        flex: 1;
+
+        color: #fff;
+
+        font-size: 17px;
+        line-height: 1.65;
+        font-weight: 800;
+
+        text-align: center;
+    }
+
+    .doctor-ayman-button-arrow {
+        width: 36px;
+        height: 36px;
+
+        flex: 0 0 36px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.14);
+        color: #fff;
+
+        font-size: 22px;
+        font-weight: bold;
+
+        transition:
+            transform 0.25s ease,
+            background 0.25s ease;
+    }
+
+    .doctor-ayman-button:hover .doctor-ayman-button-arrow {
+        transform: translateX(-4px);
+        background: rgba(255, 255, 255, 0.22);
+    }
+
+    @media (max-width: 767px) {
+
+        .doctor-ayman-button {
+            min-height: 105px;
+            padding: 15px 14px;
+            gap: 9px;
+            border-radius: 16px;
+        }
+
+        .doctor-ayman-button-icon {
+            width: 38px;
+            height: 38px;
+            flex-basis: 38px;
+            font-size: 19px;
+        }
+
+        .doctor-ayman-button-text {
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .doctor-ayman-button-arrow {
+            width: 32px;
+            height: 32px;
+            flex-basis: 32px;
+            font-size: 19px;
+        }
+    }
+
     /* =========================
        SEARCH
     ========================= */
@@ -798,15 +969,24 @@ return (
                 </div>
 
 
-          <div className="doctor-benefit-card">
-    <Link to="/dr/دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري" className="benefit-card-link">
-        
-        <h3 className="doctor-benefit-title">
-                احجز مباشرة الآن  
-             مع الدكتور أيمن عجيب
-             استشاري المخ والأعصاب والعمود الفقري
-        </h3>
-        
+         <div className="doctor-benefit-card doctor-ayman-card">
+    <Link
+        to="/dr/دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري"
+        className="doctor-ayman-button"
+    >
+        <span className="doctor-ayman-button-icon">👨‍⚕️</span>
+
+        <span className="doctor-ayman-button-text">
+            احجز مباشرة الآن
+            <br />
+            مع الدكتور أيمن عجيب
+            <br />
+            استشاري المخ والأعصاب والعمود الفقري
+        </span>
+
+        <span className="doctor-ayman-button-arrow">
+            ←
+        </span>
     </Link>
 </div>
 
