@@ -139,6 +139,11 @@ const homePageStyles = `
     width: 100%;
 }
 
+.doctor-hero picture {
+    display: block;
+    width: 100%;
+}
+
 .doctor-hero-image {
     display: block;
     width: 100%;
@@ -496,11 +501,11 @@ const homePageStyles = `
        @media (max-width: 767px) {
 
     .doctor-hero-image {
-        width: 100%;
-        height: auto;
-        aspect-ratio: auto;
-        object-fit: cover;
-    }
+    width: 100%;
+    height: auto;
+    aspect-ratio: 768 / 550;
+    object-fit: cover;
+}
 
 }
 
@@ -720,12 +725,16 @@ return (
         srcSet="/doctor-hero-mobile.webp"
     />
 
+    <picture>
+    <source
+        media="(max-width: 767px)"
+        srcSet="/doctor-hero-mobile.webp"
+    />
+
     <img
         src="/doctor-hero.webp"
         alt="منصة دكتور لحجز الأطباء في مصر"
         className="doctor-hero-image"
-        width="2046"
-        height="768"
         fetchPriority="high"
         loading="eager"
         decoding="async"
