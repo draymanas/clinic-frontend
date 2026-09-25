@@ -134,13 +134,18 @@ const homePageStyles = `
         box-shadow: 0 12px 35px rgba(0, 70, 120, 0.12);
     }
 
-    .doctor-hero-image {
-        display: block;
-        width: 100%;
-        height: auto;
-        aspect-ratio: 2046 / 768;
-        object-fit: cover;
-    }
+    .doctor-hero picture {
+    display: block;
+    width: 100%;
+}
+
+.doctor-hero-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2046 / 768;
+    object-fit: cover;
+}
 
     .doctor-hero-content {
         position: absolute;
@@ -488,12 +493,16 @@ const homePageStyles = `
             flex-direction: column;
         }
 
-        .doctor-hero-image {
-            width: 100%;
-            height: auto;
-            aspect-ratio: auto;
-            object-fit: contain;
-        }
+       @media (max-width: 767px) {
+
+    .doctor-hero-image {
+        width: 100%;
+        height: auto;
+        aspect-ratio: auto;
+        object-fit: cover;
+    }
+
+}
 
         .doctor-hero-content {
             position: static;
@@ -705,14 +714,23 @@ return (
             ============================== */}
             <section className="doctor-hero">
 
-                <img
-                    src="/doctor-hero.webp"
-                    alt="منصة دكتور لحجز الأطباء في مصر"
-                    className="doctor-hero-image"
-                    fetchPriority="high"
-                    loading="eager"
-                    decoding="async"
-                />
+               <picture>
+    <source
+        media="(max-width: 767px)"
+        srcSet="/doctor-hero-mobile.webp"
+    />
+
+    <img
+        src="/doctor-hero.webp"
+        alt="منصة دكتور لحجز الأطباء في مصر"
+        className="doctor-hero-image"
+        width="2046"
+        height="768"
+        fetchPriority="high"
+        loading="eager"
+        decoding="async"
+    />
+</picture>
 
                 <div className="doctor-hero-content">
 
