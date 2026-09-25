@@ -740,6 +740,7 @@ return (
         decoding="async"
     />
 </picture>
+</picture>
 
                 <div className="doctor-hero-content">
 
