@@ -413,8 +413,8 @@ const homePageStyles = `
         }
 
         .doctor-ayman-button-text {
-            font-size: 15px;
-            line-height: 1.6;
+            font-size: 17px;
+            line-height: 1.8;
         }
 
         .doctor-ayman-button-arrow {
@@ -558,7 +558,7 @@ const homePageStyles = `
     .doctor-app-title {
         color: #033808;
 
-        font-size: 18px;
+        font-size: 20px;
         line-height: 1.4;
 
         font-weight: 900;
@@ -567,7 +567,7 @@ const homePageStyles = `
     .doctor-app-text {
         color: #010c02;
 
-        font-size: 14px;
+        font-size: 16px;
         line-height: 1.5;
 
         font-weight: 600;
@@ -576,7 +576,7 @@ const homePageStyles = `
     .doctor-app-download {
         color: #03290a;
 
-        font-size: 14px;
+        font-size: 16px;
         line-height: 1.5;
 
         font-weight: 900;
