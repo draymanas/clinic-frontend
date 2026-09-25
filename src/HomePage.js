@@ -425,6 +425,238 @@ const homePageStyles = `
         }
     }
 
+    /* ==============================
+       زر تحميل تطبيق دكتور
+    ============================== */
+
+    .doctor-app-card {
+        padding: 0;
+        overflow: hidden;
+        border: none;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .doctor-app-button {
+        width: 100%;
+        min-height: 116px;
+
+        padding: 18px 22px;
+
+        border-radius: 18px;
+
+        background: linear-gradient(
+            135deg,
+            #b8f28b 0%,
+            #8ee36b 100%
+        );
+
+        color: #123b16;
+        text-decoration: none;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 13px;
+
+        position: relative;
+        overflow: hidden;
+
+        border: 1px solid rgba(45, 130, 40, 0.15);
+
+        box-shadow:
+            0 8px 22px rgba(76, 175, 80, 0.20),
+            inset 0 1px 0 rgba(255, 255, 255, 0.55);
+
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            background 0.25s ease;
+    }
+
+    .doctor-app-button::before {
+        content: "";
+
+        position: absolute;
+
+        top: 0;
+        left: -100%;
+
+        width: 60%;
+        height: 100%;
+
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.35),
+            transparent
+        );
+
+        transform: skewX(-20deg);
+
+        transition: left 0.6s ease;
+    }
+
+    .doctor-app-button:hover {
+        transform: translateY(-3px);
+
+        background: linear-gradient(
+            135deg,
+            #a9ed78 0%,
+            #7cda58 100%
+        );
+
+        box-shadow:
+            0 12px 28px rgba(76, 175, 80, 0.28),
+            inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    }
+
+    .doctor-app-button:hover::before {
+        left: 140%;
+    }
+
+    .doctor-app-button:active {
+        transform: translateY(-1px);
+    }
+
+    .doctor-app-icon {
+        width: 44px;
+        height: 44px;
+
+        flex: 0 0 44px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: rgba(255, 255, 255, 0.55);
+
+        border: 1px solid rgba(255, 255, 255, 0.65);
+
+        border-radius: 13px;
+
+        font-size: 23px;
+
+        box-shadow:
+            0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .doctor-app-content {
+        flex: 1;
+
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+        justify-content: center;
+
+        text-align: center;
+
+        gap: 3px;
+    }
+
+    .doctor-app-title {
+        color: #123b16;
+
+        font-size: 18px;
+        line-height: 1.4;
+
+        font-weight: 900;
+    }
+
+    .doctor-app-text {
+        color: #285c2d;
+
+        font-size: 14px;
+        line-height: 1.5;
+
+        font-weight: 600;
+    }
+
+    .doctor-app-download {
+        color: #0b5d18;
+
+        font-size: 14px;
+        line-height: 1.5;
+
+        font-weight: 900;
+
+        margin-top: 3px;
+    }
+
+    .doctor-app-arrow {
+        width: 38px;
+        height: 38px;
+
+        flex: 0 0 38px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: rgba(255, 255, 255, 0.48);
+
+        color: #176b22;
+
+        font-size: 22px;
+        font-weight: bold;
+
+        transition:
+            transform 0.25s ease,
+            background 0.25s ease;
+    }
+
+    .doctor-app-button:hover .doctor-app-arrow {
+        transform: translateX(-4px);
+
+        background: rgba(255, 255, 255, 0.70);
+    }
+
+    @media (max-width: 767px) {
+
+        .doctor-app-button {
+            min-height: 105px;
+
+            padding: 15px 14px;
+
+            gap: 9px;
+
+            border-radius: 16px;
+        }
+
+        .doctor-app-icon {
+            width: 38px;
+            height: 38px;
+
+            flex-basis: 38px;
+
+            font-size: 20px;
+        }
+
+        .doctor-app-title {
+            font-size: 16px;
+        }
+
+        .doctor-app-text {
+            font-size: 13px;
+        }
+
+        .doctor-app-download {
+            font-size: 13px;
+        }
+
+        .doctor-app-arrow {
+            width: 32px;
+            height: 32px;
+
+            flex-basis: 32px;
+
+            font-size: 19px;
+        }
+    }
+
     /* =========================
        SEARCH
     ========================= */
@@ -991,19 +1223,41 @@ return (
 </div>
 
 
-                <div className="doctor-benefit-card">
-                    <div className="doctor-benefit-icon">
-                        📱
-                    </div>
+                <div className="doctor-benefit-card doctor-app-card">
+    <a
+        href="https://play.google.com/store/apps/details?id=com.doctorplatform.app&pcampaignid=web_share"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="doctor-app-button"
+        aria-label="تحميل تطبيق دكتور من جوجل بلاي"
+    >
 
-                    <h3 className="doctor-benefit-title">
-                        من الموقع أو التطبيق
-                    </h3>
+        <span className="doctor-app-icon">
+            📱
+        </span>
 
-                    <p className="doctor-benefit-text">
-                        يمكنك الوصول إلى خدمات منصة دكتور بسهولة من هاتفك.
-                    </p>
-                </div>
+        <span className="doctor-app-content">
+
+            <span className="doctor-app-title">
+                حمل تطبيق دكتور للأندرويد
+            </span>
+
+            <span className="doctor-app-text">
+                احجز موعدك بضغطة واحدة من موبايلك
+            </span>
+
+            <span className="doctor-app-download">
+                اضغط هنا وحمّل التطبيق الآن من جوجل بلاي
+            </span>
+
+        </span>
+
+        <span className="doctor-app-arrow">
+            ←
+        </span>
+
+    </a>
+</div>
 
             </section>
 
