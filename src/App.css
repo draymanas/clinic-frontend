@@ -37,11 +37,24 @@
   }
 }
 /* إلغاء الـ padding القديم وجعل الكارت يحمل الزر بالكامل */
-.doctor-benefit-card {
-    padding: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
+/* إلغاء الخط تحت الروابط وتنسيق العنصر */
+.benefit-card-link {
+    text-decoration: none !important;
+}
+
+.benefit-card-link:hover {
+    text-decoration: none !important;
+}
+
+/* تكبير حجم الخط درجة إضافية وجعله متناسقاً */
+.doctor-benefit-card .doctor-benefit-title {
+    font-size: 1.25rem !important; /* تم زيادة حجم الخط ليصبح أوضح */
+    font-weight: 700;
+    color: #1e293b;
+    text-align: center;
+    margin: 0;
+    line-height: 1.6;
+    text-decoration: none !important;
 }
 
 /* تصميم زر الحجز الاحترافي */
