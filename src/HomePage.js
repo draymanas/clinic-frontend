@@ -81,6 +81,532 @@ const specialtiesData = [
     { name: 'تغذية علاجية', icon: '🍎', count: 267 }
 ];
 
+const homePageStyles = `
+    * {
+        box-sizing: border-box;
+    }
+
+    .doctor-home {
+        background: #f0f4f8;
+        min-height: 100vh;
+        direction: rtl;
+        overflow-x: hidden;
+    }
+
+    .doctor-header {
+        text-align: center;
+        padding: 30px 20px 20px;
+        background: #fff;
+    }
+
+    .doctor-logo-title {
+        font-size: clamp(42px, 6vw, 72px);
+        font-weight: 900;
+        margin: 0;
+        color: #1a73e8;
+        line-height: 1.15;
+    }
+
+    .doctor-logo-title span {
+        color: #2c3e50;
+        font-weight: 300;
+    }
+
+    .doctor-subtitle {
+        color: #64748b;
+        font-size: clamp(17px, 2vw, 21px);
+        margin: 10px 0 0;
+        font-weight: 600;
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .doctor-hero {
+        position: relative;
+        width: calc(100% - 40px);
+        max-width: 1450px;
+        margin: 20px auto 30px;
+        overflow: hidden;
+        border-radius: 26px;
+        background: #eaf5fc;
+        box-shadow: 0 12px 35px rgba(0, 70, 120, 0.12);
+    }
+
+    .doctor-hero-image {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 2046 / 768;
+        object-fit: cover;
+    }
+
+    .doctor-hero-content {
+        position: absolute;
+        top: 50%;
+        left: 5%;
+        transform: translateY(-50%);
+        width: min(44%, 570px);
+        direction: rtl;
+        text-align: right;
+    }
+
+    .doctor-hero-badge {
+        display: inline-block;
+        background: rgba(255,255,255,0.92);
+        color: #0369a1;
+        border-radius: 50px;
+        padding: 8px 16px;
+        font-size: 15px;
+        font-weight: 800;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    .doctor-hero-title {
+        margin: 0 0 12px;
+        color: #0f172a;
+        font-size: clamp(28px, 3.2vw, 48px);
+        line-height: 1.25;
+        font-weight: 900;
+    }
+
+    .doctor-hero-description {
+        margin: 0 0 20px;
+        color: #334155;
+        font-size: clamp(16px, 1.7vw, 21px);
+        line-height: 1.8;
+        font-weight: 600;
+    }
+
+    .doctor-hero-button {
+        border: none;
+        background: #1a73e8;
+        color: #fff;
+        padding: 14px 28px;
+        border-radius: 13px;
+        font-size: 18px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 7px 18px rgba(26,115,232,0.25);
+        transition: 0.2s ease;
+    }
+
+    .doctor-hero-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(26,115,232,0.30);
+    }
+
+    /* =========================
+       BENEFITS
+    ========================= */
+
+    .doctor-benefits {
+        max-width: 1200px;
+        margin: 0 auto 35px;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+
+    .doctor-benefit-card {
+        background: #fff;
+        border-radius: 18px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+        border: 1px solid #e2e8f0;
+    }
+
+    .doctor-benefit-icon {
+        font-size: 32px;
+        margin-bottom: 8px;
+    }
+
+    .doctor-benefit-title {
+        margin: 0 0 6px;
+        color: #0f172a;
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+    .doctor-benefit-text {
+        margin: 0;
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    /* =========================
+       SEARCH
+    ========================= */
+
+    .doctor-search-wrapper {
+        padding: 0 20px;
+        max-width: 1250px;
+        margin: 0 auto;
+    }
+
+    .doctor-search-box {
+        background: #fff;
+        border-radius: 18px;
+        margin-bottom: 40px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.10);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        direction: rtl;
+    }
+
+    .doctor-search-field {
+        flex: 1 1 240px;
+        min-width: 200px;
+        padding: 13px 15px;
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid #eee;
+    }
+
+    .doctor-search-label {
+        font-size: 16px;
+        color: #111827;
+        margin-right: 10px;
+        margin-bottom: 4px;
+        font-weight: 600;
+    }
+
+    .doctor-search-row {
+        display: flex;
+        align-items: center;
+    }
+
+    .doctor-search-icon {
+        font-size: 24px;
+        margin-left: 7px;
+    }
+
+    .doctor-search-select,
+    .doctor-search-input {
+        border: none;
+        width: 100%;
+        outline: none;
+        background: transparent;
+        font-size: 16px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .doctor-search-input {
+        padding: 4px 0;
+    }
+
+    .doctor-search-button {
+        background: #7cf046;
+        color: #000;
+        border: none;
+        padding: 0 35px;
+        font-size: 24px;
+        font-weight: 900;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 150px;
+        min-height: 65px;
+        transition: 0.2s ease;
+    }
+
+    .doctor-search-button:hover {
+        background: #68dc35;
+    }
+
+    /* =========================
+       SYMPTOMS
+    ========================= */
+
+    .doctor-symptoms {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 15px;
+    }
+
+    .doctor-symptoms-box {
+        background: linear-gradient(135deg, #ecfeff, #e0f2fe);
+        border: 1px solid #bae6fd;
+        border-radius: 22px;
+        padding: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+        direction: rtl;
+        box-shadow: 0 6px 20px rgba(14,116,144,0.08);
+    }
+
+    .doctor-symptoms-text {
+        flex: 1;
+        min-width: 260px;
+    }
+
+    .doctor-symptoms-label {
+        font-size: 15px;
+        color: #0369a1;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .doctor-symptoms-title {
+        margin: 0 0 8px;
+        color: #0f172a;
+        font-size: 24px;
+        font-weight: 800;
+    }
+
+    .doctor-symptoms-description {
+        margin: 0;
+        color: #475569;
+        line-height: 1.8;
+        font-size: 15px;
+    }
+
+    .doctor-symptoms-button {
+        border: none;
+        background: #0284c7;
+        color: #fff;
+        padding: 14px 25px;
+        border-radius: 13px;
+        font-size: 16px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 5px 15px rgba(2,132,199,0.25);
+        white-space: nowrap;
+    }
+
+    /* =========================
+       SPECIALTIES
+    ========================= */
+
+    .doctor-specialties {
+        direction: rtl;
+        padding: 20px;
+    }
+
+    .doctor-specialties-title {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .doctor-specialties-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+    }
+
+    .doctor-specialty-card {
+        border: 2px solid #3debd3;
+        border-radius: 20px;
+        padding: 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.25s ease;
+        background: #fff;
+    }
+
+    .doctor-specialty-card:hover {
+        background: #f0fff4;
+        transform: translateY(-3px);
+        box-shadow: 0 7px 18px rgba(0,0,0,0.07);
+    }
+
+    .doctor-specialty-icon {
+        font-size: 30px;
+        margin-bottom: 10px;
+    }
+
+    .doctor-specialty-name {
+        font-weight: bold;
+        color: #000;
+    }
+
+    .doctor-specialty-count {
+        font-size: 12px;
+        color: #666;
+        margin-top: 4px;
+    }
+
+    /* =========================
+       TABLET
+    ========================= */
+
+    @media (max-width: 900px) {
+        .doctor-hero-content {
+            width: 47%;
+            left: 4%;
+        }
+
+        .doctor-hero-title {
+            font-size: 30px;
+        }
+
+        .doctor-hero-description {
+            font-size: 16px;
+        }
+
+        .doctor-benefits {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 767px) {
+        .doctor-header {
+            padding: 22px 15px 15px;
+        }
+
+        .doctor-logo-title {
+            font-size: 43px;
+        }
+
+        .doctor-subtitle {
+            font-size: 16px;
+        }
+
+        .doctor-hero {
+            width: calc(100% - 24px);
+            margin: 12px auto 22px;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .doctor-hero-image {
+            width: 100%;
+            height: auto;
+            aspect-ratio: auto;
+            object-fit: contain;
+        }
+
+        .doctor-hero-content {
+            position: static;
+            transform: none;
+            width: 100%;
+            padding: 22px 20px 24px;
+            background: #fff;
+            text-align: center;
+        }
+
+        .doctor-hero-badge {
+            font-size: 13px;
+        }
+
+        .doctor-hero-title {
+            font-size: 27px;
+            margin-bottom: 10px;
+        }
+
+        .doctor-hero-description {
+            font-size: 16px;
+            line-height: 1.75;
+            margin-bottom: 16px;
+        }
+
+        .doctor-hero-button {
+            width: 100%;
+            font-size: 17px;
+        }
+
+        .doctor-benefits {
+            grid-template-columns: 1fr;
+            gap: 12px;
+            padding: 0 15px;
+            margin-bottom: 25px;
+        }
+
+        .doctor-benefit-card {
+            padding: 15px;
+        }
+
+        .doctor-search-wrapper {
+            padding: 0 12px;
+        }
+
+        .doctor-search-box {
+            border-radius: 15px;
+        }
+
+        .doctor-search-field {
+            flex: 1 1 100%;
+            min-width: 100%;
+            border-left: none;
+            border-bottom: 1px solid #eee;
+        }
+
+        .doctor-search-button {
+            width: 100%;
+            min-height: 58px;
+            font-size: 22px;
+        }
+
+        .doctor-symptoms {
+            padding: 0 12px;
+        }
+
+        .doctor-symptoms-box {
+            padding: 22px 18px;
+            text-align: center;
+            justify-content: center;
+        }
+
+        .doctor-symptoms-text {
+            min-width: 100%;
+        }
+
+        .doctor-symptoms-button {
+            width: 100%;
+        }
+
+        .doctor-specialties {
+            padding: 15px 12px;
+        }
+
+        .doctor-specialties-title {
+            font-size: 23px;
+            text-align: center;
+        }
+
+        .doctor-specialties-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .doctor-specialty-card {
+            padding: 12px 8px;
+        }
+
+        .doctor-specialty-icon {
+            font-size: 27px;
+        }
+    }
+
+    @media (max-width: 380px) {
+        .doctor-logo-title {
+            font-size: 37px;
+        }
+
+        .doctor-specialties-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+`;
 
 function HomePage() {
     const navigate = useNavigate();
@@ -88,19 +614,38 @@ function HomePage() {
     const [fSpecialty, setFSpecialty] = useState('الكل');
     const [fCity, setFCity] = useState('الكل');
     const [fArea, setFArea] = useState('الكل');
-    const orgSchema = {
-        "@context": "https://schema.org",
-        "@type": "MedicalOrganization",
-        "name": "دكتور | DOCTOR",
-        "url": "https://www.doctoreg.online/",
-        "description": "أكبر منصة لحجز الأطباء في مصر، تضم نخبة من أفضل الاستشاريين والأخصائيين في جميع التخصصات الطبية.",
-        "contactPoint": {
-            "@type": "ContactPoint",
-            "contactType": "customer service",
-            "areaServed": "EG",
-            "availableLanguage": "Arabic"
+   const siteSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Organization",
+            "@id": "https://www.doctoreg.online/#organization",
+            "name": "منصة دكتور",
+            "alternateName": "DOCTOR",
+            "url": "https://www.doctoreg.online/",
+            "description": "منصة إلكترونية لحجز مواعيد الأطباء في مصر والبحث عن الأطباء حسب التخصص والمحافظة والمنطقة.",
+            "areaServed": {
+                "@type": "Country",
+                "name": "Egypt"
+            }
+        },
+        {
+            "@type": "WebSite",
+            "@id": "https://www.doctoreg.online/#website",
+            "url": "https://www.doctoreg.online/",
+            "name": "منصة دكتور | DOCTOR",
+            "publisher": {
+                "@id": "https://www.doctoreg.online/#organization"
+            },
+            "inLanguage": "ar-EG",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://www.doctoreg.online/search?name={search_term_string}",
+                "query-input": "required name=search_term_string"
+            }
         }
-    };
+    ]
+};
 
     const handleSearchRedirect = (specialty = 'الكل', city = 'الكل', area = 'الكل', name = '') => {
         const params = new URLSearchParams();
@@ -111,355 +656,447 @@ function HomePage() {
         navigate(`/search?${params.toString()}`);
     };
 
-   return (
-        <div style={{ backgroundColor: '#f0f4f8', minHeight: '100vh', direction: 'rtl' }}>
-            {/* 3. إضافة الـ Helmet لضبط العنوان والوصف والـ Schema */}
+return (
+    <>
+        <style>{homePageStyles}</style>
+
+        <div className="doctor-home">
+
+            {/* ==============================
+                SEO
+            ============================== */}
             <Helmet>
-                <title>دكتور | منصة حجز الأطباء الأولى في مصر</title>
-                <meta name="description" content="احجز موعدك مع أفضل الأطباء والاستشاريين في مصر. تغطية شاملة لجميع التخصصات الطبية، حجز سهل ومباشر عبر الإنترنت." />
+                <title>دكتور | منصة حجز الأطباء في مصر</title>
+
+                <meta
+                    name="description"
+                    content="احجز موعدك مع الأطباء والاستشاريين في مصر بسهولة. ابحث عن الطبيب حسب التخصص والمحافظة والمنطقة واحجز موعدك أونلاين."
+                />
+
+                <meta
+                    name="robots"
+                    content="index, follow"
+                />
+
                 <script type="application/ld+json">
-                    {JSON.stringify(orgSchema)}
+                    {JSON.stringify(siteSchema)}
                 </script>
             </Helmet>
-             <div style={{ textAlign: 'center', padding: '40px 0', background: '#fff' }}>
-                <h1 style={{ fontSize: '85px', fontWeight: '900', margin: 0, color: '#1a73e8', textTransform: 'uppercase' }}>
-                    دكتور <span style={{ color: '#2c3e50', fontWeight: '300' }}>| DOCTOR</span>
+
+
+            {/* ==============================
+                HEADER
+            ============================== */}
+            <header className="doctor-header">
+
+                <h1 className="doctor-logo-title">
+                    دكتور <span>| DOCTOR</span>
                 </h1>
-                <p style={{ color: '#7f8c8d', fontSize: '20px', marginTop: '10px' }}>احجز طبيبك الآن بكل سهولة</p>
 
-                <div style={{
-                    display: 'flex',
-                    flexDirection: (typeof window !== 'undefined' && window.innerWidth < 768) ? 'column' : 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '20px',
-                    padding: '20px',
-                    direction: 'rtl'
-                }}>
-                    {/* القسم الأول (يمين): حاوية المستطيلات */}
-                    <div style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '15px',
-                        flex: (typeof window !== 'undefined' && window.innerWidth < 768) ? 'none' : '1',
-                        maxWidth: '400px',
-                        margin: '10px auto'
-                    }}>
-                        {/* 1. مستطيل تحميل التطبيق (نسخة الأندرويد فقط) */}
-                        <div style={{
-                            background: 'linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%)', 
-                            padding: '20px', borderRadius: '15px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                            border: '1px solid #c8e6c9', textAlign: 'center', display: 'flex',
-                            flexDirection: 'column', gap: '12px'
-                        }}>
-                            <h3 style={{ color: '#0c1218', margin: 0, fontSize: '24px', fontWeight: 'bold' }}>
-                                📱 حمل تطبيق دكتور للأندرويد
-                            </h3>
-                            <p style={{ margin: 0, fontSize: '20px', color: '#131111' }}>احجز موعدك بضغطة واحدة من موبايلك</p>
-                            <div style={{ display: 'flex', justifyContent: 'center' }}>
-                                <button 
-                                    onClick={() => window.open('https://play.google.com/store/apps/details?id=com.doctorplatform.app&pcampaignid=web_share', '_blank')}
-                                    style={{
-                                        background: '#0a960a', color: '#fff', border: 'none', padding: '16px 30px', 
-                                        borderRadius: '10px', cursor: 'pointer', fontSize: '20px', fontWeight: 'bold',
-                                        display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                                        transition: 'transform 0.2s'
-                                    }}
-                                    onMouseEnter={(e) => e.target.style.transform = 'scale(1.05)'}
-                                    onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-                                >
-                                    <span>تحميل من Google Play</span>
-                                </button>
-                            </div>
-                        </div>
+                <p className="doctor-subtitle">
+                    احجز طبيبك الآن بكل سهولة
+                </p>
 
-                        {/* 2. المستطيل التعريفي (الحالي) */}
-                        <div style={{
-                            border: '2px solid #3eeb09', borderRadius: '15px', backgroundColor: '#e3f2fd',
-                            padding: '12px 20px', display: 'flex', alignItems: 'center',
-                            boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
-                        }}>
-                            <p style={{ 
-                                fontSize: '22px', color: '#0d47a1', fontWeight: '800', 
-                                lineHeight: '1.8', margin: 0, textAlign: 'center'
-                            }}>
-                                احجز دكتورك الآن مع أكبر منصة لحجز الأطباء في مصر.. نخبة من أفضل وأمهر الاستشاريين والأخصائيين.. اختار الميعاد اللي يناسبك واحجز الآن.
-                            </p>
-                        </div>
+            </header>
+
+
+            {/* ==============================
+                HERO BANNER
+            ============================== */}
+            <section className="doctor-hero">
+
+                <img
+                    src="/doctor-hero.webp"
+                    alt="منصة دكتور لحجز الأطباء في مصر"
+                    className="doctor-hero-image"
+                    fetchPriority="high"
+                    loading="eager"
+                    decoding="async"
+                />
+
+                <div className="doctor-hero-content">
+
+                    <div className="doctor-hero-badge">
+                        🩺 منصة دكتور لحجز الأطباء
                     </div>
 
-                    {/* القسم الثاني (منتصف): الصورة وزر الحجز */}
-                    <div style={{ 
-                        textAlign: 'center', display: 'flex', flexDirection: 'column', 
-                        alignItems: 'center', padding: '20px', flex: '1'
-                    }}>
-                        <img 
-    src="/10.webp" 
-    alt="دكتور أيمن عجيب" 
-    fetchPriority="high"
-    loading="eager"
-    style={{ width: '90%', maxWidth: '400px', height: 'auto', borderRadius: '10px' }}
-/>
-                        <button 
-                            onClick={() => navigate('/dr_ayman_aguib')}
-                            style={{
-                                width: '100%', maxWidth: '400px', margin: '10px auto',
-                                padding: '12px 20px', backgroundColor: '#1a73e8', color: '#fff',
-                                border: 'none', borderRadius: '12px', fontSize: '22px',
-                                fontWeight: '700', cursor: 'pointer', display: 'block'
-                            }}
-                        >
-                            احجز مباشرة الان مع الدكتور ايمن عجيب استشاري المخ و الاعصاب والعمود الفقري
-                        </button>
-                    </div>
+                    <h2 className="doctor-hero-title">
+                        ابحث عن طبيبك واحجز موعدك بسهولة
+                    </h2>
 
-                    {/* القسم الثالث (يسار): العدادات */}
-                    <div style={{ 
-                        display: 'flex', 
-                        flexDirection: (typeof window !== 'undefined' && window.innerWidth < 768) ? 'row' : 'column',
-                        flexWrap: 'wrap', gap: '30px', justifyContent: 'center', alignItems: 'center', flex: '1'
-                    }}>
-                        <div style={{ textAlign: 'center' }}>
-                            <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #1a73e8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 'bold', color: '#1a73e8', margin: '0 auto 10px', backgroundColor: '#fff' }}>+1000</div>
-                            <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>👨‍⚕️ طبيب متخصص</p>
-                        </div>
-                        <div style={{ textAlign: 'center' }}>
-                            <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #2e7d32', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 'bold', color: '#2e7d32', margin: '0 auto 10px', backgroundColor: '#fff' }}>+10,000</div>
-                            <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>✅ حجز ناجح</p>
-                        </div>
-                        <div style={{ textAlign: 'center' }}>
-                            <div style={{ width: '90px', height: '90px', borderRadius: '50%', border: '4px solid #f57c00', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 'bold', color: '#f57c00', margin: '0 auto 10px', backgroundColor: '#fff' }}>24/7</div>
-                            <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#2c3e50' }}>📞 دعم فني</p>
-                        </div>
-                    </div>
+                    <p className="doctor-hero-description">
+                        ابحث عن الطبيب المناسب لك حسب التخصص والمحافظة والمنطقة،
+                        واختار الموعد الذي يناسبك.
+                    </p>
+
+                    <button
+                        className="doctor-hero-button"
+                        onClick={() => {
+                            document
+                                .getElementById('doctor-search-section')
+                                ?.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'center'
+                                });
+                        }}
+                    >
+                        🔍 ابحث عن طبيب الآن
+                    </button>
+
                 </div>
 
-                <div style={{ padding: '0 20px', maxWidth: '1200px', margin: '0 auto' }}>
-                    {/* شريط البحث المطور - تصميم (البار العريض) */}
-                    <div style={{ 
-                        background: '#fff', borderRadius: '15px', marginBottom: '40px', 
-                        boxShadow: '0 15px 40px rgba(0,0,0,0.12)', display: 'flex', 
-                        flexWrap: 'wrap', alignItems: 'stretch', border: '1px solid #ddd',
-                        overflow: 'hidden', direction: 'rtl'
-                    }}>
-                      {/* 1. حقل التخصص */}
-<div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
-    <label htmlFor="home-specialty-select" style={{ fontSize: '18px', color: '#0a0101', marginRight: '10px' }}>أنا أبحث عن دكتور</label>
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: '24px', marginLeft: '5px' }}>🩺</span>
-        <select 
-            id="home-specialty-select"
-            aria-label="أنا أبحث عن دكتور - التخصص"
-            onChange={e => setFSpecialty(e.target.value)} 
-            value={fSpecialty} 
-            style={{ border: 'none', width: '100%', fontSize: '16px', fontWeight: 'bold', outline: 'none', cursor: 'pointer', background: 'transparent' }}
-        >
-            <option value="الكل">اختيار التخصص</option>
-            {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
-        </select>
-    </div>
-</div>
+            </section>
 
-{/* 2. حقل المحافظة */}
-<div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee' }}>
-    <label htmlFor="home-city-select" style={{ fontSize: '20px', color: '#030101', marginRight: '10px' }}>في محافظة</label>
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: '24px', marginLeft: '5px' }}>📍</span>
-        <select 
-            id="home-city-select"
-            aria-label="في محافظة"
-            value={fCity}
-            onChange={e => { setFCity(e.target.value); setFArea("الكل"); }} 
-            style={{ border: 'none', width: '100%', fontSize: '16px', fontWeight: 'bold', outline: 'none', cursor: 'pointer', background: 'transparent' }}
-        >
-            <option value="الكل">كل المحافظات</option>
-            {Object.keys(egyptLocations).map(g => <option key={g} value={g}>{g}</option>)}
-        </select>
-    </div>
-</div>
 
-{/* 3. حقل المنطقة */}
-<div style={{ 
-    flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', 
-    display: 'flex', flexDirection: 'column', borderLeft: '1px solid #eee',
-    opacity: fCity === 'الكل' ? 0.6 : 1, transition: '0.3s'
-}}>
-    <label htmlFor="home-area-select" style={{ fontSize: '20px', color: '#0a0202', marginRight: '10px' }}>في منطقة</label>
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: '24px', marginLeft: '5px' }}>🏘️</span>
-        <select 
-            id="home-area-select"
-            aria-label="في منطقة"
-            disabled={fCity === 'الكل'} 
-            value={fArea} 
-            onChange={(e) => setFArea(e.target.value)} 
-            style={{ 
-                border: 'none', width: '100%', fontSize: '20px', 
-                fontWeight: 'bold', outline: 'none', 
-                cursor: fCity === 'الكل' ? 'not-allowed' : 'pointer', 
-                background: 'transparent' 
-            }}
-        >
-            <option value="الكل">اختيار المنطقة</option>
-            {fCity !== 'الكل' && egyptLocations[fCity]?.map(area => (
-                <option key={area} value={area}>{area}</option>
-            ))}
-        </select>
-    </div>
-</div>
+            {/* ==============================
+                BENEFITS
+            ============================== */}
+            <section className="doctor-benefits">
 
-{/* 4. حقل اسم الدكتور */}
-<div style={{ flex: '1 1 250px', minWidth: '200px', padding: '10px 15px', display: 'flex', flexDirection: 'column' }}>
-    <label htmlFor="home-doctor-input" style={{ fontSize: '20px', color: '#070101', marginRight: '10px' }}>أو اكتب اسم الدكتور</label>
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ fontSize: '24px', marginLeft: '5px' }}>🔍</span>
-        <input 
-            id="home-doctor-input"
-            aria-label="أو اكتب اسم الدكتور"
-            placeholder="الدكتور " 
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            style={{ 
-                border: 'none', width: '100%', outline: 'none', 
-                fontSize: '20px', fontWeight: 'bold' 
-            }} 
-        />
-    </div>
-</div>
-
-                        <button 
-                            onClick={() => handleSearchRedirect(fSpecialty, fCity, fArea, searchTerm)}
-                            style={{ 
-                                background: '#7cf046', color: '#000000', border: 'none', 
-                                padding: '0 40px', fontSize: '28px', fontWeight: 'bold', 
-                                cursor: 'pointer', display: 'flex', alignItems: 'center',
-                                justifyContent: 'center', minWidth: '150px', minHeight: '60px', flex: '1 1 100%'
-                            }}
-                        >
-                            ابحث 🔍
-                        </button>
+                <div className="doctor-benefit-card">
+                    <div className="doctor-benefit-icon">
+                        👨‍⚕️
                     </div>
+
+                    <h3 className="doctor-benefit-title">
+                        تخصصات طبية متعددة
+                    </h3>
+
+                    <p className="doctor-benefit-text">
+                        ابحث عن الطبيب المناسب حسب التخصص الذي تحتاجه.
+                    </p>
                 </div>
-             {/* ==================================================
-    🩺 مساعد اختيار التخصص
-================================================== */}
-
-<section
-  style={{
-    maxWidth: '1100px',
-    margin: '30px auto',
-    padding: '0 15px'
-  }}
->
-  <div
-    style={{
-      background:
-        'linear-gradient(135deg, #ecfeff, #e0f2fe)',
-      border:
-        '1px solid #bae6fd',
-      borderRadius: '22px',
-      padding: '28px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: '20px',
-      flexWrap: 'wrap',
-      direction: 'rtl',
-      boxShadow:
-        '0 6px 20px rgba(14,116,144,0.08)'
-    }}
-  >
-
-    <div style={{ flex: 1, minWidth: '260px' }}>
-
-      <div
-        style={{
-          fontSize: '15px',
-          color: '#0369a1',
-          fontWeight: '800',
-          marginBottom: '7px'
-        }}
-      >
-        🔍 مش عارف تروح لأي دكتور؟
-      </div>
-
-      <h2
-        style={{
-          margin: '0 0 8px',
-          color: '#0f172a',
-          fontSize: '24px',
-          fontWeight: '800'
-        }}
-      >
-        احكي لنا عن أعراضك
-      </h2>
-
-      <p
-        style={{
-          margin: 0,
-          color: '#475569',
-          lineHeight: '1.8',
-          fontSize: '15px'
-        }}
-      >
-        اكتب الأعراض التي تشعر بها، وساعدك
-        في الوصول إلى التخصص المناسب والطبيب المناسب.
-      </p>
-
-    </div>
 
 
-    <button
-      onClick={() => navigate('/symptoms')}
-      style={{
-        border: 'none',
-        background: '#0284c7',
-        color: '#fff',
-        padding: '14px 25px',
-        borderRadius: '13px',
-        fontSize: '16px',
-        fontWeight: '800',
-        cursor: 'pointer',
-        boxShadow:
-          '0 5px 15px rgba(2,132,199,0.25)',
-        whiteSpace: 'nowrap'
-      }}
-    >
-      🩺 ابدأ الآن
-    </button>
+                <div className="doctor-benefit-card">
+                    <div className="doctor-benefit-icon">
+                        📅
+                    </div>
 
-  </div>
-</section>
-                {/* بداية جدول التخصصات الجديد */}
-                <div style={{ direction: 'rtl', padding: '20px' }}>
-                    <h2 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '20px' }}>اختار التخصص اللي محتاجه:</h2>
-                    <div style={{ 
-                        display: 'grid', 
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', 
-                        gap: '15px' 
-                    }}>
-                        {specialtiesData.map((spec) => (
-                            <div key={spec.name} 
-                                onClick={() => handleSearchRedirect(spec.name)}
-                                style={{
-                                    border: '2px solid #3debd3', borderRadius: '20px', padding: '15px',
-                                    textAlign: 'center', cursor: 'pointer', transition: '0.3s',
-                                    background: '#fff'
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.background = '#f0fff4'}
-                                onMouseLeave={(e) => e.currentTarget.style.background = '#fff'}
+                    <h3 className="doctor-benefit-title">
+                        حجز بسهولة
+                    </h3>
+
+                    <p className="doctor-benefit-text">
+                        اختر الطبيب والموعد المناسب لك واحجز في خطوات بسيطة.
+                    </p>
+                </div>
+
+
+                <div className="doctor-benefit-card">
+                    <div className="doctor-benefit-icon">
+                        📱
+                    </div>
+
+                    <h3 className="doctor-benefit-title">
+                        من الموقع أو التطبيق
+                    </h3>
+
+                    <p className="doctor-benefit-text">
+                        يمكنك الوصول إلى خدمات منصة دكتور بسهولة من هاتفك.
+                    </p>
+                </div>
+
+            </section>
+
+
+            {/* ==============================
+                SEARCH SECTION
+            ============================== */}
+            <section
+                id="doctor-search-section"
+                className="doctor-search-wrapper"
+            >
+
+                <div className="doctor-search-box">
+
+                    {/* 1. التخصص */}
+                    <div className="doctor-search-field">
+
+                        <label
+                            htmlFor="home-specialty-select"
+                            className="doctor-search-label"
+                        >
+                            أنا أبحث عن دكتور
+                        </label>
+
+                        <div className="doctor-search-row">
+
+                            <span className="doctor-search-icon">
+                                🩺
+                            </span>
+
+                            <select
+                                id="home-specialty-select"
+                                aria-label="أنا أبحث عن دكتور - التخصص"
+                                value={fSpecialty}
+                                onChange={(e) =>
+                                    setFSpecialty(e.target.value)
+                                }
+                                className="doctor-search-select"
                             >
-                                <div style={{ fontSize: '30px', marginBottom: '10px' }}>{spec.icon}</div>
-                                <div style={{ fontWeight: 'bold', color: '#000' }}>{spec.name}</div>
-                                <div style={{ fontSize: '12px', color: '#666' }}>{spec.count} دكتور</div>
-                            </div>
-                        ))}
+                                <option value="الكل">
+                                    اختيار التخصص
+                                </option>
+
+                                {medicalSpecialties
+                                    .filter((s) => s !== "الكل")
+                                    .map((s) => (
+                                        <option
+                                            key={s}
+                                            value={s}
+                                        >
+                                            {s}
+                                        </option>
+                                    ))}
+                            </select>
+
+                        </div>
+
                     </div>
+
+
+                    {/* 2. المحافظة */}
+                    <div className="doctor-search-field">
+
+                        <label
+                            htmlFor="home-city-select"
+                            className="doctor-search-label"
+                        >
+                            في محافظة
+                        </label>
+
+                        <div className="doctor-search-row">
+
+                            <span className="doctor-search-icon">
+                                📍
+                            </span>
+
+                            <select
+                                id="home-city-select"
+                                aria-label="في محافظة"
+                                value={fCity}
+                                onChange={(e) => {
+                                    setFCity(e.target.value);
+                                    setFArea("الكل");
+                                }}
+                                className="doctor-search-select"
+                            >
+                                <option value="الكل">
+                                    كل المحافظات
+                                </option>
+
+                                {Object.keys(egyptLocations).map((g) => (
+                                    <option
+                                        key={g}
+                                        value={g}
+                                    >
+                                        {g}
+                                    </option>
+                                ))}
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    {/* 3. المنطقة */}
+                    <div
+                        className="doctor-search-field"
+                        style={{
+                            opacity: fCity === "الكل" ? 0.6 : 1,
+                            transition: "0.3s"
+                        }}
+                    >
+
+                        <label
+                            htmlFor="home-area-select"
+                            className="doctor-search-label"
+                        >
+                            في منطقة
+                        </label>
+
+                        <div className="doctor-search-row">
+
+                            <span className="doctor-search-icon">
+                                🏘️
+                            </span>
+
+                            <select
+                                id="home-area-select"
+                                aria-label="في منطقة"
+                                disabled={fCity === "الكل"}
+                                value={fArea}
+                                onChange={(e) =>
+                                    setFArea(e.target.value)
+                                }
+                                className="doctor-search-select"
+                                style={{
+                                    cursor:
+                                        fCity === "الكل"
+                                            ? "not-allowed"
+                                            : "pointer"
+                                }}
+                            >
+
+                                <option value="الكل">
+                                    اختيار المنطقة
+                                </option>
+
+                                {fCity !== "الكل" &&
+                                    egyptLocations[fCity]?.map(
+                                        (area) => (
+                                            <option
+                                                key={area}
+                                                value={area}
+                                            >
+                                                {area}
+                                            </option>
+                                        )
+                                    )}
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    {/* 4. اسم الدكتور */}
+                    <div className="doctor-search-field">
+
+                        <label
+                            htmlFor="home-doctor-input"
+                            className="doctor-search-label"
+                        >
+                            أو اكتب اسم الدكتور
+                        </label>
+
+                        <div className="doctor-search-row">
+
+                            <span className="doctor-search-icon">
+                                🔍
+                            </span>
+
+                            <input
+                                id="home-doctor-input"
+                                aria-label="أو اكتب اسم الدكتور"
+                                placeholder="اكتب اسم الدكتور"
+                                value={searchTerm}
+                                onChange={(e) =>
+                                    setSearchTerm(e.target.value)
+                                }
+                                className="doctor-search-input"
+                            />
+
+                        </div>
+
+                    </div>
+
+
+                    {/* زر البحث */}
+                    <button
+                        onClick={() =>
+                            handleSearchRedirect(
+                                fSpecialty,
+                                fCity,
+                                fArea,
+                                searchTerm
+                            )
+                        }
+                        className="doctor-search-button"
+                    >
+                        ابحث 🔍
+                    </button>
+
                 </div>
-                {/* نهاية جدول التخصصات */}
-            </div>
+
+            </section>
+
+
+            {/* ==============================
+                SYMPTOM ASSISTANT
+            ============================== */}
+            <section className="doctor-symptoms">
+
+                <div className="doctor-symptoms-box">
+
+                    <div className="doctor-symptoms-text">
+
+                        <div className="doctor-symptoms-label">
+                            🔍 مش عارف تروح لأي دكتور؟
+                        </div>
+
+                        <h2 className="doctor-symptoms-title">
+                            احكي لنا عن أعراضك
+                        </h2>
+
+                        <p className="doctor-symptoms-description">
+                            اكتب الأعراض التي تشعر بها،
+                            وساعدك في الوصول إلى التخصص المناسب
+                            والطبيب المناسب.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        onClick={() => navigate('/symptoms')}
+                        className="doctor-symptoms-button"
+                    >
+                        🩺 ابدأ الآن
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            {/* ==============================
+                SPECIALTIES
+            ============================== */}
+            <section className="doctor-specialties">
+
+                <h2 className="doctor-specialties-title">
+                    اختار التخصص اللي محتاجه:
+                </h2>
+
+                <div className="doctor-specialties-grid">
+
+                    {specialtiesData.map((spec) => (
+
+                        <div
+                            key={spec.name}
+                            onClick={() =>
+                                handleSearchRedirect(spec.name)
+                            }
+                            className="doctor-specialty-card"
+                        >
+
+                            <div className="doctor-specialty-icon">
+                                {spec.icon}
+                            </div>
+
+                            <div className="doctor-specialty-name">
+                                {spec.name}
+                            </div>
+
+                            <div className="doctor-specialty-count">
+                                {spec.count} دكتور
+                            </div>
+
+                        </div>
+
+                    ))}
+
+                </div>
+
+            </section>
+
         </div>
-    );
+    </>
+);
 }
 
 export default HomePage;
