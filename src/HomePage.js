@@ -239,11 +239,12 @@ const homePageStyles = `
         margin-bottom: 8px;
     }
 
-    .doctor-benefit-title {
+   .doctor-benefit-title {
         margin: 0 0 6px;
         color: #0f172a;
-        font-size: 19px;
+        font-size: 23px !important; /* تم زيادة حجم الخط هنا ليكون واضحاً وكبيراً */
         font-weight: 800;
+        text-decoration: none !important; /* لإلغاء أي خط تحت النص */
     }
 
     .doctor-benefit-text {
