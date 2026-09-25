@@ -556,7 +556,7 @@ const homePageStyles = `
     }
 
     .doctor-app-title {
-        color: #123b16;
+        color: #033808;
 
         font-size: 18px;
         line-height: 1.4;
@@ -565,7 +565,7 @@ const homePageStyles = `
     }
 
     .doctor-app-text {
-        color: #285c2d;
+        color: #010c02;
 
         font-size: 14px;
         line-height: 1.5;
@@ -574,7 +574,7 @@ const homePageStyles = `
     }
 
     .doctor-app-download {
-        color: #0b5d18;
+        color: #03290a;
 
         font-size: 14px;
         line-height: 1.5;
