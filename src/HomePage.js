@@ -799,11 +799,10 @@ return (
 
           <div className="doctor-benefit-card">
     <Link to="/dr/دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري" className="benefit-card-link">
-        <div className="doctor-benefit-icon">
-            👨‍⚕️
-        </div>
+        
         <h3 className="doctor-benefit-title">
-            احجز مباشرة الآن مع الدكتور أيمن عجيب
+                احجز مباشرة الآن  
+             مع الدكتور أيمن عجيب
              استشاري المخ والأعصاب والعمود الفقري
         </h3>
         
