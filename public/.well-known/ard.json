@@ -1,0 +1,33 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "منصة دكتور",
+    "identifier": "doctoreg.online"
+  },
+  "entries": [
+    {
+      "identifier": "urn:ai:doctoreg.online:medical:doctor-booking",
+      "displayName": "منصة دكتور - حجز الأطباء",
+      "type": "application/ai-skill",
+      "url": "https://www.doctoreg.online/search",
+      "description": "منصة إلكترونية للبحث عن الأطباء في مصر وتصفح التخصصات والمحافظات والمناطق وحجز المواعيد.",
+      "tags": [
+        "doctors",
+        "medical",
+        "appointments",
+        "Egypt",
+        "healthcare"
+      ],
+      "representativeQueries": [
+        "ابحث عن طبيب مناسب في مصر",
+        "احجز موعدًا مع دكتور",
+        "احجز كشف مع دكتور",
+        "حجز كشف مع دكتور",
+        "افضل دكتور مخ و اعصاب في مصر",
+        "ابحث عن طبيب حسب التخصص والمحافظة",
+        "find a doctor in Egypt",
+        "book a medical appointment"
+      ]
+    }
+  ]
+}
