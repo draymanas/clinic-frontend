@@ -2223,7 +2223,7 @@ const saveWebFCMToken = async (user, token) => {
     }}
   >
     <img
-      src="/logo192.webp"
+      src="/logo105.webp"
       alt="منصة دكتور"
       style={{
         height: '60px',
