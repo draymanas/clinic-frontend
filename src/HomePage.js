@@ -135,10 +135,6 @@ const homePageStyles = `
         box-shadow: 0 12px 35px rgba(0, 70, 120, 0.12);
     }
 
-    .doctor-hero picture {
-    display: block;
-    width: 100%;
-}
 
 .doctor-hero picture {
     display: block;
@@ -151,6 +147,13 @@ const homePageStyles = `
     height: auto;
     aspect-ratio: 2046 / 768;
     object-fit: cover;
+}
+
+@media (max-width: 767px) {
+    .doctor-hero-image {
+        aspect-ratio: 769 / 289;
+        object-fit: cover;
+    }
 }
 
     .doctor-hero-content {
@@ -721,10 +724,7 @@ return (
             <section className="doctor-hero">
 
                <picture>
-    <source
-        media="(max-width: 767px)"
-        srcSet="/doctor-hero-mobile.webp"
-    />
+ 
 
     <picture>
     <source
