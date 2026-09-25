@@ -797,14 +797,9 @@ return (
                 </div>
 
 
-               <div className="doctor-benefit-card">
-    <Link to="/dr/أيمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري" className="doctor-direct-booking-btn">
-        <div className="doctor-benefit-icon">
-            📅
-        </div>
-        <span className="doctor-benefit-btn-text">
-            احجز مباشرة الان مع الدكتور ايمن عجيب استشاري المخ و الاعصاب و العمود الفقري
-        </span>
+             <div className="doctor-benefit-card">
+    <Link to="/dr/دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري" className="professional-booking-btn">
+        احجز مباشرة الان مع الدكتور ايمن عجيب استشاري المخ و الاعصاب و العمود الفقري
     </Link>
 </div>
 
