@@ -356,15 +356,19 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
 
   // 🌟 1. رابط المشاركة فائق الاختصار للتعليقات وفيسبوك: /d/40
   const shortShareUrl = `https://www.doctoreg.online/d/${doctor?.id || id}`;
+// 🌟 2. رابط الـ SEO الرسمي للطبيب
+// يجب أن يطابق Sitemap و Redirect /d/:id حرفيًا
+const seoRawText =
+    `دكتور ${doctorName} ${doctor?.title ? `${doctor.title} ` : ''}${specialty}`.trim();
 
-  // 🌟 2. رابط الـ SEO الكامل المعتمد للـ Canonical ومحرك بحث Google:
-  const seoRawText = `${doctorName}-${doctor?.title ? `${doctor.title} ` : ''}${specialty}${city ? `-${city}` : ''}${area ? `-${area}` : ''}`.trim();
-  const seoSlug = seoRawText
+const seoSlug = seoRawText
     .replace(/[\/\#\?\&\\\:\*\"\'\<\>\|\(\)\,\.]/g, '')
     .trim()
-    .replace(/\s+/g, '-');
-  const canonicalUrl = `https://www.doctoreg.online/dr/${doctor?.id || id}${seoSlug ? `-${encodeURIComponent(seoSlug)}` : ''}`;
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
 
+const canonicalUrl =
+    `https://www.doctoreg.online/dr/${doctor?.id || id}${seoSlug ? `-${encodeURIComponent(seoSlug)}` : ''}`;
   const doctorSchema = {
     "@context": "https://schema.org",
     "@type": "Physician",
