@@ -1,7 +1,7 @@
 // SearchPage.js - متوافق مع الروابط النظيفة الصديقة لمحركات البحث (SEO Clean URLs)
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate, useParams, Link } from 'react-router-dom';
-
+import { Helmet } from 'react-helmet';
 
 const medicalSpecialties = [
   "الكل", "أسنان", "أطفال وحديثي الولادة", "أنف وأذن وحنجرة", "باطنة", "تغذية علاجية",
@@ -529,9 +529,83 @@ useEffect(() => {
 
 }, [fSpecialty, fCity, fArea]);
 
+// ==================================================
+// Breadcrumb Schema - Structured Data for Google
+// ==================================================
+
+const breadcrumbItems = [
+    {
+        "@type": "ListItem",
+        position: 1,
+        name: "الرئيسية",
+        item: "https://www.doctoreg.online/"
+    },
+    {
+        "@type": "ListItem",
+        position: 2,
+        name: "دليل الأطباء",
+        item: "https://www.doctoreg.online/search"
+    }
+];
+
+if (fSpecialty !== 'الكل') {
+    breadcrumbItems.push({
+        "@type": "ListItem",
+        position: breadcrumbItems.length + 1,
+        name: `أطباء ${fSpecialty}`,
+        item: `https://www.doctoreg.online/doctors/${encodeURIComponent(
+            slugifyArabic(fSpecialty)
+        )}`
+    });
+}
+
+if (fSpecialty !== 'الكل' && fCity !== 'الكل') {
+    breadcrumbItems.push({
+        "@type": "ListItem",
+        position: breadcrumbItems.length + 1,
+        name: `${fSpecialty} في ${fCity}`,
+        item: `https://www.doctoreg.online/doctors/${encodeURIComponent(
+            slugifyArabic(fSpecialty)
+        )}/${encodeURIComponent(
+            slugifyArabic(fCity)
+        )}`
+    });
+}
+
+if (
+    fSpecialty !== 'الكل' &&
+    fCity !== 'الكل' &&
+    fArea !== 'الكل'
+) {
+    breadcrumbItems.push({
+        "@type": "ListItem",
+        position: breadcrumbItems.length + 1,
+        name: `${fSpecialty} في ${fArea}`,
+        item: `https://www.doctoreg.online/doctors/${encodeURIComponent(
+            slugifyArabic(fSpecialty)
+        )}/${encodeURIComponent(
+            slugifyArabic(fCity)
+        )}/${encodeURIComponent(
+            slugifyArabic(fArea)
+        )}`
+    });
+}
+
+const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: breadcrumbItems
+};
+
 return (
         <main role="main" style={{ backgroundColor: '#f0f4f8', minHeight: '100vh', direction: 'rtl', padding: '20px' }}>
             
+<Helmet>
+    <script type="application/ld+json">
+        {JSON.stringify(breadcrumbSchema)}
+    </script>
+</Helmet>
+
             {/* مسار التصفح (Breadcrumb) والترويسة الصديقة لمحركات البحث (H1 SEO) */}
             <div style={{ maxWidth: '1200px', margin: '0 auto 20px', padding: '0 8px' }}>
              <nav
@@ -898,6 +972,8 @@ return (
                     </div>
                 </div>
             </div>
+
+
 
             {/* لا تنس إغلاق الوسم في نهاية الملف باستبدال </div> الأخير بـ </main> */}
 
