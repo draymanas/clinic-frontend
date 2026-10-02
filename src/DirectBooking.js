@@ -379,9 +379,71 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
         ...(city ? { "addressLocality": city } : {}),
         "addressCountry": "EG"
       }
-    } : {}),
+    }
+    : {}),
     ...(doctor?.fee ? { "priceRange": `${doctor.fee} EGP` } : {})
   };
+
+  // ==================================================
+// Breadcrumb Schema لصفحة الطبيب
+// ==================================================
+const breadcrumbItems = [
+    {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "الرئيسية",
+        "item": "https://www.doctoreg.online/"
+    },
+    {
+        "@type": "ListItem",
+        "position": 2,
+        "name": `أطباء ${specialty}`,
+        "item": `https://www.doctoreg.online/doctors/${encodeURIComponent(
+            specialty.trim().replace(/\s+/g, '-')
+        )}`
+    }
+];
+
+if (city) {
+    breadcrumbItems.push({
+        "@type": "ListItem",
+        "position": breadcrumbItems.length + 1,
+        "name": `أطباء ${specialty} في ${city}`,
+        "item": `https://www.doctoreg.online/doctors/${encodeURIComponent(
+            specialty.trim().replace(/\s+/g, '-')
+        )}/${encodeURIComponent(
+            city.trim().replace(/\s+/g, '-')
+        )}`
+    });
+}
+
+if (city && area) {
+    breadcrumbItems.push({
+        "@type": "ListItem",
+        "position": breadcrumbItems.length + 1,
+        "name": `أطباء ${specialty} في ${area}`,
+        "item": `https://www.doctoreg.online/doctors/${encodeURIComponent(
+            specialty.trim().replace(/\s+/g, '-')
+        )}/${encodeURIComponent(
+            city.trim().replace(/\s+/g, '-')
+        )}/${encodeURIComponent(
+            area.trim().replace(/\s+/g, '-')
+        )}`
+    });
+}
+
+breadcrumbItems.push({
+    "@type": "ListItem",
+    "position": breadcrumbItems.length + 1,
+    "name": `د. ${doctorName}`,
+    "item": canonicalUrl
+});
+
+const doctorBreadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": breadcrumbItems
+};
 
   // قائمة مواعيد العمل من الحقل المتاح
   const slotsList = doctor?.availability
@@ -418,8 +480,20 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
         document.head.appendChild(scriptTag);
       }
       scriptTag.text = JSON.stringify(doctorSchema);
+        // 🌟 Breadcrumb Schema
+const breadcrumbScriptId = 'doctor-breadcrumb-jsonld';
+let breadcrumbScript = document.getElementById(breadcrumbScriptId);
+
+if (!breadcrumbScript) {
+    breadcrumbScript = document.createElement('script');
+    breadcrumbScript.id = breadcrumbScriptId;
+    breadcrumbScript.type = 'application/ld+json';
+    document.head.appendChild(breadcrumbScript);
+}
+
+breadcrumbScript.text = JSON.stringify(doctorBreadcrumbSchema);
     }
-  }, [doctor, pageTitle, pageDescription]);
+  }, [doctor, pageTitle, pageDescription, canonicalUrl]);
 
   // =========================================================
   // تنسيقات CSS مضمنة ذاتياً لضمان المظهر حتى بدون Tailwind
