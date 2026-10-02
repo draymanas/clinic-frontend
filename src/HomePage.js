@@ -1526,16 +1526,14 @@ return (
 
                 <div className="doctor-specialties-grid">
 
-                    {specialtiesData.map((spec) => (
-
-                        <div
+                   {specialtiesData.map((spec) => (
+                        <Link
                             key={spec.name}
-                            onClick={() =>
-                                handleSearchRedirect(spec.name)
-                            }
+                            to={`/doctors/${encodeURIComponent(
+                                spec.name.trim().replace(/\s+/g, '-')
+                            )}`}
                             className="doctor-specialty-card"
                         >
-
                             <div className="doctor-specialty-icon">
                                 {spec.icon}
                             </div>
@@ -1547,9 +1545,7 @@ return (
                             <div className="doctor-specialty-count">
                                 {spec.count} دكتور
                             </div>
-
-                        </div>
-
+                        </Link>
                     ))}
 
                 </div>

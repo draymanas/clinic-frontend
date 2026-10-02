@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate, useParams, Link } from 'react-router-dom';
 
+
 const medicalSpecialties = [
   "الكل", "أسنان", "أطفال وحديثي الولادة", "أنف وأذن وحنجرة", "باطنة", "تغذية علاجية",
   "جراحة أطفال", "جراحة أوعية دموية", "جراحة أورام", "جراحة تجميل", "جراحة سمنة ونحافة",
@@ -350,6 +351,36 @@ export function SearchPage(props) {
             return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
         });
 
+// ==================================================
+// روابط SEO الداخلية للمحافظات والمناطق الفعلية
+// ==================================================
+
+const availableCitiesForSpecialty = fSpecialty !== 'الكل'
+    ? [...new Set(
+        activeList
+            .filter(d =>
+                d.is_active !== false &&
+                d.specialty === fSpecialty &&
+                d.city
+            )
+            .map(d => d.city)
+      )]
+    : [];
+
+const availableAreasForSpecialtyAndCity =
+    fSpecialty !== 'الكل' && fCity !== 'الكل'
+        ? [...new Set(
+            activeList
+                .filter(d =>
+                    d.is_active !== false &&
+                    d.specialty === fSpecialty &&
+                    d.city === fCity &&
+                    d.area
+                )
+                .map(d => d.area)
+          )]
+        : [];
+
    const handleConfirm = async () => {
         if (!selectedDay) {
             alert("من فضلك اختر اليوم المناسب أولاً");
@@ -498,40 +529,132 @@ export function SearchPage(props) {
         }
         metaDesc.setAttribute('content', pageDesc);
     }, [fSpecialty, fCity, fArea]);
+
+// ==================================================
+// Canonical URL لصفحات دليل الأطباء
+// ==================================================
+useEffect(() => {
+    let canonicalPath = '/search';
+
+    if (fSpecialty !== 'الكل') {
+        canonicalPath =
+            `/doctors/${encodeURIComponent(slugifyArabic(fSpecialty))}`;
+
+        if (fCity !== 'الكل') {
+            canonicalPath +=
+                `/${encodeURIComponent(slugifyArabic(fCity))}`;
+
+            if (fArea !== 'الكل') {
+                canonicalPath +=
+                    `/${encodeURIComponent(slugifyArabic(fArea))}`;
+            }
+        }
+    }
+
+    const canonicalUrl =
+        `https://www.doctoreg.online${canonicalPath}`;
+
+    let canonical =
+        document.querySelector('link[rel="canonical"]');
+
+    if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonical);
+    }
+
+    canonical.setAttribute('href', canonicalUrl);
+
+}, [fSpecialty, fCity, fArea]);
+
 return (
         <main role="main" style={{ backgroundColor: '#f0f4f8', minHeight: '100vh', direction: 'rtl', padding: '20px' }}>
             
             {/* مسار التصفح (Breadcrumb) والترويسة الصديقة لمحركات البحث (H1 SEO) */}
             <div style={{ maxWidth: '1200px', margin: '0 auto 20px', padding: '0 8px' }}>
-                <nav aria-label="مسار التصفح" style={{ fontSize: '13px', color: '#64748b', marginBottom: '8px', display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
-                    <Link to="/" style={{ color: '#2563eb', textDecoration: 'none' }}>الرئيسية</Link>
-                    <span aria-hidden="true">/</span>
-                    <Link to="/search" style={{ color: '#2563eb', textDecoration: 'none' }}>دليل الأطباء</Link>
-                    {fSpecialty !== 'الكل' && (
-                        <>
-                            <span aria-hidden="true">/</span>
-                            <Link to={`/doctors/${encodeURIComponent(slugifyArabic(fSpecialty))}`} style={{ color: fCity === 'الكل' ? '#0f172a' : '#2563eb', textDecoration: 'none', fontWeight: fCity === 'الكل' ? 'bold' : 'normal' }}>
-                                {fSpecialty}
-                            </Link>
-                        </>
-                    )}
-                    {fCity !== 'الكل' && (
-                        <>
-                            <span aria-hidden="true">/</span>
-                            <span style={{ color: fArea === 'الكل' ? '#0f172a' : '#2563eb', fontWeight: fArea === 'الكل' ? 'bold' : 'normal' }}>
-                                {fCity}
-                            </span>
-                        </>
-                    )}
-                    {fArea !== 'الكل' && (
-                        <>
-                            <span aria-hidden="true">/</span>
-                            <span style={{ color: '#0f172a', fontWeight: 'bold' }}>
-                                {fArea}
-                            </span>
-                        </>
-                    )}
-                </nav>
+             <nav
+    aria-label="مسار التصفح"
+    style={{
+        fontSize: '13px',
+        color: '#64748b',
+        marginBottom: '8px',
+        display: 'flex',
+        gap: '6px',
+        alignItems: 'center',
+        flexWrap: 'wrap'
+    }}
+>
+    {/* الرئيسية */}
+    <Link
+        to="/"
+        style={{ color: '#2563eb', textDecoration: 'none' }}
+    >
+        الرئيسية
+    </Link>
+
+    <span aria-hidden="true">/</span>
+
+    {/* دليل الأطباء */}
+    <Link
+        to="/search"
+        style={{ color: '#2563eb', textDecoration: 'none' }}
+    >
+        دليل الأطباء
+    </Link>
+
+    {/* التخصص */}
+    {fSpecialty !== 'الكل' && (
+        <>
+            <span aria-hidden="true">/</span>
+
+            <Link
+                to={`/doctors/${encodeURIComponent(slugifyArabic(fSpecialty))}`}
+                style={{
+                    color: fCity === 'الكل' ? '#0f172a' : '#2563eb',
+                    textDecoration: 'none',
+                    fontWeight: fCity === 'الكل' ? 'bold' : 'normal'
+                }}
+            >
+                أطباء {fSpecialty}
+            </Link>
+        </>
+    )}
+
+    {/* المحافظة */}
+    {fSpecialty !== 'الكل' && fCity !== 'الكل' && (
+        <>
+            <span aria-hidden="true">/</span>
+
+            <Link
+                to={`/doctors/${encodeURIComponent(slugifyArabic(fSpecialty))}/${encodeURIComponent(slugifyArabic(fCity))}`}
+                style={{
+                    color: fArea === 'الكل' ? '#0f172a' : '#2563eb',
+                    textDecoration: 'none',
+                    fontWeight: fArea === 'الكل' ? 'bold' : 'normal'
+                }}
+            >
+                {fSpecialty} في {fCity}
+            </Link>
+        </>
+    )}
+
+    {/* المنطقة الحالية */}
+    {fSpecialty !== 'الكل' && fCity !== 'الكل' && fArea !== 'الكل' && (
+        <>
+            <span aria-hidden="true">/</span>
+
+            <span
+                aria-current="page"
+                style={{
+                    color: '#0f172a',
+                    fontWeight: 'bold'
+                }}
+            >
+                {fSpecialty} في {fArea}
+            </span>
+        </>
+    )}
+</nav>
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
                     <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', margin: 0 }}>
@@ -544,6 +667,117 @@ return (
                     </span>
                 </div>
             </div>
+         
+{/* ==================================================
+    روابط داخلية SEO للمحافظات والمناطق
+================================================== */}
+
+{fSpecialty !== 'الكل' && (
+    <section
+        aria-label={`روابط أطباء ${fSpecialty}`}
+        style={{
+            maxWidth: '1200px',
+            margin: '0 auto 24px',
+            padding: '18px',
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '16px'
+        }}
+    >
+
+        {/* في صفحة التخصص العامة: نظهر المحافظات الفعلية */}
+        {fCity === 'الكل' && availableCitiesForSpecialty.length > 0 && (
+            <>
+                <h2
+                    style={{
+                        fontSize: '18px',
+                        color: '#0f172a',
+                        margin: '0 0 14px',
+                        fontWeight: '800'
+                    }}
+                >
+                    اختر المحافظة لعرض أطباء {fSpecialty}
+                </h2>
+
+                <div
+                    style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: '10px'
+                    }}
+                >
+                    {availableCitiesForSpecialty.map(city => (
+                        <Link
+                            key={city}
+                            to={`/doctors/${encodeURIComponent(slugifyArabic(fSpecialty))}/${encodeURIComponent(slugifyArabic(city))}`}
+                            style={{
+                                display: 'inline-block',
+                                padding: '9px 14px',
+                                background: '#eff6ff',
+                                color: '#1d4ed8',
+                                border: '1px solid #bfdbfe',
+                                borderRadius: '10px',
+                                textDecoration: 'none',
+                                fontSize: '14px',
+                                fontWeight: '700'
+                            }}
+                        >
+                            أطباء {fSpecialty} في {city}
+                        </Link>
+                    ))}
+                </div>
+            </>
+        )}
+
+
+        {/* في صفحة التخصص + المحافظة: نظهر المناطق الفعلية */}
+        {fCity !== 'الكل' &&
+         fArea === 'الكل' &&
+         availableAreasForSpecialtyAndCity.length > 0 && (
+            <>
+                <h2
+                    style={{
+                        fontSize: '18px',
+                        color: '#0f172a',
+                        margin: '0 0 14px',
+                        fontWeight: '800'
+                    }}
+                >
+                    اختر المنطقة لعرض أطباء {fSpecialty} في {fCity}
+                </h2>
+
+                <div
+                    style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: '10px'
+                    }}
+                >
+                    {availableAreasForSpecialtyAndCity.map(area => (
+                        <Link
+                            key={area}
+                            to={`/doctors/${encodeURIComponent(slugifyArabic(fSpecialty))}/${encodeURIComponent(slugifyArabic(fCity))}/${encodeURIComponent(slugifyArabic(area))}`}
+                            style={{
+                                display: 'inline-block',
+                                padding: '9px 14px',
+                                background: '#f0fdf4',
+                                color: '#166534',
+                                border: '1px solid #bbf7d0',
+                                borderRadius: '10px',
+                                textDecoration: 'none',
+                                fontSize: '14px',
+                                fontWeight: '700'
+                            }}
+                        >
+                            أطباء {fSpecialty} في {area}
+                        </Link>
+                    ))}
+                </div>
+            </>
+        )}
+
+    </section>
+)}
 
             {/* شريط البحث المطور - متوافق بالكامل مع معايير الـ Accessibility Tree */}
             <div 
@@ -718,13 +952,14 @@ return (
             }}>
                 {filteredDoctors.length > 0 ? (
                     filteredDoctors.map(doc => (
-                        <div 
-                            key={doc.id}
-                            onClick={() => {
-                                navigate(getDoctorUrl(doc));
-                            }}
-                            title="اضغط لعرض الملف الشخصي ومواعيد الطبيب"
+                       <Link
+    key={doc.id}
+    to={getDoctorUrl(doc)}
+    title={`عرض صفحة دكتور ${doc.name} ومواعيد الحجز`}
+    aria-label={`عرض صفحة دكتور ${doc.name} - ${doc.specialty || ''}`}
                            style={{
+                            textDecoration: 'none',
+color: 'inherit',
                                 position: 'relative',
                                 backgroundColor: '#9ed0fc',
                                 padding: '22px 18px',
@@ -807,15 +1042,32 @@ return (
                                         <div style={{ width: '100%', minHeight: '65px' }}>
                                             <p style={truncatedStyle}>"{doc.bio}"</p>
                                             {doc.bio.length > 50 && (
-                                                <button 
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setIsExpanded(!isExpanded);
-                                                    }}
-                                                    style={{ background: 'none', border: 'none', color: '#2563eb', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold', padding: '0', display: 'block', margin: '0 auto' }}
-                                                >
-                                                    {isExpanded ? 'عرض أقل' : '... المزيد'}
-                                                </button>
+                                                <span
+    role="button"
+    tabIndex={0}
+    onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsExpanded(!isExpanded);
+    }}
+    onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsExpanded(!isExpanded);
+        }
+    }}
+    style={{
+        color: '#2563eb',
+        cursor: 'pointer',
+        fontSize: '12px',
+        fontWeight: 'bold',
+        display: 'block',
+        margin: '0 auto'
+    }}
+>
+    {isExpanded ? 'عرض أقل' : '... المزيد'}
+</span>
                                             )}
                                         </div>
                                     );
@@ -919,7 +1171,7 @@ return (
                             >
                                 {currentUser || !openLogin ? '⚡ حجز فوري مباشر' : 'سجل دخول للحجز'}
                             </button>
-                        </div>
+                        </Link>
                     ))
                 ) : (
                     <p style={{ fontSize: '18px', color: '#64748b', marginTop: '50px' }}>لا توجد نتائج مطابقة لبحثك.</p>
