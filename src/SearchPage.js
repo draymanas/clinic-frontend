@@ -303,39 +303,40 @@ export function SearchPage(props) {
     }, [location.pathname, location.search, routeParams.specialtyParam, routeParams.cityParam, routeParams.areaParam]);
 
     const [localDoctors, setLocalDoctors] = useState([]);
-    useEffect(() => {
-        if (!doctors || doctors.length === 0) {
-            fetch('https://clinic-api-ig3d.onrender.com/doctors')
-                .then(r => r.json())
-                .then(data => {
-                    if (Array.isArray(data)) setLocalDoctors(data);
-                })
-                .catch(err => {
-                    console.warn('استخدام أطباء المعاينة:', err);
-                    setLocalDoctors([
-                        {
-                            id: 'ayman-aguib',
-                            name: 'ايمن عجيب - فرع اكتوبر',
-                            title: 'استشاري',
-                            specialty: 'مخ وأعصاب',
-                            city: 'الجيزة',
-                            area: '6 أكتوبر',
-                            address: 'ميدان الحصري / فوق شعبان / الدور الرابع',
-                            fee: '600',
-                            is_active: true,
-                            featured: true,
-                            image_url: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200&auto=format&fit=crop&q=80',
-                            availability: 'الأحد (5:00 مساءً إلى 7:00 مساءً) - الأربعاء (5:00 مساءً إلى 7:00 مساءً)',
-                            bio: 'استشاري أول جراحة المخ والأعصاب والعمود الفقري، خبرة واسعة في علاج الانزلاق الغضروفي والصداع المزمن واعتلال الأعصاب.',
-                            mobile: '01032368436'
-                        }
-                    ]);
-                });
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadDoctorsForSearchPage = async () => {
+        try {
+            const response = await fetch(
+                'https://clinic-api-ig3d.onrender.com/doctors',
+                { cache: 'no-store' }
+            );
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (!cancelled && Array.isArray(data)) {
+                setLocalDoctors(data);
+            }
+        } catch (err) {
+            console.error('خطأ تحميل أطباء صفحة البحث:', err);
         }
-    }, [doctors]);
+    };
 
-    const activeList = (doctors && doctors.length > 0) ? doctors : localDoctors;
+    loadDoctorsForSearchPage();
 
+    return () => {
+        cancelled = true;
+    };
+}, []);
+
+   const activeList = localDoctors.length > 0
+    ? localDoctors
+    : (doctors || []);
     const filteredDoctors = activeList
         .filter(d => 
             (d.is_active !== false) &&
