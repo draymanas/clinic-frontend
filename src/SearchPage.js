@@ -461,45 +461,7 @@ const availableAreasForSpecialtyAndCity =
         }
     };
 
-    // 🌟 تحديث الـ URL النظيف باللغة العربية المستهدفة لمحركات البحث (Clean Arabic SEO URL)
-    useEffect(() => {
-        let targetPath = '/search';
-        const queryParams = new URLSearchParams();
-
-        if (searchTerm) {
-            queryParams.append('name', searchTerm);
-        }
-
-        if (fSpecialty !== 'الكل') {
-            const specSlug = slugifyArabic(fSpecialty);
-            targetPath = `/doctors/${encodeURIComponent(specSlug)}`;
-
-            if (fCity !== 'الكل') {
-                const citySlug = slugifyArabic(fCity);
-                targetPath += `/${encodeURIComponent(citySlug)}`;
-
-                if (fArea !== 'الكل') {
-                    const areaSlug = slugifyArabic(fArea);
-                    targetPath += `/${encodeURIComponent(areaSlug)}`;
-                }
-            }
-        } else if (fCity !== 'الكل') {
-            targetPath = '/search';
-            queryParams.append('city', fCity);
-            if (fArea !== 'الكل') {
-                queryParams.append('area', fArea);
-            }
-        }
-
-        const queryString = queryParams.toString();
-        const fullTargetUrl = queryString ? `${targetPath}?${queryString}` : targetPath;
-
-        const currentPathWithQuery = location.pathname + (location.search || '');
-        if (decodeURIComponent(currentPathWithQuery) !== decodeURIComponent(fullTargetUrl)) {
-            navigate(fullTargetUrl, { replace: true });
-        }
-    }, [searchTerm, fSpecialty, fCity, fArea, navigate, location.pathname, location.search]);
-
+    
     // 🌟 تحديث عنوان الصفحة ووسوم الـ SEO ديناميكياً لجوجل
     useEffect(() => {
         let pageTitle = 'ابحث عن دكتورك | منصة دكتور لحجز العيادات في مصر';
