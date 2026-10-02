@@ -1031,6 +1031,112 @@ breadcrumbScript.text = JSON.stringify(doctorBreadcrumbSchema);
       {/* حاوية الصفحة الرئيسية */}
       <main className="doc-content-wrapper">
         
+{/* ==================================================
+    Breadcrumb مرئي + Internal Links لصفحة الطبيب
+================================================== */}
+
+<nav
+    aria-label="مسار التصفح"
+    style={{
+        maxWidth: '1200px',
+        margin: '0 auto 18px',
+        padding: '10px 14px',
+        fontSize: '14px',
+        lineHeight: '1.8',
+        direction: 'rtl'
+    }}
+>
+    <Link
+        to="/"
+        style={{
+            color: '#2563eb',
+            textDecoration: 'none',
+            fontWeight: '700'
+        }}
+    >
+        الرئيسية
+    </Link>
+
+    <span style={{ margin: '0 8px', color: '#94a3b8' }}>
+        ←
+    </span>
+
+    <Link
+        to={`/doctors/${encodeURIComponent(
+            specialty.trim().replace(/\s+/g, '-')
+        )}`}
+        style={{
+            color: '#2563eb',
+            textDecoration: 'none',
+            fontWeight: '700'
+        }}
+    >
+        أطباء {specialty}
+    </Link>
+
+    {city && (
+        <>
+            <span style={{ margin: '0 8px', color: '#94a3b8' }}>
+                ←
+            </span>
+
+            <Link
+                to={`/doctors/${encodeURIComponent(
+                    specialty.trim().replace(/\s+/g, '-')
+                )}/${encodeURIComponent(
+                    city.trim().replace(/\s+/g, '-')
+                )}`}
+                style={{
+                    color: '#2563eb',
+                    textDecoration: 'none',
+                    fontWeight: '700'
+                }}
+            >
+                {specialty} في {city}
+            </Link>
+        </>
+    )}
+
+    {city && area && (
+        <>
+            <span style={{ margin: '0 8px', color: '#94a3b8' }}>
+                ←
+            </span>
+
+            <Link
+                to={`/doctors/${encodeURIComponent(
+                    specialty.trim().replace(/\s+/g, '-')
+                )}/${encodeURIComponent(
+                    city.trim().replace(/\s+/g, '-')
+                )}/${encodeURIComponent(
+                    area.trim().replace(/\s+/g, '-')
+                )}`}
+                style={{
+                    color: '#2563eb',
+                    textDecoration: 'none',
+                    fontWeight: '700'
+                }}
+            >
+                {specialty} في {area}
+            </Link>
+        </>
+    )}
+
+    <span style={{ margin: '0 8px', color: '#94a3b8' }}>
+        ←
+    </span>
+
+    <span
+        aria-current="page"
+        style={{
+            color: '#475569',
+            fontWeight: '700'
+        }}
+    >
+        د. {doctorName}
+    </span>
+</nav>
+
         {/* شريط الإشعار الرسمي */}
         <div style={{
           background: '#ffffff',
