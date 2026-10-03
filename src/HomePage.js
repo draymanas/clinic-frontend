@@ -1079,6 +1079,7 @@ function HomePage() {
     };
 
 useEffect(() => {
+       console.log('✅ HOME CANONICAL EFFECT RUNNING');
     let canonical = document.querySelector('link[rel="canonical"]');
 
     if (!canonical) {
