@@ -1,5 +1,5 @@
 // HomePage.js
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
@@ -1077,6 +1077,21 @@ function HomePage() {
         if (area !== 'الكل') params.append('area', area);
         navigate(`/search?${params.toString()}`);
     };
+
+useEffect(() => {
+    let canonical = document.querySelector('link[rel="canonical"]');
+
+    if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonical);
+    }
+
+    canonical.setAttribute(
+        'href',
+        'https://www.doctoreg.online/'
+    );
+}, []);
 
 return (
     <>
