@@ -1138,30 +1138,27 @@ return (
             </header>
 
 
-            {/* ==============================
-                HERO BANNER
-            ============================== */}
-            <section className="doctor-hero">
-
-               <picture>
- 
+         {/* ==============================
+    HERO BANNER
+============================== */}
+<section className="doctor-hero">
 
     <picture>
-    <source
-        media="(max-width: 767px)"
-        srcSet="/doctor-hero-mobile.webp"
-    />
+        <source
+            media="(max-width: 767px)"
+            srcSet="/doctor-hero-mobile.webp"
+            type="image/webp"
+        />
 
-    <img
-        src="/doctor-hero.webp"
-        alt="منصة دكتور لحجز الأطباء في مصر"
-        className="doctor-hero-image"
-        fetchPriority="high"
-        loading="eager"
-        decoding="async"
-    />
-</picture>
-</picture>
+        <img
+            src="/doctor-hero.webp"
+            alt="منصة دكتور لحجز الأطباء في مصر"
+            className="doctor-hero-image"
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+        />
+    </picture>
 
                 <div className="doctor-hero-content">
 
