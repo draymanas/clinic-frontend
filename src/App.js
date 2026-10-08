@@ -1,21 +1,41 @@
 // App.js
-import DoctorDashboard from './DoctorDashboard';
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import AymanProfile from './AymanProfile';
-// في بداية ملف App.js (مع الـ imports الأخرى)
-import ServiceDetails from './ServiceDetails';
-// استيراد المكونات الجديدة
-import HomePage from './HomePage'; // الصفحة الرئيسية الجديدة
-import SearchPage from './SearchPage'; // صفحة البحث الجديدة
-import DirectBooking from './DirectBooking';
-import QandA from './QandA'; // تأكد من المسار
-import { Navigate } from 'react-router-dom'; // تأكد من استيراد 
-import { useLocation } from 'react-router-dom';
+
+import React, { useState, useEffect, lazy, Suspense } from 'react';
+
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  Navigate
+} from 'react-router-dom';
+
 import { FaBell, FaCheck } from 'react-icons/fa';
-import NotificationPage from './NotificationPage';
+
 import { requestForToken, onMessageListener } from './firebase';
-import SymptomsPage from './SymptomsPage';
+
+// =====================================================
+// تحميل الصفحات عند الحاجة فقط - React Lazy Loading
+// =====================================================
+
+const DoctorDashboard = lazy(() => import('./DoctorDashboard'));
+
+const AymanProfile = lazy(() => import('./AymanProfile'));
+
+const ServiceDetails = lazy(() => import('./ServiceDetails'));
+
+const HomePage = lazy(() => import('./HomePage'));
+
+const SearchPage = lazy(() => import('./SearchPage'));
+
+const DirectBooking = lazy(() => import('./DirectBooking'));
+
+const QandA = lazy(() => import('./QandA'));
+
+const NotificationPage = lazy(() => import('./NotificationPage'));
+
+const SymptomsPage = lazy(() => import('./SymptomsPage'));
 
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
@@ -2998,7 +3018,12 @@ onClick={() => {
       )}
       {/* 3. منطقة عرض المحتوى */}
      <main>
-        <Routes>
+  <Suspense fallback={
+    <div style={{ textAlign: 'center', padding: '50px' }}>
+      جاري تحميل الصفحة...
+    </div>
+  }>
+    <Routes>
             {/* الصفحة الرئيسية الجديدة */}
             <Route path="/" element={<HomePage />} />
 
@@ -3084,8 +3109,9 @@ onClick={() => {
                     appointments={appointments} 
                 />
             } />
-        </Routes>
-    </main>
+           </Routes>
+  </Suspense>
+</main>
     </div>
   );
 }
