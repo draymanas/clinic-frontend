@@ -2223,15 +2223,18 @@ const saveWebFCMToken = async (user, token) => {
     }}
   >
     <img
-      src="/logo105.webp"
-      alt="منصة دكتور"
-      style={{
-        height: '60px',
-        maxHeight: '100%',
-        width: 'auto',
-        objectFit: 'contain',
-        paddingRight: '5px'
-      }}
+  src="/logo105.webp"
+  alt="منصة دكتور"
+  width="60"
+  height="60"
+  style={{
+    height: '60px',
+    maxHeight: '100%',
+    width: 'auto',
+    objectFit: 'contain',
+    paddingRight: '5px'
+  }}
+
       onError={(e) => {
         e.target.src = "/logo.webp";
       }}
