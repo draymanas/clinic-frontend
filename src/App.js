@@ -1887,14 +1887,23 @@ function App() {
     }
   };
 
-  const fetchData = async () => {
+ const fetchData = async () => {
     try {
-      const resDocs = await fetch('https://clinic-api-ig3d.onrender.com/doctors');
-      setDoctors(await resDocs.json());
-      const resApps = await fetch('https://clinic-api-ig3d.onrender.com/appointments');
-      setAppointments(await resApps.json());
-    } catch (e) { console.error("Error fetching data"); }
-  };
+        const resDocs = await fetch('https://clinic-api-ig3d.onrender.com/doctors');
+        setDoctors(await resDocs.json());
+
+        // تحميل الحجوزات فقط داخل الإدارة والحسابات
+        const currentPath = window.location.pathname;
+
+        if (currentPath === '/admin' || currentPath === '/accounting') {
+            const resApps = await fetch('https://clinic-api-ig3d.onrender.com/appointments');
+            setAppointments(await resApps.json());
+        }
+
+    } catch (e) {
+        console.error("Error fetching data", e);
+    }
+};
        
 // 🎫 حالة تذكرة الحجز العامة
   const [activeTicket, setActiveTicket] = useState(null);
@@ -1982,7 +1991,7 @@ useEffect(() => {
             tempPassword: '' 
         });
     }
-    fetchData(); 
+    
 }, []);
 
 // عندما يضغط المريض على زر تفعيل الإشعارات أو زر تسجيل الدخول:
@@ -2034,6 +2043,24 @@ const savePatientFCMToken = async (mobileNumber, token) => {
 // داخل دالة المكون الرئيسي App:
 const [activeNotification, setActiveNotification] = useState(null);
 const location = useLocation();
+
+// تحميل البيانات فقط في الصفحات التي تحتاجها
+useEffect(() => {
+    const path = location.pathname;
+
+    const needsData =
+        path === '/admin' ||
+        path === '/accounting' ||
+        path === '/search' ||
+        path.startsWith('/search/') ||
+        path === '/doctors' ||
+        path.startsWith('/doctors/');
+
+    if (needsData) {
+        fetchData();
+    }
+
+}, [location.pathname]);
 
 useEffect(() => {
 const initializeWebNotifications = async () => {
