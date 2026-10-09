@@ -14,7 +14,7 @@ import {
 import { FaBell, FaCheck } from 'react-icons/fa';
 
 import { requestForToken, onMessageListener } from './firebase';
-
+import HomePage from './HomePage';
 // =====================================================
 // تحميل الصفحات عند الحاجة فقط - React Lazy Loading
 // =====================================================
@@ -24,8 +24,6 @@ const DoctorDashboard = lazy(() => import('./DoctorDashboard'));
 const AymanProfile = lazy(() => import('./AymanProfile'));
 
 const ServiceDetails = lazy(() => import('./ServiceDetails'));
-
-const HomePage = lazy(() => import('./HomePage'));
 
 const SearchPage = lazy(() => import('./SearchPage'));
 
