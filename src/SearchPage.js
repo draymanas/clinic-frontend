@@ -1784,6 +1784,14 @@ color: 'inherit',
             color: '#334155'
         }}
     >
+       <div style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 330px), 1fr))',
+    gap: '28px',
+    alignItems: 'start'
+}}>
+    {/* العمود الأول: معلومات المخ والأعصاب */}
+    <div>
         <h2 style={{
             color: '#0f172a',
             fontSize: '22px',
@@ -1792,6 +1800,61 @@ color: 'inherit',
         }}>
             {specialtyGuides[fSpecialty].title}
         </h2>
+
+        <p>{specialtyGuides[fSpecialty].intro}</p>
+
+        <h3 style={{ color: '#1d4ed8', fontSize: '18px' }}>
+            أبرز الحالات التي يتعامل معها التخصص
+        </h3>
+
+        <ul style={{ paddingRight: '25px' }}>
+            {specialtyGuides[fSpecialty].topics.map((topic, index) => (
+                <li key={index}>{topic}</li>
+            ))}
+        </ul>
+
+        <h3 style={{ color: '#1d4ed8', fontSize: '18px' }}>
+            كيف تختار الطبيب المناسب؟
+        </h3>
+
+        <p>{specialtyGuides[fSpecialty].advice}</p>
+    </div>
+
+    {/* العمود الثاني: العمود الفقري - يظهر في المخ والأعصاب فقط */}
+    {fSpecialty === 'مخ وأعصاب' && (
+        <div style={{
+            background: '#f8fafc',
+            padding: '18px',
+            borderRadius: '14px',
+            border: '1px solid #dbeafe'
+        }}>
+            <h2 style={{
+                color: '#0f172a',
+                fontSize: '21px',
+                margin: '0 0 12px'
+            }}>
+                أمراض العمود الفقري والأعصاب
+            </h2>
+
+            <p>
+                تشمل مشكلات العمود الفقري التي قد تحتاج إلى تقييم
+                لدى طبيب أو جراح متخصص في العمود الفقري ما يلي:
+            </p>
+
+            <ul style={{ paddingRight: '25px' }}>
+                {spineConditions.map((condition, index) => (
+                    <li key={index}>{condition}</li>
+                ))}
+            </ul>
+
+            <p style={{ marginBottom: 0, color: '#475569' }}>
+                يعتمد اختيار العلاج المناسب على التشخيص والفحص
+                الإكلينيكي ونتائج الأشعة، وقد يشمل العلاج التحفظي
+                أو التدخل الجراحي عند وجود داعٍ طبي.
+            </p>
+        </div>
+    )}
+</div>
 
         <p style={{ marginBottom: '15px' }}>
             {specialtyGuides[fSpecialty].intro}
