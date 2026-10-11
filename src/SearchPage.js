@@ -382,6 +382,30 @@ const availableAreasForSpecialtyAndCity =
           )]
         : [];
 
+// ==========================================
+// بيانات محلية لصفحات التخصص + المحافظة + المنطقة
+// ==========================================
+
+const localAreaDoctors =
+    fSpecialty !== 'الكل' &&
+    fCity !== 'الكل' &&
+    fArea !== 'الكل'
+        ? activeList.filter(d =>
+            d.is_active !== false &&
+            d.specialty === fSpecialty &&
+            d.city === fCity &&
+            d.area === fArea
+        )
+        : [];
+
+const localClinicAddresses = [
+    ...new Set(
+        localAreaDoctors
+            .map(d => d.address?.trim())
+            .filter(Boolean)
+    )
+].slice(0, 5);
+
    const handleConfirm = async () => {
         if (!selectedDay) {
             alert("من فضلك اختر اليوم المناسب أولاً");
@@ -2216,7 +2240,100 @@ color: 'inherit',
         </div>
     </div>
 )}
-         
+
+ 
+{/* ==========================================
+    دليل محلي لأطباء التخصص في المنطقة
+    يظهر أسفل قائمة الأطباء
+========================================== */}
+
+{fSpecialty !== 'الكل' &&
+ fCity !== 'الكل' &&
+ fArea !== 'الكل' &&
+ localAreaDoctors.length > 0 && (
+
+    <section
+        aria-label={`دليل أطباء ${fSpecialty} في ${fArea}`}
+        style={{
+            maxWidth: '1200px',
+            margin: '20px auto',
+            padding: '22px',
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '14px',
+            lineHeight: '1.9',
+            color: '#334155',
+            boxSizing: 'border-box'
+        }}
+    >
+        <h2 style={{
+            fontSize: '22px',
+            color: '#0f172a',
+            fontWeight: '800',
+            margin: '0 0 14px'
+        }}>
+            دليل أطباء {fSpecialty} في {fArea} - {fCity}
+        </h2>
+
+        <p style={{ margin: '0 0 14px' }}>
+            تضم منصة دكتور حاليًا
+            {' '}{localAreaDoctors.length}{' '}
+            {localAreaDoctors.length === 1 ? 'طبيبًا مدرجًا' : 'أطباء مدرجين'}
+            {' '}في تخصص {fSpecialty}
+            بمنطقة {fArea} في محافظة {fCity}.
+
+            يمكنك تصفح ملفات الأطباء الموجودين في هذه الصفحة
+            للتعرف على عناوين العيادات وأسعار الكشف
+            والمواعيد المتاحة، واختيار الطبيب المناسب.
+        </p>
+
+        {localClinicAddresses.length > 0 && (
+            <>
+                <h3 style={{
+                    fontSize: '18px',
+                    color: '#1d4ed8',
+                    margin: '15px 0 10px'
+                }}>
+                    أماكن عيادات {fSpecialty} في {fArea}
+                </h3>
+
+                <p style={{ margin: '0 0 10px' }}>
+                    من عناوين العيادات المسجلة على المنصة
+                    في هذه المنطقة:
+                </p>
+
+                <ul style={{
+                    paddingRight: '25px',
+                    margin: '0 0 16px'
+                }}>
+                    {localClinicAddresses.map((address, index) => (
+                        <li key={index}>
+                            {address}
+                        </li>
+                    ))}
+                </ul>
+            </>
+        )}
+
+        <h3 style={{
+            fontSize: '18px',
+            color: '#1d4ed8',
+            margin: '15px 0 10px'
+        }}>
+            كيف تختار أفضل دكتور {fSpecialty} في {fArea}؟
+        </h3>
+
+        <p style={{ margin: 0 }}>
+            عند المقارنة بين الأطباء، يمكنك مراجعة
+            المؤهلات والخبرة المتاحة في الملف الشخصي،
+            وموقع العيادة وسعر الكشف والمواعيد المناسبة لك.
+            اختيار الطبيب يعتمد على طبيعة الحالة
+            والخبرة المطلوبة وليس على الموقع أو السعر فقط.
+        </p>
+    </section>
+)}
+
+
 {/* ==========================================
     معلومات طبية متخصصة لتحسين محتوى الصفحات
     تظهر أسفل قائمة الأطباء
