@@ -44,20 +44,64 @@ const AymanProfile = ({ setActivePage, navigate: propNavigate }) => {
   const octPath = `/dr/40-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-أكتوبر")}`;
   const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-شبرا")}`;
 
-  const schemaData = {
-    "@context": "https://schema.org/",
+const schemaData = {
+    "@context": "https://schema.org",
     "@type": "Physician",
+    "@id": `${officialProfileUrl}#physician`,
+
     "name": "دكتور أيمن عجيب",
-    "medicalSpecialty": "Neurology, Spine Surgery",
-    "image": doctorPhoto,
     "url": officialProfileUrl,
-    "description": "استشاري المخ والأعصاب والعمود الفقري - عيادات 6 أكتوبر وشبرا.",
-    "address": { 
-      "@type": "PostalAddress", 
-      "addressLocality": "الجيزة والقاهرة", 
-      "addressCountry": "EG" 
-    }
-  };
+
+    "description":
+        "دكتور أيمن عجيب، استشاري المخ والأعصاب والعمود الفقري. يقدم خدمات تشخيص وعلاج أمراض المخ والجهاز العصبي والعمود الفقري من خلال عيادة 6 أكتوبر وشبرا مصر.",
+
+    "medicalSpecialty": [
+        "Neurology",
+        "Neurosurgery"
+    ],
+
+    "department": [
+        {
+            "@type": "MedicalClinic",
+            "@id": `${officialProfileUrl}#october-clinic`,
+
+            "name": "عيادة دكتور أيمن عجيب - فرع 6 أكتوبر",
+
+            "url": `https://www.doctoreg.online${octPath}`,
+
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "ميدان الحصري، فوق سنتر شعبان، الدور الرابع",
+                "addressLocality": "6 أكتوبر",
+                "addressRegion": "الجيزة",
+                "addressCountry": "EG"
+            },
+
+            "hasMap":
+                "https://maps.app.goo.gl/wse4VG3tAziZTQVs7"
+        },
+
+        {
+            "@type": "MedicalClinic",
+            "@id": `${officialProfileUrl}#shubra-clinic`,
+
+            "name": "عيادة دكتور أيمن عجيب - فرع شبرا",
+
+            "url": `https://www.doctoreg.online${shubraPath}`,
+
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "16 شارع دولتيان، فوق كنتاكي، الدور الثالث، الخلفاوي",
+                "addressLocality": "شبرا مصر",
+                "addressRegion": "القاهرة",
+                "addressCountry": "EG"
+            },
+
+            "hasMap":
+                "https://maps.app.goo.gl/M5ZMNchAfXD3omYT9"
+        }
+    ]
+};
 
   const sendToTelegram = async (e) => {
     e.preventDefault();
