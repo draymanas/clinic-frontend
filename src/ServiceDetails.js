@@ -53,7 +53,7 @@ const ServiceDetails = () => {
       "@type": "Physician",
       "name": "دكتور أيمن عجيب",
       "jobTitle": "استشاري المخ والأعصاب والعمود الفقري",
-      "url": "https://www.doctoreg.online/d/ayman"
+      "url": "https://www.doctoreg.online/dr/" + encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري")
     },
     "publisher": {
       "@type": "Organization",
