@@ -269,7 +269,7 @@ const AymanProfile = ({ setActivePage, navigate: propNavigate }) => {
 
           {/* زر دفع باي بال */}
           <button 
-            onClick={() => window.open('https://www.paypal.com/ncp/payment/4XLSYX7VNZHZS', '_blank')} 
+            onClick={() => window.open('https://www.paypal.com/ncp/payment/7DUBLXYHPG86E', '_blank')} 
             style={{ fontSize: '18px', padding: '14px 28px', background: '#ffc107', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer', color: '#000' }}
           >
             دفع عبر PayPal 💳

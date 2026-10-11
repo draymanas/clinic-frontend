@@ -844,67 +844,6 @@ return (
     </section>
 )}
 
-{/* ==========================================
-    معلومات طبية متخصصة لتحسين محتوى الصفحات
-========================================== */}
-
-{fCity === 'الكل' && specialtyGuides[fSpecialty] && (
-    <section
-        aria-label={`معلومات عن تخصص ${fSpecialty}`}
-        style={{
-            maxWidth: '1200px',
-            margin: '0 auto 20px',
-            padding: '22px',
-            background: '#ffffff',
-            border: '1px solid #e2e8f0',
-            borderRadius: '14px',
-            lineHeight: '1.9',
-            color: '#334155'
-        }}
-    >
-        <h2 style={{
-            color: '#0f172a',
-            fontSize: '22px',
-            fontWeight: '800',
-            margin: '0 0 12px'
-        }}>
-            {specialtyGuides[fSpecialty].title}
-        </h2>
-
-        <p style={{ marginBottom: '15px' }}>
-            {specialtyGuides[fSpecialty].intro}
-        </p>
-
-        <h3 style={{
-            fontSize: '18px',
-            color: '#1d4ed8',
-            marginBottom: '10px'
-        }}>
-            أبرز الحالات التي يتعامل معها التخصص
-        </h3>
-
-        <ul style={{
-            paddingRight: '25px',
-            marginBottom: '15px'
-        }}>
-            {specialtyGuides[fSpecialty].topics.map((topic, index) => (
-                <li key={index}>{topic}</li>
-            ))}
-        </ul>
-
-        <h3 style={{
-            fontSize: '18px',
-            color: '#1d4ed8',
-            marginBottom: '10px'
-        }}>
-            كيف تختار الطبيب المناسب؟
-        </h3>
-
-        <p style={{ margin: 0 }}>
-            {specialtyGuides[fSpecialty].advice}
-        </p>
-    </section>
-)}
 
 {/* ==================================================
     روابط داخلية SEO للمحافظات والمناطق
@@ -1817,6 +1756,69 @@ color: 'inherit',
     </div>
 )}
          
+
+{/* ==========================================
+    معلومات طبية متخصصة لتحسين محتوى الصفحات
+========================================== */}
+
+{fCity === 'الكل' && specialtyGuides[fSpecialty] && (
+    <section
+        aria-label={`معلومات عن تخصص ${fSpecialty}`}
+        style={{
+            maxWidth: '1200px',
+            margin: '0 auto 20px',
+            padding: '22px',
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '14px',
+            lineHeight: '1.9',
+            color: '#334155'
+        }}
+    >
+        <h2 style={{
+            color: '#0f172a',
+            fontSize: '22px',
+            fontWeight: '800',
+            margin: '0 0 12px'
+        }}>
+            {specialtyGuides[fSpecialty].title}
+        </h2>
+
+        <p style={{ marginBottom: '15px' }}>
+            {specialtyGuides[fSpecialty].intro}
+        </p>
+
+        <h3 style={{
+            fontSize: '18px',
+            color: '#1d4ed8',
+            marginBottom: '10px'
+        }}>
+            أبرز الحالات التي يتعامل معها التخصص
+        </h3>
+
+        <ul style={{
+            paddingRight: '25px',
+            marginBottom: '15px'
+        }}>
+            {specialtyGuides[fSpecialty].topics.map((topic, index) => (
+                <li key={index}>{topic}</li>
+            ))}
+        </ul>
+
+        <h3 style={{
+            fontSize: '18px',
+            color: '#1d4ed8',
+            marginBottom: '10px'
+        }}>
+            كيف تختار الطبيب المناسب؟
+        </h3>
+
+        <p style={{ margin: 0 }}>
+            {specialtyGuides[fSpecialty].advice}
+        </p>
+    </section>
+)}
+
         </main>
     );
 }
