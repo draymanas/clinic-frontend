@@ -1765,9 +1765,9 @@ color: 'inherit',
     </div>
 )}
          
-
 {/* ==========================================
     معلومات طبية متخصصة لتحسين محتوى الصفحات
+    تظهر أسفل قائمة الأطباء
 ========================================== */}
 
 {fCity === 'الكل' && specialtyGuides[fSpecialty] && (
@@ -1781,113 +1781,134 @@ color: 'inherit',
             border: '1px solid #e2e8f0',
             borderRadius: '14px',
             lineHeight: '1.9',
-            color: '#334155'
+            color: '#334155',
+            boxSizing: 'border-box'
         }}
     >
-       <div style={{
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 330px), 1fr))',
-    gap: '28px',
-    alignItems: 'start'
-}}>
-    {/* العمود الأول: معلومات المخ والأعصاب */}
-    <div>
-        <h2 style={{
-            color: '#0f172a',
-            fontSize: '22px',
-            fontWeight: '800',
-            margin: '0 0 12px'
-        }}>
-            {specialtyGuides[fSpecialty].title}
-        </h2>
+        <div
+            style={{
+                display: 'grid',
+                gridTemplateColumns:
+                    'repeat(auto-fit, minmax(min(100%, 330px), 1fr))',
+                gap: '28px',
+                alignItems: 'start'
+            }}
+        >
+            {/* العمود الأول: معلومات التخصص */}
+            <div>
+                <h2
+                    style={{
+                        color: '#0f172a',
+                        fontSize: '22px',
+                        fontWeight: '800',
+                        margin: '0 0 12px'
+                    }}
+                >
+                    {specialtyGuides[fSpecialty].title}
+                </h2>
 
-        <p>{specialtyGuides[fSpecialty].intro}</p>
+                <p style={{ margin: '0 0 15px' }}>
+                    {specialtyGuides[fSpecialty].intro}
+                </p>
 
-        <h3 style={{ color: '#1d4ed8', fontSize: '18px' }}>
-            أبرز الحالات التي يتعامل معها التخصص
-        </h3>
+                <h3
+                    style={{
+                        color: '#1d4ed8',
+                        fontSize: '18px',
+                        margin: '0 0 10px'
+                    }}
+                >
+                    أبرز الحالات التي يتعامل معها التخصص
+                </h3>
 
-        <ul style={{ paddingRight: '25px' }}>
-            {specialtyGuides[fSpecialty].topics.map((topic, index) => (
-                <li key={index}>{topic}</li>
-            ))}
-        </ul>
+                <ul
+                    style={{
+                        paddingRight: '25px',
+                        margin: '0 0 18px'
+                    }}
+                >
+                    {specialtyGuides[fSpecialty].topics.map(
+                        (topic, index) => (
+                            <li key={index}>{topic}</li>
+                        )
+                    )}
+                </ul>
 
-        <h3 style={{ color: '#1d4ed8', fontSize: '18px' }}>
-            كيف تختار الطبيب المناسب؟
-        </h3>
+                <h3
+                    style={{
+                        color: '#1d4ed8',
+                        fontSize: '18px',
+                        margin: '0 0 10px'
+                    }}
+                >
+                    كيف تختار الطبيب المناسب؟
+                </h3>
 
-        <p>{specialtyGuides[fSpecialty].advice}</p>
-    </div>
+                <p style={{ margin: 0 }}>
+                    {specialtyGuides[fSpecialty].advice}
+                </p>
+            </div>
 
-    {/* العمود الثاني: العمود الفقري - يظهر في المخ والأعصاب فقط */}
-    {fSpecialty === 'مخ وأعصاب' && (
-        <div style={{
-            background: '#f8fafc',
-            padding: '18px',
-            borderRadius: '14px',
-            border: '1px solid #dbeafe'
-        }}>
-            <h2 style={{
-                color: '#0f172a',
-                fontSize: '21px',
-                margin: '0 0 12px'
-            }}>
-                أمراض العمود الفقري والأعصاب
-            </h2>
+            {/* العمود الثاني: أمراض العمود الفقري */}
+            {fSpecialty === 'مخ وأعصاب' && (
+                <div
+                    style={{
+                        background: '#f8fafc',
+                        padding: '18px',
+                        borderRadius: '14px',
+                        border: '1px solid #dbeafe',
+                        boxSizing: 'border-box'
+                    }}
+                >
+                    <h2
+                        style={{
+                            color: '#0f172a',
+                            fontSize: '21px',
+                            fontWeight: '800',
+                            margin: '0 0 12px'
+                        }}
+                    >
+                        أمراض العمود الفقري والأعصاب
+                    </h2>
 
-            <p>
-                تشمل مشكلات العمود الفقري التي قد تحتاج إلى تقييم
-                لدى طبيب أو جراح متخصص في العمود الفقري ما يلي:
-            </p>
+                    <p style={{ margin: '0 0 12px' }}>
+                        تشمل مشكلات العمود الفقري التي قد تحتاج
+                        إلى تقييم لدى طبيب أو جراح متخصص
+                        في العمود الفقري ما يلي:
+                    </p>
 
-            <ul style={{ paddingRight: '25px' }}>
-                {spineConditions.map((condition, index) => (
-                    <li key={index}>{condition}</li>
-                ))}
-            </ul>
+                    <ul
+                        style={{
+                            paddingRight: '25px',
+                            margin: '0 0 15px'
+                        }}
+                    >
+                        {spineConditions.map((condition, index) => (
+                            <li key={index}>{condition}</li>
+                        ))}
+                    </ul>
 
-            <p style={{ marginBottom: 0, color: '#475569' }}>
-                يعتمد اختيار العلاج المناسب على التشخيص والفحص
-                الإكلينيكي ونتائج الأشعة، وقد يشمل العلاج التحفظي
-                أو التدخل الجراحي عند وجود داعٍ طبي.
-            </p>
+                    <h3
+                        style={{
+                            color: '#1d4ed8',
+                            fontSize: '18px',
+                            margin: '0 0 10px'
+                        }}
+                    >
+                        طرق علاج أمراض العمود الفقري
+                    </h3>
+
+                    <p style={{ margin: 0, color: '#475569' }}>
+                        يعتمد اختيار العلاج المناسب على
+                        التشخيص والفحص الإكلينيكي ونتائج
+                        الأشعة، وقد يشمل العلاج الدوائي
+                        والعلاج الطبيعي أو التدخلات غير الجراحية،
+                        وفي بعض الحالات التدخل الجراحي
+                        عند وجود داعٍ طبي.
+                    </p>
+                </div>
+            )}
         </div>
-    )}
-</div>
-
-        <p style={{ marginBottom: '15px' }}>
-            {specialtyGuides[fSpecialty].intro}
-        </p>
-
-        <h3 style={{
-            fontSize: '18px',
-            color: '#1d4ed8',
-            marginBottom: '10px'
-        }}>
-            أبرز الحالات التي يتعامل معها التخصص
-        </h3>
-
-        <ul style={{
-            paddingRight: '25px',
-            marginBottom: '15px'
-        }}>
-            {specialtyGuides[fSpecialty].topics.map((topic, index) => (
-                <li key={index}>{topic}</li>
-            ))}
-        </ul>
-
-        <h3 style={{
-            fontSize: '18px',
-            color: '#1d4ed8',
-            marginBottom: '10px'
-        }}>
-            كيف تختار الطبيب المناسب؟
-        </h3>
-
-        <p style={{ margin: 0 }}>
-            {specialtyGuides[fSpecialty].advice}
-        </p>
     </section>
 )}
 
