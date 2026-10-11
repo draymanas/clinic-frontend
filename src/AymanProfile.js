@@ -343,27 +343,30 @@ const AymanProfile = ({ setActivePage, navigate: propNavigate }) => {
           </h2>
           
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '20px' }}>
-            {servicesData.map((s) => (
-              <div 
-                key={s.id} 
-                onClick={() => navigate(`/service/${s.id}`)}
-                style={{ 
-                  cursor: 'pointer', 
-                  padding: '20px', 
-                  borderRight: '4px solid #3debd3', 
-                  background: '#f0fff4', 
-                  borderRadius: '12px',
-                  textAlign: 'center',
-                  fontWeight: 'bold',
-                  color: '#1e293b',
-                  transition: 'transform 0.2s'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-                onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-              >
-                {s.title}
-              </div>
-            ))}
+           {servicesData.map((s) => (
+  <Link
+    key={s.id}
+    to={`/service/${s.id}`}
+    title={`تعرف على خدمة ${s.title}`}
+    style={{
+      display: 'block',
+      cursor: 'pointer',
+      padding: '20px',
+      borderRight: '4px solid #3debd3',
+      background: '#f0fff4',
+      borderRadius: '12px',
+      textAlign: 'center',
+      fontWeight: 'bold',
+      color: '#1e293b',
+      textDecoration: 'none',
+      transition: 'transform 0.2s'
+    }}
+    onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+    onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+  >
+    {s.title}
+  </Link>
+))}
           </div>
         </div>
       </div>
