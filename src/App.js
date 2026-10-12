@@ -1,7 +1,7 @@
 // App.js
 
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-
+import ScrollToTop from './ScrollToTop';
 import {
   BrowserRouter as Router,
   Routes,
