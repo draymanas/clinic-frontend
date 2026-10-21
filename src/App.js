@@ -12,7 +12,7 @@ import {
 } from 'react-router-dom';
 
 import { FaBell, FaCheck } from 'react-icons/fa';
-
+import AdminArticles from './AdminArticles';
 import { requestForToken, onMessageListener } from './firebase';
 import HomePage from './HomePage';
 // =====================================================
@@ -527,6 +527,7 @@ const getConsultationDraft = (consultation) => {
     { id: 'appointments', title: 'إدارة الحجوزات', icon: '📅' },
     { id: 'notifications', title: 'الإشعارات', icon: '🔔' },
     { id: 'consultations', title: 'الاستشارات الطبية', icon: '💬' },
+    { id: 'articles', title: 'إدارة المقالات', icon: '📰' },
   ];
 
   return (
@@ -583,6 +584,11 @@ const getConsultationDraft = (consultation) => {
 
       {/* 🌟 2. منطقة العرض الرئيسية (Main Content) */}
       <main style={{ flex: 1, padding: '30px 35px', overflowY: 'auto' }}>
+
+{/* 📰 إدارة المقالات الطبية - كل يوم معلومة */}
+{activeTab === 'articles' && (
+  <AdminArticles />
+)}
 
         {/* -------------------- 1. إدارة الأطباء -------------------- */}
         {activeTab === 'doctors' && (
