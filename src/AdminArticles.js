@@ -1,7 +1,20 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function AdminArticles() {
     const [selectedImage, setSelectedImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState('');
+
+useEffect(() => {
+  if (!selectedImage) {
+    setImagePreview('');
+    return;
+  }
+
+  const previewUrl = URL.createObjectURL(selectedImage);
+  setImagePreview(previewUrl);
+
+  return () => URL.revokeObjectURL(previewUrl);
+}, [selectedImage]);
   const [article, setArticle] = useState({
     title: '',
     slug: '',
@@ -152,6 +165,24 @@ const handleSaveArticle = () => {
       ✅ تم اختيار الصورة: {selectedImage.name}
     </p>
   )}
+  {imagePreview && (
+  <div style={{ marginTop: '15px' }}>
+    <p style={{ fontWeight: 'bold' }}>معاينة صورة المقال:</p>
+
+    <img
+      src={imagePreview}
+      alt="معاينة صورة المقال"
+      style={{
+        width: '100%',
+        maxWidth: '450px',
+        maxHeight: '280px',
+        objectFit: 'cover',
+        borderRadius: '12px',
+        border: '1px solid #e2e8f0'
+      }}
+    />
+  </div>
+)}
 </div>
 
         <label>
