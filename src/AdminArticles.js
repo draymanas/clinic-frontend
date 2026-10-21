@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 
 export default function AdminArticles() {
+    const [articlesList, setArticlesList] = useState([]);
+const [loadingArticles, setLoadingArticles] = useState(true);
     const [selectedImage, setSelectedImage] = useState(null);
     const [imagePreview, setImagePreview] = useState('');
 
@@ -29,6 +31,29 @@ useEffect(() => {
     status: 'draft'
   });
 
+  useEffect(() => {
+  const fetchArticles = async () => {
+    try {
+      const response = await fetch(
+        'https://clinic-api-ig3d.onrender.com/api/admin/medical-articles'
+      );
+
+      if (!response.ok) {
+        throw new Error('فشل تحميل المقالات');
+      }
+
+      const data = await response.json();
+      setArticlesList(data.articles || []);
+
+    } catch (error) {
+      console.error('خطأ تحميل المقالات:', error);
+    } finally {
+      setLoadingArticles(false);
+    }
+  };
+
+  fetchArticles();
+}, []);
 
 const handleSaveArticle = async () => {
   if (!article.title.trim() || !article.slug.trim() || !article.content.trim()) {
@@ -115,6 +140,44 @@ const handleSaveArticle = async () => {
   return (
     <div dir="rtl" style={{ maxWidth: '950px' }}>
       <h2>📰 إدارة المقالات - كل يوم معلومة</h2>
+
+<div style={{
+  background: '#fff',
+  padding: '20px',
+  borderRadius: '12px',
+  marginBottom: '25px'
+}}>
+  <h3>📚 المقالات الموجودة</h3>
+
+  {loadingArticles ? (
+    <p>جاري تحميل المقالات...</p>
+  ) : articlesList.length === 0 ? (
+    <p>لا توجد مقالات حتى الآن.</p>
+  ) : (
+    <div style={{ overflowX: 'auto' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            <th style={{ padding: '10px', textAlign: 'right' }}>العنوان</th>
+            <th style={{ padding: '10px', textAlign: 'right' }}>الحالة</th>
+          </tr>
+        </thead>
+        <tbody>
+          {articlesList.map(item => (
+            <tr key={item.id}>
+              <td style={{ padding: '10px', borderTop: '1px solid #ddd' }}>
+                {item.title}
+              </td>
+              <td style={{ padding: '10px', borderTop: '1px solid #ddd' }}>
+                {item.status === 'published' ? '✅ منشور' : '📝 مسودة'}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )}
+</div>
 
       <p style={{ color: '#64748b' }}>
         إنشاء المقالات الطبية وتجهيزها للنشر على منصة دكتور
