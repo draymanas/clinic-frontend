@@ -228,6 +228,8 @@ const homePageStyles = `
     .doctor-benefit-card {
         background: #fff;
         border-radius: 18px;
+        height: 160px;
+        min-height: 160px;
         padding: 20px;
         text-align: center;
         box-shadow: 0 6px 20px rgba(0,0,0,0.06);
@@ -1201,12 +1203,17 @@ return (
 <Link
     to="/medical-articles"
     className="doctor-benefit-card"
-    style={{
-        textDecoration: 'none',
-        color: 'inherit',
-        cursor: 'pointer',
-        display: 'block'
-    }}
+   style={{
+    textDecoration: 'none',
+    color: 'inherit',
+    cursor: 'pointer',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    gap: '8px'
+}}
 >
     <div className="doctor-benefit-icon">
         📚
