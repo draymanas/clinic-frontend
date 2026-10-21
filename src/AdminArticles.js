@@ -228,58 +228,79 @@ setEditingId(null);
     <p>لا توجد مقالات حتى الآن.</p>
   ) : (
     <div style={{ overflowX: 'auto' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            <th style={{ padding: '10px', textAlign: 'right' }}>العنوان</th>
-            <th style={{ padding: '10px', textAlign: 'right' }}>الحالة</th>
-            <th style={{ padding: '10px', textAlign: 'right' }}>الإجراء</th>
-            <td style={{ padding: '10px', borderTop: '1px solid #ddd' }}>
-  <button
-    type="button"
-    onClick={() => handleEditArticle(item)}
-    style={{
-      background: '#0284c7',
-      color: '#fff',
-      border: 'none',
-      padding: '8px 16px',
-      borderRadius: '8px',
-      cursor: 'pointer'
-    }}
-  >
-    ✏️ تعديل
-  </button>
-  <button
-    type="button"
-    onClick={() => handleDeleteArticle(item)}
-    style={{
-      background: '#dc2626',
-      color: '#fff',
-      border: 'none',
-      padding: '8px 16px',
-      borderRadius: '8px',
-      cursor: 'pointer',
-      marginLeft: '10px'
-    }}
-  >
-    🗑️ حذف
-  </button>
-</td>
-          </tr>
-        </thead>
-        <tbody>
-          {articlesList.map(item => (
-            <tr key={item.id}>
-              <td style={{ padding: '10px', borderTop: '1px solid #ddd' }}>
-                {item.title}
-              </td>
-              <td style={{ padding: '10px', borderTop: '1px solid #ddd' }}>
-                {item.status === 'published' ? '✅ منشور' : '📝 مسودة'}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+
+<table style={{ width: '100%', borderCollapse: 'collapse' }}>
+  <thead>
+    <tr>
+      <th style={{ padding: '10px', textAlign: 'right' }}>
+        العنوان
+      </th>
+      <th style={{ padding: '10px', textAlign: 'right' }}>
+        الحالة
+      </th>
+      <th style={{ padding: '10px', textAlign: 'right' }}>
+        الإجراء
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {articlesList.map(item => (
+      <tr key={item.id}>
+        <td style={{
+          padding: '10px',
+          borderTop: '1px solid #ddd'
+        }}>
+          {item.title}
+        </td>
+
+        <td style={{
+          padding: '10px',
+          borderTop: '1px solid #ddd'
+        }}>
+          {item.status === 'published' ? '✅ منشور' : '📝 مسودة'}
+        </td>
+
+        <td style={{
+          padding: '10px',
+          borderTop: '1px solid #ddd'
+        }}>
+          <button
+            type="button"
+            onClick={() => handleEditArticle(item)}
+            style={{
+              background: '#0284c7',
+              color: '#fff',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            ✏️ تعديل
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleDeleteArticle(item)}
+            style={{
+              background: '#dc2626',
+              color: '#fff',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              marginRight: '10px'
+            }}
+          >
+            🗑️ حذف
+          </button>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
     </div>
   )}
 </div>
