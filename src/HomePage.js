@@ -1131,33 +1131,11 @@ return (
                     دكتور <span>| DOCTOR</span>
                 </h1>
 
-               <p className="doctor-subtitle">
-    احجز طبيبك الآن بكل سهولة
-</p>
+                <p className="doctor-subtitle">
+                    احجز طبيبك الآن بكل سهولة
+                </p>
 
-{/* 📰 رابط قسم كل يوم معلومة */}
-<div style={{ marginTop: '18px' }}>
-    <Link
-        to="/medical-articles"
-        style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '10px',
-            padding: '12px 24px',
-            background: '#0284c7',
-            color: '#ffffff',
-            borderRadius: '30px',
-            textDecoration: 'none',
-            fontWeight: 'bold',
-            fontSize: '16px'
-        }}
-    >
-        📰 كل يوم معلومة | مقالات طبية
-    </Link>
-</div>
-
-</header>
+            </header>
 
 
          {/* ==============================
@@ -1221,29 +1199,19 @@ return (
             ============================== */}
             <section className="doctor-benefits">
 
-               <Link
-    to="/medical-articles"
-    className="doctor-benefit-card"
-    style={{
-        textDecoration: 'none',
-        color: 'inherit',
-        cursor: 'pointer',
-        display: 'block'
-    }}
->
-    <div className="doctor-benefit-icon">
-        📚
-    </div>
+                <div className="doctor-benefit-card">
+                    <div className="doctor-benefit-icon">
+                        👨‍⚕️
+                    </div>
 
-    <h3 className="doctor-benefit-title">
-        كل يوم معلومة
-    </h3>
+                    <h3 className="doctor-benefit-title">
+                        تخصصات طبية متعددة
+                    </h3>
 
-    <p className="doctor-benefit-text">
-        اكتشف مقالات طبية ومعلومات صحية مفيدة
-        في مختلف التخصصات الطبية.
-    </p>
-</Link>
+                    <p className="doctor-benefit-text">
+                        ابحث عن الطبيب المناسب حسب التخصص الذي تحتاجه.
+                    </p>
+                </div>
 
 
          <div className="doctor-benefit-card doctor-ayman-card">
