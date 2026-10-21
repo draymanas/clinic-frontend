@@ -10,7 +10,7 @@ import {
   useLocation,
   Navigate
 } from 'react-router-dom';
-
+import MedicalArticles from './MedicalArticles';
 import { FaBell, FaCheck } from 'react-icons/fa';
 import AdminArticles from './AdminArticles';
 import { requestForToken, onMessageListener } from './firebase';
@@ -3120,7 +3120,7 @@ onClick={() => {
 <Route path="/search/:specialtyParam/:cityParam/:areaParam" element={<SearchPage />} />
 <Route path="/search/:specialtyParam/:cityParam" element={<SearchPage />} />
 <Route path="/search/:specialtyParam" element={<SearchPage />} />
-
+<Route path="/medical-articles" element={<MedicalArticles />} />
 <Route path="/doctors/:specialtyParam/:cityParam/:areaParam" element={<SearchPage />} />
 <Route path="/doctors/:specialtyParam/:cityParam" element={<SearchPage />} />
 <Route path="/doctors/:specialtyParam" element={<SearchPage />} />
