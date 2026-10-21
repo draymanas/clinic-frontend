@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
 export default function AdminArticles() {
+    const [editingId, setEditingId] = useState(null);
     const [articlesList, setArticlesList] = useState([]);
 const [loadingArticles, setLoadingArticles] = useState(true);
     const [selectedImage, setSelectedImage] = useState(null);
@@ -55,6 +56,65 @@ useEffect(() => {
   fetchArticles();
 }, []);
 
+const handleDeleteArticle = async (item) => {
+  const confirmed = window.confirm(
+    `هل أنت متأكد من حذف المقال "${item.title}" نهائيًا؟`
+  );
+
+  if (!confirmed) return;
+
+  try {
+    const response = await fetch(
+      `https://clinic-api-ig3d.onrender.com/api/admin/medical-articles/${item.id}`,
+      { method: 'DELETE' }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.error || 'فشل حذف المقال');
+    }
+
+    setArticlesList(prev =>
+      prev.filter(article => article.id !== item.id)
+    );
+
+    if (editingId === item.id) {
+      setEditingId(null);
+    }
+
+    alert('✅ تم حذف المقال بنجاح');
+
+  } catch (error) {
+    alert(`❌ ${error.message}`);
+  }
+};
+
+const handleEditArticle = (item) => {
+  setEditingId(item.id);
+
+  setArticle({
+    title: item.title || '',
+    slug: item.slug || '',
+    summary: item.summary || '',
+    content: item.content || '',
+    specialty: item.specialty || '',
+    author_name: item.author_name || '',
+    reviewer_name: item.reviewer_name || '',
+    sources: item.sources || '',
+    seo_title: item.seo_title || '',
+    seo_description: item.seo_description || '',
+    status: item.status || 'draft'
+  });
+
+  setSelectedImage(null);
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+};
+
 const handleSaveArticle = async () => {
   if (!article.title.trim() || !article.slug.trim() || !article.content.trim()) {
     alert('من فضلك اكتب عنوان المقال والرابط والمحتوى');
@@ -77,20 +137,33 @@ const handleSaveArticle = async () => {
       formData.append('image', selectedImage);
     }
 
-    const response = await fetch(
-      'https://clinic-api-ig3d.onrender.com/api/admin/medical-articles',
-      {
-        method: 'POST',
-        body: formData
-      }
-    );
+  const response = await fetch(
+  editingId
+    ? `https://clinic-api-ig3d.onrender.com/api/admin/medical-articles/${editingId}`
+    : 'https://clinic-api-ig3d.onrender.com/api/admin/medical-articles',
+  {
+    method: editingId ? 'PUT' : 'POST',
+    body: formData
+  }
+);
 
     const data = await response.json();
 
     if (!response.ok || !data.success) {
       throw new Error(data.error || 'فشل حفظ المقال');
     }
+// ✅ تحديث قائمة المقالات بعد الحفظ أو التعديل
+const updatedResponse = await fetch(
+  'https://clinic-api-ig3d.onrender.com/api/admin/medical-articles'
+);
 
+if (updatedResponse.ok) {
+  const updatedData = await updatedResponse.json();
+  setArticlesList(updatedData.articles || []);
+}
+
+// الخروج من وضع التعديل
+setEditingId(null);
     alert(
       article.status === 'published'
         ? '✅ تم نشر المقال بنجاح!'
@@ -160,6 +233,38 @@ const handleSaveArticle = async () => {
           <tr>
             <th style={{ padding: '10px', textAlign: 'right' }}>العنوان</th>
             <th style={{ padding: '10px', textAlign: 'right' }}>الحالة</th>
+            <th style={{ padding: '10px', textAlign: 'right' }}>الإجراء</th>
+            <td style={{ padding: '10px', borderTop: '1px solid #ddd' }}>
+  <button
+    type="button"
+    onClick={() => handleEditArticle(item)}
+    style={{
+      background: '#0284c7',
+      color: '#fff',
+      border: 'none',
+      padding: '8px 16px',
+      borderRadius: '8px',
+      cursor: 'pointer'
+    }}
+  >
+    ✏️ تعديل
+  </button>
+  <button
+    type="button"
+    onClick={() => handleDeleteArticle(item)}
+    style={{
+      background: '#dc2626',
+      color: '#fff',
+      border: 'none',
+      padding: '8px 16px',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      marginLeft: '10px'
+    }}
+  >
+    🗑️ حذف
+  </button>
+</td>
           </tr>
         </thead>
         <tbody>

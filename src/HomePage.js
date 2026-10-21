@@ -1131,11 +1131,33 @@ return (
                     دكتور <span>| DOCTOR</span>
                 </h1>
 
-                <p className="doctor-subtitle">
-                    احجز طبيبك الآن بكل سهولة
-                </p>
+               <p className="doctor-subtitle">
+    احجز طبيبك الآن بكل سهولة
+</p>
 
-            </header>
+{/* 📰 رابط قسم كل يوم معلومة */}
+<div style={{ marginTop: '18px' }}>
+    <Link
+        to="/medical-articles"
+        style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '10px',
+            padding: '12px 24px',
+            background: '#0284c7',
+            color: '#ffffff',
+            borderRadius: '30px',
+            textDecoration: 'none',
+            fontWeight: 'bold',
+            fontSize: '16px'
+        }}
+    >
+        📰 كل يوم معلومة | مقالات طبية
+    </Link>
+</div>
+
+</header>
 
 
          {/* ==============================
