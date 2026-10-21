@@ -173,7 +173,7 @@ const renderContentBlock = (block, index) => {
       {article && (
         <>
           <Helmet>
-            <title>{articleTitle} | منصة دكتور</title>
+          <title>{articleTitle.includes('منصة دكتور') ? articleTitle : `${articleTitle} | منصة دكتور`}</title>
             <meta name="description" content={articleDescription} />
             <link rel="canonical" href={pageUrl} />
             <meta property="og:type" content="article" />
@@ -183,6 +183,49 @@ const renderContentBlock = (block, index) => {
             {article.image_url && (
               <meta property="og:image" content={article.image_url} />
             )}
+            
+{/* 📰 بيانات المقال المنظمة لمحركات البحث */}
+<script type="application/ld+json">
+  {JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": pageUrl
+    },
+    "headline": article.title,
+    "description": articleDescription,
+    ...(article.image_url && {
+      "image": [article.image_url]
+    }),
+    ...(article.published_at && {
+      "datePublished": article.published_at
+    }),
+    ...(article.updated_at && {
+      "dateModified": article.updated_at
+    }),
+    "author": article.author_name
+      ? {
+          "@type": "Person",
+          "name": article.author_name
+        }
+      : {
+          "@type": "Organization",
+          "name": "منصة دكتور"
+        },
+    "publisher": {
+      "@type": "Organization",
+      "name": "منصة دكتور",
+      "url": "https://www.doctoreg.online",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.doctoreg.online/logo512.png"
+      }
+    },
+    "inLanguage": "ar-EG"
+  })}
+</script>
+
           </Helmet>
 
           <Link to="/medical-articles" style={{ color: '#0284c7' }}>
