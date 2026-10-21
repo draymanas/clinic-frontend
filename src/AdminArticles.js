@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 export default function AdminArticles() {
+    const [selectedImage, setSelectedImage] = useState(null);
   const [article, setArticle] = useState({
     title: '',
     slug: '',
@@ -14,6 +15,30 @@ export default function AdminArticles() {
     seo_description: '',
     status: 'draft'
   });
+
+const handleSaveArticle = () => {
+  if (!article.title.trim()) {
+    alert('من فضلك اكتب عنوان المقال');
+    return;
+  }
+
+  if (!article.slug.trim()) {
+    alert('من فضلك اكتب رابط المقال Slug');
+    return;
+  }
+
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(article.slug.trim())) {
+    alert('رابط المقال يجب أن يكون بالإنجليزية، بحروف صغيرة وأرقام وشرطات فقط');
+    return;
+  }
+
+  if (!article.content.trim()) {
+    alert('من فضلك اكتب محتوى المقال');
+    return;
+  }
+
+  alert('✅ بيانات المقال مكتملة وجاهزة للحفظ');
+};
 
   const updateField = (field, value) => {
     setArticle(prev => ({
@@ -84,6 +109,51 @@ export default function AdminArticles() {
           </label>
         ))}
 
+{/* 📸 اختيار صورة المقال */}
+<div>
+  <label
+    htmlFor="article-image"
+    style={{ fontWeight: 'bold', display: 'block', marginBottom: '8px' }}
+  >
+    📸 صورة المقال
+  </label>
+
+  <input
+    id="article-image"
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+    onChange={(e) => {
+      const file = e.target.files?.[0];
+
+      if (!file) {
+        setSelectedImage(null);
+        return;
+      }
+
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        alert('اختر صورة JPG أو PNG أو WebP');
+        e.target.value = '';
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert('حجم الصورة يجب ألا يتجاوز 5 ميجابايت');
+        e.target.value = '';
+        return;
+      }
+
+      setSelectedImage(file);
+    }}
+    style={fieldStyle}
+  />
+
+  {selectedImage && (
+    <p style={{ color: '#16a34a', fontSize: '14px' }}>
+      ✅ تم اختيار الصورة: {selectedImage.name}
+    </p>
+  )}
+</div>
+
         <label>
           <strong>حالة المقال</strong>
           <select
@@ -97,19 +167,19 @@ export default function AdminArticles() {
         </label>
 
         <button
-          type="button"
-          disabled
+  type="button"
+  onClick={handleSaveArticle}
           style={{
             padding: '14px',
-            background: '#94a3b8',
+            background: '#0284c7',
             border: 'none',
             borderRadius: '10px',
             color: 'white',
             fontWeight: 'bold',
-            cursor: 'not-allowed'
+            cursor: 'pointer'
           }}
         >
-          💾 حفظ المقال (سنفعّله في الخطوة القادمة)
+          💾  تجهيز حفظ المقال (سنفعّله في الخطوة القادمة)
         </button>
       </div>
     </div>
