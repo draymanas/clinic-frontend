@@ -185,6 +185,76 @@ const handleSaveArticle = () => {
 )}
 </div>
 
+{/* 📰 معاينة المقال قبل النشر */}
+<details style={{
+  background: '#f8fafc',
+  border: '1px solid #cbd5e1',
+  borderRadius: '12px',
+  padding: '20px',
+  marginTop: '15px'
+}}>
+  <summary style={{
+    cursor: 'pointer',
+    fontSize: '18px',
+    fontWeight: 'bold',
+    color: '#0284c7'
+  }}>
+    👁️ معاينة المقال قبل النشر
+  </summary>
+
+  <div style={{
+    background: '#fff',
+    padding: '25px',
+    marginTop: '20px',
+    borderRadius: '12px',
+    lineHeight: '1.9'
+  }}>
+    {article.specialty && (
+      <p style={{ color: '#0284c7', fontWeight: 'bold' }}>
+        {article.specialty}
+      </p>
+    )}
+
+    <h1 style={{ color: '#0f172a', fontSize: '28px' }}>
+      {article.title || 'عنوان المقال سيظهر هنا'}
+    </h1>
+
+    <p style={{ color: '#64748b', fontSize: '17px' }}>
+      {article.summary || 'ملخص المقال سيظهر هنا'}
+    </p>
+
+    {imagePreview && (
+      <img
+        src={imagePreview}
+        alt="صورة المقال"
+        style={{
+          width: '100%',
+          maxHeight: '350px',
+          objectFit: 'cover',
+          borderRadius: '12px',
+          marginBottom: '20px'
+        }}
+      />
+    )}
+
+    <div style={{
+      whiteSpace: 'pre-wrap',
+      color: '#334155',
+      fontSize: '17px'
+    }}>
+      {article.content || 'محتوى المقال سيظهر هنا'}
+    </div>
+
+    {article.author_name && (
+      <p><strong>الكاتب:</strong> {article.author_name}</p>
+    )}
+
+    {article.reviewer_name && (
+      <p><strong>المراجع الطبي:</strong> {article.reviewer_name}</p>
+    )}
+  </div>
+</details>
+
         <label>
           <strong>حالة المقال</strong>
           <select
