@@ -14,6 +14,7 @@ import MedicalArticles from './MedicalArticles';
 import { FaBell, FaCheck } from 'react-icons/fa';
 import AdminArticles from './AdminArticles';
 import { requestForToken, onMessageListener } from './firebase';
+import MedicalArticleDetails from './MedicalArticleDetails';
 import HomePage from './HomePage';
 // =====================================================
 // تحميل الصفحات عند الحاجة فقط - React Lazy Loading
@@ -3121,10 +3122,12 @@ onClick={() => {
 <Route path="/search/:specialtyParam/:cityParam" element={<SearchPage />} />
 <Route path="/search/:specialtyParam" element={<SearchPage />} />
 <Route path="/medical-articles" element={<MedicalArticles />} />
+<Route path="/medical-articles/:slug" element={<MedicalArticleDetails />} />
 <Route path="/doctors/:specialtyParam/:cityParam/:areaParam" element={<SearchPage />} />
 <Route path="/doctors/:specialtyParam/:cityParam" element={<SearchPage />} />
 <Route path="/doctors/:specialtyParam" element={<SearchPage />} />
 <Route path="/doctors" element={<SearchPage />} />
+
  <Route
   path="/symptoms"
   element={<SymptomsPage />}
