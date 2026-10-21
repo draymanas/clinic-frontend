@@ -62,7 +62,93 @@ export default function MedicalArticleDetails() {
   const articleDescription =
     article?.seo_description || article?.summary || 'مقالات ومعلومات طبية من منصة دكتور';
 
-  const formattedContent = (article?.content || '').split(/\n\s*\n/).filter(Boolean);
+ 
+const renderFormattedText = (text) => {
+  return text.split(/(\*\*.*?\*\*)/g).map((part, index) =>
+    part.startsWith('**') && part.endsWith('**')
+      ? <strong key={index}>{part.slice(2, -2)}</strong>
+      : part
+  );
+};
+
+const contentBlocks = (article?.content || '')
+  .split(/\n\s*\n/)
+  .map(block => block.trim())
+  .filter(Boolean);
+
+const renderContentBlock = (block, index) => {
+  if (block.startsWith('### ')) {
+    return (
+      <h3 key={index} style={{
+        color: '#0f172a',
+        fontSize: '21px',
+        marginTop: '25px',
+        lineHeight: '1.6'
+      }}>
+        {block.slice(4)}
+      </h3>
+    );
+  }
+
+  if (block.startsWith('## ')) {
+    return (
+      <h2 key={index} style={{
+        color: '#0369a1',
+        fontSize: '25px',
+        marginTop: '35px',
+        lineHeight: '1.6'
+      }}>
+        {block.slice(3)}
+      </h2>
+    );
+  }
+
+  if (block.startsWith('# ')) {
+    // عنوان المقال موجود بالفعل كـ H1 أعلى الصفحة
+    // نتجنب تكراره مرة ثانية داخل المحتوى
+    return null;
+  }
+
+  const lines = block.split('\n');
+  const isList = lines.every(line =>
+    /^\s*(?:[-*]\s+|\d+\.\s+)/.test(line)
+  );
+
+  if (isList) {
+    const isOrdered = lines.every(line => /^\s*\d+\.\s+/.test(line));
+    const ListTag = isOrdered ? 'ol' : 'ul';
+
+    return (
+      <ListTag key={index} style={{
+        paddingRight: '25px',
+        paddingLeft: '10px',
+        color: '#334155',
+        fontSize: '17px',
+        lineHeight: '2'
+      }}>
+        {lines.map((line, i) => (
+          <li key={i}>
+            {renderFormattedText(
+              line.replace(/^\s*(?:[-*]\s+|\d+\.\s+)/, '')
+            )}
+          </li>
+        ))}
+      </ListTag>
+    );
+  }
+
+  return (
+    <p key={index} style={{
+      fontSize: '17px',
+      color: '#334155',
+      whiteSpace: 'pre-wrap',
+      lineHeight: '1.9'
+    }}>
+      {renderFormattedText(block)}
+    </p>
+  );
+};
+
 
   return (
     <div
@@ -148,15 +234,7 @@ export default function MedicalArticleDetails() {
             )}
 
             <section style={{ marginTop: '30px' }}>
-              {formattedContent.map((paragraph, index) => (
-                <p key={index} style={{
-                  fontSize: '17px',
-                  color: '#334155',
-                  whiteSpace: 'pre-wrap'
-                }}>
-                  {paragraph}
-                </p>
-              ))}
+              {contentBlocks.map(renderContentBlock)}
             </section>
 
             <footer style={{
