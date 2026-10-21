@@ -1221,19 +1221,29 @@ return (
             ============================== */}
             <section className="doctor-benefits">
 
-                <div className="doctor-benefit-card">
-                    <div className="doctor-benefit-icon">
-                        👨‍⚕️
-                    </div>
+               <Link
+    to="/medical-articles"
+    className="doctor-benefit-card"
+    style={{
+        textDecoration: 'none',
+        color: 'inherit',
+        cursor: 'pointer',
+        display: 'block'
+    }}
+>
+    <div className="doctor-benefit-icon">
+        📚
+    </div>
 
-                    <h3 className="doctor-benefit-title">
-                        تخصصات طبية متعددة
-                    </h3>
+    <h3 className="doctor-benefit-title">
+        كل يوم معلومة
+    </h3>
 
-                    <p className="doctor-benefit-text">
-                        ابحث عن الطبيب المناسب حسب التخصص الذي تحتاجه.
-                    </p>
-                </div>
+    <p className="doctor-benefit-text">
+        اكتشف مقالات طبية ومعلومات صحية مفيدة
+        في مختلف التخصصات الطبية.
+    </p>
+</Link>
 
 
          <div className="doctor-benefit-card doctor-ayman-card">
