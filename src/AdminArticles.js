@@ -29,29 +29,62 @@ useEffect(() => {
     status: 'draft'
   });
 
-const handleSaveArticle = () => {
-  if (!article.title.trim()) {
-    alert('من فضلك اكتب عنوان المقال');
-    return;
-  }
 
-  if (!article.slug.trim()) {
-    alert('من فضلك اكتب رابط المقال Slug');
+const handleSaveArticle = async () => {
+  if (!article.title.trim() || !article.slug.trim() || !article.content.trim()) {
+    alert('من فضلك اكتب عنوان المقال والرابط والمحتوى');
     return;
   }
 
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(article.slug.trim())) {
-    alert('رابط المقال يجب أن يكون بالإنجليزية، بحروف صغيرة وأرقام وشرطات فقط');
+    alert('رابط المقال يجب أن يكون بحروف إنجليزية صغيرة وأرقام وشرطات فقط');
     return;
   }
 
-  if (!article.content.trim()) {
-    alert('من فضلك اكتب محتوى المقال');
-    return;
-  }
+  try {
+    const formData = new FormData();
 
-  alert('✅ بيانات المقال مكتملة وجاهزة للحفظ');
+    Object.entries(article).forEach(([key, value]) => {
+      formData.append(key, value || '');
+    });
+
+    if (selectedImage) {
+      formData.append('image', selectedImage);
+    }
+
+    const response = await fetch(
+      'https://clinic-api-ig3d.onrender.com/api/admin/medical-articles',
+      {
+        method: 'POST',
+        body: formData
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.error || 'فشل حفظ المقال');
+    }
+
+    alert(
+      article.status === 'published'
+        ? '✅ تم نشر المقال بنجاح!'
+        : '✅ تم حفظ المقال كمسودة بنجاح!'
+    );
+
+    if (article.status === 'published') {
+      window.open(
+        `https://www.doctoreg.online/medical-articles/${data.article.slug}`,
+        '_blank'
+      );
+    }
+
+  } catch (error) {
+    console.error('خطأ حفظ المقال:', error);
+    alert(`❌ ${error.message}`);
+  }
 };
+
 
   const updateField = (field, value) => {
     setArticle(prev => ({
@@ -280,7 +313,7 @@ const handleSaveArticle = () => {
             cursor: 'pointer'
           }}
         >
-          💾  تجهيز حفظ المقال (سنفعّله في الخطوة القادمة)
+         💾 حفظ المقال / نشر المقال
         </button>
       </div>
     </div>
