@@ -89,8 +89,36 @@ if (!cancelled) {
   const pageUrl = `https://www.doctoreg.online/medical-articles/${encodeURIComponent(slug)}`;
 
   const articleTitle = article?.seo_title || article?.title || 'مقال طبي';
-  const articleDescription =
-    article?.seo_description || article?.summary || 'مقالات ومعلومات طبية من منصة دكتور';
+  
+const articleDescription =
+  article?.seo_description || article?.summary || 'مقالات ومعلومات طبية من منصة دكتور';
+
+// رابط المشاركة المختصر الخاص بالمقال
+const shareUrl = `https://www.doctoreg.online/a/${encodeURIComponent(slug)}`;
+
+const handleShareArticle = async () => {
+  const shareData = {
+    title: article?.title || 'مقال طبي - منصة دكتور',
+    text: article?.summary || 'اقرأ هذا المقال الطبي على منصة دكتور',
+    url: shareUrl
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(shareUrl);
+      alert('✅ تم نسخ رابط المقال، يمكنك مشاركته الآن');
+    } else {
+      window.prompt('انسخ رابط مشاركة المقال:', shareUrl);
+    }
+  } catch (error) {
+    // إلغاء المستخدم لنافذة المشاركة لا يُعد خطأ
+    if (error.name !== 'AbortError') {
+      window.prompt('انسخ رابط مشاركة المقال:', shareUrl);
+    }
+  }
+};
 
  
 const renderFormattedText = (text) => {
@@ -292,19 +320,48 @@ const renderContentBlock = (block, index) => {
               )}
             </header>
 
-            {article.image_url && (
-              <img
-                src={article.image_url}
-                alt={article.title}
-                style={{
-                  width: '100%',
-                  maxHeight: '450px',
-                  objectFit: 'cover',
-                  borderRadius: '15px',
-                  margin: '20px 0'
-                }}
-              />
-            )}
+         
+{article.image_url && (
+  <img
+    src={article.image_url}
+    alt={article.title}
+    style={{
+      width: '100%',
+      maxHeight: '450px',
+      objectFit: 'cover',
+      borderRadius: '15px',
+      margin: '20px 0'
+    }}
+  />
+)}
+
+{/* زر مشاركة المقال */}
+<div style={{
+  display: 'flex',
+  justifyContent: 'center',
+  margin: '15px 0 30px'
+}}>
+  <button
+    type="button"
+    onClick={handleShareArticle}
+    style={{
+      background: '#0284c7',
+      color: 'white',
+      border: 'none',
+      padding: '13px 28px',
+      borderRadius: '10px',
+      fontSize: '16px',
+      fontWeight: 'bold',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px'
+    }}
+  >
+    🔗 مشاركة المقال
+  </button>
+</div>
+
 
             <section style={{ marginTop: '30px' }}>
               {contentBlocks.map(renderContentBlock)}
