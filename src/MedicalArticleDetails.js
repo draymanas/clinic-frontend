@@ -310,40 +310,6 @@ const renderContentBlock = (block, index) => {
               {contentBlocks.map(renderContentBlock)}
             </section>
 
-            <footer style={{
-              marginTop: '40px',
-              padding: '20px',
-              background: '#f1f5f9',
-              borderRadius: '12px'
-            }}>
-              {article.author_name && (
-                <p><strong>كاتب المقال:</strong> {article.author_name}</p>
-              )}
-
-              {article.reviewer_name && (
-                <p><strong>المراجع الطبي:</strong> {article.reviewer_name}</p>
-              )}
-
-              {article.sources && (
-                <div>
-                  <strong>المصادر العلمية:</strong>
-                  <p style={{ whiteSpace: 'pre-wrap' }}>{article.sources}</p>
-                </div>
-              )}
-
-              {article.related_specialties && article.related_specialties.length > 0 && (
-                <div>
-                  <strong>التخصصات المرتبطة:</strong>
-                  <p>{article.related_specialties.join(', ')}</p>
-                </div>
-              )}
-
-              <p style={{ color: '#64748b', fontSize: '13px' }}>
-                المعلومات المنشورة للتثقيف الصحي ولا تغني عن استشارة الطبيب.
-              </p>
-            
-</footer>
-
 {/* 🩺 عرض أطباء التخصصات المرتبطة بالمقال */}
 {Array.isArray(article.related_specialties) &&
   article.related_specialties.length > 0 && (
@@ -407,6 +373,40 @@ const renderContentBlock = (block, index) => {
     </div>
   </div>
 )}
+            <footer style={{
+              marginTop: '40px',
+              padding: '20px',
+              background: '#f1f5f9',
+              borderRadius: '12px'
+            }}>
+              {article.author_name && (
+                <p><strong>كاتب المقال:</strong> {article.author_name}</p>
+              )}
+
+              {article.reviewer_name && (
+                <p><strong>المراجع الطبي:</strong> {article.reviewer_name}</p>
+              )}
+
+              {article.sources && (
+                <div>
+                  <strong>المصادر العلمية:</strong>
+                  <p style={{ whiteSpace: 'pre-wrap' }}>{article.sources}</p>
+                </div>
+              )}
+
+              {article.related_specialties && article.related_specialties.length > 0 && (
+                <div>
+                  <strong>التخصصات المرتبطة:</strong>
+                  <p>{article.related_specialties.join(', ')}</p>
+                </div>
+              )}
+
+              <p style={{ color: '#64748b', fontSize: '13px' }}>
+                المعلومات المنشورة للتثقيف الصحي ولا تغني عن استشارة الطبيب.
+              </p>
+            
+</footer>
+
 
 </article>
 
