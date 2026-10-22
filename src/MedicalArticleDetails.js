@@ -331,11 +331,85 @@ const renderContentBlock = (block, index) => {
                 </div>
               )}
 
+              {article.related_specialties && article.related_specialties.length > 0 && (
+                <div>
+                  <strong>التخصصات المرتبطة:</strong>
+                  <p>{article.related_specialties.join(', ')}</p>
+                </div>
+              )}
+
               <p style={{ color: '#64748b', fontSize: '13px' }}>
                 المعلومات المنشورة للتثقيف الصحي ولا تغني عن استشارة الطبيب.
               </p>
-            </footer>
-          </article>
+            
+</footer>
+
+{/* 🩺 عرض أطباء التخصصات المرتبطة بالمقال */}
+{Array.isArray(article.related_specialties) &&
+  article.related_specialties.length > 0 && (
+
+  <div style={{
+    marginTop: '35px',
+    padding: '25px',
+    background: '#eff6ff',
+    border: '1px solid #bfdbfe',
+    borderRadius: '15px',
+    textAlign: 'center'
+  }}>
+
+    <h2 style={{
+      color: '#0f172a',
+      fontSize: '24px',
+      marginBottom: '10px'
+    }}>
+      🩺 هل تحتاج إلى استشارة طبيب متخصص؟
+    </h2>
+
+    <p style={{
+      color: '#475569',
+      fontSize: '16px',
+      marginBottom: '20px'
+    }}>
+      يمكنك استعراض الأطباء المتخصصين واختيار
+      الطبيب والموعد المناسب لك.
+    </p>
+
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      gap: '12px'
+    }}>
+
+      {article.related_specialties.map((specialty, index) => (
+
+        <Link
+          key={index}
+          to={`/doctors/${encodeURIComponent(
+            specialty.trim().replace(/\s+/g, '-')
+          )}`}
+          style={{
+            display: 'inline-block',
+            background: '#0284c7',
+            color: '#ffffff',
+            textDecoration: 'none',
+            padding: '14px 22px',
+            borderRadius: '10px',
+            fontSize: '16px',
+            fontWeight: 'bold'
+          }}
+        >
+          👨‍⚕️ عرض أطباء {specialty}
+        </Link>
+
+      ))}
+
+    </div>
+  </div>
+)}
+
+</article>
+
         </>
       )}
     </div>

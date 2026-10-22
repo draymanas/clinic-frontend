@@ -24,6 +24,7 @@ useEffect(() => {
     summary: '',
     content: '',
     specialty: '',
+    related_specialties: [],
     author_name: '',
     reviewer_name: '',
     sources: '',
@@ -99,6 +100,7 @@ const handleEditArticle = (item) => {
     summary: item.summary || '',
     content: item.content || '',
     specialty: item.specialty || '',
+    related_specialties: item.related_specialties || [],
     author_name: item.author_name || '',
     reviewer_name: item.reviewer_name || '',
     sources: item.sources || '',
@@ -129,9 +131,13 @@ const handleSaveArticle = async () => {
   try {
     const formData = new FormData();
 
-    Object.entries(article).forEach(([key, value]) => {
-      formData.append(key, value || '');
-    });
+  Object.entries(article).forEach(([key, value]) => {
+  if (key === 'related_specialties') {
+    formData.append(key, JSON.stringify(value || []));
+  } else {
+    formData.append(key, value || '');
+  }
+});
 
     if (selectedImage) {
       formData.append('image', selectedImage);
@@ -326,6 +332,106 @@ setEditingId(null);
             />
           </label>
         ))}
+
+{/* التخصصات المرتبطة بالمقال */}
+<div style={{
+  background: '#f0f9ff',
+  border: '1px solid #bae6fd',
+  padding: '18px',
+  borderRadius: '12px'
+}}>
+  <h3 style={{ marginTop: 0 }}>
+    🩺 تخصصات الأطباء المرتبطة بالمقال
+  </h3>
+
+  <p style={{ color: '#64748b', fontSize: '14px' }}>
+    اختر تخصصًا أو تخصصين ليظهر للمرضى زر استعراض أطبائهما
+    في نهاية المقال.
+  </p>
+
+  
+{[
+  'أسنان',
+  'أطفال وحديثي الولادة',
+  'أنف وأذن وحنجرة',
+  'باطنة',
+  'تغذية علاجية',
+  'جراحة أطفال',
+  'جراحة أوعية دموية',
+  'جراحة أورام',
+  'جراحة تجميل',
+  'جراحة سمنة ونحافة',
+  'عظام',
+  'جراحة قلب وصدر',
+  'جراحة مخ وأعصاب',
+  'جراحة مسالك بولية',
+  'جلدية',
+  'جهاز هضمي وكبد',
+  'حساسية ومناعة',
+  'رمد',
+  'روماتيزم',
+  'ذكورة وعقم',
+  'علاج طبيعي',
+  'غدد صماء وسكري',
+  'جراحة عامه',
+  'امراض دم',
+  'قلب وأوعية دموية',
+  'مخ وأعصاب',
+  'نسا وتوليد',
+  'تخاطب',
+  'كلى',
+  'جراحة عمود فقري',
+  'صدر',
+  'نفسي أطفال',
+  'نفسي',
+  'علاج الألم',
+  'أشعة',
+  'تحاليل'
+].map(specialty => {
+    const selected = article.related_specialties.includes(specialty);
+
+    return (
+      <label
+        key={specialty}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          marginBottom: '10px',
+          cursor: 'pointer'
+        }}
+      >
+        <input
+          type="checkbox"
+          checked={selected}
+          onChange={() => {
+            const current = article.related_specialties || [];
+
+            if (selected) {
+              updateField(
+                'related_specialties',
+                current.filter(item => item !== specialty)
+              );
+            } else if (current.length < 2) {
+              updateField(
+                'related_specialties',
+                [...current, specialty]
+              );
+            } else {
+              alert('يمكن اختيار تخصصين فقط لكل مقال');
+            }
+          }}
+        />
+
+        {specialty}
+      </label>
+    );
+  })}
+
+  <p style={{ color: '#0284c7', fontWeight: 'bold' }}>
+    تم اختيار {article.related_specialties.length} من 2
+  </p>
+</div>
 
         {[
           ['summary', 'ملخص المقال'],
