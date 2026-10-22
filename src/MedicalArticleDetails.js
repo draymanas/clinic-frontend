@@ -21,23 +21,53 @@ export default function MedicalArticleDetails() {
       setArticle(null);
 
       try {
-        const response = await fetch(
-          `${API_URL}/api/medical-articles/${encodeURIComponent(slug)}`
-        );
+      
+let data = null;
+let lastError = null;
 
-        if (!response.ok) {
-          throw new Error(
-            response.status === 404
-              ? 'المقال غير موجود أو لم يتم نشره بعد'
-              : 'حدث خطأ أثناء تحميل المقال'
-          );
-        }
+for (let attempt = 1; attempt <= 3; attempt++) {
+  if (cancelled) return;
 
-        const data = await response.json();
+  try {
+    const response = await fetch(
+      `${API_URL}/api/medical-articles/${encodeURIComponent(slug)}`
+    );
 
-        if (!cancelled) {
-          setArticle(data.article);
-        }
+    if (response.status === 404) {
+      throw new Error('المقال غير موجود أو لم يتم نشره بعد');
+    }
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    data = await response.json();
+    break;
+
+  } catch (err) {
+    lastError = err;
+
+    // لا نكرر المحاولة لو المقال غير موجود
+    if (err.message === 'المقال غير موجود أو لم يتم نشره بعد') {
+      throw err;
+    }
+
+    if (attempt < 3) {
+      await new Promise(resolve =>
+        setTimeout(resolve, attempt * 1000)
+      );
+    }
+  }
+}
+
+if (!data) {
+  throw lastError || new Error('تعذر تحميل المقال');
+}
+
+if (!cancelled) {
+  setArticle(data.article);
+}
+
       } catch (err) {
         if (!cancelled) {
           setError(err.message);
