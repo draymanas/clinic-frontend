@@ -209,16 +209,23 @@ const renderContentBlock = (block, index) => {
 
 
   return (
-    <div
-      dir="rtl"
-      style={{
-        maxWidth: '900px',
-        margin: 'auto',
-        padding: '35px 20px',
-        fontFamily: 'Cairo, sans-serif',
-        lineHeight: '1.9'
-      }}
-    >
+   
+<div
+  dir="rtl"
+  style={{
+    width: '100%',
+    maxWidth: '900px',
+    minWidth: 0,
+    boxSizing: 'border-box',
+    margin: '0 auto',
+    padding: '20px 15px',
+    fontFamily: 'Cairo, sans-serif',
+    lineHeight: '1.9',
+    overflowWrap: 'anywhere',
+    wordBreak: 'break-word'
+  }}
+>
+
       {loading && <p>جاري تحميل المقال...</p>}
 
       {error && (
@@ -447,7 +454,14 @@ const renderContentBlock = (block, index) => {
               {article.sources && (
                 <div>
                   <strong>المصادر العلمية:</strong>
-                  <p style={{ whiteSpace: 'pre-wrap' }}>{article.sources}</p>
+                <p style={{
+  whiteSpace: 'pre-wrap',
+  overflowWrap: 'anywhere',
+  wordBreak: 'break-word',
+  maxWidth: '100%'
+}}>
+  {article.sources}
+</p>
                 </div>
               )}
 
