@@ -155,33 +155,65 @@ export const DirectBooking = () => {
   }, [id]);
 
   // 4. دالة حساب التاريخ الفعلي لليوم
-  const getNextDateForDay = (dayName) => {
-    const days = {
-      'الأحد': 0,
-      'الاثنين': 1,
-      'الثلاثاء': 2,
-      'الأربعاء': 3,
-      'الخميس': 4,
-      'الجمعة': 5,
-      'السبت': 6
-    };
-
-    const cleanDayName = dayName ? dayName.replace('،', '').trim() : 'الأحد';
-    const targetDay = days[cleanDayName] !== undefined ? days[cleanDayName] : 0;
-
-    const now = new Date();
-    const currentDayOfWeek = now.getDay();
-
-    let diff = targetDay - currentDayOfWeek;
-    if (diff < 0) {
-      diff += 7;
-    }
-
-    const resultDate = new Date(now);
-    resultDate.setDate(now.getDate() + diff);
-
-    return resultDate.toISOString().split('T')[0];
+// حساب أقرب تاريخ ليوم عمل الطبيب حسب توقيت مصر
+const getNextDateForDay = (dayName) => {
+  const days = {
+    'الأحد': 0,
+    'الاثنين': 1,
+    'الثلاثاء': 2,
+    'الأربعاء': 3,
+    'الخميس': 4,
+    'الجمعة': 5,
+    'السبت': 6
   };
+
+  const cleanDayName = (dayName || '')
+    .replace('،', '')
+    .trim();
+
+  const targetDay = days[cleanDayName];
+
+  if (targetDay === undefined) {
+    console.error('اسم اليوم غير معروف:', dayName);
+    return '';
+  }
+
+  // استخراج اليوم والشهر والسنة بتوقيت القاهرة بدقة
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Africa/Cairo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).formatToParts(new Date());
+
+  const values = {};
+  parts.forEach(part => {
+    if (part.type === 'year' ||
+        part.type === 'month' ||
+        part.type === 'day') {
+      values[part.type] = Number(part.value);
+    }
+  });
+
+  // حساب أيام الأسبوع باستخدام UTC دون التأثر بتوقيت الجهاز
+  const date = new Date(Date.UTC(
+    values.year,
+    values.month - 1,
+    values.day
+  ));
+
+  const currentDay = date.getUTCDay();
+
+  const diff = (targetDay - currentDay + 7) % 7;
+
+  date.setUTCDate(date.getUTCDate() + diff);
+
+  return [
+    date.getUTCFullYear(),
+    String(date.getUTCMonth() + 1).padStart(2, '0'),
+    String(date.getUTCDate()).padStart(2, '0')
+  ].join('-');
+};
 
   // 🌟 تحديث قائمة الساعات كل 15 دقيقة فور تغيير اليوم واستبعاد المحجوز
   useEffect(() => {
