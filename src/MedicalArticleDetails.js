@@ -8,9 +8,12 @@ const API_URL = 'https://clinic-api-ig3d.onrender.com';
 export default function MedicalArticleDetails() {
   const { slug } = useParams();
 
-  const [article, setArticle] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+
+const [article, setArticle] = useState(null);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState('');
+const [relatedArticles, setRelatedArticles] = useState([]);
+
 
   useEffect(() => {
     let cancelled = false;
@@ -85,6 +88,63 @@ if (!cancelled) {
       cancelled = true;
     };
   }, [slug]);
+
+  
+useEffect(() => {
+  if (!article) {
+    setRelatedArticles([]);
+    return;
+  }
+
+  let cancelled = false;
+
+  const fetchRelatedArticles = async () => {
+    try {
+      const response = await fetch(
+        'https://clinic-api-ig3d.onrender.com/api/medical-articles'
+      );
+
+      if (!response.ok) return;
+
+      const data = await response.json();
+
+      const currentSpecialties = Array.isArray(article.related_specialties)
+        ? article.related_specialties
+        : [];
+
+      const articles = (data.articles || [])
+        .filter(item => item.slug !== article.slug)
+        .map(item => {
+          const matchScore = currentSpecialties.filter(
+            specialty =>
+              item.specialty?.includes(specialty)
+          ).length;
+
+          return { ...item, matchScore };
+        })
+        .sort((a, b) =>
+          b.matchScore - a.matchScore ||
+          new Date(b.published_at || 0) -
+          new Date(a.published_at || 0)
+        )
+        .slice(0, 3);
+
+      if (!cancelled) {
+        setRelatedArticles(articles);
+      }
+
+    } catch (err) {
+      console.error('خطأ تحميل المقالات ذات الصلة:', err);
+    }
+  };
+
+  fetchRelatedArticles();
+
+  return () => {
+    cancelled = true;
+  };
+}, [article]);
+
 
   const pageUrl = `https://www.doctoreg.online/medical-articles/${encodeURIComponent(slug)}`;
 
@@ -477,6 +537,94 @@ const renderContentBlock = (block, index) => {
               </p>
             
 </footer>
+
+
+{/* 📚 مقالات طبية ذات صلة */}
+{relatedArticles.length > 0 && (
+  <section style={{
+    marginTop: '35px',
+    paddingTop: '25px',
+    borderTop: '1px solid #e2e8f0'
+  }}>
+    <h2 style={{
+      color: '#0f172a',
+      fontSize: '24px',
+      marginBottom: '20px'
+    }}>
+      📚 مقالات طبية قد تهمك
+    </h2>
+
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))',
+      gap: '18px'
+    }}>
+      {relatedArticles.map(item => (
+        <Link
+          key={item.id}
+          to={`/medical-articles/${encodeURIComponent(item.slug)}`}
+          style={{
+            display: 'block',
+            textDecoration: 'none',
+            color: 'inherit',
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '14px',
+            overflow: 'hidden',
+            boxShadow: '0 3px 10px rgba(0,0,0,0.05)'
+          }}
+        >
+          {item.image_url && (
+            <img
+              src={item.image_url}
+              alt={item.title}
+              loading="lazy"
+              style={{
+                display: 'block',
+                width: '100%',
+                height: '160px',
+                objectFit: 'cover'
+              }}
+            />
+          )}
+
+          <div style={{ padding: '15px' }}>
+            <h3 style={{
+              fontSize: '17px',
+              lineHeight: '1.7',
+              color: '#0369a1',
+              margin: '0 0 10px'
+            }}>
+              {item.title}
+            </h3>
+
+            {item.summary && (
+              <p style={{
+                color: '#64748b',
+                fontSize: '14px',
+                lineHeight: '1.7',
+                overflow: 'hidden',
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical'
+              }}>
+                {item.summary}
+              </p>
+            )}
+
+            <span style={{
+              color: '#0284c7',
+              fontSize: '14px',
+              fontWeight: 'bold'
+            }}>
+              اقرأ المقال ←
+            </span>
+          </div>
+        </Link>
+      ))}
+    </div>
+  </section>
+)}
 
 
 </article>
