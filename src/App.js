@@ -1277,7 +1277,51 @@ const getConsultationDraft = (consultation) => {
       أرفق المريض {c.image_urls.length} صورة أو تقرير طبي.
       الصور محفوظة بصورة خاصة على Cloudinary.
     </p>
+<div style={{
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+  gap: '12px',
+  marginTop: '15px'
+}}>
+  {(c.image_display_urls || []).map((url, index) => (
 
+    <a
+      key={index}
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        display: 'block',
+        textDecoration: 'none'
+      }}
+    >
+      <img
+        src={url}
+        alt={`صورة الأشعة رقم ${index + 1}`}
+        loading="lazy"
+        style={{
+          width: '100%',
+          height: '150px',
+          objectFit: 'contain',
+          borderRadius: '12px',
+          border: '1px solid #cbd5e1',
+          background: '#fff'
+        }}
+      />
+
+      <div style={{
+        textAlign: 'center',
+        marginTop: '6px',
+        color: '#0284c7',
+        fontWeight: '700',
+        fontSize: '13px'
+      }}>
+        🔍 فتح الصورة {index + 1}
+      </div>
+    </a>
+
+  ))}
+</div>
   </div>
 
 )}
