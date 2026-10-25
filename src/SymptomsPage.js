@@ -1,6 +1,6 @@
 // src/SymptomsPage.js
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 const API_URL = 'https://clinic-api-ig3d.onrender.com';
@@ -77,7 +77,8 @@ function SymptomsPage() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [question, setQuestion] = useState('');
-
+  const [images, setImages] = useState([]);
+  const imageInputRef = useRef(null);
   const [sending, setSending] = useState(false);
   const [sendMessage, setSendMessage] = useState('');
 
@@ -130,6 +131,66 @@ function SymptomsPage() {
     fetchConsultations();
   }, []);
 
+// ==========================================
+// 🩻 اختيار صور الأشعة
+// ==========================================
+
+const handleImagesChange = (e) => {
+  const selectedFiles = Array.from(e.target.files || []);
+
+  setSendMessage('');
+
+  if (selectedFiles.length > 3) {
+    setSendMessage('❌ يمكنك إرفاق 3 صور فقط كحد أقصى.');
+    e.target.value = '';
+    return;
+  }
+
+  const allowedTypes = [
+    'image/jpeg',
+    'image/png',
+    'image/webp'
+  ];
+
+  const invalidType = selectedFiles.some(
+    file => !allowedTypes.includes(file.type)
+  );
+
+  if (invalidType) {
+    setSendMessage('❌ مسموح فقط بصور JPG وPNG وWebP.');
+    e.target.value = '';
+    return;
+  }
+
+  const tooLarge = selectedFiles.some(
+    file => file.size > 5 * 1024 * 1024
+  );
+
+  if (tooLarge) {
+    setSendMessage('❌ حجم الصورة الواحدة يجب ألا يزيد عن 5 ميجابايت.');
+    e.target.value = '';
+    return;
+  }
+
+  setImages(selectedFiles);
+};
+
+
+// ==========================================
+// 🗑️ حذف صورة من الصور المختارة
+// ==========================================
+
+const removeImage = (index) => {
+  setImages(prev =>
+    prev.filter((_, i) => i !== index)
+  );
+
+  // مسح اختيار الملفات من input
+  if (imageInputRef.current) {
+    imageInputRef.current.value = '';
+  }
+};
+
   // ==========================================
   // إرسال الاستفسار
   // ==========================================
@@ -153,22 +214,26 @@ function SymptomsPage() {
 
       setSending(true);
 
-      const response = await fetch(
-        `${API_URL}/api/consultations`,
-        {
-          method: 'POST',
+     // تجهيز بيانات الاستشارة والصور
+const formData = new FormData();
 
-          headers: {
-            'Content-Type': 'application/json'
-          },
+formData.append('name', name.trim());
+formData.append('phone', phone.trim());
+formData.append('question', question.trim());
 
-          body: JSON.stringify({
-            name: name.trim(),
-            phone: phone.trim(),
-            question: question.trim()
-          })
-        }
-      );
+// إضافة الصور المختارة بحد أقصى 3 صور
+images.forEach((file) => {
+  formData.append('images', file);
+});
+
+// إرسال الاستشارة والصور إلى Backend
+const response = await fetch(
+  `${API_URL}/api/consultations`,
+  {
+    method: 'POST',
+    body: formData
+  }
+);
 
       const data = await response.json();
 
@@ -187,9 +252,13 @@ function SymptomsPage() {
         '✅ تم استلام استفسارك بنجاح. سيتم مراجعته من فريق منصة دكتور.'
       );
 
-      setName('');
-      setPhone('');
-      setQuestion('');
+    setName('');
+setPhone('');
+setQuestion('');
+setImages([]);
+if (imageInputRef.current) {
+  imageInputRef.current.value = '';
+}
 
     } catch (error) {
 
@@ -594,7 +663,164 @@ return (
             }}
           />
 
+         <div style={{ marginBottom: '20px' }}>
+  <label style={{
+    display: 'block',
+    fontWeight: 'bold',
+    marginBottom: '10px'
+  }}>
+    🩻 صور الأشعة أو التقارير (اختياري — حتى 3 صور)
+  </label>
 
+  <input
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+    multiple
+    onChange={(e) => {
+      const selected = Array.from(e.target.files || []);
+
+      if (selected.length > 3) {
+        setSendMessage('يمكن إرفاق 3 صور كحد أقصى');
+        e.target.value = '';
+        return;
+      }
+
+      if (selected.some(file => file.size > 5 * 1024 * 1024)) {
+        setSendMessage('حجم كل صورة يجب ألا يتجاوز 5 ميجابايت');
+        e.target.value = '';
+        return;
+      }
+
+      setSendMessage('');
+      setImages(selected);
+    }}
+    style={{ width: '100%' }}
+  />
+
+  {images.length > 0 && (
+    <p style={{ color: '#0284c7', fontSize: '14px' }}>
+      ✅ تم اختيار {images.length} صورة
+    </p>
+  )}
+
+  <p style={{ fontSize: '12px', color: '#64748b' }}>
+    يُرجى تجنب إرفاق بيانات شخصية غير ضرورية.
+    تُرسل الصور للمراجعة الطبية ولا تُنشر مع الاستشارة العامة.
+  </p>
+</div>
+{/* ==========================================
+    🩻 إرفاق صور الأشعة
+========================================== */}
+
+<div style={{
+  background: '#f0f9ff',
+  border: '1px dashed #0284c7',
+  padding: '20px',
+  borderRadius: '15px',
+  marginBottom: '20px'
+}}>
+
+  <label style={{
+    display: 'block',
+    fontSize: '16px',
+    fontWeight: '800',
+    color: '#0369a1',
+    marginBottom: '10px'
+  }}>
+    🩻 إرفاق صور الأشعة أو التقارير الطبية
+  </label>
+
+  <p style={{
+    color: '#64748b',
+    fontSize: '13px',
+    marginBottom: '15px'
+  }}>
+    يمكنك إرفاق حتى 3 صور (اختياري).
+    الحد الأقصى 5 ميجابايت لكل صورة.
+  </p>
+
+  <input
+    ref={imageInputRef}
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+    multiple
+    onChange={handleImagesChange}
+    disabled={sending}
+    style={{
+      width: '100%',
+      maxWidth: '100%',
+      marginBottom: '15px'
+    }}
+  />
+
+  {images.length > 0 && (
+
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
+      gap: '12px'
+    }}>
+
+      {images.map((file, index) => (
+
+        <div key={`${file.name}-${index}`} style={{
+          background: '#fff',
+          borderRadius: '12px',
+          border: '1px solid #cbd5e1',
+          padding: '12px',
+          textAlign: 'center'
+        }}>
+
+          <div style={{
+            fontSize: '30px',
+            marginBottom: '8px'
+          }}>
+            🩻
+          </div>
+
+          <div style={{
+            fontSize: '12px',
+            color: '#334155',
+            overflowWrap: 'anywhere',
+            marginBottom: '8px'
+          }}>
+            {file.name}
+          </div>
+
+          <button
+            type="button"
+            disabled={sending}
+            onClick={() => removeImage(index)}
+            style={{
+              background: '#fee2e2',
+              color: '#b91c1c',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '7px 12px',
+              cursor: 'pointer'
+            }}
+          >
+            ❌ حذف
+          </button>
+
+        </div>
+
+      ))}
+
+    </div>
+
+  )}
+
+  <p style={{
+    fontSize: '12px',
+    color: '#475569',
+    marginTop: '12px',
+    marginBottom: 0
+  }}>
+    الصور مخصصة للمراجعة الطبية، ولا تُنشر ضمن الأسئلة العامة.
+  </p>
+
+</div>
           {/* رسالة النجاح / الخطأ */}
 
           {sendMessage && (

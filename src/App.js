@@ -1239,7 +1239,48 @@ const getConsultationDraft = (consultation) => {
 
               </div>
 
+{/* ==========================================
+    🩻 صور الأشعة المرفقة
+========================================== */}
 
+{Array.isArray(c.image_urls) &&
+  c.image_urls.length > 0 && (
+
+  <div
+    style={{
+      background: '#f0f9ff',
+      border: '1px solid #bae6fd',
+      borderRadius: '15px',
+      padding: '18px',
+      marginBottom: '20px'
+    }}
+  >
+
+    <h4
+      style={{
+        margin: '0 0 12px',
+        color: '#0369a1',
+        fontSize: '16px'
+      }}
+    >
+      🩻 صور الأشعة المرفقة ({c.image_urls.length})
+    </h4>
+
+    <p
+      style={{
+        fontSize: '13px',
+        color: '#475569',
+        margin: 0,
+        lineHeight: '1.8'
+      }}
+    >
+      أرفق المريض {c.image_urls.length} صورة أو تقرير طبي.
+      الصور محفوظة بصورة خاصة على Cloudinary.
+    </p>
+
+  </div>
+
+)}
               {/* ==================================
                   الرد
               ================================== */}
