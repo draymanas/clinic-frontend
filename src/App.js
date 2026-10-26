@@ -1275,56 +1275,72 @@ const getConsultationDraft = (consultation) => {
       }}
     >
       أرفق المريض {c.image_urls.length} صورة أو تقرير طبي.
-      الصور محفوظة بصورة خاصة على Cloudinary.
+      اضغط على الصورة لعرضها بالحجم الكامل.
     </p>
-<div style={{
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-  gap: '12px',
-  marginTop: '15px'
-}}>
-  {(c.image_display_urls || []).map((url, index) => (
 
-    <a
-      key={index}
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
+    <div
       style={{
-        display: 'block',
-        textDecoration: 'none'
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+        gap: '12px',
+        marginTop: '15px'
       }}
     >
-      <img
-        src={url}
-        alt={`صورة الأشعة رقم ${index + 1}`}
-        loading="lazy"
-        style={{
-          width: '100%',
-          height: '150px',
-          objectFit: 'contain',
-          borderRadius: '12px',
-          border: '1px solid #cbd5e1',
-          background: '#fff'
-        }}
-      />
 
-      <div style={{
-        textAlign: 'center',
-        marginTop: '6px',
-        color: '#0284c7',
-        fontWeight: '700',
-        fontSize: '13px'
-      }}>
-        🔍 فتح الصورة {index + 1}
-      </div>
-    </a>
+      {c.image_urls.map((publicId, index) => {
 
-  ))}
-</div>
+        const imageUrl =
+          `https://res.cloudinary.com/enxkc3ah/image/upload/${publicId}`;
+
+        return (
+          <a
+            key={index}
+            href={imageUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'block',
+              textDecoration: 'none'
+            }}
+          >
+
+            <img
+              src={imageUrl}
+              alt={`صورة الأشعة رقم ${index + 1}`}
+              loading="lazy"
+              style={{
+                width: '100%',
+                height: '150px',
+                objectFit: 'contain',
+                borderRadius: '12px',
+                border: '1px solid #cbd5e1',
+                background: '#fff'
+              }}
+            />
+
+            <div
+              style={{
+                textAlign: 'center',
+                marginTop: '6px',
+                color: '#0284c7',
+                fontWeight: '700',
+                fontSize: '13px'
+              }}
+            >
+              🔍 فتح الصورة {index + 1}
+            </div>
+
+          </a>
+        );
+
+      })}
+
+    </div>
+
   </div>
 
 )}
+
               {/* ==================================
                   الرد
               ================================== */}
