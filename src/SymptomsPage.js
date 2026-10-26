@@ -663,51 +663,7 @@ return (
             }}
           />
 
-         <div style={{ marginBottom: '20px' }}>
-  <label style={{
-    display: 'block',
-    fontWeight: 'bold',
-    marginBottom: '10px'
-  }}>
-    🩻 صور الأشعة أو التقارير (اختياري — حتى 3 صور)
-  </label>
-
-  <input
-    type="file"
-    accept="image/jpeg,image/png,image/webp"
-    multiple
-    onChange={(e) => {
-      const selected = Array.from(e.target.files || []);
-
-      if (selected.length > 3) {
-        setSendMessage('يمكن إرفاق 3 صور كحد أقصى');
-        e.target.value = '';
-        return;
-      }
-
-      if (selected.some(file => file.size > 5 * 1024 * 1024)) {
-        setSendMessage('حجم كل صورة يجب ألا يتجاوز 5 ميجابايت');
-        e.target.value = '';
-        return;
-      }
-
-      setSendMessage('');
-      setImages(selected);
-    }}
-    style={{ width: '100%' }}
-  />
-
-  {images.length > 0 && (
-    <p style={{ color: '#0284c7', fontSize: '14px' }}>
-      ✅ تم اختيار {images.length} صورة
-    </p>
-  )}
-
-  <p style={{ fontSize: '12px', color: '#64748b' }}>
-    يُرجى تجنب إرفاق بيانات شخصية غير ضرورية.
-    تُرسل الصور للمراجعة الطبية ولا تُنشر مع الاستشارة العامة.
-  </p>
-</div>
+ 
 {/* ==========================================
     🩻 إرفاق صور الأشعة
 ========================================== */}
