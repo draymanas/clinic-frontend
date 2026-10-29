@@ -2001,6 +2001,54 @@ function AccountingPage({ doctors = [], appointments = [] }) {
   });
 
   // ==========================================
+// 🔎 اختيار الطبيب بالاسم أو الكود عند Enter
+// ==========================================
+
+const handleDoctorSearch = () => {
+
+  const searchValue = doctorSearch.trim().toLowerCase();
+
+  if (!searchValue) return;
+
+  // أولًا: البحث عن تطابق كامل مع كود الطبيب
+  const doctorByCode = doctorsList.find(
+    d => String(d.id) === searchValue
+  );
+
+  if (doctorByCode) {
+    setSelectedDocId(String(doctorByCode.id));
+    setDiscount(0);
+    return;
+  }
+
+  // ثانيًا: البحث عن تطابق كامل مع الاسم
+  const doctorByName = doctorsList.find(
+    d => String(d.name || '').trim().toLowerCase() === searchValue
+  );
+
+  if (doctorByName) {
+    setSelectedDocId(String(doctorByName.id));
+    setDiscount(0);
+    return;
+  }
+
+  // ثالثًا: لو فيه نتيجة واحدة فقط
+  if (filteredDoctors.length === 1) {
+    setSelectedDocId(String(filteredDoctors[0].id));
+    setDiscount(0);
+    return;
+  }
+
+  if (filteredDoctors.length > 1) {
+    alert(
+      `تم العثور على ${filteredDoctors.length} طبيب مطابق. اختر الطبيب المطلوب من القائمة.`
+    );
+  } else {
+    alert('لم يتم العثور على طبيب بهذا الاسم أو الكود.');
+  }
+};
+
+  // ==========================================
   // حجوزات الطبيب خلال الشهر والسنة
   // ==========================================
 
@@ -2247,13 +2295,47 @@ function AccountingPage({ doctors = [], appointments = [] }) {
             🔎 البحث باسم الطبيب أو كوده
           </label>
 
-          <input
-            type="text"
-            value={doctorSearch}
-            onChange={e => setDoctorSearch(e.target.value)}
-            placeholder="اكتب اسم الطبيب أو ID"
-            style={styles.input}
-          />
+          <div style={{
+  display: 'flex',
+  gap: '8px'
+}}>
+
+  <input
+    type="text"
+    value={doctorSearch}
+    onChange={e => setDoctorSearch(e.target.value)}
+    onKeyDown={e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleDoctorSearch();
+      }
+    }}
+    placeholder="اكتب اسم الطبيب أو كوده"
+    style={{
+      ...styles.input,
+      flex: 1,
+      minWidth: 0
+    }}
+  />
+
+  <button
+    type="button"
+    onClick={handleDoctorSearch}
+    style={{
+      padding: '10px 16px',
+      background: '#0284c7',
+      color: '#fff',
+      border: 'none',
+      borderRadius: '10px',
+      cursor: 'pointer',
+      fontWeight: '800',
+      whiteSpace: 'nowrap'
+    }}
+  >
+    🔍 بحث
+  </button>
+
+</div>
         </div>
 
         <div>
