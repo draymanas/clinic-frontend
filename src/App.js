@@ -1837,101 +1837,884 @@ const getConsultationDraft = (consultation) => {
     </div>
   );
 }
+// =====================================================
+// 💰 نظام الحسابات والفواتير الشهرية - منصة دكتور
+// =====================================================
 
-// ==========================================
-// 🌟 صفحة الحسابات المدمجة
-// ==========================================
-function AccountingPage({ doctors, appointments }) {
-  const [selectedDocId, setSelectedDocId] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+function AccountingPage({ doctors = [], appointments = [] }) {
 
-  // فلترة الحجوزات المكتملة
-  const doctorAppointments = (appointments || []).filter(app => {
-    const currentDoc = (doctors || []).find(d => d.id === parseInt(selectedDocId));
-    const isSameDoctor = Number(app.doctor_id) === Number(currentDoc?.id);
-    const appDate = new Date(app.booking_date || app.appointment_date);
-    const isSameMonth = (appDate.getMonth() + 1) === parseInt(selectedMonth);
-    const isCompleted = app.status === 'completed';
-    return isSameDoctor && isSameMonth && isCompleted;
+  const today = new Date();
+
+  const [selectedDocId, setSelectedDocId] = React.useState('');
+  const [doctorSearch, setDoctorSearch] = React.useState('');
+  const [selectedMonth, setSelectedMonth] = React.useState(
+    today.getMonth() + 1
+  );
+  const [selectedYear, setSelectedYear] = React.useState(
+    today.getFullYear()
+  );
+  const [discount, setDiscount] = React.useState(0);
+  const [downloading, setDownloading] = React.useState(false);
+
+  const invoiceRef = React.useRef(null);
+
+  const months = [
+    'يناير', 'فبراير', 'مارس', 'أبريل',
+    'مايو', 'يونيو', 'يوليو', 'أغسطس',
+    'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+  ];
+
+  const COMMISSION_RATE = 0.20;
+
+  const styles = {
+    input: {
+      width: '100%',
+      padding: '12px',
+      border: '1px solid #cbd5e1',
+      borderRadius: '10px',
+      background: '#fff',
+      boxSizing: 'border-box',
+      fontSize: '14px',
+      fontFamily: 'inherit'
+    },
+    card: {
+      background: '#fff',
+      padding: '20px',
+      borderRadius: '14px',
+      border: '1px solid #e2e8f0'
+    },
+    th: {
+      padding: '11px',
+      textAlign: 'right',
+      background: '#e2e8f0',
+      color: '#0f172a',
+      border: '1px solid #cbd5e1',
+      fontSize: '12px'
+    },
+    td: {
+      padding: '10px',
+      border: '1px solid #e2e8f0',
+      fontSize: '12px',
+      color: '#334155'
+    }
+  };
+
+  // ==========================================
+  // دوال مساعدة
+  // ==========================================
+
+  const money = value => {
+    return Number(value || 0).toLocaleString('ar-EG', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  };
+
+  const getAppointmentDate = app => {
+    const raw = app.booking_date || app.appointment_date;
+
+    if (!raw) return null;
+
+    // استخراج التاريخ كما هو بدون تحويل منطقة زمنية
+    // في حالة YYYY-MM-DD
+    if (typeof raw === 'string') {
+      const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})/);
+
+      if (match) {
+        const year = Number(match[1]);
+        const month = Number(match[2]);
+        const day = Number(match[3]);
+
+        const date = new Date(year, month - 1, day);
+
+        if (
+          date.getFullYear() === year &&
+          date.getMonth() + 1 === month &&
+          date.getDate() === day
+        ) {
+          return date;
+        }
+      }
+    }
+
+    const parsed = new Date(raw);
+
+    return Number.isNaN(parsed.getTime())
+      ? null
+      : parsed;
+  };
+
+  const getStatus = status => {
+    const normalized = String(status || '').toLowerCase().trim();
+
+    if (['completed', 'done', 'تم', 'attended'].includes(normalized)) {
+      return {
+        label: 'تم',
+        color: '#15803d',
+        background: '#dcfce7',
+        completed: true
+      };
+    }
+
+    if (['absent', 'no_show', 'no-show', 'غائب'].includes(normalized)) {
+      return {
+        label: 'غائب',
+        color: '#b91c1c',
+        background: '#fee2e2',
+        completed: false
+      };
+    }
+
+    if (['cancelled', 'canceled', 'ملغي'].includes(normalized)) {
+      return {
+        label: 'ملغي',
+        color: '#64748b',
+        background: '#f1f5f9',
+        completed: false
+      };
+    }
+
+    return {
+      label: 'معلق',
+      color: '#a16207',
+      background: '#fef3c7',
+      completed: false
+    };
+  };
+
+  const doctorsList = Array.isArray(doctors) ? doctors : [];
+  const appointmentsList = Array.isArray(appointments) ? appointments : [];
+
+  const currentDoc = doctorsList.find(
+    d => String(d.id) === String(selectedDocId)
+  );
+
+  // البحث بالاسم أو الكود أو المنطقة
+  const filteredDoctors = doctorsList.filter(doc => {
+    const text = [
+      doc.name,
+      doc.id,
+      doc.area
+    ].filter(Boolean).join(' ').toLowerCase();
+
+    return text.includes(doctorSearch.trim().toLowerCase());
   });
 
-  const currentDoc = (doctors || []).find(d => Number(d.id) === Number(selectedDocId));
-  const totalAmount = doctorAppointments.length * (currentDoc?.fee || 0);
-  const platformFee = totalAmount * 0.20; // نسبة الـ 20%
+  // ==========================================
+  // حجوزات الطبيب خلال الشهر والسنة
+  // ==========================================
 
-  const finalMessage = `
-🧾 فاتورة مستحقات المنصة - شهر ${selectedMonth}
-👨‍⚕️ دكتور: ${currentDoc?.name || 'غير محدد'}
-📊 عدد الحجوزات: ${doctorAppointments.length}
-💰 إجمالي الكشوفات: ${totalAmount} ج.م
-🏦 نسبة المنصة (20%): ${platformFee} ج.م
+  const doctorAppointments = appointmentsList
+    .filter(app => {
 
-✅ طرق الدفع المتاحة:
-📱 فودافون كاش: 01032368436
-💸 إنستاباي: draymanas@instapay
-برجاء إرسال صورة التحويل بعد الدفع.
-  `;
+      if (!currentDoc) return false;
+
+      if (String(app.doctor_id) !== String(currentDoc.id)) {
+        return false;
+      }
+
+      const date = getAppointmentDate(app);
+
+      if (!date) return false;
+
+      return (
+        date.getMonth() + 1 === Number(selectedMonth) &&
+        date.getFullYear() === Number(selectedYear)
+      );
+
+    })
+    .sort((a, b) => {
+      const dateA = getAppointmentDate(a);
+      const dateB = getAppointmentDate(b);
+
+      return dateA - dateB;
+    });
+
+  const completedAppointments = doctorAppointments.filter(
+    app => getStatus(app.status).completed
+  );
+
+  const pendingCount = doctorAppointments.filter(
+    app => getStatus(app.status).label === 'معلق'
+  ).length;
+
+  const absentCount = doctorAppointments.filter(
+    app => getStatus(app.status).label === 'غائب'
+  ).length;
+
+  // ==========================================
+  // الحسابات المالية
+  // ==========================================
+
+  const consultationFee = Math.max(
+    0,
+    Number(currentDoc?.fee) || 0
+  );
+
+  // نستخدم سعر الكشف الحالي المسجل للطبيب
+  const totalAmount =
+    completedAppointments.length * consultationFee;
+
+  const platformFee = totalAmount * COMMISSION_RATE;
+
+  // خصم الإدارة على عمولة المنصة فقط
+  const discountRate = Math.min(
+    100,
+    Math.max(0, Number(discount) || 0)
+  );
+
+  const discountAmount =
+    platformFee * discountRate / 100;
+
+  const finalAmount = Math.max(
+    0,
+    platformFee - discountAmount
+  );
+
+  // ==========================================
+  // بيانات الفاتورة
+  // ==========================================
+
+  const monthName = months[Number(selectedMonth) - 1];
+
+  const invoiceNumber = currentDoc
+    ? `DOC-${selectedYear}${String(selectedMonth).padStart(2, '0')}-${currentDoc.id}`
+    : '';
+
+  const doctorPhone = String(
+    currentDoc?.clinic_whatsapp ||
+    currentDoc?.clinic_mobile ||
+    currentDoc?.personal_mobile ||
+    currentDoc?.mobile ||
+    ''
+  ).replace(/\D/g, '');
+
+  // تهيئة رقم الهاتف لواتساب مصر
+  const whatsappPhone = (() => {
+    if (!doctorPhone) return '';
+
+    if (doctorPhone.startsWith('20')) {
+      return doctorPhone;
+    }
+
+    if (doctorPhone.startsWith('0')) {
+      return `20${doctorPhone.slice(1)}`;
+    }
+
+    return doctorPhone;
+  })();
+
+  const finalMessage = currentDoc ? `
+🧾 فاتورة مستحقات منصة دكتور
+
+رقم الفاتورة: ${invoiceNumber}
+الطبيب: ${currentDoc.name}
+كود الطبيب: ${currentDoc.id}
+الفترة: ${monthName} ${selectedYear}
+
+إجمالي الحجوزات: ${doctorAppointments.length}
+الحجوزات المكتملة: ${completedAppointments.length}
+الحجوزات المعلقة: ${pendingCount}
+الحجوزات الغائبة: ${absentCount}
+
+إجمالي الكشوفات المكتملة: ${money(totalAmount)} ج.م
+مستحقات المنصة 20%: ${money(platformFee)} ج.م
+خصم الإدارة ${discountRate}%: ${money(discountAmount)} ج.م
+
+✅ صافي المستحق للمنصة: ${money(finalAmount)} ج.م
+
+طرق السداد:
+فودافون كاش: 01032368436
+إنستاباي: draymanas@instapay
+
+برجاء إرسال صورة إيصال التحويل بعد السداد.
+` : '';
+
+  // ==========================================
+  // تنزيل الفاتورة PDF
+  // ==========================================
+
+  const downloadInvoicePDF = async () => {
+    if (!invoiceRef.current || !currentDoc) return;
+
+    try {
+      setDownloading(true);
+
+      const html2pdfModule = await import('html2pdf.js');
+
+      const html2pdf =
+        html2pdfModule.default || html2pdfModule;
+
+      // انتظار تحميل الخطوط
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
+
+      await html2pdf()
+        .set({
+          margin: [8, 7, 8, 7],
+          filename: `${invoiceNumber}.pdf`,
+          image: {
+            type: 'jpeg',
+            quality: 0.98
+          },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            scrollY: 0
+          },
+          jsPDF: {
+            unit: 'mm',
+            format: 'a4',
+            orientation: 'portrait'
+          },
+          pagebreak: {
+            mode: ['css', 'legacy'],
+            avoid: ['tr', '.invoice-summary']
+          }
+        })
+        .from(invoiceRef.current)
+        .save();
+
+    } catch (error) {
+      console.error('خطأ إنشاء PDF:', error);
+      alert('تعذر إنشاء ملف PDF. حاول مرة أخرى.');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  // ==========================================
+  // إرسال رسالة واتساب
+  // ==========================================
+
+  const sendWhatsApp = () => {
+
+    if (!currentDoc) return;
+
+    if (!whatsappPhone) {
+      alert('لا يوجد رقم واتساب مسجل لهذا الطبيب.');
+      return;
+    }
+
+    window.open(
+      `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(finalMessage)}`,
+      '_blank',
+      'noopener,noreferrer'
+    );
+  };
+
+  // ==========================================
+  // الواجهة
+  // ==========================================
 
   return (
-    <div>
-      <h2 style={{ margin: '0 0 25px 0', color: '#0f172a', fontSize: '24px', fontWeight: '800' }}>💰 نظام الحسابات والتحصيل</h2>
+    <div
+      dir="rtl"
+      style={{
+        padding: '10px',
+        color: '#0f172a',
+        fontFamily: 'inherit'
+      }}
+    >
 
-      <div style={{ display: 'flex', gap: '15px', marginBottom: '25px', flexWrap: 'wrap' }}>
-        <select
-          onChange={e => setSelectedDocId(e.target.value)}
-          value={selectedDocId}
-          style={{ padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '15px', background: '#fff', minWidth: '240px' }}
-        >
-          <option value="">-- اختر الدكتور والفرع --</option>
-          {(doctors || []).map(d => (
-            <option key={d.id} value={d.id}>
-              {d.name} - ({d.area || 'فرع عام'})
-            </option>
-          ))}
-        </select>
+      <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '8px' }}>
+        💰 نظام الحسابات والفواتير الشهرية
+      </h2>
 
-        <select
-          onChange={e => setSelectedMonth(e.target.value)}
-          value={selectedMonth}
-          style={{ padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '15px', background: '#fff' }}
-        >
-          {Array.from({ length: 12 }, (_, i) => (
-            <option key={i + 1} value={i + 1}>شهر {i + 1}</option>
-          ))}
-        </select>
+      <p style={{ color: '#64748b', marginBottom: '22px' }}>
+        اختيار الطبيب والفترة المحاسبية وإصدار فاتورة مستحقات المنصة.
+      </p>
+
+      {/* ====================================
+          فلاتر البحث
+      ==================================== */}
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '14px',
+        background: '#f8fafc',
+        border: '1px solid #e2e8f0',
+        borderRadius: '16px',
+        padding: '18px',
+        marginBottom: '22px'
+      }}>
+
+        <div>
+          <label style={{ display: 'block', marginBottom: '7px', fontWeight: '700' }}>
+            🔎 البحث باسم الطبيب أو كوده
+          </label>
+
+          <input
+            type="text"
+            value={doctorSearch}
+            onChange={e => setDoctorSearch(e.target.value)}
+            placeholder="اكتب اسم الطبيب أو ID"
+            style={styles.input}
+          />
+        </div>
+
+        <div>
+          <label style={{ display: 'block', marginBottom: '7px', fontWeight: '700' }}>
+            👨‍⚕️ اختر الطبيب / الفرع
+          </label>
+
+          <select
+            value={selectedDocId}
+            onChange={e => {
+              setSelectedDocId(e.target.value);
+              setDiscount(0);
+            }}
+            style={styles.input}
+          >
+            <option value="">-- اختر الطبيب --</option>
+
+            {currentDoc &&
+              !filteredDoctors.some(d => String(d.id) === String(currentDoc.id)) && (
+              <option value={currentDoc.id}>
+                {currentDoc.name} — كود {currentDoc.id}
+              </option>
+            )}
+
+            {filteredDoctors.map(d => (
+              <option key={d.id} value={d.id}>
+                {d.name} — كود {d.id} — {d.area || 'فرع عام'}
+              </option>
+            ))}
+
+          </select>
+        </div>
+
+        <div>
+          <label style={{ display: 'block', marginBottom: '7px', fontWeight: '700' }}>
+            📅 الشهر
+          </label>
+
+          <select
+            value={selectedMonth}
+            onChange={e => setSelectedMonth(Number(e.target.value))}
+            style={styles.input}
+          >
+            {months.map((month, index) => (
+              <option key={month} value={index + 1}>
+                {month}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label style={{ display: 'block', marginBottom: '7px', fontWeight: '700' }}>
+            📆 السنة
+          </label>
+
+          <input
+            type="number"
+            min="2024"
+            max={today.getFullYear() + 1}
+            value={selectedYear}
+            onChange={e => setSelectedYear(Number(e.target.value))}
+            style={styles.input}
+          />
+        </div>
+
       </div>
 
-      {selectedDocId && (
-        <div style={{ background: '#fff', padding: '25px', borderRadius: '16px', boxShadow: '0 4px 15px rgba(0,0,0,0.04)', maxWidth: '600px' }}>
-          <h3 style={{ borderBottom: '2px solid #f1f5f9', paddingBottom: '12px', margin: '0 0 16px 0', color: '#1e293b' }}>تفاصيل الفاتورة</h3>
-          <p style={{ fontSize: '15px', margin: '8px 0' }}>عدد الحجوزات المكتملة: <b>{doctorAppointments.length}</b></p>
-          <p style={{ fontSize: '15px', margin: '8px 0' }}>إجمالي مبلغ الكشوفات: <b>{totalAmount} ج.م</b></p>
-          <p style={{ color: '#ef4444', fontSize: '18px', fontWeight: 'bold', margin: '12px 0' }}>مستحقات المنصة (20%): <b>{platformFee} ج.م</b></p>
-
-          <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', marginTop: '20px', border: '1px solid #e2e8f0' }}>
-            <pre style={{ whiteSpace: 'pre-line', fontSize: '13.5px', fontFamily: 'inherit', margin: 0, color: '#334155' }}>{finalMessage}</pre>
-          </div>
-
-          <button
-            onClick={() => window.open(`https://wa.me/2${currentDoc?.personal_mobile || currentDoc?.mobile}?text=${encodeURIComponent(finalMessage)}`, '_blank')}
-            style={{
-              width: '100%',
-              padding: '14px',
-              background: '#16a34a',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '10px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              fontSize: '16px',
-              marginTop: '18px',
-              boxShadow: '0 4px 12px rgba(22,163,74,0.3)'
-            }}
-          >
-            💬 إرسال الفاتورة للدكتور (واتساب)
-          </button>
+      {!selectedDocId && (
+        <div style={{
+          background: '#fff',
+          border: '1px dashed #cbd5e1',
+          padding: '35px',
+          borderRadius: '14px',
+          textAlign: 'center',
+          color: '#64748b'
+        }}>
+          👨‍⚕️ اختر الطبيب أولًا لعرض سجل الحجوزات وإصدار الفاتورة.
         </div>
       )}
+
+      {currentDoc && (
+        <>
+
+          {/* ====================================
+              الخصم الإداري
+          ==================================== */}
+
+          <div style={{
+            ...styles.card,
+            maxWidth: '420px',
+            marginBottom: '20px'
+          }}>
+            <label style={{
+              display: 'block',
+              fontWeight: '800',
+              marginBottom: '8px'
+            }}>
+              🎁 نسبة خصم الإدارة من عمولة المنصة
+            </label>
+
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <input
+                type="number"
+                value={discount}
+                min="0"
+                max="100"
+                step="0.5"
+                onChange={e => setDiscount(e.target.value)}
+                style={{ ...styles.input, maxWidth: '170px' }}
+              />
+
+              <strong>%</strong>
+            </div>
+
+            <p style={{
+              fontSize: '12px',
+              color: '#64748b',
+              marginBottom: 0
+            }}>
+              يُطبق الخصم على مستحقات المنصة وليس على قيمة الكشف.
+              الحد الأقصى 100%.
+            </p>
+          </div>
+
+          {/* ====================================
+              الفاتورة القابلة للتصدير
+          ==================================== */}
+
+          <div
+            ref={invoiceRef}
+            className="doctor-accounting-invoice"
+            style={{
+              width: '100%',
+              boxSizing: 'border-box',
+              background: '#ffffff',
+              border: '1px solid #cbd5e1',
+              borderRadius: '15px',
+              padding: '22px',
+              color: '#0f172a',
+              direction: 'rtl',
+              fontFamily: 'Tahoma, Arial, sans-serif'
+            }}
+          >
+
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              borderBottom: '3px solid #0284c7',
+              paddingBottom: '14px',
+              marginBottom: '18px',
+              flexWrap: 'wrap',
+              gap: '12px'
+            }}>
+
+              <div>
+                <h2 style={{
+                  color: '#0369a1',
+                  margin: '0 0 5px',
+                  fontSize: '22px'
+                }}>
+                  منصة دكتور | DOCTOR
+                </h2>
+
+                <strong style={{ color: '#334155' }}>
+                  فاتورة مستحقات المنصة
+                </strong>
+              </div>
+
+              <div style={{ fontSize: '12px', color: '#475569' }}>
+                <div><b>رقم الفاتورة:</b> {invoiceNumber}</div>
+                <div><b>الفترة:</b> {monthName} {selectedYear}</div>
+                <div><b>تاريخ الإصدار:</b> {today.toLocaleDateString('ar-EG')}</div>
+              </div>
+
+            </div>
+
+            <div style={{
+              background: '#f0f9ff',
+              borderRadius: '10px',
+              padding: '13px',
+              marginBottom: '18px',
+              lineHeight: '1.9',
+              fontSize: '13px'
+            }}>
+              <div><b>الطبيب:</b> {currentDoc.name}</div>
+              <div><b>كود الطبيب:</b> {currentDoc.id}</div>
+              <div><b>الفرع:</b> {currentDoc.area || 'غير محدد'}</div>
+              <div><b>سعر الكشف المسجل:</b> {money(consultationFee)} ج.م</div>
+            </div>
+
+            {/* إحصائيات */}
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+              gap: '7px',
+              marginBottom: '18px'
+            }}>
+
+              {[
+                ['إجمالي الحجوزات', doctorAppointments.length],
+                ['تم', completedAppointments.length],
+                ['معلق', pendingCount],
+                ['غائب', absentCount]
+              ].map(([label, number]) => (
+
+                <div
+                  key={label}
+                  style={{
+                    padding: '12px 5px',
+                    borderRadius: '9px',
+                    background: '#f1f5f9',
+                    textAlign: 'center'
+                  }}
+                >
+                  <div style={{ fontSize: '19px', fontWeight: '800' }}>
+                    {number}
+                  </div>
+                  <div style={{ fontSize: '10px', color: '#64748b' }}>
+                    {label}
+                  </div>
+                </div>
+
+              ))}
+            </div>
+
+            {/* جدول الحجوزات */}
+
+            <h3 style={{
+              fontSize: '16px',
+              color: '#0f172a',
+              marginBottom: '10px'
+            }}>
+              📋 سجل الحجوزات خلال الشهر
+            </h3>
+
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                direction: 'rtl'
+              }}>
+                <thead>
+                  <tr>
+                    <th style={styles.th}>#</th>
+                    <th style={styles.th}>اسم المريض</th>
+                    <th style={styles.th}>تاريخ الحجز</th>
+                    <th style={styles.th}>الحالة</th>
+                    <th style={styles.th}>قيمة الكشف المحتسبة</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  {doctorAppointments.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        style={{ ...styles.td, textAlign: 'center', padding: '25px' }}
+                      >
+                        لا توجد حجوزات لهذا الطبيب خلال الفترة المحددة.
+                      </td>
+                    </tr>
+                  ) : (
+
+                    doctorAppointments.map((app, index) => {
+                      const status = getStatus(app.status);
+                      const date = getAppointmentDate(app);
+
+                      const patientName =
+                        app.patient_name ||
+                        app.name ||
+                        'غير مسجل';
+
+                      return (
+                        <tr key={app.id || index}>
+                          <td style={styles.td}>
+                            {index + 1}
+                          </td>
+
+                          <td style={styles.td}>
+                            {patientName}
+                          </td>
+
+                          <td style={styles.td}>
+                            {date
+                              ? date.toLocaleDateString('ar-EG')
+                              : '—'}
+                          </td>
+
+                          <td style={styles.td}>
+                            <span style={{
+                              display: 'inline-block',
+                              padding: '4px 8px',
+                              borderRadius: '7px',
+                              background: status.background,
+                              color: status.color,
+                              fontWeight: '800',
+                              fontSize: '11px'
+                            }}>
+                              {status.label}
+                            </span>
+                          </td>
+
+                          <td style={styles.td}>
+                            {status.completed
+                              ? `${money(consultationFee)} ج.م`
+                              : 'غير محتسب'}
+                          </td>
+                        </tr>
+                      );
+                    })
+
+                  )}
+
+                </tbody>
+              </table>
+            </div>
+
+            {/* الملخص المالي */}
+
+            <div
+              className="invoice-summary"
+              style={{
+                marginTop: '22px',
+                padding: '18px',
+                background: '#f8fafc',
+                border: '1px solid #cbd5e1',
+                borderRadius: '12px',
+                maxWidth: '440px',
+                marginRight: 'auto',
+                lineHeight: '2'
+              }}
+            >
+
+              <h3 style={{
+                margin: '0 0 10px',
+                color: '#0369a1'
+              }}>
+                💰 ملخص الفاتورة
+              </h3>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
+                <span>إجمالي الكشوفات المكتملة</span>
+                <b>{money(totalAmount)} ج.م</b>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
+                <span>عمولة المنصة (20%)</span>
+                <b>{money(platformFee)} ج.م</b>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
+                <span>خصم الإدارة ({discountRate}%)</span>
+                <b style={{ color: '#dc2626' }}>
+                  - {money(discountAmount)} ج.م
+                </b>
+              </div>
+
+              <div style={{
+                borderTop: '2px solid #0284c7',
+                marginTop: '12px',
+                paddingTop: '12px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: '12px',
+                color: '#0369a1',
+                fontWeight: '800',
+                fontSize: '17px'
+              }}>
+                <span>صافي مستحقات المنصة</span>
+                <span>{money(finalAmount)} ج.م</span>
+              </div>
+
+            </div>
+
+            <div style={{
+              marginTop: '20px',
+              borderTop: '1px solid #e2e8f0',
+              paddingTop: '12px',
+              color: '#475569',
+              fontSize: '12px',
+              lineHeight: '1.9'
+            }}>
+              <b>طرق السداد:</b>
+              <div>فودافون كاش: 01032368436</div>
+              <div>إنستاباي: draymanas@instapay</div>
+
+              <div style={{ marginTop: '9px' }}>
+                ملاحظة: تُحتسب عمولة المنصة على الحجوزات المكتملة فقط،
+                ولا تدخل الحجوزات المعلقة أو الغائبة أو الملغاة في المبلغ المستحق.
+              </div>
+            </div>
+
+          </div>
+
+          {/* ====================================
+              أزرار الفاتورة
+          ==================================== */}
+
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '12px',
+            marginTop: '18px'
+          }}>
+
+            <button
+              type="button"
+              onClick={downloadInvoicePDF}
+              disabled={downloading}
+              style={{
+                padding: '14px 24px',
+                background: downloading ? '#94a3b8' : '#0284c7',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '10px',
+                cursor: downloading ? 'wait' : 'pointer',
+                fontWeight: '800',
+                fontSize: '15px'
+              }}
+            >
+              {downloading
+                ? '⏳ جاري إعداد PDF...'
+                : '📄 تحميل الفاتورة PDF'}
+            </button>
+
+            <button
+              type="button"
+              onClick={sendWhatsApp}
+              style={{
+                padding: '14px 24px',
+                background: '#16a34a',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '10px',
+                cursor: 'pointer',
+                fontWeight: '800',
+                fontSize: '15px'
+              }}
+            >
+              💬 إرسال ملخص الفاتورة واتساب
+            </button>
+
+          </div>
+
+          <p style={{
+            fontSize: '12px',
+            color: '#64748b',
+            marginTop: '12px'
+          }}>
+            زر واتساب يفتح رسالة جاهزة للطبيب. لإرسال ملف PDF نفسه،
+            حمّله أولًا ثم أرفقه داخل محادثة واتساب.
+          </p>
+
+        </>
+      )}
+
     </div>
   );
 }
