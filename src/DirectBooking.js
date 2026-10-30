@@ -330,13 +330,23 @@ console.log('📦 بيانات الحجز المرسلة إلى السيرفر:'
 });
 
     setSubmitting(true);
-    try {
-      await axios.post(
-        'https://clinic-api-ig3d.onrender.com/book-appointment',
-        bookingData,
-        { timeout: 7000 }
-      );
-    } catch (error) {
+   try {
+  await axios.post(
+    'https://clinic-api-ig3d.onrender.com/book-appointment',
+    bookingData,
+    { timeout: 7000 }
+  );
+
+  // 📊 إرسال حدث الحجز إلى Google Analytics
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', 'booking_completed', {
+      booking_source: 'direct_booking'
+    });
+
+    console.log('✅ تم إرسال حدث الحجز إلى Google Analytics');
+  }
+
+} catch (error) {
       console.warn('استجابة الحجز (تم الاعتماد وعرض التذكرة للمريض):', error);
     } finally {
       setSelectedSlot(fullSlotString);
