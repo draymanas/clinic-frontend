@@ -562,7 +562,7 @@ const getConsultationDraft = (consultation) => {
   }}
 >  
       {/* 🌟 1. العمود الجانبي (Sidebar) على اليمين */}
-      <aside style={{
+      <aside className="admin-sidebar" style={{
         width: '260px',
         backgroundColor: '#1e293b',
         color: '#fff',
@@ -611,7 +611,15 @@ const getConsultationDraft = (consultation) => {
       </aside>
 
       {/* 🌟 2. منطقة العرض الرئيسية (Main Content) */}
-      <main style={{ flex: 1, padding: '30px 35px', overflowY: 'auto' }}>
+     <main
+  className="admin-main"
+  style={{
+    flex: 1,
+    padding: '30px 35px',
+    overflowY: 'visible',
+    minWidth: 0
+  }}
+>
 
 {/* 📰 إدارة المقالات الطبية - كل يوم معلومة */}
 {activeTab === 'articles' && (
