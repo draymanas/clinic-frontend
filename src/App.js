@@ -551,18 +551,10 @@ const getConsultationDraft = (consultation) => {
   ];
 
   return (
-    <div
-  className="admin-layout"
-  style={{
-    display: 'flex',
-    minHeight: '100vh',
-    direction: 'rtl',
-    fontFamily: 'Cairo, sans-serif',
-    background: '#f1f5f9'
-  }}
->  
+    <div style={{ display: 'flex', minHeight: '100vh', direction: 'rtl', fontFamily: 'Cairo, sans-serif', background: '#f1f5f9' }}>
+      
       {/* 🌟 1. العمود الجانبي (Sidebar) على اليمين */}
-      <aside className="admin-sidebar" style={{
+      <aside style={{
         width: '260px',
         backgroundColor: '#1e293b',
         color: '#fff',
@@ -611,15 +603,7 @@ const getConsultationDraft = (consultation) => {
       </aside>
 
       {/* 🌟 2. منطقة العرض الرئيسية (Main Content) */}
-     <main
-  className="admin-main"
-  style={{
-    flex: 1,
-    padding: '30px 35px',
-    overflowY: 'visible',
-    minWidth: 0
-  }}
->
+      <main style={{ flex: 1, padding: '30px 35px', overflowY: 'auto' }}>
 
 {/* 📰 إدارة المقالات الطبية - كل يوم معلومة */}
 {activeTab === 'articles' && (
