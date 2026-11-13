@@ -3725,19 +3725,19 @@ const handleRecordPayment = async () => {
 </div>
 
 {/* سجل جميع فواتير الطبيب */}
-<div className="bg-white rounded-xl shadow p-4 mt-6">
+<div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mt-6">
 
   <div className="flex justify-between items-center mb-4">
-    <h2 className="text-xl font-bold">
-      سجل فواتير الطبيب
+    <h2 className="text-lg font-bold text-gray-800">
+      📋 سجل فواتير الطبيب
     </h2>
 
     <button
       onClick={fetchDoctorInvoiceHistory}
       disabled={!selectedDocId || loadingDoctorHistory}
-      className="bg-blue-600 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+      className="bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 rounded-lg text-sm disabled:opacity-50"
     >
-      تحديث السجل
+      🔄 تحديث السجل
     </button>
   </div>
 
@@ -3746,7 +3746,7 @@ const handleRecordPayment = async () => {
       اختر طبيبًا لعرض جميع فواتيره.
     </p>
   ) : loadingDoctorHistory ? (
-    <p className="text-center py-6">
+    <p className="text-center py-6 text-gray-500">
       جاري تحميل فواتير الطبيب...
     </p>
   ) : doctorHistoryError ? (
@@ -3761,13 +3761,13 @@ const handleRecordPayment = async () => {
     <div className="overflow-x-auto">
       <table className="w-full text-sm text-right border-collapse">
         <thead>
-          <tr className="bg-gray-100">
-            <th className="p-3 border">رقم الفاتورة</th>
-            <th className="p-3 border">الشهر</th>
-            <th className="p-3 border">السنة</th>
-            <th className="p-3 border">قيمة الفاتورة</th>
-            <th className="p-3 border">تاريخ الإصدار</th>
-            <th className="p-3 border">حالة الفاتورة</th>
+          <tr className="bg-slate-200 text-gray-800">
+            <th className="p-3 border border-slate-300">رقم الفاتورة</th>
+            <th className="p-3 border border-slate-300">الشهر</th>
+            <th className="p-3 border border-slate-300">السنة</th>
+            <th className="p-3 border border-slate-300">قيمة الفاتورة</th>
+            <th className="p-3 border border-slate-300">تاريخ الإصدار</th>
+            <th className="p-3 border border-slate-300">حالة الفاتورة</th>
           </tr>
         </thead>
 
@@ -3780,40 +3780,43 @@ const handleRecordPayment = async () => {
             ];
 
             return (
-              <tr key={invoice.id} className="hover:bg-gray-50">
-                <td className="p-3 border">
-                  {invoice.id}
+              <tr
+                key={invoice.id}
+                className="hover:bg-slate-50 transition-colors"
+              >
+                <td className="p-3 border border-slate-200">
+                  #{invoice.id}
                 </td>
 
-                <td className="p-3 border">
+                <td className="p-3 border border-slate-200">
                   {monthNames[invoice.invoice_month - 1]}
                 </td>
 
-                <td className="p-3 border">
+                <td className="p-3 border border-slate-200">
                   {invoice.invoice_year}
                 </td>
 
-                <td className="p-3 border font-semibold">
+                <td className="p-3 border border-slate-200 font-semibold">
                   {Number(invoice.invoice_total).toLocaleString('ar-EG')} ج.م
                 </td>
 
-                <td className="p-3 border">
+                <td className="p-3 border border-slate-200">
                   {invoice.issued_at
                     ? new Date(invoice.issued_at).toLocaleDateString('ar-EG')
                     : '-'}
                 </td>
 
-                <td className="p-3 border">
+                <td className="p-3 border border-slate-200">
                   {invoice.payment_status === 'paid' ? (
-                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+                    <span className="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-md font-medium">
                       مدفوعة بالكامل
                     </span>
                   ) : invoice.payment_status === 'void' ? (
-                    <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
+                    <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-md font-medium">
                       ملغاة
                     </span>
                   ) : (
-                    <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full">
+                    <span className="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-md font-medium">
                       غير مدفوعة
                     </span>
                   )}
@@ -3826,11 +3829,12 @@ const handleRecordPayment = async () => {
     </div>
   )}
 
-  <div className="mt-4 text-sm text-gray-600">
+  <div className="mt-3 text-sm text-gray-500 text-left">
     إجمالي عدد الفواتير: {doctorInvoiceHistory.length}
   </div>
 
 </div>
+
 
     </div>
   );
