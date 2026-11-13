@@ -1913,6 +1913,10 @@ function AccountingPage({ doctors = [], appointments = [] }) {
   const [loadingInvoices, setLoadingInvoices] = React.useState(false);
   const [invoicesError, setInvoicesError] = React.useState('');
   const [issuingInvoice, setIssuingInvoice] = React.useState(false);
+  // سجل جميع فواتير الطبيب
+const [doctorInvoiceHistory, setDoctorInvoiceHistory] = React.useState([]);
+const [loadingDoctorHistory, setLoadingDoctorHistory] = React.useState(false);
+const [doctorHistoryError, setDoctorHistoryError] = React.useState('');
   // ==========================================
 // 💸 حالات تسجيل التحويلات المالية
 // ==========================================
@@ -1978,6 +1982,48 @@ const [paymentsError, setPaymentsError] = React.useState('');
 
   React.useEffect(() => {
   fetchSavedPayments();
+}, [selectedDocId]);
+
+const fetchDoctorInvoiceHistory = async () => {
+  if (!selectedDocId) {
+    setDoctorInvoiceHistory([]);
+    return;
+  }
+
+  try {
+    setLoadingDoctorHistory(true);
+    setDoctorHistoryError('');
+
+    const params = new URLSearchParams();
+    params.append('doctor_id', selectedDocId);
+
+    const response = await fetch(
+      `https://clinic-api-ig3d.onrender.com/api/accounting/invoices?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      throw new Error('تعذر جلب فواتير الطبيب');
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error || 'فشل تحميل الفواتير');
+    }
+
+    setDoctorInvoiceHistory(
+      Array.isArray(data.invoices) ? data.invoices : []
+    );
+
+  } catch (error) {
+    console.error('خطأ جلب فواتير الطبيب:', error);
+    setDoctorHistoryError('حدث خطأ أثناء تحميل سجل فواتير الطبيب.');
+  } finally {
+    setLoadingDoctorHistory(false);
+  }
+};
+React.useEffect(() => {
+  fetchDoctorInvoiceHistory();
 }, [selectedDocId]);
 
 // ==========================================
@@ -2506,6 +2552,7 @@ const handleRecordPayment = async () => {
 
     await fetchSavedInvoices();
     await fetchSavedPayments();
+    await fetchDoctorInvoiceHistory();
 
   } catch (error) {
     console.error('خطأ تسجيل التحويل:', error);
@@ -3675,6 +3722,114 @@ const handleRecordPayment = async () => {
     المبلغ المحول فعليًا يعرض قيمة التحويل المسجلة، بينما المبلغ المخصص
     يعرض قيمة السداد المرتبطة بالفاتورة.
   </p>
+</div>
+
+{/* سجل جميع فواتير الطبيب */}
+<div className="bg-white rounded-xl shadow p-4 mt-6">
+
+  <div className="flex justify-between items-center mb-4">
+    <h2 className="text-xl font-bold">
+      سجل فواتير الطبيب
+    </h2>
+
+    <button
+      onClick={fetchDoctorInvoiceHistory}
+      disabled={!selectedDocId || loadingDoctorHistory}
+      className="bg-blue-600 text-white px-4 py-2 rounded-lg disabled:opacity-50"
+    >
+      تحديث السجل
+    </button>
+  </div>
+
+  {!selectedDocId ? (
+    <p className="text-gray-500 text-center py-6">
+      اختر طبيبًا لعرض جميع فواتيره.
+    </p>
+  ) : loadingDoctorHistory ? (
+    <p className="text-center py-6">
+      جاري تحميل فواتير الطبيب...
+    </p>
+  ) : doctorHistoryError ? (
+    <p className="text-red-600 text-center py-6">
+      {doctorHistoryError}
+    </p>
+  ) : doctorInvoiceHistory.length === 0 ? (
+    <p className="text-gray-500 text-center py-6">
+      لا توجد فواتير صادرة لهذا الطبيب حتى الآن.
+    </p>
+  ) : (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm text-right border-collapse">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="p-3 border">رقم الفاتورة</th>
+            <th className="p-3 border">الشهر</th>
+            <th className="p-3 border">السنة</th>
+            <th className="p-3 border">قيمة الفاتورة</th>
+            <th className="p-3 border">تاريخ الإصدار</th>
+            <th className="p-3 border">حالة الفاتورة</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {doctorInvoiceHistory.map((invoice) => {
+            const monthNames = [
+              'يناير', 'فبراير', 'مارس', 'أبريل',
+              'مايو', 'يونيو', 'يوليو', 'أغسطس',
+              'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+            ];
+
+            return (
+              <tr key={invoice.id} className="hover:bg-gray-50">
+                <td className="p-3 border">
+                  {invoice.id}
+                </td>
+
+                <td className="p-3 border">
+                  {monthNames[invoice.invoice_month - 1]}
+                </td>
+
+                <td className="p-3 border">
+                  {invoice.invoice_year}
+                </td>
+
+                <td className="p-3 border font-semibold">
+                  {Number(invoice.invoice_total).toLocaleString('ar-EG')} ج.م
+                </td>
+
+                <td className="p-3 border">
+                  {invoice.issued_at
+                    ? new Date(invoice.issued_at).toLocaleDateString('ar-EG')
+                    : '-'}
+                </td>
+
+                <td className="p-3 border">
+                  {invoice.payment_status === 'paid' ? (
+                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full">
+                      مدفوعة بالكامل
+                    </span>
+                  ) : invoice.payment_status === 'void' ? (
+                    <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
+                      ملغاة
+                    </span>
+                  ) : (
+                    <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full">
+                      غير مدفوعة
+                    </span>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  )}
+
+  <div className="mt-4 text-sm text-gray-600">
+    إجمالي عدد الفواتير: {doctorInvoiceHistory.length}
+  </div>
+
 </div>
 
     </div>
