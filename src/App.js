@@ -551,8 +551,16 @@ const getConsultationDraft = (consultation) => {
   ];
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', direction: 'rtl', fontFamily: 'Cairo, sans-serif', background: '#f1f5f9' }}>
-      
+    <div
+  className="admin-layout"
+  style={{
+    display: 'flex',
+    minHeight: '100vh',
+    direction: 'rtl',
+    fontFamily: 'Cairo, sans-serif',
+    background: '#f1f5f9'
+  }}
+>  
       {/* 🌟 1. العمود الجانبي (Sidebar) على اليمين */}
       <aside style={{
         width: '260px',
