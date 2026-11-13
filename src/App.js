@@ -1930,6 +1930,10 @@ const [paymentDate, setPaymentDate] = React.useState(() => {
 const [paymentReference, setPaymentReference] = React.useState('');
 const [paymentNotes, setPaymentNotes] = React.useState('');
 const [recordingPayment, setRecordingPayment] = React.useState(false);
+// حالات سجل التحويلات المالية
+const [savedPayments, setSavedPayments] = React.useState([]);
+const [loadingPayments, setLoadingPayments] = React.useState(false);
+const [paymentsError, setPaymentsError] = React.useState('');
   const invoiceRef = React.useRef(null);
   // جلب الفواتير المحفوظة من قاعدة البيانات
   const fetchSavedInvoices = async () => {
@@ -1971,6 +1975,52 @@ const [recordingPayment, setRecordingPayment] = React.useState(false);
   React.useEffect(() => {
     fetchSavedInvoices();
   }, [selectedDocId, selectedMonth, selectedYear]);
+
+  React.useEffect(() => {
+  fetchSavedPayments();
+}, [selectedDocId]);
+
+// ==========================================
+// جلب سجل التحويلات المالية
+// ==========================================
+
+const fetchSavedPayments = async () => {
+  try {
+    setLoadingPayments(true);
+    setPaymentsError('');
+
+    const params = new URLSearchParams();
+
+    if (selectedDocId) {
+      params.append('doctor_id', selectedDocId);
+    }
+
+    const response = await fetch(
+      `https://clinic-api-ig3d.onrender.com/api/accounting/payments?${params.toString()}`
+    );
+
+    if (!response.ok) {
+      throw new Error('تعذر جلب سجل التحويلات');
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error || 'فشل تحميل سجل التحويلات');
+    }
+
+    setSavedPayments(
+      Array.isArray(data.payments) ? data.payments : []
+    );
+
+  } catch (error) {
+    console.error('خطأ جلب سجل التحويلات:', error);
+    setPaymentsError('حدث خطأ أثناء تحميل سجل التحويلات.');
+  } finally {
+    setLoadingPayments(false);
+  }
+};
+
   const months = [
     'يناير', 'فبراير', 'مارس', 'أبريل',
     'مايو', 'يونيو', 'يوليو', 'أغسطس',
@@ -2455,6 +2505,7 @@ const handleRecordPayment = async () => {
     setPaymentNotes('');
 
     await fetchSavedInvoices();
+    await fetchSavedPayments();
 
   } catch (error) {
     console.error('خطأ تسجيل التحويل:', error);
@@ -3447,6 +3498,185 @@ const handleRecordPayment = async () => {
     );
   })()}
 </div>
+
+{/* ==========================================
+    📋 سجل التحويلات المالية
+========================================== */}
+
+<div
+  style={{
+    ...styles.card,
+    marginTop: '22px'
+  }}
+>
+  <div style={{
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: '10px',
+    marginBottom: '16px'
+  }}>
+    <h3 style={{
+      margin: 0,
+      color: '#0369a1',
+      fontSize: '19px'
+    }}>
+      📋 سجل التحويلات المالية
+    </h3>
+
+    <button
+      type="button"
+      onClick={fetchSavedPayments}
+      disabled={loadingPayments}
+      style={{
+        padding: '9px 15px',
+        background: '#0284c7',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: loadingPayments ? 'wait' : 'pointer',
+        fontWeight: '700'
+      }}
+    >
+      {loadingPayments ? '⏳ جاري التحديث...' : '🔄 تحديث السجل'}
+    </button>
+  </div>
+
+  {paymentsError && (
+    <p style={{ color: '#dc2626' }}>
+      {paymentsError}
+    </p>
+  )}
+
+  {loadingPayments ? (
+    <p style={{
+      textAlign: 'center',
+      color: '#64748b',
+      padding: '20px'
+    }}>
+      جاري تحميل التحويلات...
+    </p>
+  ) : savedPayments.length === 0 ? (
+    <p style={{
+      textAlign: 'center',
+      padding: '25px',
+      color: '#64748b',
+      background: '#f8fafc',
+      borderRadius: '10px'
+    }}>
+      لا توجد تحويلات مسجلة حتى الآن.
+    </p>
+  ) : (
+    <div style={{ overflowX: 'auto' }}>
+      <table style={{
+        width: '100%',
+        borderCollapse: 'collapse',
+        minWidth: '850px',
+        direction: 'rtl'
+      }}>
+        <thead>
+          <tr>
+            <th style={styles.th}>رقم التحويل</th>
+            <th style={styles.th}>الطبيب</th>
+            <th style={styles.th}>الفاتورة</th>
+            <th style={styles.th}>تاريخ التحويل</th>
+            <th style={styles.th}>قيمة الفاتورة</th>
+            <th style={styles.th}>المبلغ المحول فعليًا</th>
+            <th style={styles.th}>المبلغ المخصص للفاتورة</th>
+            <th style={styles.th}>رقم المرجع</th>
+            <th style={styles.th}>الحالة</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {savedPayments.map(payment => {
+            const isConfirmed = payment.payment_status === 'confirmed';
+
+            const paymentDate = payment.payment_date
+              ? String(payment.payment_date).slice(0, 10)
+              : '';
+
+            return (
+              <tr key={payment.payment_id}>
+                <td style={styles.td}>
+                  #{payment.payment_id}
+                </td>
+
+                <td style={styles.td}>
+                  <b>{payment.doctor_name || '—'}</b>
+                  <div style={{
+                    fontSize: '11px',
+                    color: '#64748b'
+                  }}>
+                    كود {payment.doctor_id}
+                  </div>
+                </td>
+
+                <td style={styles.td}>
+                  #{payment.invoice_id}
+                  <div style={{
+                    fontSize: '11px',
+                    color: '#64748b'
+                  }}>
+                    {payment.invoice_month}/{payment.invoice_year}
+                  </div>
+                </td>
+
+                <td style={styles.td}>
+                  {paymentDate || '—'}
+                </td>
+
+                <td style={styles.td}>
+                  {money(payment.invoice_total)} ج.م
+                </td>
+
+                <td style={{
+                  ...styles.td,
+                  fontWeight: '800',
+                  color: '#15803d'
+                }}>
+                  {money(payment.actual_transfer_amount)} ج.م
+                </td>
+
+                <td style={styles.td}>
+                  {money(payment.allocated_amount)} ج.م
+                </td>
+
+                <td style={styles.td}>
+                  {payment.reference_number || '—'}
+                </td>
+
+                <td style={styles.td}>
+                  <span style={{
+                    display: 'inline-block',
+                    padding: '5px 9px',
+                    borderRadius: '7px',
+                    fontWeight: '800',
+                    color: isConfirmed ? '#15803d' : '#b91c1c',
+                    background: isConfirmed ? '#dcfce7' : '#fee2e2'
+                  }}>
+                    {isConfirmed ? 'مؤكد' : 'معكوس'}
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  )}
+
+  <p style={{
+    fontSize: '12px',
+    color: '#64748b',
+    marginTop: '12px'
+  }}>
+    المبلغ المحول فعليًا يعرض قيمة التحويل المسجلة، بينما المبلغ المخصص
+    يعرض قيمة السداد المرتبطة بالفاتورة.
+  </p>
+</div>
+
     </div>
   );
 }
