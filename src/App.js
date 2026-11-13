@@ -1908,10 +1908,53 @@ function AccountingPage({ doctors = [], appointments = [] }) {
   );
   const [discount, setDiscount] = React.useState(0);
   const [downloading, setDownloading] = React.useState(false);
+    // حالات سجل الفواتير المحفوظة
+  const [savedInvoices, setSavedInvoices] = React.useState([]);
+  const [loadingInvoices, setLoadingInvoices] = React.useState(false);
+  const [invoicesError, setInvoicesError] = React.useState('');
   const [issuingInvoice, setIssuingInvoice] = React.useState(false);
 
   const invoiceRef = React.useRef(null);
+  // جلب الفواتير المحفوظة من قاعدة البيانات
+  const fetchSavedInvoices = async () => {
+    try {
+      setLoadingInvoices(true);
+      setInvoicesError('');
 
+      const params = new URLSearchParams();
+
+      if (selectedDocId) {
+        params.append('doctor_id', selectedDocId);
+      }
+
+      params.append('year', selectedYear);
+      params.append('month', selectedMonth);
+
+      const response = await fetch(
+        `https://clinic-api-ig3d.onrender.com/api/accounting/invoices?${params.toString()}`
+      );
+
+      if (!response.ok) {
+        throw new Error('تعذر جلب الفواتير المحفوظة');
+      }
+
+      const data = await response.json();
+
+      setSavedInvoices(
+        Array.isArray(data.invoices) ? data.invoices : []
+      );
+
+    } catch (error) {
+      console.error('خطأ جلب الفواتير:', error);
+      setInvoicesError('حدث خطأ أثناء تحميل سجل الفواتير.');
+    } finally {
+      setLoadingInvoices(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchSavedInvoices();
+  }, [selectedDocId, selectedMonth, selectedYear]);
   const months = [
     'يناير', 'فبراير', 'مارس', 'أبريل',
     'مايو', 'يونيو', 'يوليو', 'أغسطس',
@@ -2546,7 +2589,133 @@ const issueInvoice = async () => {
         </div>
 
       </div>
+            {/* ====================================
+          سجل الفواتير المحفوظة
+      ==================================== */}
 
+      <div style={{
+        background: '#fff',
+        border: '1px solid #e2e8f0',
+        borderRadius: '14px',
+        padding: '18px',
+        marginBottom: '22px'
+      }}>
+
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '10px',
+          marginBottom: '15px'
+        }}>
+          <h3 style={{ margin: 0, fontSize: '17px' }}>
+            🧾 سجل الفواتير المحفوظة
+          </h3>
+
+          <button
+            type="button"
+            onClick={fetchSavedInvoices}
+            disabled={loadingInvoices}
+            style={{
+              padding: '9px 15px',
+              background: '#0284c7',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: loadingInvoices ? 'wait' : 'pointer',
+              fontWeight: '700'
+            }}
+          >
+            {loadingInvoices ? '⏳ جاري التحديث...' : '🔄 تحديث السجل'}
+          </button>
+        </div>
+
+        {invoicesError && (
+          <p style={{ color: '#dc2626' }}>
+            {invoicesError}
+          </p>
+        )}
+
+        {loadingInvoices ? (
+          <p style={{ textAlign: 'center', color: '#64748b' }}>
+            جاري تحميل الفواتير...
+          </p>
+        ) : savedInvoices.length === 0 ? (
+          <p style={{
+            textAlign: 'center',
+            padding: '22px',
+            color: '#64748b',
+            background: '#f8fafc',
+            borderRadius: '10px'
+          }}>
+            لا توجد فواتير محفوظة لهذه الفترة.
+          </p>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              minWidth: '520px',
+              direction: 'rtl'
+            }}>
+              <thead>
+                <tr>
+                  <th style={styles.th}>الطبيب</th>
+                  <th style={styles.th}>كود الطبيب</th>
+                  <th style={styles.th}>الفترة</th>
+                  <th style={styles.th}>قيمة الفاتورة</th>
+                  <th style={styles.th}>الحالة</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {savedInvoices.map(invoice => {
+                  const isPaid = invoice.payment_status === 'paid';
+
+                  return (
+                    <tr key={invoice.id}>
+                      <td style={styles.td}>
+                        {invoice.doctor_name || '—'}
+                      </td>
+
+                      <td style={styles.td}>
+                        {invoice.doctor_id}
+                      </td>
+
+                      <td style={styles.td}>
+                        {months[Number(invoice.invoice_month) - 1] || invoice.invoice_month}
+                        {' '}
+                        {invoice.invoice_year}
+                      </td>
+
+                      <td style={{
+                        ...styles.td,
+                        fontWeight: '800'
+                      }}>
+                        {money(invoice.invoice_total)} ج.م
+                      </td>
+
+                      <td style={styles.td}>
+                        <span style={{
+                          display: 'inline-block',
+                          padding: '5px 10px',
+                          borderRadius: '7px',
+                          fontWeight: '800',
+                          color: isPaid ? '#15803d' : '#b45309',
+                          background: isPaid ? '#dcfce7' : '#fef3c7'
+                        }}>
+                          {isPaid ? 'مدفوعة بالكامل' : 'غير مدفوعة'}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
       {!selectedDocId && (
         <div style={{
           background: '#fff',
