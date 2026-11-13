@@ -1908,6 +1908,7 @@ function AccountingPage({ doctors = [], appointments = [] }) {
   );
   const [discount, setDiscount] = React.useState(0);
   const [downloading, setDownloading] = React.useState(false);
+  const [issuingInvoice, setIssuingInvoice] = React.useState(false);
 
   const invoiceRef = React.useRef(null);
 
@@ -2230,6 +2231,95 @@ const handleDoctorSearch = () => {
 
 برجاء إرسال صورة إيصال التحويل بعد السداد.
 ` : '';
+
+
+// ==========================================
+// إصدار وحفظ الفاتورة في قاعدة البيانات
+// ==========================================
+
+const issueInvoice = async () => {
+  if (!currentDoc) {
+    alert('اختر الطبيب أولاً.');
+    return;
+  }
+
+  if (finalAmount <= 0) {
+    alert('لا يمكن إصدار فاتورة بقيمة صفر أو أقل.');
+    return;
+  }
+
+  const confirmed = window.confirm(
+    `تأكيد إصدار الفاتورة؟\n\n` +
+    `الطبيب: ${currentDoc.name}\n` +
+    `الكود: ${currentDoc.id}\n` +
+    `الفترة: ${monthName} ${selectedYear}\n` +
+    `عدد الكشوفات المكتملة: ${completedAppointments.length}\n` +
+    `قيمة الفاتورة: ${money(finalAmount)} جنيه\n\n` +
+    `سيتم حفظ الفاتورة نهائياً بهذه القيمة.`
+  );
+
+  if (!confirmed) return;
+
+  try {
+    setIssuingInvoice(true);
+
+    // التأكد أولاً من عدم وجود فاتورة لنفس الشهر
+    const checkResponse = await fetch(
+      `https://clinic-api-ig3d.onrender.com/api/accounting/invoices?doctor_id=${currentDoc.id}&year=${selectedYear}&month=${selectedMonth}`
+    );
+
+    const checkData = await checkResponse.json();
+
+    if (!checkResponse.ok || !checkData.success) {
+      throw new Error('تعذر التأكد من وجود فاتورة سابقة.');
+    }
+
+    const alreadyExists = (checkData.invoices || []).some(
+      invoice =>
+        String(invoice.doctor_id) === String(currentDoc.id) &&
+        Number(invoice.invoice_year) === Number(selectedYear) &&
+        Number(invoice.invoice_month) === Number(selectedMonth)
+    );
+
+    if (alreadyExists) {
+      alert('توجد فاتورة محفوظة لهذا الطبيب عن هذا الشهر بالفعل.');
+      return;
+    }
+
+    // حفظ الفاتورة
+    const response = await fetch(
+      'https://clinic-api-ig3d.onrender.com/api/accounting/invoices/issue',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          doctor_id: Number(currentDoc.id),
+          invoice_year: Number(selectedYear),
+          invoice_month: Number(selectedMonth),
+          invoice_total: Number(finalAmount),
+          notes: `عدد الكشوفات المكتملة: ${completedAppointments.length}`
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.error || 'فشل إصدار الفاتورة.');
+    }
+
+    alert('تم إصدار الفاتورة وحفظها بنجاح.');
+
+  } catch (error) {
+    console.error('Invoice issue error:', error);
+    alert(error.message || 'حدث خطأ أثناء إصدار الفاتورة.');
+  } finally {
+    setIssuingInvoice(false);
+  }
+};
+
 
   // ==========================================
   // تنزيل الفاتورة PDF
@@ -2818,6 +2908,28 @@ const handleDoctorSearch = () => {
                 ? '⏳ جاري إعداد PDF...'
                 : '📄 تحميل الفاتورة PDF'}
             </button>
+
+
+<button
+  type="button"
+  onClick={issueInvoice}
+  disabled={issuingInvoice || finalAmount <= 0}
+  style={{
+    padding: '14px 24px',
+    background: issuingInvoice ? '#94a3b8' : '#0f766e',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '10px',
+    cursor: issuingInvoice ? 'wait' : 'pointer',
+    fontWeight: '800',
+    fontSize: '15px'
+  }}
+>
+  {issuingInvoice
+    ? '⏳ جاري حفظ الفاتورة...'
+    : '💾 إصدار وحفظ الفاتورة'}
+</button>
+
 
             <button
               type="button"
