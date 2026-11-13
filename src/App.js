@@ -3724,102 +3724,167 @@ const handleRecordPayment = async () => {
   </p>
 </div>
 
-{/* سجل جميع فواتير الطبيب */}
-<div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mt-6">
 
-  <div className="flex justify-between items-center mb-4">
-    <h2 className="text-lg font-bold text-gray-800">
+{/* ==========================================
+    📋 سجل جميع فواتير الطبيب
+========================================== */}
+
+<div
+  style={{
+    ...styles.card,
+    marginTop: '22px'
+  }}
+>
+  <div style={{
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: '10px',
+    marginBottom: '16px'
+  }}>
+    <h3 style={{
+      margin: 0,
+      color: '#0369a1',
+      fontSize: '19px'
+    }}>
       📋 سجل فواتير الطبيب
-    </h2>
+    </h3>
 
     <button
+      type="button"
       onClick={fetchDoctorInvoiceHistory}
       disabled={!selectedDocId || loadingDoctorHistory}
-      className="bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 rounded-lg text-sm disabled:opacity-50"
+      style={{
+        padding: '9px 15px',
+        background: '#0284c7',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: loadingDoctorHistory ? 'wait' : 'pointer',
+        fontWeight: '700',
+        opacity: !selectedDocId || loadingDoctorHistory ? 0.6 : 1
+      }}
     >
-      🔄 تحديث السجل
+      {loadingDoctorHistory ? '⏳ جاري التحديث...' : '🔄 تحديث السجل'}
     </button>
   </div>
 
   {!selectedDocId ? (
-    <p className="text-gray-500 text-center py-6">
+    <p style={{
+      textAlign: 'center',
+      padding: '25px',
+      color: '#64748b'
+    }}>
       اختر طبيبًا لعرض جميع فواتيره.
     </p>
   ) : loadingDoctorHistory ? (
-    <p className="text-center py-6 text-gray-500">
+    <p style={{
+      textAlign: 'center',
+      padding: '20px',
+      color: '#64748b'
+    }}>
       جاري تحميل فواتير الطبيب...
     </p>
   ) : doctorHistoryError ? (
-    <p className="text-red-600 text-center py-6">
+    <p style={{
+      color: '#dc2626',
+      textAlign: 'center',
+      padding: '20px'
+    }}>
       {doctorHistoryError}
     </p>
   ) : doctorInvoiceHistory.length === 0 ? (
-    <p className="text-gray-500 text-center py-6">
+    <p style={{
+      textAlign: 'center',
+      padding: '25px',
+      color: '#64748b',
+      background: '#f8fafc',
+      borderRadius: '10px'
+    }}>
       لا توجد فواتير صادرة لهذا الطبيب حتى الآن.
     </p>
   ) : (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm text-right border-collapse">
+    <div style={{ overflowX: 'auto' }}>
+      <table style={{
+        width: '100%',
+        borderCollapse: 'collapse',
+        minWidth: '750px',
+        direction: 'rtl'
+      }}>
         <thead>
-          <tr className="bg-slate-200 text-gray-800">
-            <th className="p-3 border border-slate-300">رقم الفاتورة</th>
-            <th className="p-3 border border-slate-300">الشهر</th>
-            <th className="p-3 border border-slate-300">السنة</th>
-            <th className="p-3 border border-slate-300">قيمة الفاتورة</th>
-            <th className="p-3 border border-slate-300">تاريخ الإصدار</th>
-            <th className="p-3 border border-slate-300">حالة الفاتورة</th>
+          <tr>
+            <th style={styles.th}>رقم الفاتورة</th>
+            <th style={styles.th}>الشهر</th>
+            <th style={styles.th}>السنة</th>
+            <th style={styles.th}>قيمة الفاتورة</th>
+            <th style={styles.th}>تاريخ الإصدار</th>
+            <th style={styles.th}>حالة الفاتورة</th>
           </tr>
         </thead>
 
         <tbody>
-          {doctorInvoiceHistory.map((invoice) => {
+          {doctorInvoiceHistory.map(invoice => {
             const monthNames = [
               'يناير', 'فبراير', 'مارس', 'أبريل',
               'مايو', 'يونيو', 'يوليو', 'أغسطس',
               'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
             ];
 
+            const isPaid = invoice.payment_status === 'paid';
+            const isVoid = invoice.payment_status === 'void';
+
             return (
-              <tr
-                key={invoice.id}
-                className="hover:bg-slate-50 transition-colors"
-              >
-                <td className="p-3 border border-slate-200">
+              <tr key={invoice.id}>
+                <td style={styles.td}>
                   #{invoice.id}
                 </td>
 
-                <td className="p-3 border border-slate-200">
-                  {monthNames[invoice.invoice_month - 1]}
+                <td style={styles.td}>
+                  {monthNames[invoice.invoice_month - 1] || '—'}
                 </td>
 
-                <td className="p-3 border border-slate-200">
+                <td style={styles.td}>
                   {invoice.invoice_year}
                 </td>
 
-                <td className="p-3 border border-slate-200 font-semibold">
-                  {Number(invoice.invoice_total).toLocaleString('ar-EG')} ج.م
+                <td style={{
+                  ...styles.td,
+                  fontWeight: '800'
+                }}>
+                  {money(invoice.invoice_total)} ج.م
                 </td>
 
-                <td className="p-3 border border-slate-200">
+                <td style={styles.td}>
                   {invoice.issued_at
                     ? new Date(invoice.issued_at).toLocaleDateString('ar-EG')
-                    : '-'}
+                    : '—'}
                 </td>
 
-                <td className="p-3 border border-slate-200">
-                  {invoice.payment_status === 'paid' ? (
-                    <span className="inline-block bg-green-100 text-green-700 px-3 py-1 rounded-md font-medium">
-                      مدفوعة بالكامل
-                    </span>
-                  ) : invoice.payment_status === 'void' ? (
-                    <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-md font-medium">
-                      ملغاة
-                    </span>
-                  ) : (
-                    <span className="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-md font-medium">
-                      غير مدفوعة
-                    </span>
-                  )}
+                <td style={styles.td}>
+                  <span style={{
+                    display: 'inline-block',
+                    padding: '5px 9px',
+                    borderRadius: '7px',
+                    fontWeight: '800',
+                    fontSize: '11px',
+                    color: isPaid
+                      ? '#15803d'
+                      : isVoid
+                        ? '#475569'
+                        : '#b91c1c',
+                    background: isPaid
+                      ? '#dcfce7'
+                      : isVoid
+                        ? '#e2e8f0'
+                        : '#fee2e2'
+                  }}>
+                    {isPaid
+                      ? 'مدفوعة بالكامل'
+                      : isVoid
+                        ? 'ملغاة'
+                        : 'غير مدفوعة'}
+                  </span>
                 </td>
               </tr>
             );
@@ -3829,12 +3894,14 @@ const handleRecordPayment = async () => {
     </div>
   )}
 
-  <div className="mt-3 text-sm text-gray-500 text-left">
+  <p style={{
+    fontSize: '12px',
+    color: '#64748b',
+    marginTop: '12px'
+  }}>
     إجمالي عدد الفواتير: {doctorInvoiceHistory.length}
-  </div>
-
+  </p>
 </div>
-
 
     </div>
   );
