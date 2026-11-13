@@ -1913,7 +1913,23 @@ function AccountingPage({ doctors = [], appointments = [] }) {
   const [loadingInvoices, setLoadingInvoices] = React.useState(false);
   const [invoicesError, setInvoicesError] = React.useState('');
   const [issuingInvoice, setIssuingInvoice] = React.useState(false);
+  // ==========================================
+// 💸 حالات تسجيل التحويلات المالية
+// ==========================================
 
+const [selectedPaymentInvoiceId, setSelectedPaymentInvoiceId] = React.useState('');
+const [paymentAmount, setPaymentAmount] = React.useState('');
+const [paymentDate, setPaymentDate] = React.useState(() => {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+});
+const [paymentReference, setPaymentReference] = React.useState('');
+const [paymentNotes, setPaymentNotes] = React.useState('');
+const [recordingPayment, setRecordingPayment] = React.useState(false);
   const invoiceRef = React.useRef(null);
   // جلب الفواتير المحفوظة من قاعدة البيانات
   const fetchSavedInvoices = async () => {
@@ -2363,6 +2379,90 @@ const issueInvoice = async () => {
   }
 };
 
+// ==========================================
+// 💸 تسجيل تحويل مالي لفاتورة محددة
+// ==========================================
+
+const handleRecordPayment = async () => {
+  const selectedInvoice = savedInvoices.find(
+    invoice => String(invoice.id) === String(selectedPaymentInvoiceId)
+  );
+
+  if (!selectedInvoice) {
+    alert('من فضلك اختر الفاتورة التي تريد تسجيل التحويل لها.');
+    return;
+  }
+
+  const amount = Number(paymentAmount);
+  const invoiceTotal = Number(selectedInvoice.invoice_total);
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    alert('من فضلك أدخل مبلغ تحويل صحيح.');
+    return;
+  }
+
+  if (amount < invoiceTotal) {
+    alert(
+      `مبلغ التحويل لا يمكن أن يكون أقل من قيمة الفاتورة (${money(invoiceTotal)} ج.م).`
+    );
+    return;
+  }
+
+  if (!paymentDate) {
+    alert('من فضلك اختر تاريخ التحويل.');
+    return;
+  }
+
+  if (!window.confirm(
+    `تأكيد تسجيل تحويل بقيمة ${money(amount)} ج.م لهذه الفاتورة؟`
+  )) {
+    return;
+  }
+
+  try {
+    setRecordingPayment(true);
+
+    const response = await fetch(
+      'https://clinic-api-ig3d.onrender.com/api/accounting/payments',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          invoice_id: Number(selectedInvoice.id),
+          amount,
+          payment_date: paymentDate,
+          reference_number: paymentReference.trim() || null,
+          notes: paymentNotes.trim() || null
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || data.message || 'تعذر تسجيل التحويل.'
+      );
+    }
+
+    alert('✅ تم تسجيل التحويل بنجاح، وأصبحت الفاتورة مدفوعة بالكامل.');
+
+    setSelectedPaymentInvoiceId('');
+    setPaymentAmount('');
+    setPaymentReference('');
+    setPaymentNotes('');
+
+    await fetchSavedInvoices();
+
+  } catch (error) {
+    console.error('خطأ تسجيل التحويل:', error);
+    alert(error.message || 'حدث خطأ أثناء تسجيل التحويل.');
+  } finally {
+    setRecordingPayment(false);
+  }
+};
 
   // ==========================================
   // تنزيل الفاتورة PDF
@@ -3130,7 +3230,223 @@ const issueInvoice = async () => {
 
         </>
       )}
+     {/* ==========================================
+    💸 تسجيل التحويلات المالية
+========================================== */}
 
+<div
+  style={{
+    ...styles.card,
+    marginTop: '25px',
+    border: '1px solid #bae6fd'
+  }}
+>
+  <h3
+    style={{
+      margin: '0 0 8px',
+      color: '#0369a1',
+      fontSize: '20px'
+    }}
+  >
+    💸 تسجيل التحويلات المالية
+  </h3>
+
+  <p
+    style={{
+      color: '#64748b',
+      fontSize: '13px',
+      marginBottom: '20px'
+    }}
+  >
+    اختر فاتورة غير مدفوعة وسجّل بيانات التحويل الخاص بها.
+  </p>
+
+  {(() => {
+    const unpaidInvoices = savedInvoices.filter(
+      invoice => invoice.payment_status === 'unpaid'
+    );
+
+    const selectedInvoice = unpaidInvoices.find(
+      invoice => String(invoice.id) === String(selectedPaymentInvoiceId)
+    );
+
+    return (
+      <>
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{
+            display: 'block',
+            fontWeight: '700',
+            marginBottom: '7px'
+          }}>
+            اختر الفاتورة غير المدفوعة
+          </label>
+
+          <select
+            value={selectedPaymentInvoiceId}
+            onChange={e => {
+              const invoiceId = e.target.value;
+              setSelectedPaymentInvoiceId(invoiceId);
+
+              const invoice = unpaidInvoices.find(
+                item => String(item.id) === String(invoiceId)
+              );
+
+              setPaymentAmount(
+                invoice ? String(invoice.invoice_total) : ''
+              );
+            }}
+            style={styles.input}
+          >
+            <option value="">-- اختر الفاتورة --</option>
+
+            {unpaidInvoices.map(invoice => (
+              <option key={invoice.id} value={invoice.id}>
+                {invoice.doctor_name} — فاتورة {invoice.invoice_month}/{invoice.invoice_year}
+                — {money(invoice.invoice_total)} ج.م
+              </option>
+            ))}
+          </select>
+
+          {unpaidInvoices.length === 0 && (
+            <p style={{
+              color: '#b45309',
+              fontSize: '13px',
+              marginTop: '8px'
+            }}>
+              لا توجد فواتير غير مدفوعة ضمن سجل الفواتير المحمّل حاليًا.
+              يمكنك تغيير الطبيب أو الشهر أو السنة لعرض فواتير أخرى.
+            </p>
+          )}
+        </div>
+
+        {selectedInvoice && (
+          <div style={{
+            background: '#f0f9ff',
+            border: '1px solid #bae6fd',
+            borderRadius: '10px',
+            padding: '14px',
+            marginBottom: '16px',
+            lineHeight: '2'
+          }}>
+            <div>
+              الطبيب: <b>{selectedInvoice.doctor_name}</b>
+            </div>
+
+            <div>
+              قيمة الفاتورة:
+              <b> {money(selectedInvoice.invoice_total)} ج.م</b>
+            </div>
+          </div>
+        )}
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '14px'
+        }}>
+          <div>
+            <label style={{
+              display: 'block',
+              fontWeight: '700',
+              marginBottom: '7px'
+            }}>
+              مبلغ التحويل بالجنيه
+            </label>
+
+            <input
+              type="number"
+              min={selectedInvoice ? selectedInvoice.invoice_total : '0.01'}
+              step="0.01"
+              value={paymentAmount}
+              onChange={e => setPaymentAmount(e.target.value)}
+              placeholder="أدخل المبلغ المحول"
+              disabled={!selectedInvoice}
+              style={styles.input}
+            />
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              fontWeight: '700',
+              marginBottom: '7px'
+            }}>
+              تاريخ التحويل
+            </label>
+
+            <input
+              type="date"
+              value={paymentDate}
+              onChange={e => setPaymentDate(e.target.value)}
+              style={styles.input}
+            />
+          </div>
+
+          <div>
+            <label style={{
+              display: 'block',
+              fontWeight: '700',
+              marginBottom: '7px'
+            }}>
+              رقم مرجع التحويل (اختياري)
+            </label>
+
+            <input
+              type="text"
+              value={paymentReference}
+              onChange={e => setPaymentReference(e.target.value)}
+              placeholder="رقم العملية أو المرجع"
+              style={styles.input}
+            />
+          </div>
+        </div>
+
+        <div style={{ marginTop: '14px' }}>
+          <label style={{
+            display: 'block',
+            fontWeight: '700',
+            marginBottom: '7px'
+          }}>
+            ملاحظات (اختياري)
+          </label>
+
+          <textarea
+            value={paymentNotes}
+            onChange={e => setPaymentNotes(e.target.value)}
+            placeholder="أي تفاصيل إضافية عن التحويل..."
+            rows={3}
+            style={{
+              ...styles.input,
+              resize: 'vertical'
+            }}
+          />
+        </div>
+
+        <button
+          type="button"
+          onClick={handleRecordPayment}
+          disabled={!selectedInvoice || recordingPayment}
+          style={{
+            width: '100%',
+            marginTop: '18px',
+            padding: '14px',
+            background: recordingPayment ? '#94a3b8' : '#16a34a',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '10px',
+            fontWeight: '800',
+            fontSize: '15px',
+            cursor: recordingPayment ? 'wait' : 'pointer'
+          }}
+        >
+          {recordingPayment
+            ? '⏳ جاري تسجيل التحويل...'
+            : '✅ حفظ التحويل وتأكيد سداد الفاتورة'}
+        </button>
+      </>
+    );
+  })()}
+</div>
     </div>
   );
 }
