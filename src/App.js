@@ -551,10 +551,44 @@ const getConsultationDraft = (consultation) => {
   ];
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', direction: 'rtl', fontFamily: 'Cairo, sans-serif', background: '#f1f5f9' }}>
-      
+    
+    <div className="admin-layout" style={{ display: 'flex', minHeight: '100vh', direction: 'rtl', fontFamily: 'Cairo, sans-serif', background: '#f1f5f9' }}>  
+<style>{`
+@media screen and (max-width: 768px) {
+
+  .admin-layout {
+    width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    box-sizing: border-box;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+    overscroll-behavior-x: contain;
+    align-items: stretch;
+  }
+
+  .admin-sidebar {
+    width: 220px !important;
+    min-width: 220px !important;
+    flex: 0 0 220px !important;
+    box-sizing: border-box;
+  }
+
+  .admin-main {
+    width: 900px !important;
+    min-width: 900px !important;
+    flex: 0 0 900px !important;
+    box-sizing: border-box;
+    overflow: visible !important;
+    padding: 20px !important;
+  }
+}
+`}</style>
+
       {/* 🌟 1. العمود الجانبي (Sidebar) على اليمين */}
-      <aside style={{
+      <aside className="admin-sidebar" style={{
         width: '260px',
         backgroundColor: '#1e293b',
         color: '#fff',
