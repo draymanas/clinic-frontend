@@ -2023,6 +2023,8 @@ const fetchDoctorInvoiceHistory = async () => {
   }
 };
 React.useEffect(() => {
+  setSelectedPaymentInvoiceId('');
+  setPaymentAmount('');
   fetchDoctorInvoiceHistory();
 }, [selectedDocId]);
 
@@ -3360,9 +3362,9 @@ const handleRecordPayment = async () => {
   </p>
 
   {(() => {
-    const unpaidInvoices = savedInvoices.filter(
-      invoice => invoice.payment_status === 'unpaid'
-    );
+   const unpaidInvoices = doctorInvoiceHistory.filter(
+  invoice => invoice.payment_status === 'unpaid'
+);
 
     const selectedInvoice = unpaidInvoices.find(
       invoice => String(invoice.id) === String(selectedPaymentInvoiceId)
@@ -3411,8 +3413,7 @@ const handleRecordPayment = async () => {
               fontSize: '13px',
               marginTop: '8px'
             }}>
-              لا توجد فواتير غير مدفوعة ضمن سجل الفواتير المحمّل حاليًا.
-              يمكنك تغيير الطبيب أو الشهر أو السنة لعرض فواتير أخرى.
+             لا توجد فواتير غير مدفوعة لهذا الطبيب.
             </p>
           )}
         </div>
@@ -3906,7 +3907,6 @@ const handleRecordPayment = async () => {
     </div>
   );
 }
-
 
 
 // -// --- 5. المكون الرئيسي (App) ---
