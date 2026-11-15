@@ -5189,7 +5189,7 @@ onClick={() => {
                 />
             } />
             {/* مسارات البحث والصفحات النظيفة المتوافقة مع Google SEO */}
-<Route path="/search" element={<SearchPage />} />
+ 
 <Route path="/search/:specialtyParam/:cityParam/:areaParam" element={<SearchPage />} />
 <Route path="/search/:specialtyParam/:cityParam" element={<SearchPage />} />
 <Route path="/search/:specialtyParam" element={<SearchPage />} />

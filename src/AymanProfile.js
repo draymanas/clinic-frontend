@@ -290,36 +290,197 @@ const schemaData = {
         </button>
       </div>
 
-      {/* الهيدر */}
-      <div style={{ background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)', color: '#fff', padding: '40px 20px', textAlign: 'center' }}>
-        <h1 style={{ margin: '0 0 10px 0', fontSize: '32px' }}>دكتور أيمن عجيب</h1>
-        <p style={{ fontSize: '22px', opacity: '0.9', margin: '0' }}>استشاري المخ والأعصاب والعمود الفقري</p>
-        
-        {/* حاوية الأزرار */}
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          gap: '15px', 
-          marginTop: '25px', 
-          flexWrap: 'wrap'
-        }}>
-          {/* زر حجز موعد */}
-          <button 
-            onClick={() => setShowBookingModal(true)} 
-            style={{ fontSize: '18px', padding: '14px 28px', background: '#3bff5c', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer', color: '#000' }}
-          >
-            حجز موعد أونلاين
-          </button>
 
-          {/* زر دفع باي بال */}
-          <button 
-            onClick={() => window.open('https://www.paypal.com/ncp/payment/7DUBLXYHPG86E', '_blank')} 
-            style={{ fontSize: '18px', padding: '14px 28px', background: '#ffc107', border: 'none', borderRadius: '50px', fontWeight: 'bold', cursor: 'pointer', color: '#000' }}
-          >
-            دفع عبر PayPal 💳
-          </button>
-        </div>
+{/* الواجهة الرئيسية - الهوية الطبية الشخصية */}
+<section
+  style={{
+    direction: 'rtl',
+    background: 'linear-gradient(120deg, #f5f9ff 0%, #e5f0fc 55%, #d5e7fa 100%)',
+    padding: '55px 20px 65px',
+    overflow: 'hidden'
+  }}
+>
+  <div
+    style={{
+      maxWidth: '1150px',
+      margin: 'auto',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '30px',
+      flexWrap: 'wrap'
+    }}
+  >
+    {/* صورة الطبيب */}
+    <div
+      style={{
+        flex: '1 1 420px',
+        maxWidth: '500px',
+        width: '100%',
+        margin: 'auto',
+        textAlign: 'center'
+      }}
+    >
+      <div
+        style={{
+        padding: '6px',
+background: '#fff',
+borderRadius: '28px',
+boxShadow: '0 18px 45px rgba(13, 55, 100, 0.18)',
+overflow: 'hidden'
+        }}
+      >
+        <img
+         src="/ayman-profile.webp"
+          alt="دكتور أيمن عجيب، استشاري المخ والأعصاب والعمود الفقري"
+         style={{
+  display: 'block',
+  width: '100%',
+height: 'auto',
+objectFit: 'cover',
+  objectPosition: 'center',
+  borderRadius: '21px',
+  background: '#fff'
+}}
+        />
       </div>
+    </div>
+
+    {/* التعريف بالطبيب */}
+    <div
+      style={{
+        flex: '1 1 450px',
+        minWidth: 0,
+        textAlign: 'right'
+      }}
+    >
+      <div
+        style={{
+          display: 'inline-block',
+          padding: '9px 18px',
+          borderRadius: '30px',
+          background: '#d4e8ff',
+          color: '#07549a',
+          fontWeight: 'bold',
+          fontSize: '15px',
+          marginBottom: '18px'
+        }}
+      >
+        خبرة أكثر من 20 عامًا داخل وخارج مصر
+      </div>
+
+      <h1
+        style={{
+          color: '#102f59',
+          fontSize: 'clamp(32px, 5vw, 48px)',
+          lineHeight: '1.4',
+          margin: '0 0 12px',
+          fontWeight: '800'
+        }}
+      >
+        دكتور أيمن عجيب
+      </h1>
+
+      <h2
+        style={{
+          color: '#1265a8',
+          fontSize: 'clamp(21px, 3vw, 28px)',
+          lineHeight: '1.6',
+          margin: '0 0 22px',
+          fontWeight: '700'
+        }}
+      >
+        استشاري المخ والأعصاب والعمود الفقري
+      </h2>
+
+      <p
+        style={{
+          color: '#40536b',
+          fontSize: '17px',
+          lineHeight: '2',
+          margin: '0 0 25px'
+        }}
+      >
+        خبرة مهنية داخل مصر وخارجها، من خلال العمل بمستشفيات جامعة بنها
+        ومستشفى الأطفال والمستشفى التخصصي بمصر، ومستشفى الطائف الطبي
+        بالمملكة العربية السعودية.
+      </p>
+
+      {/* التخصصات */}
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '10px',
+          marginBottom: '28px'
+        }}
+      >
+        {[
+          'أمراض المخ والأعصاب',
+          'جراحة العمود الفقري',
+          'آلام الظهر والرقبة'
+        ].map((item, index) => (
+          <span
+            key={index}
+            style={{
+              background: '#fff',
+              color: '#164d83',
+              border: '1px solid #c8def5',
+              borderRadius: '25px',
+              padding: '9px 15px',
+              fontSize: '14px',
+              fontWeight: 'bold'
+            }}
+          >
+            {item}
+          </span>
+        ))}
+      </div>
+
+      {/* أزرار التفاعل */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '12px',
+          flexWrap: 'wrap'
+        }}
+      >
+        <button
+          onClick={() => setShowBookingModal(true)}
+          style={{
+            background: '#075ba5',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '12px',
+            padding: '15px 27px',
+            fontSize: '17px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            boxShadow: '0 6px 16px rgba(7, 91, 165, 0.2)'
+          }}
+        >
+          حجز موعد
+        </button>
+
+        <button
+          onClick={() => setShowConsultModal(true)}
+          style={{
+            background: '#fff',
+            color: '#075ba5',
+            border: '2px solid #075ba5',
+            borderRadius: '12px',
+            padding: '13px 25px',
+            fontSize: '17px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}
+        >
+          إرسال استشارة
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
 
       <div style={{ maxWidth: '1000px', margin: '20px auto 0', padding: '0 20px' }}>
         {/* قسم الفروع */}
