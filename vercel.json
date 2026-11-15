@@ -28,9 +28,7 @@
       "source": "/d/:slugOrId*",
       "destination": "https://clinic-api-ig3d.onrender.com/d/:slugOrId*"
     },
-
-{"source": "/dr/:slugOrId*", "destination": "https://clinic-api-ig3d.onrender.com/dr/:slugOrId*"},
-{"source": "/doctor/:slugOrId*", "destination": "https://clinic-api-ig3d.onrender.com/doctor/:slugOrId*"},
+    
     {
       "source": "/s/:serviceId*",
       "destination": "https://clinic-api-ig3d.onrender.com/s/:serviceId*"
