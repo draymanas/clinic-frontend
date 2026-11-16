@@ -24,6 +24,7 @@ useEffect(() => {
     summary: '',
     content: '',
     specialty: '',
+    article_type: 'general',
     related_specialties: [],
     author_name: '',
     reviewer_name: '',
@@ -100,6 +101,7 @@ const handleEditArticle = (item) => {
     summary: item.summary || '',
     content: item.content || '',
     specialty: item.specialty || '',
+    article_type: item.article_type || 'general',
     related_specialties: item.related_specialties || [],
     author_name: item.author_name || '',
     reviewer_name: item.reviewer_name || '',
@@ -332,6 +334,20 @@ setEditingId(null);
             />
           </label>
         ))}
+
+{/* تحديد نوع المقال */}
+<label>
+  <strong>نوع المقال</strong>
+
+  <select
+    style={fieldStyle}
+    value={article.article_type}
+    onChange={e => updateField('article_type', e.target.value)}
+  >
+    <option value="general">مقال طبي عام</option>
+    <option value="neuro">مقال مخ وأعصاب</option>
+  </select>
+</label>
 
 {/* التخصصات المرتبطة بالمقال */}
 <div style={{
