@@ -16,6 +16,7 @@ import AdminArticles from './AdminArticles';
 import { requestForToken, onMessageListener } from './firebase';
 import MedicalArticleDetails from './MedicalArticleDetails';
 import HomePage from './HomePage';
+import PediatricHydrocephalus from './PediatricHydrocephalus';
 // =====================================================
 // تحميل الصفحات عند الحاجة فقط - React Lazy Loading
 // =====================================================
