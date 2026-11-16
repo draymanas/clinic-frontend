@@ -22,8 +22,8 @@ const AymanProfile = ({ setActivePage, navigate: propNavigate }) => {
   const shortShareUrl = "https://www.doctoreg.online/d/ayman";
 
   // رابط صورتك الرسمية للمعاينة في السوشيال ميديا
-  const doctorPhoto = "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=1200&h=630&auto=format&fit=crop&q=80";
-
+  const doctorPhoto =
+  "https://www.doctoreg.online/ayman-profile.webp";
   // تحويل المتصفح تلقائياً إلى رابط الـ SEO الكامل إذا دخل المستخدم عبر /ayman أو /d/ayman
   useEffect(() => {
     if (location.pathname === '/ayman' || location.pathname === '/d/ayman') {
