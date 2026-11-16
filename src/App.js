@@ -5200,6 +5200,10 @@ onClick={() => {
 <Route path="/doctors/:specialtyParam/:cityParam" element={<SearchPage />} />
 <Route path="/doctors/:specialtyParam" element={<SearchPage />} />
 <Route path="/doctors" element={<SearchPage />} />
+<Route
+  path="/conditions/pediatric-hydrocephalus"
+  element={<PediatricHydrocephalus />}
+/>
 
  <Route
   path="/symptoms"
