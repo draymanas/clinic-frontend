@@ -508,6 +508,37 @@ const doctorBreadcrumbSchema = {
         document.head.appendChild(metaDesc);
       }
       metaDesc.setAttribute('content', pageDescription);
+
+// تحديث بيانات المشاركة Open Graph وTwitter لكل طبيب
+const doctorImage =
+  doctor.image_url ||
+  'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=600&auto=format&fit=crop&q=80';
+
+const setMetaTag = (selector, attribute, key, content) => {
+  let tag = document.querySelector(selector);
+
+  if (!tag) {
+    tag = document.createElement('meta');
+    tag.setAttribute(attribute, key);
+    document.head.appendChild(tag);
+  }
+
+  tag.setAttribute('content', content);
+};
+
+setMetaTag('meta[property="og:title"]', 'property', 'og:title', pageTitle);
+setMetaTag('meta[property="og:description"]', 'property', 'og:description', pageDescription);
+setMetaTag('meta[property="og:url"]', 'property', 'og:url', canonicalUrl);
+setMetaTag('meta[property="og:type"]', 'property', 'og:type', 'profile');
+setMetaTag('meta[property="og:image"]', 'property', 'og:image', doctorImage);
+setMetaTag('meta[property="og:image:alt"]', 'property', 'og:image:alt', `د. ${doctorName}`);
+
+setMetaTag('meta[name="twitter:card"]', 'name', 'twitter:card', 'summary_large_image');
+setMetaTag('meta[name="twitter:title"]', 'name', 'twitter:title', pageTitle);
+setMetaTag('meta[name="twitter:description"]', 'name', 'twitter:description', pageDescription);
+setMetaTag('meta[name="twitter:url"]', 'name', 'twitter:url', canonicalUrl);
+setMetaTag('meta[name="twitter:image"]', 'name', 'twitter:image', doctorImage);
+
         // 👇👇 أضف هذا الجزء الجديد هنا (إضافة فقط) 👇👇
       // 🌟 تثبيت رابط Canonical الكامل لجوجل
       let canonicalTag = document.querySelector('link[rel="canonical"]');
