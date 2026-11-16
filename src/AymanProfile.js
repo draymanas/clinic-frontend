@@ -10,7 +10,10 @@ const AymanProfile = ({ setActivePage, navigate: propNavigate }) => {
   const [showConsultModal, setShowConsultModal] = useState(false);
   const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
   const [copied, setCopied] = useState(false);
-
+// المقالات الطبية المنشورة الخاصة بالمخ والأعصاب
+const [articles, setArticles] = useState([]);
+const [articlesLoading, setArticlesLoading] = useState(true);
+const [articlesError, setArticlesError] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -30,6 +33,59 @@ const AymanProfile = ({ setActivePage, navigate: propNavigate }) => {
       navigate(officialPath, { replace: true });
     }
   }, [location.pathname, navigate, officialPath]);
+
+
+// ==========================================================
+// 📰 جلب مقالات د. أيمن من قاعدة البيانات
+// ==========================================================
+
+useEffect(() => {
+    let cancelled = false;
+
+    const fetchDoctorArticles = async () => {
+        try {
+            setArticlesLoading(true);
+            setArticlesError('');
+
+            const response = await fetch(
+                'https://clinic-api-ig3d.onrender.com/api/doctor-articles'
+            );
+
+            if (!response.ok) {
+                throw new Error('تعذر تحميل المقالات حاليًا');
+            }
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error('فشل تحميل المقالات');
+            }
+
+            if (!cancelled) {
+                setArticles(data.articles || []);
+            }
+
+        } catch (error) {
+            console.error('خطأ تحميل مقالات الطبيب:', error);
+
+            if (!cancelled) {
+                setArticlesError(error.message);
+            }
+
+        } finally {
+            if (!cancelled) {
+                setArticlesLoading(false);
+            }
+        }
+    };
+
+    fetchDoctorArticles();
+
+    return () => {
+        cancelled = true;
+    };
+}, []);
+
 
   // نسخ رابط المشاركة الشيك
   const handleCopyShortLink = () => {
@@ -575,6 +631,140 @@ objectFit: 'cover',
           </div>
         </div>
       </div>
+
+
+{/* ==========================================================
+    📰 مقالات د. أيمن - من قاعدة البيانات
+========================================================== */}
+
+<section
+    dir="rtl"
+    style={{
+        marginTop: '45px',
+        padding: '30px 20px',
+        background: '#f8fafc',
+        borderRadius: '18px'
+    }}
+>
+    <div style={{
+        textAlign: 'center',
+        marginBottom: '30px'
+    }}>
+        <h2 style={{
+            color: '#0f172a',
+            fontSize: '26px',
+            marginBottom: '10px'
+        }}>
+            📰 مقالات طبية في المخ والأعصاب
+        </h2>
+
+        <p style={{
+            color: '#64748b',
+            fontSize: '16px'
+        }}>
+            معلومات طبية ومقالات توعوية يقدمها د. أيمن
+        </p>
+    </div>
+
+    {articlesLoading ? (
+        <p style={{ textAlign: 'center', color: '#64748b' }}>
+            جاري تحميل المقالات...
+        </p>
+
+    ) : articlesError ? (
+        <p style={{ textAlign: 'center', color: '#dc2626' }}>
+            {articlesError}
+        </p>
+
+    ) : articles.length === 0 ? (
+        <p style={{ textAlign: 'center', color: '#64748b' }}>
+            لا توجد مقالات منشورة حاليًا.
+        </p>
+
+    ) : (
+        <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))',
+            gap: '22px'
+        }}>
+            {articles.map(article => (
+                <article
+                    key={article.id}
+                    style={{
+                        background: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '15px',
+                        overflow: 'hidden',
+                        boxShadow: '0 3px 12px rgba(0,0,0,0.05)'
+                    }}
+                >
+                    {article.image_url && (
+                        <img
+                            src={article.image_url}
+                            alt={article.title}
+                            loading="lazy"
+                            style={{
+                                display: 'block',
+                                width: '100%',
+                                height: '190px',
+                                objectFit: 'cover'
+                            }}
+                        />
+                    )}
+
+                    <div style={{ padding: '20px' }}>
+                        {article.specialty && (
+                            <span style={{
+                                color: '#0284c7',
+                                fontSize: '14px',
+                                fontWeight: 'bold'
+                            }}>
+                                {article.specialty}
+                            </span>
+                        )}
+
+                        <h3 style={{
+                            color: '#0f172a',
+                            fontSize: '19px',
+                            lineHeight: '1.7',
+                            margin: '10px 0'
+                        }}>
+                            {article.title}
+                        </h3>
+
+                        {article.summary && (
+                            <p style={{
+                                color: '#64748b',
+                                fontSize: '14px',
+                                lineHeight: '1.8',
+                                overflow: 'hidden',
+                                display: '-webkit-box',
+                                WebkitLineClamp: 3,
+                                WebkitBoxOrient: 'vertical'
+                            }}>
+                                {article.summary}
+                            </p>
+                        )}
+
+                        <Link
+                            to={`/medical-articles/${encodeURIComponent(article.slug)}`}
+                            style={{
+                                display: 'inline-block',
+                                marginTop: '12px',
+                                color: '#0284c7',
+                                fontWeight: 'bold',
+                                textDecoration: 'none'
+                            }}
+                        >
+                            اقرأ المقال ←
+                        </Link>
+                    </div>
+                </article>
+            ))}
+        </div>
+    )}
+</section>
+
 
       {/* بطاقة استسقاء المخ عند الأطفال */}
       <section
