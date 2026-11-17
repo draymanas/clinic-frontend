@@ -8,7 +8,12 @@ import { Link } from 'react-router-dom';
 const AymanProfile = ({ setActivePage, navigate: propNavigate }) => { 
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showConsultModal, setShowConsultModal] = useState(false);
-  const [formData, setFormData] = useState({ name: '', phone: '', question: '' });
+ const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    question: '',
+    branch: ''
+});
   const [copied, setCopied] = useState(false);
 // المقالات الطبية المنشورة الخاصة بالمخ والأعصاب
 const [articles, setArticles] = useState([]);
@@ -161,8 +166,10 @@ const schemaData = {
 
   const sendToTelegram = async (e) => {
     e.preventDefault();
-    const message = `طلب حجز أونلاين جديد:%0Aالاسم: ${formData.name}%0Aرقم الواتساب: ${formData.phone}`;
-    const token = '8639669118:AAGOpN9rtWDl_J3kmhoBK3PddqI14jPqEgw';
+   const message = `طلب حجز جديد:
+الاسم: ${formData.name}
+رقم الواتساب: ${formData.phone}
+الفرع المطلوب: ${formData.branch}`; const token = '8639669118:AAGOpN9rtWDl_J3kmhoBK3PddqI14jPqEgw';
     const chatId = '6635887452'; 
     const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${message}`;
     
@@ -227,7 +234,33 @@ const schemaData = {
               style={{ width: '100%', padding: '15px', margin: '10px 0', fontSize: '18px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }} 
               onChange={(e) => setFormData({...formData, phone: e.target.value})} 
             />
-            
+            <select
+    required
+    value={formData.branch}
+    onChange={(e) =>
+        setFormData({ ...formData, branch: e.target.value })
+    }
+    style={{
+        width: '100%',
+        padding: '15px',
+        margin: '10px 0',
+        fontSize: '16px',
+        borderRadius: '8px',
+        border: '1px solid #ccc',
+        boxSizing: 'border-box',
+        background: '#fff',
+        color: formData.branch ? '#000' : '#888',
+        direction: 'rtl'
+    }}
+>
+    <option value="" disabled>الفرع المطلوب</option>
+    <option value="فرع أكتوبر">فرع أكتوبر</option>
+    <option value="فرع شبرا">فرع شبرا</option>
+    <option value="حجز كشف أونلاين بالفيديو">
+        حجز كشف أونلاين بالفيديو
+    </option>
+</select>
+
             <button 
               type="submit" 
               style={{ background: '#1a73e8', color: '#fff', padding: '15px', width: '100%', fontSize: '18px', border: 'none', borderRadius: '8px', cursor: 'pointer', marginTop: '10px' }}
