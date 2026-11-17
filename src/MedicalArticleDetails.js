@@ -533,6 +533,26 @@ const renderContentBlock = (block, index) => {
     </p>
 )}
 
+{isNeuroArticle && (
+    <div style={{ marginTop: '15px', textAlign: 'center' }}>
+        <Link
+            to="/dr/دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري"
+            style={{
+                display: 'inline-block',
+                background: '#0284c7',
+                color: '#ffffff',
+                padding: '11px 22px',
+                borderRadius: '8px',
+                fontWeight: 'bold',
+                fontSize: '15px',
+                textDecoration: 'none',
+                transition: 'background 0.2s ease'
+            }}
+        >
+            احجز مباشرة مع الدكتور أيمن عجيب من هنا
+        </Link>
+    </div>
+)}
               {article.reviewer_name && (
                 <p><strong>المراجع الطبي:</strong> {article.reviewer_name}</p>
               )}
