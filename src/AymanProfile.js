@@ -723,14 +723,21 @@ objectFit: 'cover',
                             </span>
                         )}
 
-                        <h3 style={{
-                            color: '#0f172a',
-                            fontSize: '19px',
-                            lineHeight: '1.7',
-                            margin: '10px 0'
-                        }}>
-                            {article.title}
-                        </h3>
+                       <h3 style={{
+    fontSize: '19px',
+    lineHeight: '1.7',
+    margin: '10px 0'
+}}>
+    <Link
+        to={`/medical-articles/${encodeURIComponent(article.slug)}`}
+        style={{
+            color: '#0f172a',
+            textDecoration: 'none'
+        }}
+    >
+        {article.title}
+    </Link>
+</h3>
 
                         {article.summary && (
                             <p style={{

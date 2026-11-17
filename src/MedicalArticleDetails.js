@@ -147,7 +147,13 @@ useEffect(() => {
 
 
   const pageUrl = `https://www.doctoreg.online/medical-articles/${encodeURIComponent(slug)}`;
+// رابط البروفايل الرسمي لد. أيمن
+const doctorProfileUrl =
+    'https://www.doctoreg.online/dr/' +
+    encodeURIComponent('دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري');
 
+// تحديد ما إذا كان المقال خاصًا بالمخ والأعصاب
+const isNeuroArticle = article?.article_type === 'neuro';
   const articleTitle = article?.seo_title || article?.title || 'مقال طبي';
   
 const articleDescription =
@@ -329,15 +335,18 @@ const renderContentBlock = (block, index) => {
     ...(article.updated_at && {
       "dateModified": article.updated_at
     }),
-    "author": article.author_name
-      ? {
-          "@type": "Person",
-          "name": article.author_name
-        }
-      : {
-          "@type": "Organization",
-          "name": "منصة دكتور"
-        },
+   "author": article.author_name
+    ? {
+        "@type": "Person",
+        "name": article.author_name,
+        ...(isNeuroArticle && {
+            "url": doctorProfileUrl
+        })
+    }
+    : {
+        "@type": "Organization",
+        "name": "منصة دكتور"
+    },
     "publisher": {
       "@type": "Organization",
       "name": "منصة دكتور",
@@ -504,8 +513,25 @@ const renderContentBlock = (block, index) => {
               borderRadius: '12px'
             }}>
               {article.author_name && (
-                <p><strong>كاتب المقال:</strong> {article.author_name}</p>
-              )}
+    <p>
+        <strong>كاتب المقال:</strong>{' '}
+
+        {isNeuroArticle ? (
+            <Link
+                to="/dr/دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري"
+                style={{
+                    color: '#0284c7',
+                    fontWeight: 'bold',
+                    textDecoration: 'none'
+                }}
+            >
+                {article.author_name}
+            </Link>
+        ) : (
+            article.author_name
+        )}
+    </p>
+)}
 
               {article.reviewer_name && (
                 <p><strong>المراجع الطبي:</strong> {article.reviewer_name}</p>
