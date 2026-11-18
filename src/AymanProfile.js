@@ -104,30 +104,23 @@ useEffect(() => {
   // روابط حجز الفروع
   const octPath = `/dr/40-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-أكتوبر")}`;
   const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-شبرا")}`;
-
 const schemaData = {
     "@context": "https://schema.org",
-    "@type": "Physician",
+    "@type": "IndividualPhysician",
     "@id": `${officialProfileUrl}#physician`,
 
     "name": "دكتور أيمن عجيب",
     "url": officialProfileUrl,
-
     "description":
-        "دكتور أيمن عجيب، استشاري المخ والأعصاب والعمود الفقري. يقدم خدمات تشخيص وعلاج أمراض المخ والجهاز العصبي والعمود الفقري من خلال عيادة 6 أكتوبر وشبرا مصر.",
+        "دكتور أيمن عجيب، استشاري جراحة المخ والأعصاب والعمود الفقري. يقدم خدمات تشخيص وعلاج أمراض المخ والجهاز العصبي والعمود الفقري من خلال عيادتي 6 أكتوبر وشبرا مصر.",
 
-    "medicalSpecialty": [
-        "Neurology",
-        "Neurosurgery"
-    ],
+    "medicalSpecialty": "https://schema.org/Neurologic",
 
-    "department": [
+    "practicesAt": [
         {
             "@type": "MedicalClinic",
             "@id": `${officialProfileUrl}#october-clinic`,
-
             "name": "عيادة دكتور أيمن عجيب - فرع 6 أكتوبر",
-
             "url": `https://www.doctoreg.online${octPath}`,
 
             "address": {
@@ -138,16 +131,13 @@ const schemaData = {
                 "addressCountry": "EG"
             },
 
-            "hasMap":
-                "https://maps.app.goo.gl/wse4VG3tAziZTQVs7"
+            "hasMap": "https://maps.app.goo.gl/wse4VG3tAziZTQVs7"
         },
 
         {
             "@type": "MedicalClinic",
             "@id": `${officialProfileUrl}#shubra-clinic`,
-
             "name": "عيادة دكتور أيمن عجيب - فرع شبرا",
-
             "url": `https://www.doctoreg.online${shubraPath}`,
 
             "address": {
@@ -158,8 +148,7 @@ const schemaData = {
                 "addressCountry": "EG"
             },
 
-            "hasMap":
-                "https://maps.app.goo.gl/M5ZMNchAfXD3omYT9"
+            "hasMap": "https://maps.app.goo.gl/M5ZMNchAfXD3omYT9"
         }
     ]
 };
@@ -191,7 +180,7 @@ const schemaData = {
     <div style={{ direction: 'rtl', backgroundColor: '#f8fafc', minHeight: '100vh', paddingBottom: '50px', fontFamily: 'Cairo, sans-serif' }}>
       <Helmet>
         <title>دكتور أيمن عجيب | استشاري المخ والأعصاب والعمود الفقري</title>
-        <meta name="description" content="عيادات د. أيمن عجيب استشاري جراحة المخ والأعصاب والعمود الفقري (فرع أكتوبر وفرع شبرا). احجز موعدك أو أرسل استشارتك الطبية مباشرة." />
+        <meta name="description" content="عيادات دكتور. أيمن عجيب استشاري جراحة المخ والأعصاب والعمود الفقري (فرع أكتوبر وفرع شبرا). احجز موعدك أو أرسل استشارتك الطبية مباشرة." />
         <link rel="canonical" href={officialProfileUrl} />
 
         {/* كروت السوشيال ميديا المباشرة */}
@@ -202,7 +191,7 @@ const schemaData = {
         <meta property="og:image:height" content="630" />
         <meta property="og:url" content={officialProfileUrl} />
         <meta property="og:type" content="profile" />
-        <meta property="og:site_name" content="عيادات دكتور أيمن عجيب" />
+        <meta property="og:site_name" content="عيادة دكتور أيمن عجيب" />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="دكتور أيمن عجيب | استشاري المخ والأعصاب والعمود الفقري" />
