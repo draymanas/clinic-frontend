@@ -1914,6 +1914,18 @@ function AccountingPage({ doctors = [], appointments = [] }) {
   const [loadingInvoices, setLoadingInvoices] = React.useState(false);
   const [invoicesError, setInvoicesError] = React.useState('');
   const [issuingInvoice, setIssuingInvoice] = React.useState(false);
+  // ==========================================
+// 📊 حالات التقرير الشهري والإصدار الجماعي
+// ==========================================
+
+const [selectedBulkDoctors, setSelectedBulkDoctors] = React.useState([]);
+const [bulkDiscount, setBulkDiscount] = React.useState(0);
+const [doctorDiscounts, setDoctorDiscounts] = React.useState({});
+const [issuingBulkInvoices, setIssuingBulkInvoices] = React.useState(false);
+const [bulkIssueResults, setBulkIssueResults] = React.useState(null);
+const [downloadingMonthlyReport, setDownloadingMonthlyReport] = React.useState(false);
+
+const monthlyReportRef = React.useRef(null);
   // سجل جميع فواتير الطبيب
 const [doctorInvoiceHistory, setDoctorInvoiceHistory] = React.useState([]);
 const [loadingDoctorHistory, setLoadingDoctorHistory] = React.useState(false);
@@ -2196,6 +2208,104 @@ const fetchSavedPayments = async () => {
 
   const doctorsList = Array.isArray(doctors) ? doctors : [];
   const appointmentsList = Array.isArray(appointments) ? appointments : [];
+  // ==========================================
+// 📊 التقرير الشهري الشامل لكل العيادات
+// ==========================================
+
+const monthlyAppointments = appointmentsList.filter(app => {
+  const date = getAppointmentDate(app);
+
+  if (!date) return false;
+
+  return (
+    date.getMonth() + 1 === Number(selectedMonth) &&
+    date.getFullYear() === Number(selectedYear)
+  );
+});
+
+const monthlyReportRows = doctorsList.map(doc => {
+  const docAppointments = monthlyAppointments.filter(
+    app => String(app.doctor_id) === String(doc.id)
+  );
+
+  const completed = docAppointments.filter(
+    app => getStatus(app.status).completed
+  ).length;
+
+  const pending = docAppointments.filter(
+    app => getStatus(app.status).label === 'معلق'
+  ).length;
+
+  const absent = docAppointments.filter(
+    app => getStatus(app.status).label === 'غائب'
+  ).length;
+
+  const cancelled = docAppointments.filter(
+    app => getStatus(app.status).label === 'ملغي'
+  ).length;
+
+  const fee = Math.max(0, Number(doc.fee) || 0);
+
+  const totalAmount = completed * fee;
+  const platformFee = totalAmount * COMMISSION_RATE;
+
+  const effectiveDiscount = Math.min(
+    100,
+    Math.max(
+      0,
+      Number(
+        doctorDiscounts[String(doc.id)] !== undefined
+          ? doctorDiscounts[String(doc.id)]
+          : bulkDiscount
+      ) || 0
+    )
+  );
+
+  const discountAmount = platformFee * effectiveDiscount / 100;
+  const finalAmount = Math.max(0, platformFee - discountAmount);
+
+  return {
+    doctor: doc,
+    doctorId: doc.id,
+    doctorName: doc.name || 'بدون اسم',
+    total: docAppointments.length,
+    completed,
+    pending,
+    absent,
+    cancelled,
+    fee,
+    totalAmount,
+    platformFee,
+    discountRate: effectiveDiscount,
+    discountAmount,
+    finalAmount
+  };
+}).filter(row => row.total > 0);
+
+const monthlyReportTotals = monthlyReportRows.reduce(
+  (totals, row) => ({
+    total: totals.total + row.total,
+    completed: totals.completed + row.completed,
+    pending: totals.pending + row.pending,
+    absent: totals.absent + row.absent,
+    cancelled: totals.cancelled + row.cancelled,
+    totalAmount: totals.totalAmount + row.totalAmount,
+    platformFee: totals.platformFee + row.platformFee,
+    discountAmount: totals.discountAmount + row.discountAmount,
+    finalAmount: totals.finalAmount + row.finalAmount
+  }),
+  {
+    total: 0,
+    completed: 0,
+    pending: 0,
+    absent: 0,
+    cancelled: 0,
+    totalAmount: 0,
+    platformFee: 0,
+    discountAmount: 0,
+    finalAmount: 0
+  }
+);
 
   const currentDoc = doctorsList.find(
     d => String(d.id) === String(selectedDocId)
@@ -2457,7 +2567,11 @@ const issueInvoice = async () => {
           invoice_year: Number(selectedYear),
           invoice_month: Number(selectedMonth),
           invoice_total: Number(finalAmount),
-          notes: `عدد الكشوفات المكتملة: ${completedAppointments.length}`
+        notes:
+  `عدد الكشوفات المكتملة: ${completedAppointments.length}` +
+  ` | عمولة المنصة: ${money(platformFee)} جنيه` +
+  ` | خصم الإدارة: ${discountRate}%` +
+  ` | قيمة الخصم: ${money(discountAmount)} جنيه`
         })
       }
     );
@@ -2468,13 +2582,224 @@ const issueInvoice = async () => {
       throw new Error(data.error || 'فشل إصدار الفاتورة.');
     }
 
-    alert('تم إصدار الفاتورة وحفظها بنجاح.');
+   alert('تم إصدار الفاتورة وحفظها بنجاح.');
+
+await fetchSavedInvoices();
+await fetchDoctorInvoiceHistory();
 
   } catch (error) {
     console.error('Invoice issue error:', error);
     alert(error.message || 'حدث خطأ أثناء إصدار الفاتورة.');
   } finally {
     setIssuingInvoice(false);
+  }
+};
+
+// ==========================================
+// ☑️ تحديد العيادات للإصدار الجماعي
+// ==========================================
+
+const toggleBulkDoctor = doctorId => {
+  setSelectedBulkDoctors(previous => {
+    const id = String(doctorId);
+
+    return previous.includes(id)
+      ? previous.filter(item => item !== id)
+      : [...previous, id];
+  });
+};
+
+const selectAllBulkDoctors = () => {
+  setSelectedBulkDoctors(
+    monthlyReportRows.map(row => String(row.doctorId))
+  );
+};
+
+const clearBulkDoctors = () => {
+  setSelectedBulkDoctors([]);
+};
+
+const updateDoctorDiscount = (doctorId, value) => {
+  setDoctorDiscounts(previous => ({
+    ...previous,
+    [String(doctorId)]: value
+  }));
+};
+
+// ==========================================
+// 💰 تطبيق الخصم الجماعي على كل العيادات
+// ==========================================
+
+const applyBulkDiscountToAll = value => {
+  setBulkDiscount(value);
+  setDoctorDiscounts({});
+};
+
+// ==========================================
+// 🧾 إصدار الفواتير الجماعي
+// ==========================================
+
+const issueBulkInvoices = async () => {
+  const selectedRows = monthlyReportRows.filter(row =>
+    selectedBulkDoctors.includes(String(row.doctorId))
+  );
+
+  if (selectedRows.length === 0) {
+    alert('حدد عيادة واحدة على الأقل لإصدار الفواتير.');
+    return;
+  }
+
+  const eligibleRows = selectedRows.filter(
+    row => row.completed > 0 && row.finalAmount > 0
+  );
+
+  if (eligibleRows.length === 0) {
+    alert('لا توجد عيادات محددة لديها حجوزات مكتملة ومبالغ مستحقة للإصدار.');
+    return;
+  }
+
+  const skippedLocally = selectedRows.length - eligibleRows.length;
+
+  const confirmed = window.confirm(
+    `تأكيد الإصدار الجماعي؟\n\n` +
+    `عدد العيادات المحددة: ${selectedRows.length}\n` +
+    `عدد الفواتير المستحقة للإصدار: ${eligibleRows.length}\n` +
+    `عدد العيادات بدون مبلغ مستحق: ${skippedLocally}\n\n` +
+    `الفترة: ${monthName} ${selectedYear}\n` +
+    `إجمالي الفواتير المتوقع: ${money(
+      eligibleRows.reduce((sum, row) => sum + row.finalAmount, 0)
+    )} جنيه\n\n` +
+    `سيتم فحص كل عيادة قبل إصدار فاتورتها.`
+  );
+
+  if (!confirmed) return;
+
+  setIssuingBulkInvoices(true);
+  setBulkIssueResults(null);
+
+  const results = {
+    success: [],
+    skipped: [],
+    failed: []
+  };
+
+  try {
+    // الإصدار بالتتابع لتجنب الضغط على السيرفر
+    for (const row of eligibleRows) {
+      try {
+        // فحص وجود فاتورة سابقة لنفس العيادة والفترة
+        const checkParams = new URLSearchParams({
+          doctor_id: String(row.doctorId),
+          year: String(selectedYear),
+          month: String(selectedMonth)
+        });
+
+        const checkResponse = await fetch(
+          `https://clinic-api-ig3d.onrender.com/api/accounting/invoices?${checkParams.toString()}`
+        );
+
+        const checkData = await checkResponse.json();
+
+        if (!checkResponse.ok || !checkData.success) {
+          throw new Error('تعذر التحقق من الفواتير السابقة.');
+        }
+
+        const alreadyExists = (checkData.invoices || []).some(
+          invoice =>
+            String(invoice.doctor_id) === String(row.doctorId) &&
+            Number(invoice.invoice_year) === Number(selectedYear) &&
+            Number(invoice.invoice_month) === Number(selectedMonth)
+        );
+
+        if (alreadyExists) {
+          results.skipped.push({
+            doctorId: row.doctorId,
+            doctorName: row.doctorName,
+            reason: 'توجد فاتورة سابقة لهذه الفترة'
+          });
+
+          continue;
+        }
+
+        // إصدار الفاتورة
+        const response = await fetch(
+          'https://clinic-api-ig3d.onrender.com/api/accounting/invoices/issue',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              doctor_id: Number(row.doctorId),
+              invoice_year: Number(selectedYear),
+              invoice_month: Number(selectedMonth),
+              invoice_total: Number(row.finalAmount),
+              notes:
+                `عدد الكشوفات المكتملة: ${row.completed}` +
+                ` | عمولة المنصة: ${money(row.platformFee)} جنيه` +
+                ` | خصم الإدارة: ${row.discountRate}%` +
+                ` | قيمة الخصم: ${money(row.discountAmount)} جنيه`
+            })
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(
+            data.error || 'فشل إصدار الفاتورة.'
+          );
+        }
+
+        results.success.push({
+          doctorId: row.doctorId,
+          doctorName: row.doctorName,
+          amount: row.finalAmount
+        });
+
+      } catch (error) {
+        console.error(
+          `فشل إصدار فاتورة العيادة ${row.doctorId}:`,
+          error
+        );
+
+        results.failed.push({
+          doctorId: row.doctorId,
+          doctorName: row.doctorName,
+          reason: error.message || 'خطأ غير معروف'
+        });
+      }
+    }
+
+    // تسجيل العيادات التي لا تستحق فاتورة
+    selectedRows
+      .filter(row => row.completed === 0 || row.finalAmount <= 0)
+      .forEach(row => {
+        results.skipped.push({
+          doctorId: row.doctorId,
+          doctorName: row.doctorName,
+          reason: 'لا توجد حجوزات مكتملة أو قيمة الفاتورة صفر'
+        });
+      });
+
+    setBulkIssueResults(results);
+
+    // تحديث سجل الفواتير بعد انتهاء العملية
+    await fetchSavedInvoices();
+
+    const message =
+      `انتهت عملية الإصدار الجماعي.\n\n` +
+      `تم الإصدار بنجاح: ${results.success.length}\n` +
+      `تم التخطي: ${results.skipped.length}\n` +
+      `فشل الإصدار: ${results.failed.length}`;
+
+    alert(message);
+
+  } catch (error) {
+    console.error('خطأ الإصدار الجماعي:', error);
+    alert('حدث خطأ عام أثناء عملية الإصدار الجماعي.');
+  } finally {
+    setIssuingBulkInvoices(false);
   }
 };
 
@@ -2619,6 +2944,66 @@ const handleRecordPayment = async () => {
       setDownloading(false);
     }
   };
+
+// ==========================================
+// 📄 تنزيل التقرير الشهري الشامل PDF
+// ==========================================
+
+const downloadMonthlyReportPDF = async () => {
+  if (!monthlyReportRef.current) {
+    alert('التقرير غير جاهز للتصدير.');
+    return;
+  }
+
+  if (monthlyReportRows.length === 0) {
+    alert('لا توجد حجوزات خلال الشهر المحدد لإنشاء التقرير.');
+    return;
+  }
+
+  try {
+    setDownloadingMonthlyReport(true);
+
+    const html2pdfModule = await import('html2pdf.js');
+    const html2pdf = html2pdfModule.default || html2pdfModule;
+
+    if (document.fonts?.ready) {
+      await document.fonts.ready;
+    }
+
+    await html2pdf()
+      .set({
+        margin: [8, 7, 8, 7],
+        filename: `Monthly-Accounting-${selectedYear}-${String(selectedMonth).padStart(2, '0')}.pdf`,
+        image: {
+          type: 'jpeg',
+          quality: 0.98
+        },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          scrollY: 0
+        },
+        jsPDF: {
+          unit: 'mm',
+          format: 'a4',
+          orientation: 'landscape'
+        },
+        pagebreak: {
+          mode: ['css', 'legacy'],
+          avoid: ['tr']
+        }
+      })
+      .from(monthlyReportRef.current)
+      .save();
+
+  } catch (error) {
+    console.error('خطأ تنزيل التقرير الشهري:', error);
+    alert('تعذر إنشاء التقرير PDF.');
+  } finally {
+    setDownloadingMonthlyReport(false);
+  }
+};
 
   // ==========================================
   // إرسال رسالة واتساب
@@ -2790,6 +3175,564 @@ const handleRecordPayment = async () => {
         </div>
 
       </div>
+
+{/* =====================================================
+    📊 التقرير الشهري الشامل والإصدار الجماعي
+===================================================== */}
+
+<div style={{
+  ...styles.card,
+  marginBottom: '22px',
+  border: '1px solid #bae6fd'
+}}>
+
+  <div style={{
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: '12px',
+    marginBottom: '18px'
+  }}>
+    <div>
+      <h3 style={{
+        margin: '0 0 6px',
+        color: '#0369a1',
+        fontSize: '20px'
+      }}>
+        📊 التقرير الشهري الشامل
+      </h3>
+
+      <p style={{
+        margin: 0,
+        color: '#64748b',
+        fontSize: '13px'
+      }}>
+        {monthName} {selectedYear} — جميع العيادات التي لديها حجوزات
+      </p>
+    </div>
+
+    <button
+      type="button"
+      onClick={downloadMonthlyReportPDF}
+      disabled={downloadingMonthlyReport || monthlyReportRows.length === 0}
+      style={{
+        padding: '11px 17px',
+        background: downloadingMonthlyReport ? '#94a3b8' : '#0284c7',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '9px',
+        fontWeight: '800',
+        cursor: downloadingMonthlyReport ? 'wait' : 'pointer'
+      }}
+    >
+      {downloadingMonthlyReport
+        ? '⏳ جاري إعداد التقرير...'
+        : '📄 تحميل التقرير الشهري PDF'}
+    </button>
+  </div>
+
+  {/* ملخص إجمالي الشهر */}
+
+  <div style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(135px, 1fr))',
+    gap: '10px',
+    marginBottom: '20px'
+  }}>
+
+    {[
+      ['عدد العيادات', monthlyReportRows.length],
+      ['إجمالي الحجوزات', monthlyReportTotals.total],
+      ['مكتمل', monthlyReportTotals.completed],
+      ['معلق', monthlyReportTotals.pending],
+      ['غائب', monthlyReportTotals.absent],
+      ['ملغي', monthlyReportTotals.cancelled]
+    ].map(([label, value]) => (
+      <div key={label} style={{
+        background: '#f8fafc',
+        border: '1px solid #e2e8f0',
+        borderRadius: '10px',
+        padding: '13px',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          fontSize: '21px',
+          fontWeight: '900',
+          color: '#0f172a'
+        }}>
+          {value}
+        </div>
+
+        <div style={{
+          fontSize: '12px',
+          color: '#64748b',
+          marginTop: '4px'
+        }}>
+          {label}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {/* الملخص المالي */}
+
+  <div style={{
+    background: '#f0f9ff',
+    border: '1px solid #bae6fd',
+    borderRadius: '12px',
+    padding: '15px',
+    marginBottom: '20px',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+    gap: '12px'
+  }}>
+    <div>
+      <div style={{ color: '#64748b', fontSize: '12px' }}>
+        إجمالي قيمة الكشوفات المكتملة
+      </div>
+      <strong>{money(monthlyReportTotals.totalAmount)} ج.م</strong>
+    </div>
+
+    <div>
+      <div style={{ color: '#64748b', fontSize: '12px' }}>
+        إجمالي عمولة المنصة 20%
+      </div>
+      <strong>{money(monthlyReportTotals.platformFee)} ج.م</strong>
+    </div>
+
+    <div>
+      <div style={{ color: '#64748b', fontSize: '12px' }}>
+        إجمالي الخصومات
+      </div>
+      <strong style={{ color: '#dc2626' }}>
+        {money(monthlyReportTotals.discountAmount)} ج.م
+      </strong>
+    </div>
+
+    <div>
+      <div style={{ color: '#64748b', fontSize: '12px' }}>
+        صافي مستحقات المنصة
+      </div>
+      <strong style={{ color: '#047857', fontSize: '18px' }}>
+        {money(monthlyReportTotals.finalAmount)} ج.م
+      </strong>
+    </div>
+  </div>
+
+  {/* إعدادات الإصدار الجماعي */}
+
+  <div style={{
+    background: '#f8fafc',
+    border: '1px solid #e2e8f0',
+    borderRadius: '12px',
+    padding: '15px',
+    marginBottom: '18px'
+  }}>
+
+    <h4 style={{
+      margin: '0 0 12px',
+      fontSize: '16px'
+    }}>
+      🧾 إعداد الفواتير الجماعية
+    </h4>
+
+    <div style={{
+      display: 'flex',
+      alignItems: 'end',
+      flexWrap: 'wrap',
+      gap: '12px'
+    }}>
+
+      <div style={{ flex: '1', minWidth: '180px' }}>
+        <label style={{
+          display: 'block',
+          fontWeight: '700',
+          marginBottom: '7px',
+          fontSize: '13px'
+        }}>
+          نسبة الخصم الجماعي
+        </label>
+
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            step="0.5"
+            value={bulkDiscount}
+            onChange={e => applyBulkDiscountToAll(e.target.value)}
+            style={{
+              ...styles.input,
+              maxWidth: '150px'
+            }}
+          />
+
+          <b>%</b>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={selectAllBulkDoctors}
+        style={{
+          padding: '11px 15px',
+          background: '#0369a1',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '8px',
+          fontWeight: '700',
+          cursor: 'pointer'
+        }}
+      >
+        ☑️ تحديد الكل
+      </button>
+
+      <button
+        type="button"
+        onClick={clearBulkDoctors}
+        style={{
+          padding: '11px 15px',
+          background: '#e2e8f0',
+          color: '#334155',
+          border: 'none',
+          borderRadius: '8px',
+          fontWeight: '700',
+          cursor: 'pointer'
+        }}
+      >
+        إلغاء التحديد
+      </button>
+
+    </div>
+
+    <p style={{
+      color: '#64748b',
+      fontSize: '12px',
+      margin: '10px 0 0'
+    }}>
+      الخصم الافتراضي 0%، ويمكنك تغيير نسبة الخصم لأي عيادة بشكل مستقل من الجدول.
+      الخصم يُحسب من عمولة المنصة فقط.
+    </p>
+  </div>
+
+  {/* التقرير القابل للتصدير */}
+
+  <div
+    ref={monthlyReportRef}
+    style={{
+      background: '#fff',
+      padding: '12px',
+      color: '#0f172a',
+      direction: 'rtl',
+      fontFamily: 'Tahoma, Arial, sans-serif'
+    }}
+  >
+
+    <div style={{
+      textAlign: 'center',
+      marginBottom: '16px',
+      borderBottom: '2px solid #0284c7',
+      paddingBottom: '12px'
+    }}>
+      <h2 style={{
+        margin: '0 0 6px',
+        color: '#0369a1'
+      }}>
+        منصة دكتور | التقرير المحاسبي الشهري
+      </h2>
+
+      <div style={{ fontSize: '14px' }}>
+        الفترة: {monthName} {selectedYear}
+      </div>
+    </div>
+
+    <div style={{ overflowX: 'auto' }}>
+      <table style={{
+        width: '100%',
+        minWidth: '1050px',
+        borderCollapse: 'collapse',
+        direction: 'rtl'
+      }}>
+        <thead>
+          <tr>
+            {[
+              'كود العيادة',
+              'اسم الطبيب',
+              'إجمالي الحجوزات',
+              'مكتمل',
+              'معلق',
+              'غائب',
+              'ملغي',
+              'سعر الكشف',
+              'إجمالي الكشوفات',
+              'عمولة المنصة',
+              'الخصم',
+              'صافي المستحق'
+            ].map(label => (
+              <th key={label} style={styles.th}>
+                {label}
+              </th>
+            ))}
+          </tr>
+        </thead>
+
+        <tbody>
+          {monthlyReportRows.length === 0 ? (
+            <tr>
+              <td
+                colSpan={12}
+                style={{
+                  ...styles.td,
+                  textAlign: 'center',
+                  padding: '25px'
+                }}
+              >
+                لا توجد حجوزات خلال هذه الفترة.
+              </td>
+            </tr>
+          ) : (
+            monthlyReportRows.map(row => (
+              <tr key={row.doctorId}>
+                <td style={styles.td}>{row.doctorId}</td>
+                <td style={styles.td}>{row.doctorName}</td>
+                <td style={styles.td}>{row.total}</td>
+                <td style={styles.td}>{row.completed}</td>
+                <td style={styles.td}>{row.pending}</td>
+                <td style={styles.td}>{row.absent}</td>
+                <td style={styles.td}>{row.cancelled}</td>
+                <td style={styles.td}>{money(row.fee)}</td>
+                <td style={styles.td}>{money(row.totalAmount)}</td>
+                <td style={styles.td}>{money(row.platformFee)}</td>
+                <td style={styles.td}>
+                  {row.discountRate}% — {money(row.discountAmount)}
+                </td>
+                <td style={{
+                  ...styles.td,
+                  fontWeight: '800'
+                }}>
+                  {money(row.finalAmount)}
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+
+        {monthlyReportRows.length > 0 && (
+          <tfoot>
+            <tr>
+              <td style={styles.td} colSpan={2}>
+                <b>الإجمالي</b>
+              </td>
+              <td style={styles.td}><b>{monthlyReportTotals.total}</b></td>
+              <td style={styles.td}><b>{monthlyReportTotals.completed}</b></td>
+              <td style={styles.td}><b>{monthlyReportTotals.pending}</b></td>
+              <td style={styles.td}><b>{monthlyReportTotals.absent}</b></td>
+              <td style={styles.td}><b>{monthlyReportTotals.cancelled}</b></td>
+              <td style={styles.td}>—</td>
+              <td style={styles.td}><b>{money(monthlyReportTotals.totalAmount)}</b></td>
+              <td style={styles.td}><b>{money(monthlyReportTotals.platformFee)}</b></td>
+              <td style={styles.td}><b>{money(monthlyReportTotals.discountAmount)}</b></td>
+              <td style={styles.td}><b>{money(monthlyReportTotals.finalAmount)}</b></td>
+            </tr>
+          </tfoot>
+        )}
+      </table>
+    </div>
+  </div>
+
+  {/* جدول اختيار العيادات وتعديل الخصم */}
+
+  <h4 style={{
+    margin: '22px 0 10px',
+    fontSize: '16px'
+  }}>
+    ☑️ اختيار العيادات وتعديل الخصم قبل الإصدار
+  </h4>
+
+  <div style={{ overflowX: 'auto' }}>
+    <table style={{
+      width: '100%',
+      minWidth: '850px',
+      borderCollapse: 'collapse',
+      direction: 'rtl'
+    }}>
+      <thead>
+        <tr>
+          <th style={styles.th}>اختيار</th>
+          <th style={styles.th}>كود العيادة</th>
+          <th style={styles.th}>الطبيب</th>
+          <th style={styles.th}>المكتمل</th>
+          <th style={styles.th}>العمولة</th>
+          <th style={styles.th}>الخصم %</th>
+          <th style={styles.th}>صافي الفاتورة</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {monthlyReportRows.map(row => (
+          <tr key={row.doctorId}>
+            <td style={styles.td}>
+              <input
+                type="checkbox"
+                checked={selectedBulkDoctors.includes(String(row.doctorId))}
+                onChange={() => toggleBulkDoctor(row.doctorId)}
+              />
+            </td>
+
+            <td style={styles.td}>
+              <b>{row.doctorId}</b>
+            </td>
+
+            <td style={styles.td}>
+              {row.doctorName}
+            </td>
+
+            <td style={styles.td}>
+              {row.completed}
+            </td>
+
+            <td style={styles.td}>
+              {money(row.platformFee)} ج.م
+            </td>
+
+            <td style={styles.td}>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.5"
+                value={
+                  doctorDiscounts[String(row.doctorId)] !== undefined
+                    ? doctorDiscounts[String(row.doctorId)]
+                    : bulkDiscount
+                }
+                onChange={e =>
+                  updateDoctorDiscount(row.doctorId, e.target.value)
+                }
+                style={{
+                  ...styles.input,
+                  width: '85px',
+                  padding: '7px'
+                }}
+              />
+            </td>
+
+            <td style={{
+              ...styles.td,
+              fontWeight: '800',
+              color: '#047857'
+            }}>
+              {money(row.finalAmount)} ج.م
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <div style={{
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: '12px',
+    marginTop: '18px'
+  }}>
+
+    <div style={{
+      color: '#475569',
+      fontSize: '13px',
+      fontWeight: '700'
+    }}>
+      عدد العيادات المحددة: {selectedBulkDoctors.length}
+    </div>
+
+    <button
+      type="button"
+      onClick={issueBulkInvoices}
+      disabled={issuingBulkInvoices || selectedBulkDoctors.length === 0}
+      style={{
+        padding: '14px 22px',
+        background: issuingBulkInvoices ? '#94a3b8' : '#0f766e',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '10px',
+        fontWeight: '900',
+        fontSize: '15px',
+        cursor: issuingBulkInvoices ? 'wait' : 'pointer'
+      }}
+    >
+      {issuingBulkInvoices
+        ? '⏳ جاري إصدار الفواتير بالتتابع...'
+        : '🧾 إصدار فواتير العيادات المحددة'}
+    </button>
+
+  </div>
+
+  {/* نتيجة الإصدار الجماعي */}
+
+  {bulkIssueResults && (
+    <div style={{
+      marginTop: '18px',
+      padding: '15px',
+      borderRadius: '10px',
+      background: '#f8fafc',
+      border: '1px solid #e2e8f0'
+    }}>
+
+      <h4 style={{ margin: '0 0 12px' }}>
+        📋 نتيجة عملية الإصدار
+      </h4>
+
+      <p style={{ color: '#15803d', fontWeight: '700' }}>
+        تم الإصدار بنجاح: {bulkIssueResults.success.length}
+      </p>
+
+      {bulkIssueResults.success.map(item => (
+        <div key={`success-${item.doctorId}`} style={{
+          fontSize: '13px',
+          marginBottom: '5px'
+        }}>
+          ✅ {item.doctorName} — كود {item.doctorId} — {money(item.amount)} ج.م
+        </div>
+      ))}
+
+      <p style={{ color: '#a16207', fontWeight: '700' }}>
+        تم التخطي: {bulkIssueResults.skipped.length}
+      </p>
+
+      {bulkIssueResults.skipped.map((item, index) => (
+        <div key={`skipped-${item.doctorId}-${index}`} style={{
+          fontSize: '13px',
+          marginBottom: '5px'
+        }}>
+          ⚠️ {item.doctorName} — كود {item.doctorId}: {item.reason}
+        </div>
+      ))}
+
+      <p style={{ color: '#dc2626', fontWeight: '700' }}>
+        فشل الإصدار: {bulkIssueResults.failed.length}
+      </p>
+
+      {bulkIssueResults.failed.map((item, index) => (
+        <div key={`failed-${item.doctorId}-${index}`} style={{
+          fontSize: '13px',
+          marginBottom: '5px'
+        }}>
+          ❌ {item.doctorName} — كود {item.doctorId}: {item.reason}
+        </div>
+      ))}
+
+    </div>
+  )}
+
+</div>
+
             {/* ====================================
           سجل الفواتير المحفوظة
       ==================================== */}
