@@ -86,31 +86,41 @@ const ServiceDetails = () => {
       setTimeout(() => setCopied(false), 2500);
     }
   };
+const sendToTelegram = async (e) => {
+  e.preventDefault();
 
-  const sendToTelegram = async (e) => {
-    e.preventDefault();
-    const data = new FormData(e.target);
-    const name = data.get('name');
-    const phone = data.get('phone');
+  const data = new FormData(e.target);
+  const name = data.get('name');
+  const phone = data.get('phone');
 
-    const message = `طلب حجز موعد جديد من صفحة مقال (${service.title}):%0Aالاسم: ${name}%0Aالموبايل/واتساب: ${phone}`;
-    const token = '8639669118:AAGOpN9rtWDl_J3kmhoBK3PddqI14jPqEgw';
-    const chatId = '6635887452'; 
-    const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${message}`;
-    
-    try {
-      const response = await fetch(url);
-      if (response.ok) {
-        alert('تم إرسال طلبك بنجاح، سنتواصل معك هاتفياً أو عبر الواتساب لتأكيد الموعد!');
-        setShowModal(false);
-      } else {
-        alert('حدث خطأ أثناء الإرسال، حاول مرة أخرى.');
+  try {
+    const response = await fetch(
+      'https://clinic-api-ig3d.onrender.com/api/service-booking',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name,
+          phone,
+          serviceTitle: service.title
+        })
       }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('تعذر الاتصال بخادم التليجرام.');
+    );
+
+    if (response.ok) {
+      alert('تم إرسال طلبك بنجاح، سنتواصل معك هاتفياً أو عبر الواتساب لتأكيد الموعد!');
+      setShowModal(false);
+    } else {
+      alert('حدث خطأ أثناء الإرسال، حاول مرة أخرى.');
     }
-  };
+
+  } catch (error) {
+    console.error('Error:', error);
+    alert('تعذر الاتصال بالخادم، حاول مرة أخرى.');
+  }
+};
 
   // روابط الحجز للفرعين بالصيغة السريعة
   const octBookingPath = `/dr/40-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-أكتوبر")}`;
