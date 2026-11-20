@@ -4859,6 +4859,9 @@ function App() {
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false); 
+  const [adminToken, setAdminToken] = useState(null);
+const [adminPassword, setAdminPassword] = useState('');
+const [adminLoginError, setAdminLoginError] = useState('');
   const [activePage, setActivePage] = useState('home'); 
   const [currentUser, setCurrentUser] = useState(null); 
   const [showLoginModal, setShowLoginModal] = useState(false); 
@@ -4869,6 +4872,44 @@ function App() {
   const [showPatientHistoryModal, setShowPatientHistoryModal] = useState(false);
   const [patientAppointments, setPatientAppointments] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+
+
+const loginAdmin = async () => {
+  try {
+    setAdminLoginError('');
+
+    const response = await fetch(
+      'https://clinic-api-ig3d.onrender.com/api/admin/login',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          password: adminPassword
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      setAdminLoginError('كلمة المرور غير صحيحة');
+      return;
+    }
+
+    setAdminToken(data.token);
+    setIsAdmin(true);
+    setCurrentUser({ name: 'Admin', role: 'admin' });
+    setAdminPassword('');
+    setShowLoginModal(false);
+    navigate('/admin');
+
+  } catch (error) {
+    setAdminLoginError('تعذر الاتصال بالسيرفر');
+  }
+};
+
 
   // دالة جلب حجوزات المريض برقم هاتفه من السيرفر
  // دالة جلب حجوزات المريض المحدثة (تفتح فوراً وتبحث عن الرقم بذكاء)
@@ -5553,29 +5594,46 @@ const saveWebFCMToken = async (user, token) => {
     </div>
 )}
                     
-                {currentUser?.role === 'admin_check' && (
-    <div style={{ display: 'grid', gap: '10px' }}>
-        <input 
-            type="password" 
-            placeholder="كلمة سر الأدمن" 
-            style={inputStyle} 
-            onKeyDown={(e) => {
-                if(e.key === 'Enter' && e.target.value === 'admin123') {
-                    const adminData = {name: 'Admin', role: 'admin'};
-                    
-                    setIsAdmin(true);
-                    setCurrentUser(adminData);
-                   navigate('/admin');
-                    
-                    localStorage.setItem('saved_user', JSON.stringify(adminData));
-                    
-                    setShowLoginModal(false);
-                }
-            }} 
-        />
-        <p style={{fontSize:'12px', color:'gray', textAlign: 'center'}}>اضغط Enter بعد كتابة الباسورد</p>
-    </div>
+            
+{currentUser?.role === 'admin_check' && (
+  <div style={{ display: 'grid', gap: '10px' }}>
+    <input
+      type="password"
+      placeholder="كلمة سر الأدمن"
+      style={inputStyle}
+      value={adminPassword}
+      onChange={(e) => setAdminPassword(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          loginAdmin();
+        }
+      }}
+    />
+
+    <button
+      onClick={loginAdmin}
+      style={{
+        background: '#3498db',
+        color: '#fff',
+        border: 'none',
+        padding: '12px',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        fontWeight: 'bold'
+      }}
+    >
+      دخول لوحة الإدارة
+    </button>
+
+    {adminLoginError && (
+      <p style={{ color: 'red', textAlign: 'center' }}>
+        {adminLoginError}
+      </p>
+    )}
+  </div>
 )}
+
                 {currentUser?.role === 'doctor_check' && (
     <div style={{ display: 'grid', gap: '10px' }}>
         <input 
