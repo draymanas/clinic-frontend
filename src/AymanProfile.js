@@ -102,8 +102,7 @@ useEffect(() => {
   };
 
   // روابط حجز الفروع
-  const octPath = `/dr/40-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-أكتوبر")}`;
-  const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-شبرا")}`;
+ const octPath = "/dr/40-دكتور-ايمن-عجيب-فرع-اكتوبر-استشاري-مخ-وأعصاب"; const shubraPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-شبرا")}`;
 const schemaData = {
     "@context": "https://schema.org",
     "@type": "IndividualPhysician",
