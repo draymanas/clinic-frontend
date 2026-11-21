@@ -123,7 +123,7 @@ const sendToTelegram = async (e) => {
 };
 
   // روابط الحجز للفرعين بالصيغة السريعة
-  const octBookingPath = `/dr/40-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-أكتوبر")}`;
+  const octBookingPath = `/dr/40-${encodeURIComponent("دكتور-ايمن-عجيب-فرع-اكتوبر-استشاري-مخ-وأعصاب")}`;
   const shubraBookingPath = `/dr/138-${encodeURIComponent("دكتور-ايمن-عجيب-استشاري-مخ-وأعصاب-وعمود-فقري-فرع-شبرا")}`;
 
   return (
