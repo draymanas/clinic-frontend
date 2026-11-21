@@ -34,17 +34,26 @@ useEffect(() => {
     status: 'draft'
   });
 
-  useEffect(() => {
-  const fetchArticles = async () => {
-    try {
-     const response = await fetch(
-  'https://clinic-api-ig3d.onrender.com/api/admin/medical-articles',
-  {
-    headers: {
-      Authorization: `Bearer ${adminToken}`
-    }
+
+useEffect(() => {
+  if (!adminToken) {
+    setLoadingArticles(false);
+    return;
   }
-);
+
+  const fetchArticles = async () => {
+    setLoadingArticles(true);
+
+    try {
+      const response = await fetch(
+        'https://clinic-api-ig3d.onrender.com/api/admin/medical-articles',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${adminToken}`
+          }
+        }
+      );
 
       if (!response.ok) {
         throw new Error('فشل تحميل المقالات');
@@ -62,6 +71,7 @@ useEffect(() => {
 
   fetchArticles();
 }, [adminToken]);
+
 
 const handleDeleteArticle = async (item) => {
   const confirmed = window.confirm(
@@ -173,20 +183,23 @@ const handleSaveArticle = async () => {
     if (!response.ok || !data.success) {
       throw new Error(data.error || 'فشل حفظ المقال');
     }
-// ✅ تحديث قائمة المقالات بعد الحفظ أو التعديل
-const response = await fetch(
+// ✅ تحديث قائمة المقالات بعد الحفظ أو التعديل باستخدام Admin Token
+const updatedResponse = await fetch(
   'https://clinic-api-ig3d.onrender.com/api/admin/medical-articles',
   {
+    method: 'GET',
     headers: {
       Authorization: `Bearer ${adminToken}`
     }
   }
 );
 
-if (updatedResponse.ok) {
-  const updatedData = await updatedResponse.json();
-  setArticlesList(updatedData.articles || []);
+if (!updatedResponse.ok) {
+  throw new Error('تم الحفظ لكن فشل تحديث قائمة المقالات');
 }
+
+const updatedData = await updatedResponse.json();
+setArticlesList(updatedData.articles || []);
 
 // الخروج من وضع التعديل
 setEditingId(null);
