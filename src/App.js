@@ -223,7 +223,7 @@ function DoctorRegister() {
 // ==========================================
 // 🌟 المكون الرئيسي للوحة تحكم الإدارة المطورة (Admin Dashboard)
 // ==========================================
-function AdminPage({ doctors, appointments, fetchData }) {
+function AdminPage({ doctors, appointments, fetchData, adminToken }) {
   // التبويب النشط حالياً: 'doctors' | 'accounting' | 'appointments' | 'notifications' | 'consultations'
   const [activeTab, setActiveTab] = useState('doctors');
 
@@ -251,16 +251,22 @@ const [consultationFilter, setConsultationFilter] = useState('all');
   const [isSendingNotif, setIsSendingNotif] = useState(false);
 
   // جلب الاستشارات
-  const fetchConsultations = async () => {
-    try {
-      const response = await fetch(ADMIN_API_URL);
-      if (!response.ok) throw new Error("فشل في جلب البيانات");
-      const data = await response.json();
-      setConsultations(data);
-    } catch (error) {
-      console.error("Error fetching consultations:", error);
-    }
-  };
+const fetchConsultations = async () => {
+  try {
+    const response = await fetch(ADMIN_API_URL, {
+      headers: {
+        Authorization: `Bearer ${adminToken}`
+      }
+    });
+
+    if (!response.ok) throw new Error("فشل في جلب البيانات");
+
+    const data = await response.json();
+    setConsultations(data);
+  } catch (error) {
+    console.error("Error fetching consultations:", error);
+  }
+};
 
   useEffect(() => {
     fetchConsultations();
@@ -269,17 +275,20 @@ const [consultationFilter, setConsultationFilter] = useState('all');
 
 
   // دوال إدارة الأطباء
-  const handleDelete = async (id) => {
-    if (window.confirm("هل أنت متأكد من رغبتك في حذف هذا الطبيب نهائياً؟")) {
-      await fetch(`https://clinic-api-ig3d.onrender.com/delete-doctor/${id}`, { method: 'DELETE' });
-      fetchData();
-    }
-  };
+await fetch(`https://clinic-api-ig3d.onrender.com/delete-doctor/${id}`, {
+  method: 'DELETE',
+  headers: {
+    Authorization: `Bearer ${adminToken}`
+  }
+});
 
   const handleToggle = async (id, s) => {
     await fetch(`https://clinic-api-ig3d.onrender.com/toggle-doctor/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${adminToken}`
+      },
       body: JSON.stringify({ status: s })
     });
     fetchData();
@@ -289,7 +298,10 @@ const [consultationFilter, setConsultationFilter] = useState('all');
     try {
       await fetch(`https://clinic-api-ig3d.onrender.com/update-doctor-featured/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminToken}`
+        },
         body: JSON.stringify({ featured: !currentStatus })
       });
       fetchData();
@@ -349,9 +361,10 @@ const handleAnswerSubmit = async (id, draft) => {
       {
         method: 'PUT',
 
-        headers: {
-          'Content-Type': 'application/json'
-        },
+       headers: {
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${adminToken}`
+},
 
         body: JSON.stringify({
 
@@ -766,7 +779,11 @@ const getConsultationDraft = (consultation) => {
 
         {/* -------------------- 2. إدارة الحسابات -------------------- */}
         {activeTab === 'accounting' && (
-          <AccountingPage doctors={doctors} appointments={appointments} />
+       <AccountingPage
+  doctors={doctors}
+  appointments={appointments}
+  adminToken={adminToken}
+/>
         )}
 
         {/* -------------------- 3. إدارة الحجوزات -------------------- */}
@@ -1895,7 +1912,7 @@ const getConsultationDraft = (consultation) => {
 // 💰 نظام الحسابات والفواتير الشهرية - منصة دكتور
 // =====================================================
 
-function AccountingPage({ doctors = [], appointments = [] }) {
+function AccountingPage({ doctors = [], appointments = [], adminToken }) {
 
   const today = new Date();
 
@@ -1967,9 +1984,14 @@ const [paymentsError, setPaymentsError] = React.useState('');
       params.append('year', selectedYear);
       params.append('month', selectedMonth);
 
-      const response = await fetch(
-        `https://clinic-api-ig3d.onrender.com/api/accounting/invoices?${params.toString()}`
-      );
+     const response = await fetch(
+  `https://clinic-api-ig3d.onrender.com/api/accounting/invoices?${params.toString()}`,
+  {
+    headers: {
+      Authorization: `Bearer ${adminToken}`
+    }
+  }
+);
 
       if (!response.ok) {
         throw new Error('تعذر جلب الفواتير المحفوظة');
@@ -2011,8 +2033,14 @@ const fetchDoctorInvoiceHistory = async () => {
     params.append('doctor_id', selectedDocId);
 
     const response = await fetch(
-      `https://clinic-api-ig3d.onrender.com/api/accounting/invoices?${params.toString()}`
-    );
+      `https://clinic-api-ig3d.onrender.com/api/accounting/invoices?${params.toString()}`,
+  {
+    headers: {
+      Authorization: `Bearer ${adminToken}`
+    }
+  }
+);
+    
 
     if (!response.ok) {
       throw new Error('تعذر جلب فواتير الطبيب');
@@ -2057,7 +2085,13 @@ const fetchSavedPayments = async () => {
     }
 
     const response = await fetch(
-      `https://clinic-api-ig3d.onrender.com/api/accounting/payments?${params.toString()}`
+      `https://clinic-api-ig3d.onrender.com/api/accounting/payments?${params.toString()}`,
+  {
+    headers: {
+      Authorization: `Bearer ${adminToken}`
+    }
+  }
+
     );
 
     if (!response.ok) {
@@ -2532,9 +2566,14 @@ const issueInvoice = async () => {
     setIssuingInvoice(true);
 
     // التأكد أولاً من عدم وجود فاتورة لنفس الشهر
-    const checkResponse = await fetch(
-      `https://clinic-api-ig3d.onrender.com/api/accounting/invoices?doctor_id=${currentDoc.id}&year=${selectedYear}&month=${selectedMonth}`
-    );
+const checkResponse = await fetch(
+  `https://clinic-api-ig3d.onrender.com/api/accounting/invoices?doctor_id=${currentDoc.id}&year=${selectedYear}&month=${selectedMonth}`,
+  {
+    headers: {
+      Authorization: `Bearer ${adminToken}`
+    }
+  }
+);
 
     const checkData = await checkResponse.json();
 
@@ -2560,8 +2599,9 @@ const issueInvoice = async () => {
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
-        },
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${adminToken}`
+},
         body: JSON.stringify({
           doctor_id: Number(currentDoc.id),
           invoice_year: Number(selectedYear),
@@ -2726,9 +2766,10 @@ const issueBulkInvoices = async () => {
           'https://clinic-api-ig3d.onrender.com/api/accounting/invoices/issue',
           {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+           headers: {
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${adminToken}`
+},
             body: JSON.stringify({
               doctor_id: Number(row.doctorId),
               invoice_year: Number(selectedYear),
@@ -2850,9 +2891,10 @@ const handleRecordPayment = async () => {
       'https://clinic-api-ig3d.onrender.com/api/accounting/payments',
       {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+       headers: {
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${adminToken}`
+},
         body: JSON.stringify({
           invoice_id: Number(selectedInvoice.id),
           amount,
@@ -4882,9 +4924,10 @@ const loginAdmin = async () => {
       'https://clinic-api-ig3d.onrender.com/api/admin/login',
       {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+       headers: {
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${adminToken}`
+},
         body: JSON.stringify({
           password: adminPassword
         })
@@ -4958,7 +5001,14 @@ const loginAdmin = async () => {
         const currentPath = window.location.pathname;
 
         if (currentPath === '/admin' || currentPath === '/accounting') {
-            const resApps = await fetch('https://clinic-api-ig3d.onrender.com/appointments');
+           const resApps = await fetch(
+  'https://clinic-api-ig3d.onrender.com/appointments',
+  {
+    headers: {
+      Authorization: `Bearer ${adminToken}`
+    }
+  }
+);
             setAppointments(await resApps.json());
         }
 
@@ -5243,9 +5293,10 @@ const saveWebFCMToken = async (user, token) => {
       'https://clinic-api-ig3d.onrender.com/api/save-token',
       {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+       headers: {
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${adminToken}`
+},
         body: JSON.stringify({
           doctorId: user.id,
           fcmToken: token
@@ -5277,13 +5328,32 @@ const saveWebFCMToken = async (user, token) => {
   }
 };
 
-  const handleLogout = () => {
-    setIsAdmin(false);
-    setCurrentUser(null);
-    localStorage.removeItem('saved_user'); // إزالة بيانات المستخدم عند الخروج
-    localStorage.removeItem('saved_doctor_id'); // إزالة كود الدكتور
-    navigate('/')
-  };
+const handleLogout = async () => {
+  if (adminToken) {
+    try {
+      await fetch(
+        'https://clinic-api-ig3d.onrender.com/api/admin/logout',
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${adminToken}`
+          }
+        }
+      );
+    } catch (error) {
+      console.error('خطأ أثناء تسجيل خروج الأدمن:', error);
+    }
+  }
+
+  setAdminToken(null);
+  setIsAdmin(false);
+  setCurrentUser(null);
+
+  localStorage.removeItem('saved_user');
+  localStorage.removeItem('saved_doctor_id');
+
+  navigate('/');
+};
 
   return (
     
@@ -6188,6 +6258,7 @@ onClick={() => {
                     doctors={doctors} 
                     appointments={appointments} 
                     fetchData={fetchData} 
+                    adminToken={adminToken}
                 />
             } />
             {/* مسارات البحث والصفحات النظيفة المتوافقة مع Google SEO */}
@@ -6219,6 +6290,7 @@ onClick={() => {
                 <AccountingPage 
                     doctors={doctors} 
                     appointments={appointments} 
+                    adminToken={adminToken}
                 />
             } />
            </Routes>
