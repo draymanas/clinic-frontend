@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function AdminArticles() {
+export default function AdminArticles({ adminToken }) {
     const [editingId, setEditingId] = useState(null);
     const [articlesList, setArticlesList] = useState([]);
 const [loadingArticles, setLoadingArticles] = useState(true);
@@ -37,9 +37,14 @@ useEffect(() => {
   useEffect(() => {
   const fetchArticles = async () => {
     try {
-      const response = await fetch(
-        'https://clinic-api-ig3d.onrender.com/api/admin/medical-articles'
-      );
+     const response = await fetch(
+  'https://clinic-api-ig3d.onrender.com/api/admin/medical-articles',
+  {
+    headers: {
+      Authorization: `Bearer ${adminToken}`
+    }
+  }
+);
 
       if (!response.ok) {
         throw new Error('فشل تحميل المقالات');
@@ -56,7 +61,7 @@ useEffect(() => {
   };
 
   fetchArticles();
-}, []);
+}, [adminToken]);
 
 const handleDeleteArticle = async (item) => {
   const confirmed = window.confirm(
@@ -68,7 +73,12 @@ const handleDeleteArticle = async (item) => {
   try {
     const response = await fetch(
       `https://clinic-api-ig3d.onrender.com/api/admin/medical-articles/${item.id}`,
-      { method: 'DELETE' }
+      {
+  method: 'DELETE',
+  headers: {
+    Authorization: `Bearer ${adminToken}`
+  }
+}
     );
 
     const data = await response.json();
@@ -149,10 +159,13 @@ const handleSaveArticle = async () => {
   editingId
     ? `https://clinic-api-ig3d.onrender.com/api/admin/medical-articles/${editingId}`
     : 'https://clinic-api-ig3d.onrender.com/api/admin/medical-articles',
-  {
-    method: editingId ? 'PUT' : 'POST',
-    body: formData
-  }
+ {
+  method: editingId ? 'PUT' : 'POST',
+  headers: {
+    Authorization: `Bearer ${adminToken}`
+  },
+  body: formData
+}
 );
 
     const data = await response.json();
@@ -161,8 +174,13 @@ const handleSaveArticle = async () => {
       throw new Error(data.error || 'فشل حفظ المقال');
     }
 // ✅ تحديث قائمة المقالات بعد الحفظ أو التعديل
-const updatedResponse = await fetch(
-  'https://clinic-api-ig3d.onrender.com/api/admin/medical-articles'
+const response = await fetch(
+  'https://clinic-api-ig3d.onrender.com/api/admin/medical-articles',
+  {
+    headers: {
+      Authorization: `Bearer ${adminToken}`
+    }
+  }
 );
 
 if (updatedResponse.ok) {

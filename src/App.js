@@ -268,9 +268,11 @@ const fetchConsultations = async () => {
   }
 };
 
-  useEffect(() => {
+useEffect(() => {
+  if (adminToken) {
     fetchConsultations();
-  }, []);
+  }
+}, [adminToken]);
 
 
 
@@ -323,18 +325,46 @@ const handleDelete = async (id) => {
     }
   };
 
-  const handleOrderChange = async (id, newOrder) => {
-    try {
-      await fetch(`https://clinic-api-ig3d.onrender.com/update-doctor-order/${id}`, {
+ // ==========================================
+// 🔢 تحديث ترتيب ظهور الطبيب
+// ==========================================
+
+const handleOrderChange = async (id, newOrder) => {
+  try {
+
+    const response = await fetch(
+      `https://clinic-api-ig3d.onrender.com/update-doctor-order/${id}`,
+      {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sort_order: newOrder || 999 })
-      });
-      fetchData();
-    } catch (err) {
-      console.error("Error updating order:", err);
+
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminToken}`
+        },
+
+        body: JSON.stringify({
+          sort_order:
+            newOrder === '' || newOrder === null
+              ? 999
+              : Number(newOrder)
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('فشل تحديث ترتيب الطبيب');
     }
-  };
+
+    await fetchData();
+
+  } catch (err) {
+
+    console.error('❌ Error updating doctor order:', err);
+
+    alert('حدث خطأ أثناء تحديث ترتيب الطبيب. يرجى المحاولة مرة أخرى.');
+
+  }
+};
 
   // الرد على الاستشارة
  // ==========================================
@@ -535,7 +565,10 @@ const getConsultationDraft = (consultation) => {
 
       const res = await fetch("https://clinic-api-ig3d.onrender.com/api/send-bulk-notification", {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${adminToken}`
+},
         body: JSON.stringify(payload)
       });
 
@@ -668,7 +701,7 @@ const getConsultationDraft = (consultation) => {
 
 {/* 📰 إدارة المقالات الطبية - كل يوم معلومة */}
 {activeTab === 'articles' && (
-  <AdminArticles />
+<AdminArticles adminToken={adminToken} />
 )}
 
         {/* -------------------- 1. إدارة الأطباء -------------------- */}
