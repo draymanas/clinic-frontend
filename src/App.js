@@ -274,13 +274,26 @@ const fetchConsultations = async () => {
 
 
 
-  // دوال إدارة الأطباء
-await fetch(`https://clinic-api-ig3d.onrender.com/delete-doctor/${id}`, {
-  method: 'DELETE',
-  headers: {
-    Authorization: `Bearer ${adminToken}`
+// دوال إدارة الأطباء
+const handleDelete = async (id) => {
+  try {
+    const response = await fetch(
+      `https://clinic-api-ig3d.onrender.com/delete-doctor/${id}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${adminToken}`
+        }
+      }
+    );
+
+    if (!response.ok) throw new Error("فشل حذف الطبيب");
+
+    fetchData();
+  } catch (error) {
+    console.error("Error deleting doctor:", error);
   }
-});
+};
 
   const handleToggle = async (id, s) => {
     await fetch(`https://clinic-api-ig3d.onrender.com/toggle-doctor/${id}`, {
