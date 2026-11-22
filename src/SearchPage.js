@@ -180,7 +180,9 @@ const getDoctorUrl = (doc) => {
     const cleanSlug = rawText
         .replace(/[\/\#\?\&\\\:\*\"\'\<\>\|\(\)\,\.]/g, '')
         .trim()
-        .replace(/\s+/g, '-');
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+        
     return `/dr/${doc.id}-${encodeURIComponent(cleanSlug)}`;
 };
 
