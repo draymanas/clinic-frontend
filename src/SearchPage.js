@@ -2461,10 +2461,12 @@ color: 'inherit',
                     margin: '0 0 16px'
                 }}>
                     {localClinicAddresses.map((address, index) => (
-                        <li key={index}>
-                            {address}
-                        </li>
-                    ))}
+    <li key={index}>
+        {address
+            ? `${address.trim().split(/\s+/).slice(0, 2).join(' ')} ...`
+            : 'العنوان التفصيلي متاح بعد إتمام الحجز'}
+    </li>
+))}
                 </ul>
             </>
         )}
