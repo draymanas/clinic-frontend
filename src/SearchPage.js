@@ -2428,14 +2428,12 @@ color: 'inherit',
                         دكتور {doc.name} - {doc.specialty}
                     </Link>
 
-                    {doc.address && (
-                        <span style={{
-                            color: '#64748b',
-                            fontSize: '14px'
-                        }}>
-                            {' '}({doc.address})
-                        </span>
-                    )}
+                  <span style={{
+    color: '#64748b',
+    fontSize: '14px'
+}}>
+    {' '}({fArea})
+</span>
                 </li>
             ))}
         </ul>
