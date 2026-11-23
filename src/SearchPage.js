@@ -509,34 +509,64 @@ const localClinicAddresses = [
 
     
     // 🌟 تحديث عنوان الصفحة ووسوم الـ SEO ديناميكياً لجوجل
-    useEffect(() => {
-        let pageTitle = 'ابحث عن دكتورك | منصة دكتور لحجز العيادات في مصر';
-        let pageDesc = 'احجز موعد كشف مع أفضل الأطباء والاستشاريين في مصر، مواعيد العيادات وسعر الكشف وحجز فوري بدون رسوم إضافية.';
+ 
+// 🌟 تحديث عنوان الصفحة ووسوم SEO ديناميكياً
+useEffect(() => {
+    let pageTitle = 'دليل الأطباء في مصر | منصة دكتور للحجز المباشر';
+    let pageDesc =
+        'ابحث عن الأطباء في مختلف التخصصات والمحافظات في مصر. تعرف على بيانات العيادات وأسعار الكشف ومواعيد الحجز عبر منصة دكتور.';
 
-        if (fSpecialty !== 'الكل' && fCity !== 'الكل' && fArea !== 'الكل') {
-            pageTitle = `دكتور ${fSpecialty} في ${fArea}، ${fCity} | حجز فوري مع أفضل الأطباء`;
-            pageDesc = `قائمة بأفضل أطباء واستشاريي ${fSpecialty} في ${fArea} بمحافظة ${fCity}. تعرف على أسعار الكشف ومواعيد العيادات واحجز فوراً.`;
-        } else if (fSpecialty !== 'الكل' && fCity !== 'الكل') {
-            pageTitle = `أفضل دكتور ${fSpecialty} في ${fCity} | دليل العيادات وحجز مباشر`;
-            pageDesc = `ابحث واحجز مع نخبة من أطباء ${fSpecialty} في محافظة ${fCity}. مواعيد مؤكدة وسعر الكشف الرسمي.`;
-        } else if (fSpecialty !== 'الكل') {
-            pageTitle = `أفضل أطباء ${fSpecialty} في مصر | دليل الاستشاريين وحجز العيادات`;
-            pageDesc = `دليل شامل لأطباء ${fSpecialty} في مصر. تقييمات المرضى ومواعيد الكشف وحجز مباشر بالعيادة.`;
-        } else if (fCity !== 'الكل') {
-            pageTitle = `دليل أطباء وعيادات ${fCity} | احجز كشفك الآن`;
-            pageDesc = `دليل أطباء محافظة ${fCity} في كافة التخصصات الطبية، حجز موعد مباشر في العيادة.`;
-        }
+    if (
+        fSpecialty !== 'الكل' &&
+        fCity !== 'الكل' &&
+        fArea !== 'الكل'
+    ) {
+        pageTitle =
+            `دكتور ${fSpecialty} في ${fArea}، ${fCity} | منصة دكتور`;
 
-        document.title = pageTitle;
+        pageDesc =
+            `ابحث عن دكتور ${fSpecialty} في ${fArea} بمحافظة ${fCity}. تصفح الأطباء المسجلين، وتعرف على عناوين العيادات وأسعار الكشف ومواعيد الحجز المتاحة.`;
 
-        let metaDesc = document.querySelector('meta[name="description"]');
-        if (!metaDesc) {
-            metaDesc = document.createElement('meta');
-            metaDesc.setAttribute('name', 'description');
-            document.head.appendChild(metaDesc);
-        }
-        metaDesc.setAttribute('content', pageDesc);
-    }, [fSpecialty, fCity, fArea]);
+    } else if (
+        fSpecialty !== 'الكل' &&
+        fCity !== 'الكل'
+    ) {
+        pageTitle =
+            `أطباء ${fSpecialty} في ${fCity} | حجز دكتور`;
+
+        pageDesc =
+            `دليل أطباء ${fSpecialty} في ${fCity}. قارن بين بيانات الأطباء وعناوين العيادات وأسعار الكشف، واختر الطبيب المناسب واحجز موعدك مباشرة.`;
+
+    } else if (fSpecialty !== 'الكل') {
+        pageTitle =
+            `أفضل أطباء ${fSpecialty} في مصر | دليل وحجز`;
+
+        pageDesc =
+            `ابحث عن دكتور ${fSpecialty} في مصر من خلال دليل الأطباء على منصة دكتور. تعرف على بيانات الأطباء والعيادات وأسعار الكشف ومواعيد الحجز.`;
+
+    } else if (fCity !== 'الكل') {
+        pageTitle =
+            `أطباء وعيادات ${fCity} | دليل الأطباء والحجز`;
+
+        pageDesc =
+            `تصفح دليل الأطباء في ${fCity} بمختلف التخصصات الطبية. تعرف على بيانات العيادات وأسعار الكشف ومواعيد الحجز المتاحة.`;
+    }
+
+    document.title = pageTitle;
+
+    let metaDesc = document.querySelector(
+        'meta[name="description"]'
+    );
+
+    if (!metaDesc) {
+        metaDesc = document.createElement('meta');
+        metaDesc.setAttribute('name', 'description');
+        document.head.appendChild(metaDesc);
+    }
+
+    metaDesc.setAttribute('content', pageDesc);
+
+}, [fSpecialty, fCity, fArea]);
 
 // ==================================================
 // Canonical URL لصفحات دليل الأطباء
@@ -1258,11 +1288,24 @@ return (
 </nav>
 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-                    <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', margin: 0 }}>
-                        {fSpecialty !== 'الكل' 
-                            ? `أطباء ${fSpecialty} ${fArea !== 'الكل' ? `في ${fArea}، ` : ''}${fCity !== 'الكل' ? `في ${fCity}` : 'في مصر'}`
-                            : fCity !== 'الكل' ? `أطباء وعيادات ${fCity}` : 'دليل أطباء وعيادات مصر'}
-                    </h1>
+                   
+<h1 style={{
+    fontSize: '24px',
+    fontWeight: '800',
+    color: '#0f172a',
+    margin: 0
+}}>
+    {fSpecialty !== 'الكل'
+        ? fArea !== 'الكل'
+            ? `دكتور ${fSpecialty} في ${fArea}، ${fCity}`
+            : fCity !== 'الكل'
+                ? `أفضل أطباء ${fSpecialty} في ${fCity}`
+                : `أفضل أطباء ${fSpecialty} في مصر`
+        : fCity !== 'الكل'
+            ? `أطباء وعيادات ${fCity}`
+            : 'دليل أطباء وعيادات مصر'}
+</h1>
+
                     <span style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '4px 12px', borderRadius: '12px', fontSize: '13px', fontWeight: '700' }}>
                         {filteredDoctors.length} {filteredDoctors.length === 1 ? 'طبيب متاح' : 'أطباء متاحين للحجز الفوري'}
                     </span>
@@ -1272,8 +1315,9 @@ return (
 {/* ==================================================
     وصف SEO ديناميكي لصفحات دليل الأطباء
 ================================================== */}
+
 {/* ==================================================
-    محتوى SEO ديناميكي لصفحات التخصصات والمحافظات والمناطق
+    محتوى SEO مخصص لصفحات التخصصات والمحافظات والمناطق
 ================================================== */}
 
 {fSpecialty !== 'الكل' && (
@@ -1281,70 +1325,223 @@ return (
         aria-label={`دليل أطباء ${fSpecialty}`}
         style={{
             maxWidth: '1200px',
-            margin: '0 auto 20px',
-            padding: '20px',
+            margin: '0 auto 24px',
+            padding: '22px',
             background: '#ffffff',
             borderRadius: '14px',
             border: '1px solid #e2e8f0',
             color: '#475569',
             lineHeight: '1.9',
-            fontSize: '15px'
+            fontSize: '15px',
+            boxSizing: 'border-box'
         }}
     >
         <h2 style={{
-            fontSize: '19px',
+            fontSize: '21px',
             fontWeight: '800',
             color: '#0f172a',
             margin: '0 0 12px'
         }}>
             {fArea !== 'الكل'
-                ? `دليل أطباء ${fSpecialty} في ${fArea} بمحافظة ${fCity}`
+                ? `دليل دكاترة ${fSpecialty} في ${fArea}، ${fCity}`
                 : fCity !== 'الكل'
-                    ? `دليل أطباء ${fSpecialty} في ${fCity}`
+                    ? `البحث عن دكتور ${fSpecialty} في ${fCity}`
                     : `دليل أطباء ${fSpecialty} في مصر`}
         </h2>
 
         {fCity === 'الكل' && (
-            <p style={{ margin: 0 }}>
-                اكتشف أطباء {fSpecialty} المسجلين على منصة دكتور
-                في مختلف محافظات مصر. يمكنك الاطلاع على بيانات
-               الأطباء وأماكن العيادات وأسعار الكشف الرسمية，
-                والمقارنة بينهم للوصول إلى الطبيب المناسب.
-                اختر المحافظة أو المنطقة التي تبحث فيها，
-                ثم افتح صفحة الطبيب لمعرفة التفاصيل وإتمام الحجز.
+            <p style={{ margin: '0 0 14px' }}>
+                إذا كنت تبحث عن دكتور {fSpecialty} في مصر،
+                يمكنك استخدام دليل منصة دكتور للوصول إلى الأطباء
+                المسجلين في مختلف المحافظات. اختر المحافظة التي
+                تناسبك، ثم حدد المنطقة للاطلاع على الأطباء
+                وبيانات العيادات ومعلومات الحجز المتاحة.
             </p>
         )}
 
+        {fCity !== 'الكل' && fArea === 'الكل' && (
+            <p style={{ margin: '0 0 14px' }}>
+                هل تبحث عن دكتور {fSpecialty} في {fCity}؟
+                تساعدك منصة دكتور في استعراض الأطباء المسجلين
+                في المحافظة، والتعرف على بيانات كل طبيب ومكان
+                العيادة وسعر الكشف والمواعيد المتاحة.
+                ويمكنك تضييق نطاق البحث باختيار المنطقة
+                الأقرب إليك داخل {fCity}.
+            </p>
+        )}
 
-{fCity !== 'الكل' && fArea === 'الكل' && (
-    <p style={{ margin: 0 }}>
-        هل تبحث عن دكتور {fSpecialty} في {fCity}؟
-        تعرض منصة دكتور بيانات الأطباء المعتمدة والموثقة
-        من قبلهم، مع عناوين العيادات وأسعار الكشف الرسمية
-        ومواعيد مؤكدة للحجز. يمكنك اختيار المنطقة المناسبة
-        والاطلاع على تفاصيل الأطباء قبل تحديد موعدك.
-    </p>
-)}
+        {fCity !== 'الكل' && fArea !== 'الكل' && (
+            <p style={{ margin: '0 0 14px' }}>
+                للوصول إلى دكتور {fSpecialty} في {fArea}،
+                {fCity}، تصفح ملفات الأطباء الظاهرة في نتائج
+                البحث. ستجد بيانات العيادات ومواقعها وأسعار
+                الكشف والمواعيد المتاحة وفقًا للمعلومات
+                المسجلة لدى كل طبيب. ويمكنك فتح الملف الشخصي
+                للطبيب لمعرفة التفاصيل قبل الحجز.
+            </p>
+        )}
 
-{fCity !== 'الكل' && fArea !== 'الكل' && (
-    <p style={{ margin: 0 }}>
-        تصفح دليل أطباء {fSpecialty} في {fArea}
-        بمحافظة {fCity} على منصة دكتور.
-        تعرف على الأطباء وبيانات العيادات وأسعار الكشف
-        الرسمية ومواعيد الحجز المؤكدة. يمكنك زيارة صفحة
-        كل طبيب للاطلاع على التفاصيل وإتمام الحجز.
-    </p>
-)}
+        {specialtyGuides[fSpecialty] && (
+            <>
+                <h3 style={{
+                    fontSize: '18px',
+                    color: '#1d4ed8',
+                    margin: '18px 0 8px'
+                }}>
+                    ما الحالات التي يعالجها تخصص {fSpecialty}؟
+                </h3>
 
-<p style={{
-    margin: '12px 0 0',
-    fontSize: '14px',
-    color: '#64748b'
-}}>
-    يتم توثيق بيانات الأطباء من قبلهم، ويستطيع كل طبيب
-    تحديث بياناته من خلال لوحة التحكم الخاصة به،
-    لضمان استمرار دقة معلومات العيادة والأسعار والمواعيد.
-</p>
+                <p style={{ margin: '0 0 10px' }}>
+                    {specialtyGuides[fSpecialty].intro}
+                </p>
+
+                <ul style={{
+                    paddingRight: '24px',
+                    margin: '0 0 14px'
+                }}>
+                    {specialtyGuides[fSpecialty].topics.map(
+                        (topic, index) => (
+                            <li key={index}>{topic}</li>
+                        )
+                    )}
+                </ul>
+            </>
+        )}
+
+        <h3 style={{
+            fontSize: '18px',
+            color: '#1d4ed8',
+            margin: '18px 0 8px'
+        }}>
+            كيف تختار دكتور {fSpecialty} المناسب؟
+        </h3>
+
+        <p style={{ margin: '0 0 16px' }}>
+            عند المقارنة بين أطباء {fSpecialty}،
+            راجع المؤهلات والخبرة والتخصص الدقيق للطبيب،
+            وتأكد من ملاءمة الخدمات التي يقدمها لاحتياجاتك.
+            كما يمكنك مقارنة موقع العيادة وسعر الكشف
+            والمواعيد المتاحة قبل اتخاذ قرار الحجز.
+        </p>
+
+        <h3 style={{
+            fontSize: '18px',
+            color: '#1d4ed8',
+            margin: '18px 0 10px'
+        }}>
+            أسئلة شائعة عن أطباء {fSpecialty}
+            {fCity !== 'الكل' ? ` في ${fCity}` : ' في مصر'}
+            {fArea !== 'الكل' ? ` - ${fArea}` : ''}
+        </h3>
+
+        <div style={{
+            display: 'grid',
+            gap: '10px'
+        }}>
+
+            <details style={{
+                padding: '12px 14px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '10px',
+                background: '#f8fafc'
+            }}>
+                <summary style={{
+                    cursor: 'pointer',
+                    fontWeight: '700',
+                    color: '#0f172a'
+                }}>
+                    كيف أجد دكتور {fSpecialty} في
+                    {fArea !== 'الكل'
+                        ? ` ${fArea}`
+                        : fCity !== 'الكل'
+                            ? ` ${fCity}`
+                            : ' مصر'}؟
+                </summary>
+
+                <p style={{ margin: '10px 0 0' }}>
+                    يمكنك تصفح قائمة الأطباء في هذه الصفحة،
+                    ومراجعة بيانات كل طبيب وموقع العيادة
+                    ومواعيد الحجز، ثم فتح الملف الشخصي
+                    للطبيب المناسب لمعرفة التفاصيل.
+                </p>
+            </details>
+
+            <details style={{
+                padding: '12px 14px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '10px',
+                background: '#f8fafc'
+            }}>
+                <summary style={{
+                    cursor: 'pointer',
+                    fontWeight: '700',
+                    color: '#0f172a'
+                }}>
+                    كيف أعرف سعر الكشف عند دكتور {fSpecialty}؟
+                </summary>
+
+                <p style={{ margin: '10px 0 0' }}>
+                    يمكنك مراجعة سعر الكشف المسجل في بطاقة
+                    الطبيب أو ملفه الشخصي، والتأكد من السعر
+                    قبل إتمام الحجز.
+                </p>
+            </details>
+
+            <details style={{
+                padding: '12px 14px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '10px',
+                background: '#f8fafc'
+            }}>
+                <summary style={{
+                    cursor: 'pointer',
+                    fontWeight: '700',
+                    color: '#0f172a'
+                }}>
+                    هل يمكن حجز موعد مع الطبيب من خلال منصة دكتور؟
+                </summary>
+
+                <p style={{ margin: '10px 0 0' }}>
+                    يمكنك فتح صفحة الطبيب والاطلاع على
+                    المواعيد المتاحة، ثم اختيار الموعد المناسب
+                    وإدخال بيانات الحجز وفقًا للخيارات
+                    المتوفرة في صفحة الطبيب.
+                </p>
+            </details>
+
+            <details style={{
+                padding: '12px 14px',
+                border: '1px solid #e2e8f0',
+                borderRadius: '10px',
+                background: '#f8fafc'
+            }}>
+                <summary style={{
+                    cursor: 'pointer',
+                    fontWeight: '700',
+                    color: '#0f172a'
+                }}>
+                    ما الذي يجب مراجعته قبل اختيار دكتور {fSpecialty}؟
+                </summary>
+
+                <p style={{ margin: '10px 0 0' }}>
+                    راجع خبرة الطبيب ومؤهلاته ومجال تخصصه،
+                    وموقع العيادة وسعر الكشف والمواعيد،
+                    واختر الطبيب الذي تتناسب خبرته مع
+                    طبيعة الحالة التي تحتاج إلى تقييمها.
+                </p>
+            </details>
+
+        </div>
+
+        <p style={{
+            margin: '16px 0 0',
+            fontSize: '13px',
+            color: '#64748b'
+        }}>
+            تعتمد بيانات الأطباء وأسعار الكشف ومواعيد العيادات
+            على المعلومات المسجلة في ملفاتهم على منصة دكتور،
+            لذلك يُنصح بمراجعة ملف الطبيب قبل الحجز.
+        </p>
 
     </section>
 )}
