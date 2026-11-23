@@ -1186,8 +1186,31 @@ const specialtyGuides = {
 
 };
 
+
 // ==========================================
-// Schema لقائمة الأطباء الظاهرة في صفحة البحث
+// قائمة الأطباء الخاصة بصفحات SEO
+// لا تتأثر بالبحث المؤقت عن اسم الطبيب
+// ==========================================
+
+const seoDoctors = activeList
+    .filter(d =>
+        d.is_active !== false &&
+        (fSpecialty === 'الكل' || d.specialty === fSpecialty) &&
+        (fCity === 'الكل' || d.city === fCity) &&
+        (fArea === 'الكل' || d.area === fArea)
+    )
+    .sort((a, b) => {
+        const orderA = a.sort_order ?? 999;
+        const orderB = b.sort_order ?? 999;
+
+        if (orderA !== orderB) return orderA - orderB;
+
+        return (b.featured ? 1 : 0) -
+               (a.featured ? 1 : 0);
+    });
+
+// ==========================================
+// ItemList Schema
 // ==========================================
 
 const hasSeoFilter =
@@ -1196,10 +1219,11 @@ const hasSeoFilter =
     fArea !== 'الكل';
 
 const doctorListSchema =
-    hasSeoFilter && filteredDoctors.length > 0
+    hasSeoFilter && seoDoctors.length > 0
         ? {
             "@context": "https://schema.org",
             "@type": "ItemList",
+
             "name": [
                 'أطباء',
                 fSpecialty !== 'الكل' ? fSpecialty : '',
@@ -1207,19 +1231,21 @@ const doctorListSchema =
                 fArea !== 'الكل' ? `بمنطقة ${fArea}` : ''
             ].filter(Boolean).join(' '),
 
-            "numberOfItems": filteredDoctors.length,
+            "numberOfItems": seoDoctors.length,
 
-            "itemListElement": filteredDoctors.map((doc, index) => ({
+            "itemListElement": seoDoctors.map((doc, index) => ({
                 "@type": "ListItem",
                 "position": index + 1,
+
                 "item": {
-                    "@type": "Physician",
+                    "@type": "Thing",
                     "name": doc.name,
                     "url": `https://www.doctoreg.online${getDoctorUrl(doc)}`
                 }
             }))
         }
         : null;
+
 
 const breadcrumbSchema = {
     "@context": "https://schema.org",
