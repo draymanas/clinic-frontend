@@ -1186,20 +1186,121 @@ const specialtyGuides = {
 
 };
 
+// ==========================================
+// Schema لقائمة الأطباء الظاهرة في صفحة البحث
+// ==========================================
+
+const hasSeoFilter =
+    fSpecialty !== 'الكل' ||
+    fCity !== 'الكل' ||
+    fArea !== 'الكل';
+
+const doctorListSchema =
+    hasSeoFilter && filteredDoctors.length > 0
+        ? {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": [
+                'أطباء',
+                fSpecialty !== 'الكل' ? fSpecialty : '',
+                fCity !== 'الكل' ? `في ${fCity}` : '',
+                fArea !== 'الكل' ? `بمنطقة ${fArea}` : ''
+            ].filter(Boolean).join(' '),
+
+            "numberOfItems": filteredDoctors.length,
+
+            "itemListElement": filteredDoctors.map((doc, index) => ({
+                "@type": "ListItem",
+                "position": index + 1,
+                "item": {
+                    "@type": "Physician",
+                    "name": doc.name,
+                    "url": `https://www.doctoreg.online${getDoctorUrl(doc)}`
+                }
+            }))
+        }
+        : null;
+
 const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: breadcrumbItems
 };
 
+// ==========================================
+// SEO Metadata - Title / Description / Canonical
+// ==========================================
+
+const seoTitle =
+    fSpecialty !== 'الكل' && fCity !== 'الكل' && fArea !== 'الكل'
+        ? `دكتور ${fSpecialty} في ${fArea}، ${fCity} | منصة دكتور`
+        : fSpecialty !== 'الكل' && fCity !== 'الكل'
+            ? `أطباء ${fSpecialty} في ${fCity} | حجز دكتور`
+            : fSpecialty !== 'الكل'
+                ? `أفضل أطباء ${fSpecialty} في مصر | دليل وحجز`
+                : fCity !== 'الكل'
+                    ? `أطباء وعيادات ${fCity} | منصة دكتور`
+                    : 'دليل الأطباء في مصر | منصة دكتور';
+
+const seoDescription =
+    fSpecialty !== 'الكل' && fCity !== 'الكل' && fArea !== 'الكل'
+        ? `ابحث عن دكتور ${fSpecialty} في ${fArea} بمحافظة ${fCity}. تصفح بيانات الأطباء وعناوين العيادات وأسعار الكشف ومواعيد الحجز.`
+        : fSpecialty !== 'الكل' && fCity !== 'الكل'
+            ? `دليل أطباء ${fSpecialty} في ${fCity}. تعرف على بيانات الأطباء والعيادات وأسعار الكشف ومواعيد الحجز المتاحة.`
+            : fSpecialty !== 'الكل'
+                ? `ابحث عن دكتور ${fSpecialty} في مصر. تعرف على بيانات الأطباء والعيادات وأسعار الكشف ومواعيد الحجز عبر منصة دكتور.`
+                : fCity !== 'الكل'
+                    ? `تصفح دليل الأطباء في ${fCity} بمختلف التخصصات، وتعرف على بيانات العيادات وأسعار الكشف ومواعيد الحجز.`
+                    : 'ابحث عن الأطباء في مختلف التخصصات والمحافظات في مصر، وتعرف على بيانات العيادات وأسعار الكشف ومواعيد الحجز.';
+
+let seoCanonicalPath = '/search';
+
+if (fSpecialty !== 'الكل') {
+    seoCanonicalPath =
+        `/doctors/${encodeURIComponent(slugifyArabic(fSpecialty))}`;
+
+    if (fCity !== 'الكل') {
+        seoCanonicalPath +=
+            `/${encodeURIComponent(slugifyArabic(fCity))}`;
+
+        if (fArea !== 'الكل') {
+            seoCanonicalPath +=
+                `/${encodeURIComponent(slugifyArabic(fArea))}`;
+        }
+    }
+}
+
+const seoCanonicalUrl =
+    `https://www.doctoreg.online${seoCanonicalPath}`;
+
 return (
         <main role="main" style={{ backgroundColor: '#f0f4f8', minHeight: '100vh', direction: 'rtl', padding: '20px' }}>
             
+
 <Helmet>
+    <title>{seoTitle}</title>
+
+    <meta
+        name="description"
+        content={seoDescription}
+    />
+
+    <link
+        rel="canonical"
+        href={seoCanonicalUrl}
+    />
+
     <script type="application/ld+json">
         {JSON.stringify(breadcrumbSchema)}
     </script>
+    {/* Doctors List Schema */}
+{doctorListSchema && (
+    <script type="application/ld+json">
+        {JSON.stringify(doctorListSchema)}
+    </script>
+)}
 </Helmet>
+
 
             {/* مسار التصفح (Breadcrumb) والترويسة الصديقة لمحركات البحث (H1 SEO) */}
             <div style={{ maxWidth: '1200px', margin: '0 auto 20px', padding: '0 8px' }}>
@@ -2505,6 +2606,48 @@ color: 'inherit',
     للتعرف على عناوين العيادات وأسعار الكشف
     والمواعيد المتاحة، واختيار الطبيب المناسب.
 </p>
+
+
+        <h3 style={{
+            fontSize: '18px',
+            color: '#1d4ed8',
+            margin: '18px 0 10px'
+        }}>
+            الأطباء المسجلون في تخصص {fSpecialty} بمنطقة {fArea}
+        </h3>
+
+        <ul style={{
+            paddingRight: '24px',
+            margin: '0 0 18px',
+            display: 'grid',
+            gap: '8px'
+        }}>
+            {localAreaDoctors.map(doc => (
+                <li key={doc.id}>
+                    <Link
+                        to={getDoctorUrl(doc)}
+                        title={`عرض صفحة دكتور ${doc.name} في ${fArea}`}
+                        style={{
+                            color: '#1d4ed8',
+                            fontWeight: '700',
+                            textDecoration: 'none'
+                        }}
+                    >
+                        دكتور {doc.name} - {doc.specialty}
+                    </Link>
+
+                    {doc.address && (
+                        <span style={{
+                            color: '#64748b',
+                            fontSize: '14px'
+                        }}>
+                            {' '}({doc.address})
+                        </span>
+                    )}
+                </li>
+            ))}
+        </ul>
+
 
         {localClinicAddresses.length > 0 && (
             <>
