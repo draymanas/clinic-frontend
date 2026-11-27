@@ -186,6 +186,15 @@ const getDoctorUrl = (doc) => {
     return `/dr/${doc.id}-${encodeURIComponent(cleanSlug)}`;
 };
 
+// التحقق من التخصص الأساسي أو الإضافي للطبيب
+const matchesDoctorSpecialty = (doctor, specialty) => {
+    return (
+        specialty === 'الكل' ||
+        doctor?.specialty === specialty ||
+        doctor?.additional_specialty === specialty
+    );
+};
+
 // 🌟 دوال تحويل النصوص لروابط عربية نظيفة (Clean SEO Slugs)
 const slugifyArabic = (text) => {
     if (!text || text === 'الكل') return '';
@@ -361,7 +370,7 @@ export function SearchPage(props) {
     const filteredDoctors = activeList
         .filter(d => 
             (d.is_active !== false) &&
-            (fSpecialty === 'الكل' || d.specialty === fSpecialty) &&
+            matchesDoctorSpecialty(d, fSpecialty) &&
             (fCity === 'الكل' || d.city === fCity) &&
             (fArea === 'الكل' || d.area === fArea) &&
             d.name?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -382,7 +391,7 @@ const availableCitiesForSpecialty = fSpecialty !== 'الكل'
         activeList
             .filter(d =>
                 d.is_active !== false &&
-                d.specialty === fSpecialty &&
+                matchesDoctorSpecialty(d, fSpecialty) &&
                 d.city
             )
             .map(d => d.city)
@@ -395,7 +404,7 @@ const availableAreasForSpecialtyAndCity =
             activeList
                 .filter(d =>
                     d.is_active !== false &&
-                    d.specialty === fSpecialty &&
+                    matchesDoctorSpecialty(d, fSpecialty) &&
                     d.city === fCity &&
                     d.area
                 )
@@ -413,7 +422,7 @@ const localAreaDoctors =
     fArea !== 'الكل'
         ? activeList.filter(d =>
             d.is_active !== false &&
-            d.specialty === fSpecialty &&
+            matchesDoctorSpecialty(d, fSpecialty) &&
             d.city === fCity &&
             d.area === fArea
         )
@@ -1195,7 +1204,7 @@ const specialtyGuides = {
 const seoDoctors = activeList
     .filter(d =>
         d.is_active !== false &&
-        (fSpecialty === 'الكل' || d.specialty === fSpecialty) &&
+        matchesDoctorSpecialty(d, fSpecialty) &&
         (fCity === 'الكل' || d.city === fCity) &&
         (fArea === 'الكل' || d.area === fArea)
     )
@@ -1799,9 +1808,30 @@ color: 'inherit',
                                 دكتور / {doc.name}
                             </h3>
                             
-                            <p style={{ fontSize: '15px', color: '#151516', fontWeight: '700', margin: '2px 0 10px 0' }}>
-                                {doc.title ? `${doc.title} ` : ''}{doc.specialty}
-                            </p>
+                           <div style={{
+    fontSize: '15px',
+    color: '#151516',
+    fontWeight: '700',
+    margin: '2px 0 10px 0',
+    lineHeight: '1.7'
+}}>
+    <div>
+        {doc.title ? `${doc.title} ` : ''}{doc.specialty}
+    </div>
+
+    {doc.additional_specialty &&
+        doc.additional_specialty !== doc.specialty && (
+            <div style={{
+                fontSize: '13px',
+                color: '#1d4ed8',
+                fontWeight: '600',
+                marginTop: '3px'
+            }}>
+                التخصص الإضافي: {doc.additional_specialty}
+            </div>
+        )
+    }
+</div>
 
                             {doc.bio ? (() => {
                                 const BioSection = () => {

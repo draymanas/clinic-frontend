@@ -259,7 +259,11 @@ const handleUpdateProfile = async (e) => {
     appendIfValue('mobile', doctorData.mobile);
 
     appendIfValue('specialty', doctorData.specialty);
-
+     
+    formData.append(
+    'additional_specialty',
+    doctorData.additional_specialty || ''
+);
     // سعر الكشف
     // يمكن أن يكون 500 أو ٥٠٠
     // والـBackend سيقوم بتحويله إلى رقم
@@ -475,12 +479,46 @@ const handleUpdateProfile = async (e) => {
           </div>
 
           <div style={sectionBox}>
-            <label>🎓 التخصص:</label>
-            <select value={doctorData.specialty} onChange={(e) => setDoctorData({...doctorData, specialty: e.target.value})} style={inputStyle}>
-              <option value="">اختر التخصص</option>
-              {specialties.map((spec) => <option key={spec} value={spec}>{spec}</option>)}
-            </select>
-          </div>
+    <label>🎓 التخصص الأساسي:</label>
+    <select
+        value={doctorData.specialty || ''}
+        onChange={(e) => setDoctorData({
+            ...doctorData,
+            specialty: e.target.value
+        })}
+        style={inputStyle}
+    >
+        <option value="">اختر التخصص الأساسي</option>
+        {specialties.filter(spec => spec !== "الكل").map(spec => (
+            <option key={spec} value={spec}>{spec}</option>
+        ))}
+    </select>
+</div>
+
+<div style={sectionBox}>
+    <label>➕ التخصص الإضافي (اختياري):</label>
+    <select
+        value={doctorData.additional_specialty || ''}
+        onChange={(e) => setDoctorData({
+            ...doctorData,
+            additional_specialty: e.target.value
+        })}
+        style={inputStyle}
+    >
+        <option value="">بدون تخصص إضافي</option>
+        {specialties
+            .filter(spec =>
+                spec !== "الكل" &&
+                spec !== doctorData.specialty
+            )
+            .map(spec => (
+                <option key={spec} value={spec}>{spec}</option>
+            ))}
+    </select>
+    <small style={{color: '#666'}}>
+        يمكنك اختيار تخصص إضافي واحد فقط أو تركه فارغًا.
+    </small>
+</div>
 
           <div style={sectionBox}>
             <label>🏅 الدرجة الوظيفية:</label>
