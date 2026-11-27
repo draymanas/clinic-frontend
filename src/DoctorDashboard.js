@@ -9,7 +9,7 @@ const specialties = [
 const titles = ["أخصائي", "استشاري", "أستاذ دكتور"];
 const weekDays = ["السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
 const hoursArr = Array.from({ length: 12 }, (_, i) => i + 1);
-const minsArr = ["00", "15", "30", "45"];
+const minsArr = ["00", "30"];
 const periodsArr = ["صباحاً", "مساءً"];
 // --- 1. الثوابت العامة ---
 const egyptLocations = {
@@ -57,6 +57,76 @@ const egyptLocations = {
     "الوادي الجديد": ["الخارجة", "الداخلة", "الفرافرة", "باريس"]
 };
 const daysOfWeek = ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
+
+const parseDoctorAvailability = (rawAvailability) => {
+    const initialAvailability = {};
+
+    weekDays.forEach(day => {
+        initialAvailability[day] = {
+            startH: '',
+            startM: '00',
+            startP: 'مساءً',
+            endH: '',
+            endM: '00',
+            endP: 'مساءً'
+        };
+    });
+
+    if (!rawAvailability) return initialAvailability;
+
+    // محاولة قراءة البيانات إذا كانت محفوظة بصيغة JSON
+    try {
+        const parsed = typeof rawAvailability === 'string'
+            ? JSON.parse(rawAvailability)
+            : rawAvailability;
+
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+            weekDays.forEach(day => {
+                const d = parsed[day];
+                if (!d) return;
+
+                initialAvailability[day] = {
+                    startH: String(d.startH ?? d.from ?? ''),
+                    startM: String(d.startM ?? '00'),
+                    startP: d.startP ?? d.fromP ?? 'مساءً',
+                    endH: String(d.endH ?? d.to ?? ''),
+                    endM: String(d.endM ?? '00'),
+                    endP: d.endP ?? d.toP ?? 'مساءً'
+                };
+            });
+
+            return initialAvailability;
+        }
+    } catch (error) {
+        // إذا لم تكن البيانات JSON، سنحاول قراءة صيغة النص القديمة
+    }
+
+    // قراءة صيغة المواعيد النصية المحفوظة في قاعدة البيانات
+    const availabilityText = String(rawAvailability);
+
+    weekDays.forEach(day => {
+        const escapedDay = day.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+        const pattern = new RegExp(
+            `${escapedDay}\\s*\\(\\s*(\\d{1,2}):(\\d{2})\\s*(صباحاً|مساءً)\\s*إلى\\s*(\\d{1,2}):(\\d{2})\\s*(صباحاً|مساءً)\\s*\\)`
+        );
+
+        const match = availabilityText.match(pattern);
+
+        if (match) {
+            initialAvailability[day] = {
+                startH: match[1],
+                startM: match[2],
+                startP: match[3],
+                endH: match[4],
+                endM: match[5],
+                endP: match[6]
+            };
+        }
+    });
+
+    return initialAvailability;
+};
 
 const DoctorDashboard = ({ doctorId }) => {
   const [appointments, setAppointments] = useState([]);
@@ -107,14 +177,7 @@ const handleTimeChange = (day, field, value) => {
           city: addrParts[1] || '',
           detailedAddress: addrParts[2] || ''
         });
-
-        try {
-          setAvailability(JSON.parse(currentDoc.availability));
-        } catch (e) {
-          let initialAvail = {};
-          daysOfWeek.forEach(day => initialAvail[day] = { from: '1', to: '1', fromP: 'مساءً', toP: 'مساءً', active: false });
-          setAvailability(initialAvail);
-        }
+setAvailability(parseDoctorAvailability(currentDoc.availability));
       }
       setLoading(false);
     } catch (e) { 
@@ -503,26 +566,88 @@ const handleUpdateProfile = async (e) => {
 
           <div style={{ ...sectionBox, backgroundColor: '#f9f9f9', padding: '15px' }}>
             <h3 style={{ fontSize: '16px', color: '#007bff' }}>📅 تحديث مواعيد العيادة:</h3>
-            {weekDays.map((day) => (
-              <div key={day} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', borderBottom: '1px solid #eee', paddingBottom: '5px' }}>
-                <span style={{ minWidth: '60px', fontWeight: 'bold' }}>{day}</span>
-                <select onChange={(e) => handleTimeChange(day, 'startH', e.target.value)} value={availability[day]?.startH || ''}>
-                  <option value="">ساعة</option>
-                  {hoursArr.map(h => <option key={h} value={h}>{h}</option>)}
-                </select>
-                <select onChange={(e) => handleTimeChange(day, 'startP', e.target.value)} value={availability[day]?.startP || 'صباحاً'}>
-                {periodsArr.map(p => <option key={p} value={p}>{p}</option>)}
-                </select>
-                <span>إلى</span>
-                <select onChange={(e) => handleTimeChange(day, 'endH', e.target.value)} value={availability[day]?.endH || ''}>
-                  <option value="">ساعة</option>
-                  {hoursArr.map(h => <option key={h} value={h}>{h}</option>)}
-                </select>
-                <select onChange={(e) => handleTimeChange(day, 'endP', e.target.value)} value={availability[day]?.endP || 'مساءً'}>
-                  {periodsArr.map(p => <option key={p} value={p}>{p}</option>)}
-                </select>
-              </div>
+           {weekDays.map((day) => (
+    <div
+        key={day}
+        style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '12px',
+            borderBottom: '1px solid #eee',
+            paddingBottom: '5px',
+            flexWrap: 'wrap'
+        }}
+    >
+        <span style={{ minWidth: '60px', fontWeight: 'bold' }}>
+            {day}
+        </span>
+
+        {/* ساعة البداية */}
+        <select
+            onChange={(e) => handleTimeChange(day, 'startH', e.target.value)}
+            value={availability[day]?.startH || ''}
+        >
+            <option value="">ساعة</option>
+            {hoursArr.map(h => (
+                <option key={h} value={h}>{h}</option>
             ))}
+        </select>
+
+        {/* دقائق البداية */}
+        <select
+            onChange={(e) => handleTimeChange(day, 'startM', e.target.value)}
+            value={availability[day]?.startM ?? '00'}
+        >
+            {minsArr.map(m => (
+                <option key={m} value={m}>{m}</option>
+            ))}
+        </select>
+
+        {/* الفترة الصباحية أو المسائية للبداية */}
+        <select
+            onChange={(e) => handleTimeChange(day, 'startP', e.target.value)}
+            value={availability[day]?.startP || 'مساءً'}
+        >
+            {periodsArr.map(p => (
+                <option key={p} value={p}>{p}</option>
+            ))}
+        </select>
+
+        <span>إلى</span>
+
+        {/* ساعة النهاية */}
+        <select
+            onChange={(e) => handleTimeChange(day, 'endH', e.target.value)}
+            value={availability[day]?.endH || ''}
+        >
+            <option value="">ساعة</option>
+            {hoursArr.map(h => (
+                <option key={h} value={h}>{h}</option>
+            ))}
+        </select>
+
+        {/* دقائق النهاية */}
+        <select
+            onChange={(e) => handleTimeChange(day, 'endM', e.target.value)}
+            value={availability[day]?.endM ?? '00'}
+        >
+            {minsArr.map(m => (
+                <option key={m} value={m}>{m}</option>
+            ))}
+        </select>
+
+        {/* الفترة الصباحية أو المسائية للنهاية */}
+        <select
+            onChange={(e) => handleTimeChange(day, 'endP', e.target.value)}
+            value={availability[day]?.endP || 'مساءً'}
+        >
+            {periodsArr.map(p => (
+                <option key={p} value={p}>{p}</option>
+            ))}
+        </select>
+    </div>
+))}
           </div>
           
         <button type="submit" style={saveBtn}>💾 حفظ التغييرات النهائية</button>
