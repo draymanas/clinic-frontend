@@ -71,17 +71,27 @@ export default function MedicalArticles() {
               overflow: 'hidden',
               boxShadow: '0 4px 15px rgba(0,0,0,0.08)'
             }}>
-              {article.image_url && (
-                <img
-                  src={article.image_url}
-                  alt={article.title}
-                  style={{
-                    width: '100%',
-                    height: '200px',
-                    objectFit: 'cover'
-                  }}
-                />
-              )}
+             {article.image_url && (
+  <Link
+    to={`/medical-articles/${encodeURIComponent(article.slug)}`}
+    style={{
+      display: 'block',
+      textDecoration: 'none'
+    }}
+  >
+    <img
+      src={article.image_url}
+      alt={article.title}
+      style={{
+        display: 'block',
+        width: '100%',
+        height: '200px',
+        objectFit: 'cover',
+        cursor: 'pointer'
+      }}
+    />
+  </Link>
+)}
 
               <div style={{ padding: '22px' }}>
                 <span style={{ color: '#0284c7' }}>
@@ -89,8 +99,17 @@ export default function MedicalArticles() {
                 </span>
 
                 <h2 style={{ fontSize: '20px' }}>
-                  {article.title}
-                </h2>
+  <Link
+    to={`/medical-articles/${encodeURIComponent(article.slug)}`}
+    style={{
+      color: '#0f172a',
+      textDecoration: 'none',
+      cursor: 'pointer'
+    }}
+  >
+    {article.title}
+  </Link>
+</h2>
 
                 <p style={{ color: '#64748b' }}>
                   {article.summary}

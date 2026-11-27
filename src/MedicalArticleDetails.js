@@ -402,9 +402,11 @@ const renderContentBlock = (block, index) => {
     src={article.image_url}
     alt={article.title}
     style={{
+      display: 'block',
       width: '100%',
-      maxHeight: '450px',
-      objectFit: 'cover',
+      height: 'auto',
+      maxHeight: 'none',
+      objectFit: 'contain',
       borderRadius: '15px',
       margin: '20px 0'
     }}
