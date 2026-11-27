@@ -117,8 +117,21 @@ const getNextDateForDay = (dayName) => {
 
 // مكون تسجيل الدكتور (DoctorRegister)
 function DoctorRegister() {
-    const [newDoc, setNewDoc] = useState({ name: '', mobile: '', specialty: '',bio: '', fee: '', address: '', personal_mobile: '', title: '', city: '', area: '', password: '' });
-    const [scheduleDetails, setScheduleDetails] = useState({});
+    
+    const [newDoc, setNewDoc] = useState({
+    name: '',
+    mobile: '',
+    specialty: '',
+    additional_specialty: '',
+    bio: '',
+    fee: '',
+    address: '',
+    personal_mobile: '',
+    title: '',
+    city: '',
+    area: '',
+    password: ''
+});const [scheduleDetails, setScheduleDetails] = useState({});
     const [selectedFile, setSelectedFile] = useState(null);
     const weekDays = ["السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
    const hoursArr = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -144,6 +157,10 @@ const periodsArr = ["مساءً", "صباحاً"];
         formData.append('name', newDoc.name);
         formData.append('mobile', newDoc.mobile);
         formData.append('specialty', newDoc.specialty);
+        formData.append(
+    'additional_specialty',
+    newDoc.additional_specialty || ''
+);
         formData.append('bio', newDoc.bio)
         formData.append('fee', newDoc.fee);
         formData.append('address', newDoc.address);
@@ -176,10 +193,46 @@ const periodsArr = ["مساءً", "صباحاً"];
                         <option value="">اللقب المهني</option>
                         <option value="أخصائي">أخصائي</option><option value="استشاري">استشاري</option><option value="أستاذ دكتور">أستاذ دكتور</option>
                     </select>
-                    <select onChange={e => setNewDoc({...newDoc, specialty: e.target.value})} style={inputStyle}>
-                        <option value="">التخصص الطبي</option>
-                        {medicalSpecialties.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
+                   {/* التخصص الأساسي */}
+<select
+    value={newDoc.specialty}
+    onChange={e => setNewDoc({
+        ...newDoc,
+        specialty: e.target.value,
+        additional_specialty:
+            e.target.value === newDoc.additional_specialty
+                ? ''
+                : newDoc.additional_specialty
+    })}
+    style={inputStyle}
+>
+    <option value="">التخصص الطبي الأساسي</option>
+    {medicalSpecialties
+        .filter(s => s !== "الكل")
+        .map(s => (
+            <option key={s} value={s}>{s}</option>
+        ))}
+</select>
+
+{/* التخصص الإضافي */}
+<select
+    value={newDoc.additional_specialty}
+    onChange={e => setNewDoc({
+        ...newDoc,
+        additional_specialty: e.target.value
+    })}
+    style={inputStyle}
+>
+    <option value="">التخصص الإضافي (اختياري)</option>
+    {medicalSpecialties
+        .filter(s =>
+            s !== "الكل" &&
+            s !== newDoc.specialty
+        )
+        .map(s => (
+            <option key={s} value={s}>{s}</option>
+        ))}
+</select>
                     <textarea 
                         placeholder="نبذة مختصرة عنك (الخبرات، الشهادات، إلخ...)" 
                         onChange={e => setNewDoc({...newDoc, bio: e.target.value})} 
