@@ -271,14 +271,12 @@ const periodsArr = ["مساءً", "صباحاً"];
     onChange={e => setNewDoc({ ...newDoc, address: e.target.value })}
     style={inputStyle}
 />
-               
-<div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '15px' }}>
-    <p style={{ fontWeight: 'bold' }}>📅 مواعيد العيادة:</p>
-    <p style={{ fontSize: '12px', color: '#666' }}>
-        يمكنك اختيار مواعيد العيادة بالساعات ونصف الساعة، والمواعيد الافتراضية مساءً.
-    </p>
+<div style={{ backgroundColor: '#f9f9f9', padding: '15px', borderRadius: '8px', border: '1px solid #eee' }}>
+    <h3 style={{ fontSize: '16px', color: '#007bff', marginTop: 0, marginBottom: '15px' }}>
+        📅 مواعيد العيادة:
+    </h3>
 
-    {weekDays.map(day => {
+    {weekDays.map((day) => {
         const d = scheduleDetails[day] || {};
 
         return (
@@ -286,24 +284,24 @@ const periodsArr = ["مساءً", "صباحاً"];
                 key={day}
                 style={{
                     display: 'flex',
-                    flexWrap: 'wrap',
                     alignItems: 'center',
-                    gap: '5px',
+                    gap: '8px',
                     marginBottom: '12px',
-                    fontSize: '13px'
+                    borderBottom: '1px solid #eee',
+                    paddingBottom: '5px',
+                    flexWrap: 'wrap'
                 }}
             >
-                <span style={{ minWidth: '65px', fontWeight: 'bold' }}>
-                    {day}: من
+                <span style={{ minWidth: '60px', fontWeight: 'bold' }}>
+                    {day}
                 </span>
 
                 {/* ساعة البداية */}
                 <select
+                    onChange={(e) => handleTimeChange(day, 'startH', e.target.value)}
                     value={d.startH || ''}
-                    onChange={e => handleTimeChange(day, 'startH', e.target.value)}
-                    style={inputStyle}
                 >
-                    <option value="">الساعة</option>
+                    <option value="">ساعة</option>
                     {hoursArr.map(h => (
                         <option key={h} value={h}>{h}</option>
                     ))}
@@ -311,20 +309,18 @@ const periodsArr = ["مساءً", "صباحاً"];
 
                 {/* دقائق البداية */}
                 <select
+                    onChange={(e) => handleTimeChange(day, 'startM', e.target.value)}
                     value={d.startM ?? '00'}
-                    onChange={e => handleTimeChange(day, 'startM', e.target.value)}
-                    style={inputStyle}
                 >
                     {minutesArr.map(m => (
                         <option key={m} value={m}>{m}</option>
                     ))}
                 </select>
 
-                {/* فترة البداية */}
+                {/* الفترة الصباحية أو المسائية للبداية */}
                 <select
+                    onChange={(e) => handleTimeChange(day, 'startP', e.target.value)}
                     value={d.startP || 'مساءً'}
-                    onChange={e => handleTimeChange(day, 'startP', e.target.value)}
-                    style={inputStyle}
                 >
                     {periodsArr.map(p => (
                         <option key={p} value={p}>{p}</option>
@@ -335,11 +331,10 @@ const periodsArr = ["مساءً", "صباحاً"];
 
                 {/* ساعة النهاية */}
                 <select
+                    onChange={(e) => handleTimeChange(day, 'endH', e.target.value)}
                     value={d.endH || ''}
-                    onChange={e => handleTimeChange(day, 'endH', e.target.value)}
-                    style={inputStyle}
                 >
-                    <option value="">الساعة</option>
+                    <option value="">ساعة</option>
                     {hoursArr.map(h => (
                         <option key={h} value={h}>{h}</option>
                     ))}
@@ -347,20 +342,18 @@ const periodsArr = ["مساءً", "صباحاً"];
 
                 {/* دقائق النهاية */}
                 <select
+                    onChange={(e) => handleTimeChange(day, 'endM', e.target.value)}
                     value={d.endM ?? '00'}
-                    onChange={e => handleTimeChange(day, 'endM', e.target.value)}
-                    style={inputStyle}
                 >
                     {minutesArr.map(m => (
                         <option key={m} value={m}>{m}</option>
                     ))}
                 </select>
 
-                {/* فترة النهاية */}
+                {/* الفترة الصباحية أو المسائية للنهاية */}
                 <select
+                    onChange={(e) => handleTimeChange(day, 'endP', e.target.value)}
                     value={d.endP || 'مساءً'}
-                    onChange={e => handleTimeChange(day, 'endP', e.target.value)}
-                    style={inputStyle}
                 >
                     {periodsArr.map(p => (
                         <option key={p} value={p}>{p}</option>
@@ -370,7 +363,6 @@ const periodsArr = ["مساءً", "صباحاً"];
         );
     })}
 </div>
-
                 <input placeholder="سعر الكشف" onChange={e => setNewDoc({...newDoc, fee: e.target.value})} style={inputStyle} />
                 <input type="file" accept="image/*" onChange={(e) => setSelectedFile(e.target.files[0])} />
                 <input placeholder="موبايل الحجز" onChange={e => setNewDoc({...newDoc, mobile: e.target.value})} style={inputStyle} />
