@@ -240,15 +240,37 @@ const periodsArr = ["مساءً", "صباحاً"];
                     />
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                    <select onChange={e => setNewDoc({...newDoc, city: e.target.value, area: ''})} style={inputStyle}>
-                        <option value="">المحافظة</option>
-                        {Object.keys(egyptLocations).map(g => <option key={g} value={g}>{g}</option>)}
-                    </select>
-                    <select onChange={e => setNewDoc({...newDoc, area: e.target.value})} disabled={!newDoc.city} style={inputStyle}>
-                        <option value="">المدينة/المنطقة</option>
-                        {newDoc.city && egyptLocations[newDoc.city].map(a => <option key={a} value={a}>{a}</option>)}
-                    </select>
-                </div>
+    <select
+        value={newDoc.city}
+        onChange={e => setNewDoc({ ...newDoc, city: e.target.value, area: '' })}
+        style={inputStyle}
+    >
+        <option value="">المحافظة</option>
+        {Object.keys(egyptLocations).map(g => (
+            <option key={g} value={g}>{g}</option>
+        ))}
+    </select>
+
+    <select
+        value={newDoc.area}
+        onChange={e => setNewDoc({ ...newDoc, area: e.target.value })}
+        disabled={!newDoc.city}
+        style={inputStyle}
+    >
+        <option value="">المدينة/المنطقة</option>
+        {newDoc.city && egyptLocations[newDoc.city]?.map(a => (
+            <option key={a} value={a}>{a}</option>
+        ))}
+    </select>
+</div>
+
+<input
+    type="text"
+    placeholder="العنوان التفصيلي للعيادة (الشارع، رقم العقار، الدور، علامة مميزة)"
+    value={newDoc.address}
+    onChange={e => setNewDoc({ ...newDoc, address: e.target.value })}
+    style={inputStyle}
+/>
                
 <div style={{ padding: '20px', background: '#f8f9fa', borderRadius: '15px' }}>
     <p style={{ fontWeight: 'bold' }}>📅 مواعيد العيادة:</p>
@@ -736,11 +758,19 @@ const getConsultationDraft = (consultation) => {
     'قلب وأوعية دموية', 'جلدية', 'عيون', 'أنف وأذن وحنجرة', 'مسالك بولية', 'علاج طبيعي'
   ];
 
-  const filteredAdminDoctors = (doctors || []).filter(d => {
-    const matchName = (d.name || '').toLowerCase().includes(adminSearch.toLowerCase());
-    const matchSpecialty = adminSpecialty === 'الكل' || d.specialty === adminSpecialty;
-    return matchName && matchSpecialty;
-  });
+const filteredAdminDoctors = (doctors || []).filter(d => {
+
+  const matchName = (d.name || '')
+    .toLowerCase()
+    .includes(adminSearch.toLowerCase());
+
+  const matchSpecialty =
+    adminSpecialty === 'الكل' ||
+    d.specialty === adminSpecialty ||
+    d.additional_specialty === adminSpecialty;
+
+  return matchName && matchSpecialty;
+});
 
   // قائمة أزرار القائمة الجانبية بالترتيب المطلوب
   const menuItems = [
