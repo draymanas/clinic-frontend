@@ -150,40 +150,39 @@ const DoctorDashboard = ({ doctorId }) => {
   const [selectedFile, setSelectedFile] = useState(null);
 
   // دالة جلب البيانات (الحجوزات + بيانات البروفايل)
-  const fetchDoctorData = async () => {
+const fetchDoctorData = async () => {
     try {
       // جلب الحجوزات
       const resApps = await fetch(`https://clinic-api-ig3d.onrender.com/doctor-appointments/${doctorId}`);
       const dataApps = await resApps.json();
-      setAppointments(dataApps);
+      setAppointments(Array.isArray(dataApps) ? dataApps : []);
 
-      // جلب بيانات الدكتور عشان نملى الفورم
-      const resDoc = await fetch(`https://clinic-api-ig3d.onrender.com/doctors`); 
+      // جلب بيانات الدكتور لملء الفورم بدون كاش
+      const resDoc = await fetch(`https://clinic-api-ig3d.onrender.com/doctors`, {
+        cache: 'no-store'
+      });
       const allDoctors = await resDoc.json();
-      const currentDoc = allDoctors.find(d => d.id === parseInt(doctorId));
-const handleTimeChange = (day, field, value) => {
-    setAvailability(prev => ({
-        ...prev,
-        [day]: { 
-            ...(prev[day] || { startH: '', startM: '00', startP: 'مساءً', endH: '', endM: '00', endP: 'مساءً' }), 
-            [field]: value 
-        }
-    }));
-};
+      const currentDoc = Array.isArray(allDoctors)
+        ? allDoctors.find(d => d.id === parseInt(doctorId, 10))
+        : null;
+
       if (currentDoc) {
-        const addrParts = currentDoc.address ? currentDoc.address.split(' - ') : ['', '', ''];
+        const hasValidCity = Boolean(currentDoc.city && egyptLocations[currentDoc.city]);
+
         setDoctorData({
           ...currentDoc,
-          governorate: addrParts[0] || '',
-          city: addrParts[1] || '',
-          detailedAddress: addrParts[2] || ''
+          governorate: hasValidCity ? currentDoc.city : '',
+          city: currentDoc.area || '',
+          detailedAddress: currentDoc.address || '',
+          additional_specialty: currentDoc.additional_specialty || ''
         });
-setAvailability(parseDoctorAvailability(currentDoc.availability));
+
+        setAvailability(parseDoctorAvailability(currentDoc.availability));
       }
       setLoading(false);
-    } catch (e) { 
+    } catch (e) {
       console.error("Fetch Error:", e);
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -204,10 +203,13 @@ setAvailability(parseDoctorAvailability(currentDoc.availability));
     }
   };
 // السطر 118: تغيير الاسم من updateDay لـ handleTimeChange
-  const handleTimeChange = (day, field, value) => {
+ const handleTimeChange = (day, field, value) => {
     setAvailability(prev => ({
       ...prev,
-      [day]: { ...(prev[day] || {}), [field]: value }
+      [day]: {
+        ...(prev[day] || { startH: '', startM: '00', startP: 'مساءً', endH: '', endM: '00', endP: 'مساءً' }),
+        [field]: value
+      }
     }));
   };
 const handleUpdateProfile = async (e) => {
@@ -481,11 +483,15 @@ const handleUpdateProfile = async (e) => {
 
           <div style={sectionBox}>
     <label>🎓 التخصص الأساسي:</label>
-    <select
+   <select
         value={doctorData.specialty || ''}
         onChange={(e) => setDoctorData({
             ...doctorData,
-            specialty: e.target.value
+            specialty: e.target.value,
+            additional_specialty:
+                e.target.value === doctorData.additional_specialty
+                    ? ''
+                    : doctorData.additional_specialty
         })}
         style={inputStyle}
     >
